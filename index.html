@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- mobile status bar color -->
+    <meta name="theme-color" content="#fff">
+    <title>Sudoku</title>
+    <link rel="shortcut icon" href="./static/images/icon.png" type="image/x-icon">
+    <!-- google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Potta+One&display=swap" rel="stylesheet">
+    <!-- box icons -->
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <!-- app css -->
+    <link rel="stylesheet" href="./app.css">
+
+</head>
+
+<body>
+
+    <!-- main -->
+    <div class="main">
+        <div class="screen">
+
+            <!-- game screen -->
+            <div class="main-game active" id="game-screen">
+                <div class="main-sudoku-grid">
+                    <!-- 81 cells -->
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px; margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px; margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px; margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px; margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell">                        </div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                        <div class="sudoku-grid-cell"></div>
+                    </div>
+
+                <div class="button-box">
+                    <div class="btnRow">
+                        <button class="btn-define" id="btn-define">Definieren</button>
+                        <button class="btn-play" id="btn-play">Spielen</button>
+                    </div>
+
+                    <div class="numbers">
+                        <div class="number">1</div>
+                        <div class="number">2</div>
+                        <div class="number">3</div>
+                        <div class="number">4</div>
+                        <div class="number">5</div>
+                        <div class="number">6</div>
+                        <div class="number">7</div>
+                        <div class="number">8</div>
+                        <div class="number">9</div>
+                        <div class="delete" id="btn-delete">X</div>
+                    </div>
+                </div>
+                <div class="main-btns">
+                    <button class="main-btn" id="btn-init">Initialisieren</button>
+                    <button class="main-btn" id="btn-reset">Zurücksetzen</button>
+                    <button class="main-btn" id="btn-save">Speichern</button>
+                    <button class="main-btn" id="btn-restore">Wiederherstellen</button>
+                </div>
+            </div>
+            <!-- end game screen -->
+        </div>
+    </div>
+    <!-- end main -->
+
+    <script src="./static/js/constant.js"></script>
+    <script src="./static/js/sudoku.js"></script>
+    <script src="./static/js/appHubert.js"></script>
+</body>
+
+</html>
