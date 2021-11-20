@@ -350,9 +350,13 @@ nav {
 
 .btnRow {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-    ;
+}
+.btn-back-next {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
 }
 
 .number {
@@ -376,12 +380,12 @@ nav {
     font-size: var(--font-size);
     cursor: pointer;
 }
-.number:active, .delete:active {
+.number:active, .delete:active ,.btn-next:active, .btn-back:active {
     transform: translate(2px, 2px);
 }
 
 
-.btn-define, .btn-play {
+.btn-define, .btn-play, .btn-next, .btn-back {
     padding: 10px;
     border-radius: var(--border-radius);
     box-shadow: 5px 5px #666;
@@ -400,12 +404,24 @@ nav {
     background-color: var(--filled-bg);
     color: var(--filled-color);
 }
+.btn-next, .btn-back {
+    padding: 10px;
+    border-radius: var(--border-radius);
+    box-shadow: 5px 5px #666;
+    border: hidden;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+}
 
-.btn-play {
+.btn-play, .btn-next, .btn-back {
     background-color: var(--blue);
     color: var(--black);
 }
-
+.btn-image {
+        width: 30px;
+        height:30px;   
+}
 
 .main-btn:active {
     box-shadow: 0 0px gray;

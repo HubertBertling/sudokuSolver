@@ -31,7 +31,9 @@ class SudokuApp {
         document.querySelector('#btn-play').addEventListener('click', () => {
             sudoApp.setMode('play');
         });
-
+        document.querySelector('#btn-next').addEventListener('click', () => {
+            sudoApp.nextSolutionStep();
+        });
         //Der Delete-Button
         document.querySelector('#btn-delete').addEventListener('click', () => {
             sudoApp.deleteButtonPressed();
@@ -67,6 +69,15 @@ class SudokuApp {
         // Schritt 3:
         // Fülle die Sudokutabelle initial
         this.suGrid.initGrid();
+    }
+
+    nextSolutionStep() {
+        // DeadlockReached
+        if (this.suGrid.deadlockReached()){
+            // Gehe zurück zur letzten freien Zell Wahl
+        }
+        let tmpSelectedCell = this.suGrid.nextSelection();
+
     }
 
     setMode(mode) {
