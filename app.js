@@ -11,8 +11,15 @@ class SudokuApp {
         this.currentMode = 'play';
         // Die App erhält eine Sudoku-Tabelle. Die als HTML schon existierende Tabelle 
         // erhält hier einen Javascript Wrapper.
-        this.suGrid = new SudokuGrid();
 
+        // Die App hat bisher drei  Dialoge
+        this.storageSaveDialog = new StorageSaveDialog();
+        this.storageRestoreDialog = new StorageRestoreDialog();
+        this.storageDeleteDialog = new StorageDeleteDialog();
+        // Der Zustandsspeicher
+        this.sudokuStorage = new SudokuStateStorage();
+        // Die Hauptansicht
+        this.suGrid = new SudokuGrid();
         //Die Buttons der App werden Event-Hhandler zugeordnet
         // Nummer-Buttons
         this.number_inputs = document.querySelectorAll('.number');
@@ -22,6 +29,10 @@ class SudokuApp {
             e.addEventListener('click', () => {
                 sudoApp.numberButtonPressed(index + 1)
             })
+            //Der Delete-Button: Löscht aktuelle selektierte Zelle
+            document.querySelector('#btn-delete-cell').addEventListener('click', () => {
+                sudoApp.deleteCellButtonPressed();
+            });
 
         });
         // Die beiden Mode-button 
@@ -31,33 +42,52 @@ class SudokuApp {
         document.querySelector('#btn-play').addEventListener('click', () => {
             sudoApp.setMode('play');
         });
-        document.querySelector('#btn-next').addEventListener('click', () => {
-            sudoApp.nextSolutionStep();
+        // Undo- und Redo-Button
+        document.querySelector('#btn-redo').addEventListener('click', () => {
+            sudoApp.historyStepForward();
         });
-        //Der Delete-Button
-        document.querySelector('#btn-delete').addEventListener('click', () => {
-            sudoApp.deleteButtonPressed();
+        document.querySelector('#btn-undo').addEventListener('click', () => {
+            sudoApp.historyStepBackward();
         });
 
-        // Der Initialisieren-Button
+        // Automatische Ausführung: vollautomatisch
+        document.querySelector('#btn-run').addEventListener('click', () => {
+            sudoApp.automatedRun();
+        });
+        // Automatische Ausführung: schrittweise
+        document.querySelector('#btn-autoStep').addEventListener('click', () => {
+            sudoApp.autoStep();
+        });
+
+
+        // Der Initialisieren-Button: Initialisiert die Tabelle
         document.querySelector('#btn-init').addEventListener('click', () => {
             sudoApp.initButtonPressed();
         });
-        // Der Zurücksetzen-Button
+        // Der Zurücksetzen-Button: Setzt die Tabelle zurück auf die Definition.
+        // Alle Zellen bis auf die, die zur Definition gehören, werden gelöscht
         document.querySelector('#btn-reset').addEventListener('click', () => {
             sudoApp.resetBtnPressed();
         });
-        // Der Speichern-Button
+        // Der Speichern-Button: Der aktuelle Zustand wird unter einem Namen gespeichert.
         document.querySelector('#btn-save').addEventListener('click', () => {
             sudoApp.saveBtnPressed();
         });
-        // Der Wiederherstellen--Button
+        // Der Wiederherstellen--Button: Ein gespeicherter Zustand wird wiederhergestellt.
         document.querySelector('#btn-restore').addEventListener('click', () => {
             sudoApp.restoreBtnPressed();
+        });
+        // Der Lösche--Button: Ein gespeicherter Zustand wird gelöscht.
+        document.querySelector('#btn-delete').addEventListener('click', () => {
+            sudoApp.deleteBtnPressed();
         });
 
     }
     init() {
+        this.storageSaveDialog.close();
+        this.storageRestoreDialog.close();
+        this.storageDeleteDialog.close();
+
         // Der initiale Modus ist `play'.
         this.setMode('play');
         // Die Sudoku-Tabelle wird geladen.
@@ -71,14 +101,6 @@ class SudokuApp {
         this.suGrid.initGrid();
     }
 
-    nextSolutionStep() {
-        // DeadlockReached
-        if (this.suGrid.deadlockReached()){
-            // Gehe zurück zur letzten freien Zell Wahl
-        }
-        let tmpSelectedCell = this.suGrid.nextSelection();
-
-    }
 
     setMode(mode) {
         if (mode == 'play') {
@@ -92,10 +114,14 @@ class SudokuApp {
         }
     }
 
+    autoStep() {
+        this.suGrid.autoStep(this.currentMode);
+    }
+
     numberButtonPressed(btnNumber) {
         this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentMode);
     }
-    deleteButtonPressed() {
+    deleteCellButtonPressed() {
         this.suGrid.deleteSelected(this.currentMode);
     }
 
@@ -105,15 +131,91 @@ class SudokuApp {
     resetBtnPressed() {
         this.suGrid.reset();
     }
+
     saveBtnPressed() {
-        this.pushCurrentState();
+        // Zustand soll gespeichert werden
+        let tmpNameList = this.sudokuStorage.getNameList();
+        this.storageSaveDialog.open(tmpNameList);
     }
+
     restoreBtnPressed() {
-        this.popCurrentState();
+        // Zustand soll wiederhergestellt werden
+        let tmpNameList = this.sudokuStorage.getNameList();
+        this.storageRestoreDialog.open(tmpNameList);
+
     }
+    deleteBtnPressed() {
+        // Zustand soll gelöscht werden
+        let tmpNameList = this.sudokuStorage.getNameList();
+        this.storageDeleteDialog.open(tmpNameList);
+    }
+
     sudokuCellPressed(cellNode, index) {
         this.suGrid.select(cellNode, index);
     }
+
+    saveStorageDlgOKPressed() {
+        this.storageSaveDialog.close();
+        // Der Name unter dem der aktuelle Zustand gespeichert werden soll
+        let stateName = this.storageSaveDialog.getSelectedName();
+
+        let tmpNamedState = this.sudokuStorage.getNamedState(stateName);
+        if (tmpNamedState == null) {
+            // Alles gut: es existiert noch kein state mit diesem Namen
+            // Speichere den Zustand
+        } else {
+            // Es existiert bereits ein Zustand mit diesem Namen
+            stateName = stateName + 'A';
+        }
+        // Berechne den aktuellen Zustand
+        let currentState = this.suGrid.getCurrentState();
+        //Speichere den named Zustand
+        this.sudokuStorage.saveNamedState(stateName, currentState);
+    }
+
+    saveStorageDlgCancelPressed() {
+        this.storageSaveDialog.close()
+    }
+
+    restoreStorageDlgOKPressed() {
+        this.storageRestoreDialog.close();
+        // DerZustand mit diesem Namen soll geholt werden
+        let stateName = this.storageRestoreDialog.getSelectedName();
+        // Hole den State mit diesem Namen
+        let tmpState = this.sudokuStorage.getNamedState(stateName);
+        if (tmpState !== null) {
+            this.suGrid.setCurrentState(tmpState);
+            // Berechne die möglichen Inhalte der Zellen
+            this.suGrid.recalculatePermissibleSets();
+            // Berechne potentiell vorhandene Konflikte
+            this.suGrid.reCalculateErrorCells();
+            // Berechne die notwendigen Zellinhalte
+            this.suGrid.reEvaluateUniquePerms();
+        } else {
+            alert("Zustand mit diesem Namen existiert nicht");
+        }
+    }
+
+    restoreStorageDlgCancelPressed() {
+        this.storageRestoreDialog.close()
+    }
+
+    deleteStorageDlgOKPressed() {
+        this.storageDeleteDialog.close();
+        // DerZustand mit diesem Namen soll geholt werden
+        let stateName = this.storageDeleteDialog.getSelectedName();
+        // Lösche den named State mit diesem Namen
+        this.sudokuStorage.deleteNamedState(stateName);
+    }
+
+    deleteStorageDlgCancelPressed() {
+        this.storageDeleteDialog.close()
+    }
+
+    comboBoxNameSelected(comboBoxNode) {
+        comboBoxNode.setInputField();
+    }
+
     getMode() {
         return this.currentMode;
     }
@@ -141,7 +243,13 @@ class SudokuApp {
         let updateStorageObj = JSON.stringify(storageObj);
         localStorage.setItem("sudokuStorage", updateStorageObj);
     }
+    topCurrentState() {
+        let str_storageOBj = localStorage.getItem("sudokuStorage")
+        let storageObj = JSON.parse(str_storageOBj);
 
+        let previousState = storageObj[storageObj.length - 1];
+        this.suGrid.setCurrentState(previousState);
+    }
 }
 
 class SudokuGrid {
@@ -155,18 +263,85 @@ class SudokuGrid {
         // Speichert die aktuell selektierte Zelle und ihren Index
         this.selectedCell = undefined;
         this.indexSelected = -1;
+        // Die autoselected number ist eine von 1...9
+        this.autoSelected = '0';
+        //Backtracking
+        this.backTrackStack = [];
+        // Ermöglicht schrittweises Vor- und Zurückgehen in der Lösung
+        // this.actionHistory = [];
+    }
+
+
+    autoStep(currentMode) {
+        // Führt abwechselnd select- und Nummernsetzoprationen durch
+        // Kein Deadlock bisher
+        if (!this.deadlockReached()) {
+            // Eine Selektion ist gesetzt
+            if (parseInt(this.autoSelected) > 0) {
+                this.atCurrentSelectionSetNumber(this.autoSelected, currentMode)
+            } else {
+                //Eine Selektion wird gesetzt
+                this.autoSelect(currentMode);
+            }
+
+        } else {
+            // Deadlock reached
+            // Back track ...
+        }
+    }
+    autoSelect(currentMode) {
+        for (let i = 0; i < 81; i++) {
+            // Die Zelle ist noch nicht gesetzt
+            if (this.sudoCells[i].value() == '0') {
+                let tmpNr = this.sudoCells[i].hasUniqueSolution();
+                let tmpNrInt = parseInt(tmpNr);
+                // tmpNr is indeed a unque number
+                if (tmpNrInt > 0) {
+                    // Set selection
+                    this.selectCell(this.sudoCells[i], tmpNr);
+                    this.autoSelected = tmpNr;
+                    return tmpNr;
+                }
+            }
+        }
+    }
+    /*
+       stepBackward() {
+          //Lösche die zuletzt gesetzte Zelle
+          if (this.actionHistory.length > '0') {
+              let action = this.actionHistory.pop();
+              if (action.op === "setNumber") {
+                  this.select(this.currentMode, action.cellIndex);
+                  this.suGrid.deleteSelected(this.currentMode);
+              } 
+          }
+      }
+      */
+
+
+
+
+    deadlockReached() {
+        // Deadlock ist erreicht, wenn es eine unlösbare Zelle gibt
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].isInsolvable()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     getCurrentState() {
-        let tmpState = [];
+        // Zusammenstellung des Zustandes, um ihn abspeichern zu können
+        let tmpGrid = [];
         for (let i = 0; i < 81; i++) {
             let storedCell = {
                 cellValue: this.sudoCells[i].value(),
                 cellMode: this.sudoCells[i].getMode()
             };
-            tmpState.push(storedCell);
+            tmpGrid.push(storedCell);
         }
-        return tmpState;
+        return tmpGrid;
     }
 
     setCurrentState(previousState) {
@@ -218,11 +393,11 @@ class SudokuGrid {
             let groupCol = Math.floor(col / 3);
 
             // Die Wrapper-Zellen für die DOM-Zellen werden erzeugt
-            // und im Arry sudoCells gespeicehrt
+            // und im Array sudoCells gespeicehrt
             let tmpSudoCell = new SudokuCell(this, i, this.cells[i]);
             this.sudoCells.push(tmpSudoCell);
 
-            // Gleichzeitig werden die Wrapper-Zellen Grupprn gespeichert.
+            // Gleichzeitig werden die Wrapper-Zellen in Gruppen gespeichert.
             // Die Tabelle besitzt 9 Gruppen mit jeweils 9 Zellen.
             let tmpGroupIndex = calcIndex(groupCol, groupRow);
             this.sudoGroups[tmpGroupIndex].push(tmpSudoCell);
@@ -234,6 +409,8 @@ class SudokuGrid {
         // Schritt 1: Die aktuelle Zellenselektion wird zurückgesetzt
         this.selectedCell = undefined;
         this.indexSelected = -1;
+        this.autoSelected = '0';
+        //this.actionHistory = [];
         // Die aktuellen Zellinhalte werden gelöscht
         for (let i = 0; i < 81; i++) {
             this.sudoCells[i].clear();
@@ -252,6 +429,8 @@ class SudokuGrid {
         // Schritt 1: Die aktuelle Selektion wird zurückgesetzt
         this.selectedCell = undefined;
         this.indexSelected = -1;
+        this.autoSelected = '0';
+        //this.actionHistory = [];
         // Schritt 2: Die aktuellen Zellinhalte werden gelöscht
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getMode() !== 'define') {
@@ -287,13 +466,16 @@ class SudokuGrid {
         if ( // Das geht nur, wenn eine Zelle selektiert ist
             this.indexSelected !== -1) {
             if (// Wenn die Zelle leer ist, kein Problem
-                (this.selectedCell.value() == 0) ||
+                (this.selectedCell.value() == '0') ||
                 // Wenn die Zelle geüllt ist, kann nur im gleichen Modus
                 // eine Neusetzung erfolgen
                 (this.selectedCell.getMode() == currentMode)
-                // 
+
             ) {
                 this.selectedCell.setNumber(btnNumber, currentMode);
+                // Setze action in der action history
+                //let action = { op: "setNumber", cellIndex: this.indexSelected };
+                //this.actionHistory.push(action);
                 // Berechne die jetzt noch möglichen Inhalte der Zellen
                 this.recalculatePermissibleSets();
                 // Berechne potentiell jetzt vorhandene Konflikte
@@ -334,7 +516,7 @@ class SudokuGrid {
         let currentGroup = this.sudoGroups[groupNr];
         for (let i = 0; i < 9; i++) {
 
-            if (currentGroup[i].value() == 0) {
+            if (currentGroup[i].value() == '0') {
                 if (currentGroup[i].hasThisPermNr(permNr)) {
                     countOccurrences++;
                     lastCellwithNr = currentGroup[i];
@@ -353,6 +535,7 @@ class SudokuGrid {
         // Lösche die aktuelle Selektionsinformation in der Tabelle
         this.selectedCell = undefined;
         this.indexSelected = -1;
+        this.autoSelected = '0';
     }
 
     recalculatePermissibleSets() {
@@ -360,7 +543,7 @@ class SudokuGrid {
             let tmpCell = this.sudoCells[i];
             tmpCell.calculatePermissibleNumbers();
             // Nur leere Zellen erhalten möglche Nummern
-            if (tmpCell.value() == 0) {
+            if (tmpCell.value() == '0') {
                 tmpCell.setPermissibleNumbers();
             }
         }
@@ -370,7 +553,7 @@ class SudokuGrid {
         for (let i = 0; i < this.sudoCells.length; i++) {
             let tmpCell = this.sudoCells[i];
             tmpCell.unsetError();
-            if (tmpCell.isContradictory()) {
+            if (tmpCell.isSetinError()) {
                 tmpCell.setError();
             }
         }
@@ -383,6 +566,8 @@ class SudokuGrid {
             // eine Neusetzung erfolgen
             if (this.selectedCell.getMode() == currentMode) {
                 this.selectedCell.delete();
+                //let action = { op: "deleteNumber", cell: this.indexSelected };
+                //this.actionHistory.push(action);
                 // Berechne die jetzt noch möglichen Inhalte der Zellen
                 this.recalculatePermissibleSets();
                 // Berechne potentiell jetzt (nicht mehr) vorhandene Konflikte
@@ -404,18 +589,24 @@ class SudokuGrid {
         }
     }
 
-    select(cellNode, index) {
+    selectCell(cell, index) {
         // Setze eine Zelle auf selektiert
         if (this.indexSelected !== -1) {
             // Löse eine potentiell bisher vorhandene Selektion
             this.selectedCell.deselect();
             this.indexSelected = -1;
+            this.autoSelected = '0';
         }
         // Setze die neue Selektion
-        let tmpCell = this.cellOf(cellNode);
-        tmpCell.select();
+        cell.select();
         this.indexSelected = index;
-        this.selectedCell = tmpCell;
+        this.selectedCell = cell;
+    }
+
+    select(cellNode, index) {
+        // Setze eine Zelle auf selektiert
+        let tmpCell = this.cellOf(cellNode);
+        this.selectCell(tmpCell, index);
     }
 
 
@@ -491,8 +682,9 @@ class SudokuCell {
         this.influencers = [];
         // Speiceht die aktuell möglichen Zahlen für diese Zelle
         this.myPermissibles;
-        // Speichert, falls vorhanden die notwendige Zahl dieser Zelle
-        this.necessary = 0;
+        // Speichert, falls vorhanden  notwendige Zahlen dieser Zelle. 
+        // Mehr als eine bedeuten einen Widerspruch in der Lösung.
+        this.necessary = new Set();
     }
     clear() {
         this.unsetNumber();
@@ -507,20 +699,20 @@ class SudokuCell {
     }
 
     setNumber(number, mode) {
-        this.privateSetNumber(number,mode);
+        this.privateSetNumber(number, mode);
 
         this.myCellNode.classList.add('zoom-in');
         setTimeout(() => {
             this.myCellNode.classList.remove('zoom-in');
         }, 500);
     }
-    
+
     massSetNumber(number, mode) {
         //Wird augerufen für die Wiederherstellung
-        this.privateSetNumber(number,mode);
+        this.privateSetNumber(number, mode);
     }
 
-    privateSetNumber(number,mode) {
+    privateSetNumber(number, mode) {
         this.myCellNode.setAttribute('data-value', number);
         //remove permissible numbers
         while (this.myCellNode.firstChild) {
@@ -528,6 +720,8 @@ class SudokuCell {
         }
         // Lösche die 'nested'-Klassifizierung 
         this.myCellNode.classList.remove('nested')
+        this.myCellNode.classList.remove('inSolvable');
+
         //Setze das data-value Attribut der Zelle
         this.myCellNode.setAttribute('data-value', number);
         // Setze das Zahlelement
@@ -545,7 +739,7 @@ class SudokuCell {
     unsetNumber() {
         // Setze das Value-Attribut im Knoten auf 0
         // Damit kann man leicht eine leere Zelle bestimmen
-        this.myCellNode.setAttribute('data-value', 0);
+        this.myCellNode.setAttribute('data-value', '0');
         this.myCellNode.innerHTML = '';
         this.myMode = '';
         // LÖsche die gegebenfalls vorhandene Define-KLassifizierung
@@ -619,19 +813,26 @@ class SudokuCell {
     setPermissibleNumbers() {
         // Lösche die bisherigen Zahlen
         this.myCellNode.innerHTML = '';
-        this.myCellNode.setAttribute('data-value', 0);
+        this.myCellNode.setAttribute('data-value', '0');
         while (this.myCellNode.firstChild) {
             this.myCellNode.removeChild(this.myCellNode.lastChild);
         }
         // Klassifizire die Zelle als 'nested'
         this.myCellNode.classList.add('nested');
         // Übertrage die berechneten Möglchen in das DOM
-        this.myPermissibles.forEach(e => {
-            let permNumberElement = document.createElement('div');
-            permNumberElement.setAttribute('data-value', e);
-            permNumberElement.innerHTML = e;
-            this.myCellNode.appendChild(permNumberElement);
-        });
+        if (this.myPermissibles.size == 0) {
+            // Klassefiziere diese Zelle als widersprüchlich
+            this.myCellNode.classList.add('inSolvable');
+        } else {
+            this.myCellNode.classList.remove('inSolvable');
+            this.myPermissibles.forEach(e => {
+                let permNumberElement = document.createElement('div');
+                permNumberElement.setAttribute('data-value', e);
+                permNumberElement.innerHTML = e;
+                this.myCellNode.appendChild(permNumberElement);
+            });
+        }
+
     }
     getPermissibleNumbers() {
         return this.myPermissibles;
@@ -640,11 +841,15 @@ class SudokuCell {
     setNecessary(permNr) {
         // Klassifiziere die Zahl permNr in der Menge der möglichen Zahlen
         // als notwendig
+        this.necessary.add(permNr);
         let permNodes = this.myCellNode.children;
         for (let i = 0; i < permNodes.length; i++) {
             if (permNodes[i].getAttribute('data-value') == permNr) {
                 permNodes[i].classList.add('neccessary');
             }
+        }
+        if (this.necessary.size > 1) {
+            this.myCellNode.classList.add('inSolvable');
         }
     }
 
@@ -655,7 +860,7 @@ class SudokuCell {
                 permNodes[i].classList.remove('neccessary');
             }
         }
-
+        this.necessary.delete(permNr);
     }
 
     delete() {
@@ -664,18 +869,282 @@ class SudokuCell {
         this.setPermissibleNumbers();
     }
 
-    isContradictory() {
+    isSetinError() {
         let tmpValue = this.value();
-        if (tmpValue == 0) {
+        // Wenn die Zelle gar nicht gesetzt ist, kann sie nicht fehlerhaft gesezt sein
+        if (tmpValue == '0') {
             return false;
         } else {
+            // Wenn die gesetzte Zahl nicht in der Menge der erlaubten Zahlen ist, ist die Zahl fehlerhaft gesetzt
             return !this.myPermissibles.has(tmpValue);
         }
     }
+
+    isInsolvable() {
+        // Nur eine nicht gesetzte Zelle kann unlösbar sein
+        let tmpValue = this.value();
+        if (tmpValue !== '0') {
+            return false;
+        } else {
+            return (this.necessary.length > 1 || this.myPermissibles.size == 0);
+        }
+    }
+
+
+    hasUniqueSolution() {
+        // Gibt, falls vorhanden, die einzig mögliche Zahl zurück 
+        let tmpValue = '0';
+        // Wir betrachten nicht gesetzte Zellen
+        if (this.value() == '0') {
+            // Es kann vorkommen, dass mehrere notwendige Zahlen
+            // für eine Zelle berechnet werden. 
+            // Dann ist das sudoku unlösbar.
+            if (this.necessary.size == 1) {
+                this.necessary.forEach(e => {
+                    tmpValue = e;
+                });
+            } else if (this.myPermissibles.size == 1) {
+                // Wenn nur eine Zahl zulässig ist, dann ist sie
+                // notwendig. D.h. sie ist die einzig mögliche Lösung
+                this.myPermissibles.forEach(e => {
+                    tmpValue = e;
+                });
+            } else {
+                // Gibt 0 zurück, wenn keine eindeutig mögliche Zahl existiert
+                tmpValue = '0';
+            }
+            return tmpValue;
+        }
+
+    }
+
     getIndex() {
         return this.myIndex;
     }
 }
+class Combobox {
+    constructor(comboBoxNode) {
+        // Der Combobox Knoten
+        this.myComboBoxNode = comboBoxNode;
+        // 1. Kind: das Input-Feld der Combobox
+        this.theinput = comboBoxNode.firstElementChild;
+        // 2. und letztes Kind: das Selektionsfeld Options-Liste
+        this.optionList = comboBoxNode.lastElementChild;
 
+        // Mit der Erzeugung des Wrappers wird
+        // auch der Eventhandler der Combobox gesetzt
+        this.optionList.addEventListener('change', () => {
+            sudoApp.comboBoxNameSelected(this);
+        });
+    }
+    getNode() {
+        return this.myComboBoxNode;
+    }
+    getDialog() {
+        return this.myDialog;
+    }
+    setInputField() {
+        // Eine Selektion in der Optionsliste ruft diese Operation au
+        // und überträgt die Auswahl in das Inputfeld (Combbox)
+        let idx = this.optionList.selectedIndex;
+        if (idx >= 0) {
+            let content = this.optionList.options[idx].innerHTML;
+            this.theinput.value = content;
+        } else {
+            this.theinput.value = '';
+        }
+    }
+    init(optionListNew) {
+        // Fülle optionListNew in die comboBoxliste
+        // remove existing list
 
+        while (this.optionList.firstChild) {
+            this.optionList.removeChild(this.optionList.lastChild);
+        }
+        //fill new list
+        for (let i = 0; i < optionListNew.length; i++) {
+            let optionElement = document.createElement('option');
+            optionElement.innerHTML = optionListNew[i];
+            this.optionList.appendChild(optionElement);
+        }
+        this.setInputField();
+    }
+    getSelectedName() {
+        return this.theinput.value;
+    }
+}
+class StorageSaveDialog {
+    constructor() {
+        this.storageSaveDlgNode = document.getElementById("storageSaveDialog");
+        this.myComboBoxNode = document.getElementById("storageSaveComboBox");
+        this.myComboBox = new Combobox(this.myComboBoxNode);
+        this.okNode = document.getElementById("btn-saveStorageOK");
+        this.cancelNode = document.getElementById("btn-saveStorageCancel");
+        // Mit der Erzeugung des Wrappers werden 
+        // auch der Eventhandler OK und Abbrechen gesetzt
+        this.okNode.addEventListener('click', () => {
+            sudoApp.saveStorageDlgOKPressed();
+        });
+        this.cancelNode.addEventListener('click', () => {
+            sudoApp.saveStorageDlgCancelPressed();
+        });
+    }
+    open(nameList) {
+        this.myComboBox.init(nameList);
+        this.storageSaveDlgNode.style.visibility = "visible";
+    }
+    close() {
+        this.storageSaveDlgNode.style.visibility = "hidden";
+    }
+    init(nameList) {
+        this.myComboBox.init(nameList);
+    }
+    getSelectedName() {
+        return this.myComboBox.getSelectedName();
+    }
+}
+
+class StorageRestoreDialog {
+    constructor() {
+        this.storageRestoreDialog = document.getElementById("storageRestoreDialog");
+        this.myComboBox = new Combobox(document.getElementById("storageRestoreComboBox"));
+        this.okNode = document.getElementById("btn-restoreStorageOK");
+        this.cancelNode = document.getElementById("btn-restoreStorageCancel");
+        // Mit der Erzeugung des Wrappers werden 
+        // auch der Eventhandler OK und Abbrechen gesetzt
+        this.okNode.addEventListener('click', () => {
+            sudoApp.restoreStorageDlgOKPressed();
+        });
+        this.cancelNode.addEventListener('click', () => {
+            sudoApp.restoreStorageDlgCancelPressed();
+        });
+    }
+    open(nameList) {
+        this.myComboBox.init(nameList);
+        this.storageRestoreDialog.style.visibility = "visible";
+    }
+    close() {
+        this.storageRestoreDialog.style.visibility = "hidden";
+    }
+    init(nameList) {
+        this.myComboBox.init(nameList);
+    }
+    getSelectedName() {
+        return this.myComboBox.getSelectedName();
+    }
+}
+class StorageDeleteDialog {
+    constructor() {
+        this.storageDeleteDialog = document.getElementById("storageDeleteDialog");
+        this.myComboBox = new Combobox(document.getElementById("storageDeleteComboBox"));
+        this.okNode = document.getElementById("btn-deleteStorageOK");
+        this.cancelNode = document.getElementById("btn-deleteStorageCancel");
+        // Mit der Erzeugung des Wrappers werden 
+        // auch der Eventhandler OK und Abbrechen gesetzt
+        this.okNode.addEventListener('click', () => {
+            sudoApp.deleteStorageDlgOKPressed();
+        });
+        this.cancelNode.addEventListener('click', () => {
+            sudoApp.deleteStorageDlgCancelPressed();
+        });
+    }
+    open(nameList) {
+        this.myComboBox.init(nameList);
+        this.storageDeleteDialog.style.visibility = "visible";
+    }
+    close() {
+        this.storageDeleteDialog.style.visibility = "hidden";
+    }
+    init(nameList) {
+        this.myComboBox.init(nameList);
+    }
+    getSelectedName() {
+        return this.myComboBox.getSelectedName();
+    }
+}
+class SudokuStateStorage {
+    constructor() { }
+
+    getNamedState(name) {
+        // Gibt ein Zustandsobjekt zurück
+        let str_storageOBj = localStorage.getItem("sudokuStorage");
+        let storageObj = JSON.parse(str_storageOBj);
+        if (storageObj == null) {
+            storageObj = [];
+        }
+        let foundIndex = -1;
+        let i = 0;
+        let tmpNamedState = null;
+        while ((foundIndex == -1) && i < storageObj.length) {
+            tmpNamedState = storageObj[i];
+            if (tmpNamedState.name == name) {
+                foundIndex = i;
+            }
+            i++;
+        }
+        if (foundIndex !== -1) {
+            return tmpNamedState.state;
+        } else {
+            // Es gibt keinen Zustand mit diesem Namen
+            // Auch nicht den leeren Zustand []
+            return null;
+        }
+    }
+    saveNamedState(name, state) {
+        // Hole den Speicher als ein Objekt
+        let str_storageOBj = localStorage.getItem("sudokuStorage");
+        let storageObj = JSON.parse(str_storageOBj);
+        if (storageObj == null) {
+            storageObj = [];
+        }
+        // Definiere neues NamedState
+        let newNamedState = {
+            name: name,
+            state: state
+        }
+        // Füge den namedState in das Speicherobjekt ein
+        storageObj.push(newNamedState);
+        // Kreiere die JSON-Version des Speicherobjektes
+        // und speichere sie.
+        let updateStorageObj = JSON.stringify(storageObj);
+        localStorage.setItem("sudokuStorage", updateStorageObj);
+    }
+    deleteNamedState(name) {
+        // Hole den Speicher als ein Objekt
+        let str_storageOBj = localStorage.getItem("sudokuStorage");
+        let storageObj = JSON.parse(str_storageOBj);
+        if (storageObj == null) {
+            storageObj = [];
+        }
+        let foundIndex = -1;
+        let i = 0;
+        let tmpNamedState = null;
+        while ((foundIndex == -1) && i < storageObj.length) {
+            tmpNamedState = storageObj[i];
+            if (tmpNamedState.name == name) {
+                foundIndex = i;
+            }
+            i++;
+        }
+        if (foundIndex !== -1) {
+            storageObj.splice(foundIndex, 1);
+            let updateStorageObj = JSON.stringify(storageObj);
+            localStorage.setItem("sudokuStorage", updateStorageObj);
+        }
+    }
+    getNameList() {
+        // Hole den Speicher als ein Objekt
+        let str_storageObj = localStorage.getItem("sudokuStorage");
+        let storageObj = JSON.parse(str_storageObj);
+        if (storageObj == null) {
+            storageObj = [];
+        }
+        let nameList = [];
+        for (let i = 0; i < storageObj.length; i++) {
+            nameList.push(storageObj[i].name);
+        }
+        return nameList;
+    }
+
+}
 init();

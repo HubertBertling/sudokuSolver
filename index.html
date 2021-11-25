@@ -8,7 +8,7 @@
     <!-- mobile status bar color -->
     <meta name="theme-color" content="#fff">
     <title>Sudoku</title>
-    <link rel="shortcut icon" href="./static/images/icon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="./images/icon.png" type="image/x-icon">
     <!-- google font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,126 +25,361 @@
     <!-- main -->
     <div class="main">
         <div class="screen">
-
             <!-- game screen -->
             <div class="main-game active" id="game-screen">
-                <div class="main-sudoku-grid">
-                    <!-- 81 cells -->
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px; margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px; margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px; margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px; margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell">                        </div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
-                        <div class="sudoku-grid-cell"></div>
+                <div class="inputArea">
+                    <div class="inputBox">
+                        <div class="main-sudoku-grid">
+                            <!-- 81 cells -->
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px; margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px; margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px; margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px; margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell" style="margin-bottom: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"> </div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell" style="margin-right: 10px;"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                            <div class="sudoku-grid-cell"></div>
+                        </div>
                     </div>
 
-                <div class="button-box">
-                    <div class="btnRow">
-                        <button class="btn-define" id="btn-define">Definieren</button>
-                        <button class="btn-play" id="btn-play">Spielen</button>
-                        <div class= "btn-back-next">
-                            <button class="btn-back" id="btn-back"> <img src="images/back.png" class="btn-image"></button>
-                            <button class="btn-next" id="btn-next"> <img src="images/forward.png" class="btn-image"></button>
-                       </div>
-                    </div>
+                    <div class="button-box">
+                        <div class="btnRow">
+                            <div class="btn-define" id="btn-define">Definieren</div>
+                            <div class="btn-play" id="btn-play">Spielen</div>
+                            <div class="btn-undo-redo">
+                                <div class="btn-undo" id="btn-undo"> <img src="images/back.png" class="btn-image">Undo
+                                </div>
+                                <div class="btn-redo" id="btn-redo"> <img src="images/forward.png"
+                                        class="btn-image">Redo
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="numbers">
-                        <div class="number">1</div>
-                        <div class="number">2</div>
-                        <div class="number">3</div>
-                        <div class="number">4</div>
-                        <div class="number">5</div>
-                        <div class="number">6</div>
-                        <div class="number">7</div>
-                        <div class="number">8</div>
-                        <div class="number">9</div>
-                        <div class="delete" id="btn-delete">X</div>
+                        <div class="numbers">
+                            <div class="number">1</div>
+                            <div class="number">2</div>
+                            <div class="number">3</div>
+                            <div class="number">4</div>
+                            <div class="number">5</div>
+                            <div class="number">6</div>
+                            <div class="number">7</div>
+                            <div class="number">8</div>
+                            <div class="number">9</div>
+                            <div class="delete" id="btn-delete-cell">X</div>
+                        </div>
+                        <div class=automation>
+                            <h1>Automatische Ausführung:</h1>
+                            <div class="btn-automatic" id="btn-run"><img src="images/automatic.png" class="btn-image">
+                            </div>
+                            <div class="btn-automatic" id="btn-autoStep"><img src="images/nextstep.png"
+                                    class="btn-image"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="main-btns">
-                    <button class="main-btn" id="btn-init">Initialisieren</button>
-                    <button class="main-btn" id="btn-reset">Zurücksetzen</button>
-                    <button class="main-btn" id="btn-save">Speichern</button>
-                    <button class="main-btn" id="btn-restore">Wiederherstellen</button>
+                <div class="progress-box" id="progress-box">
+                    <h1>Fortschritt</h1>
+                    <div class="progess-table" id="progress-table">
+                        <div class="progress-row">
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField" style="color:black; background-color: var(--nested-color);">{5,
+                                7}/5</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField" style="color: white; background-color:var(--red)">(5,2)</div>
+                        </div>
+                        <div class="progress-row">
+                            <div class="progressField" style="color: white; background-color: blue">i</div>
+                            <div class="progressField" style="color: white; background-color: blue">i</div>
+                            <div class="progressField" style="color: white; background-color: blue">i</div>
+                            <div class="progressField" style="color: white; background-color: blue">i</div>
+                            <div class="progressField" style="color: white; background-color: blue">i</div>
+                            <div class="progressField" style="color: white; background-color: blue">i</div>
+                            <div class="progressField" style="color:black; background-color: var(--nested-color);">{5,
+                                7}/7</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField" style="color: white; background-color:green">Success</div>
+                        </div>
+                        <div class="progress-row">
+                            <div class="progressField" style="color: white; background-color: blue">i</div>
+                            <div class="progressField" style="color: white; background-color: blue">i</div>
+                            <div class="progressField" style="color: white; background-color: blue">i</div>
+                            <div class="progressField" style="color: white; background-color: blue">i</div>
+                            <div class="progressField" style="color: white; background-color: blue">i</div>
+                            <div class="progressField" style="color: white; background-color: blue">i</div>
+                            <div class="progressField" style="color:black; background-color: var(--nested-color);">{5,
+                                7}/7</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField">i</div>
+                            <div class="progressField" style="color: white; background-color:green">Success</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="storageSaveDialog" id="storageSaveDialog">
+                    <form name="saveForm"  id="storageSaveForm">
+                        <div class="storageSaveFormElement">
+                            <h1>Zustand speichern unter ...</h1>
+                        </div>
+                        <div class = "combBox">Zustandsname: </div>
+                        <div name="comboBox" class="storageSaveFormElement" id="storageSaveComboBox">
+                            <input class="combBox" type="text" id="saveStorageName" name="saveStorageName" />
+                            <select class="combBox" name="saveStorageList" id="saveStorageList">
+                                <option>oneoneone</option>
+                                <option>two</option>
+                                <option>three</option>
+                            </select>
+                        </div>
+                        <div class="storageSaveDialogButtons storageSaveFormElement">
+                            <input type="button" class = "main-btn okCancelBtn" id = "btn-saveStorageOK"  name="ok" value="OK" />
+                            <input type="button" class = "main-btn okCancelBtn" id = "btn-saveStorageCancel"  name="cancel"
+                                value="Abbrechen" />
+                        </div>
+                    </form>
+                </div>
+                <div class="storageRestoreDialog" id="storageRestoreDialog">
+                    <form name="restoreForm" id="storageRestoreForm">
+                        <div class="storageRestoreFormElement">
+                            <h1>Zustand wiederherstellen</h1>
+                        </div>
+                        <div>Zustandsname: </div>
+                        <div name="comboBox" class="storageRestoreFormElement" id="storageRestoreComboBox">
+                            <input class="combBox" type="text" id="restoreStorageName" name="restoreStorageName" />
+                            <select class="combBox" name="restoreStorageList" id="restoreStorageList">
+                                <option>oneoneone</option>
+                                <option>two</option>
+                                <option>three</option>
+                            </select>
+                        </div>
+                        <div class="storageRestoreDialogButtons storageRestoreFormElement">
+                            <input type="button" class = "main-btn okCancelBtn" id = "btn-restoreStorageOK" name="ok" value="OK" />
+                            <input type="button" class = "main-btn okCancelBtn" id = "btn-restoreStorageCancel"  name="cancel"
+                                value="Abbrechen" />
+                        </div>
+                    </form>
+                </div>
+                <div class="storageDeleteDialog" id="storageDeleteDialog">
+                    <form name="deleteForm" id="storageDeleteForm">
+                        <div class="storageDeleteFormElement">
+                            <h1>Zustand löschen</h1>
+                        </div>
+                        <div>Zustandsname: </div>
+                        <div name="comboBox" class="storageDeleteFormElement" id="storageDeleteComboBox">
+                            <input class="combBox" type="text" id="restoreStorageName" name="restoreStorageName" />
+                            <select class="combBox" name="restoreStorageList" id="restoreStorageList">
+                                <option>oneoneone</option>
+                                <option>two</option>
+                                <option>three</option>
+                            </select>
+                        </div>
+                        <div class="storageDeleteDialogButtons storageDeleteFormElement">
+                            <input type="button" class = "main-btn okCancelBtn" id = "btn-deleteStorageOK" name="ok" value="OK" />
+                            <input type="button" class = "main-btn okCancelBtn" id = "btn-deleteStorageCancel" name="cancel" value="Abbrechen" />
+                        </div>
+                    </form>
                 </div>
             </div>
-            <!-- end game screen -->
         </div>
+    </div>
+    </div>
+
+    <div class="main-btns">
+        <div class="main-btn" id="btn-init">Initialisieren</div>
+        <div class="main-btn" id="btn-reset">Zurücksetzen</div>
+        <div class="main-btn" id="btn-save">Speichern unter ...</div>
+        <div class="main-btn" id="btn-restore">Wiederherstellen</div>
+        <div class="main-btn" id="btn-delete">Löschen</div>
+    </div>
+    </div>
+    <!-- end game screen -->
+    </div>
     </div>
     <!-- end main -->
 

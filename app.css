@@ -34,6 +34,7 @@ body {
     overflow-x: hidden;
     user-select: none;
 }
+
 /*
 input {
     border: 2px solid var(--bg-main);
@@ -113,6 +114,7 @@ nav {
     height: 100%;
     min-width: 400px;
 }
+
 /*
 .start-screen {
     position: absolute;
@@ -227,6 +229,9 @@ nav {
     color: var(--white);
 }
 
+.sudoku-grid-cell.insSolvable {
+    background-color: var(--red);
+}
 .sudoku-grid-cell.nested {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -234,9 +239,14 @@ nav {
     place-items: center;
     font-size: var(--font-size-sm);
     padding: 1px;
-    background-color: lightyellow;;
+    background-color: lightyellow;
+    ;
     border: 1px solid gray;
 }
+
+
+
+
 
 .sudoku-grid-cell.nested.selected {
     background-color: var(--blue);
@@ -246,15 +256,15 @@ nav {
 .nested>div {
     padding: 1px;
     font-size: 1em;
-    color: darkred; 
+    color: darkred;
 }
 
-.nested > div.neccessary {
+.nested>div.neccessary {
     padding: 2px;
     border-radius: 3px;
     background-color: var(--blue);
     font-size: 1.5em;
-    color: white; 
+    color: white;
 }
 
 .sudoku-grid-cell.define {
@@ -292,6 +302,7 @@ nav {
     background-color: var(--red);
     color: var(--white);
 }
+
 /*
 .main-game-info {
     margin-top: var(--space-y);
@@ -334,26 +345,37 @@ nav {
     cursor: pointer;
 }
 */
+.inputArea {
+    display: grid;
+    grid-template-columns: 1fr 290px;
+}
+
+.inputBox {
+    display: grid;
+}
+
 .button-box {
     padding: var(--space-y);
-    border-left: 5px solid var(--blue);
+    border-top: 5px solid var(--blue);
     border-right: 5px solid var(--blue);
     border-bottom: 5px solid var(--blue);
 }
 
+
 .numbers {
     margin-top: var(--space-y);
     display: grid;
-    grid-template-columns: repeat(10, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 5px;
 }
 
-.btnRow {
+.btnRow, .btn-automation {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(1, 1fr);
     gap: 20px;
 }
-.btn-back-next {
+
+.btn-undo-redo {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
@@ -380,13 +402,21 @@ nav {
     font-size: var(--font-size);
     cursor: pointer;
 }
-.number:active, .delete:active ,.btn-next:active, .btn-back:active {
+
+.number:active, .delete:active, .btn-redo:active, .btn-undo:active, .btn-automatic:active {
     transform: translate(2px, 2px);
 }
 
+.automation {
+    margin-top: var(--space-y);
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 10px;
+}
 
-.btn-define, .btn-play, .btn-next, .btn-back {
-    padding: 10px;
+
+.btn-define, .btn-play, .btn-redo, .btn-undo, .btn-automatic, .btn-redostep {
+    padding: 5px;
     border-radius: var(--border-radius);
     box-shadow: 5px 5px #666;
     border: hidden;
@@ -395,6 +425,11 @@ nav {
     font-size: var(--font-size);
     cursor: pointer;
 }
+
+.btn-redo, .btn-undo {
+    font-size: var(--font-size-sm);
+}
+
 .btn-define.pressed, .btn-play.pressed {
     box-shadow: 0px 0px;
     transform: translate(2px, 2px);
@@ -404,7 +439,8 @@ nav {
     background-color: var(--filled-bg);
     color: var(--filled-color);
 }
-.btn-next, .btn-back {
+
+.btn-redo, .btn-undo {
     padding: 10px;
     border-radius: var(--border-radius);
     box-shadow: 5px 5px #666;
@@ -414,13 +450,14 @@ nav {
     cursor: pointer;
 }
 
-.btn-play, .btn-next, .btn-back {
+.btn-play, .btn-redo, .btn-undo, .btn-automatic {
     background-color: var(--blue);
     color: var(--black);
 }
+
 .btn-image {
-        width: 30px;
-        height:30px;   
+    width: 20px;
+    height: 20px;
 }
 
 .main-btn:active {
@@ -445,6 +482,59 @@ nav {
     font-size: var(--1rem-size-sm);
     cursor: pointer;
 }
+
+.progress-box {
+    padding: var(--space-y);
+    border-left: 5px solid var(--blue);
+    border-right: 5px solid var(--blue);
+    border-bottom: 5px solid var(--blue);
+}
+
+.progress-row {
+    margin-top: 10px;
+}
+
+.progressField {
+    display: inline;
+    width: 1%;
+    color: var(--blue);
+    background-color: var(--blue);
+
+}
+
+
+.storageSaveDialog,.storageRestoreDialog, .storageDeleteDialog  {
+    visibility: hidden;
+    position: fixed;
+    width: 500pxx;
+    height: 250px;
+
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border: 1px solid #666666;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+    border: 3px solid #cccccc;
+    left: 50%;
+    top: 20px;
+}
+
+.combBox {
+    padding: 5px;
+    font-size: 18px;
+}
+.okCancelBtn {
+    width:30%
+}
+
+.storageSaveFormElement, .storageRestoreFormElement, .storageDeleteFormElement {
+    padding: 10px;
+}
+
 /*
 .pause-screen, .result-screen {
     position: absolute;
@@ -499,6 +589,7 @@ nav {
     0% {
         transform: scale(3);
     }
+
     100% {
         transform: scale(1);
     }
@@ -512,12 +603,15 @@ nav {
     0% {
         transform: scale(2);
     }
+
     25% {
         transform: scale(2) rotate(30deg);
     }
+
     50% {
         transform: scale(2) rotate(-30deg);
     }
+
     100% {
         transform: scale(1);
     }
@@ -534,15 +628,19 @@ nav {
         --font-size-lg: 1.5rem;
         --font-size-xl: 2rem;
     }
+
     .input-name, .btn {
         height: 50px;
     }
+
     .sudoku-grid-cell.hover {
         border-width: 2px;
     }
+
     .screen {
         min-width: unset;
     }
+
     .main {
         height: 100vh;
     }
