@@ -184,6 +184,9 @@ class SudokuApp {
         // Hole den State mit diesem Namen
         let tmpState = this.sudokuStorage.getNamedState(stateName);
         if (tmpState !== null) {
+            //Lösche aktuelle Selektio
+            this.suGrid.deselect();
+            // Setze den aus dem Speicher geholten Zustand
             this.suGrid.setCurrentState(tmpState);
             // Berechne die möglichen Inhalte der Zellen
             this.suGrid.recalculatePermissibleSets();
@@ -218,37 +221,6 @@ class SudokuApp {
 
     getMode() {
         return this.currentMode;
-    }
-
-    pushCurrentState() {
-        let str_storageOBj = localStorage.getItem("sudokuStorage")
-        let storageObj = JSON.parse(str_storageOBj);
-        if (storageObj == null) {
-            storageObj = [];
-        }
-
-        let currentState = this.suGrid.getCurrentState();
-        storageObj.push(currentState);
-
-        let updateStorageObj = JSON.stringify(storageObj);
-        localStorage.setItem("sudokuStorage", updateStorageObj);
-    }
-    popCurrentState() {
-        let str_storageOBj = localStorage.getItem("sudokuStorage")
-        let storageObj = JSON.parse(str_storageOBj);
-
-        let previousState = storageObj.pop();
-        this.suGrid.setCurrentState(previousState);
-
-        let updateStorageObj = JSON.stringify(storageObj);
-        localStorage.setItem("sudokuStorage", updateStorageObj);
-    }
-    topCurrentState() {
-        let str_storageOBj = localStorage.getItem("sudokuStorage")
-        let storageObj = JSON.parse(str_storageOBj);
-
-        let previousState = storageObj[storageObj.length - 1];
-        this.suGrid.setCurrentState(previousState);
     }
 }
 
