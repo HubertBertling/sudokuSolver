@@ -16,7 +16,7 @@
     --space-y: 20px;
     --gap: 5px;
     --font-size-sm: 0.7rem;
-    --font-size: 1.5rem;
+    --font-size: 1.3rem;
     --font-size-lg: 2rem;
     --font-size-xl: 3rem;
 }
@@ -34,6 +34,7 @@ body {
     overflow-x: hidden;
     user-select: none;
 }
+
 .main {
     /* height: 100vh; */
     padding-top: var(--nav-size);
@@ -90,7 +91,7 @@ body {
 
 
 .sudoku-grid-cell.inSolvable {
-    background-color:rgb(247, 137, 137);
+    background-color: rgb(247, 137, 137);
     color: var(--white);
 }
 
@@ -166,26 +167,27 @@ body {
     gap: 5px;
 }
 
-.manual-exec-btns,.automatic-exec-btns {
+.manual-exec-btns, .automatic-exec {
     margin-top: 10px;
     padding-top: 10px;
     padding-bottom: 5px;
-    border-top: 5px solid var(--blue); 
+    border-top: 5px solid var(--blue);
     display: grid;
     grid-template-columns: repeat(1, 1fr);
-    gap: 2px;   
+    gap: 2px;
 }
 
 .mode-btns {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
-    gap: 2px;   
+    gap: 2px;
 }
 
 
 .btn-define, .btn-play {
     margin: 5px;
 }
+
 .btn-define {
     background-color: var(--filled-bg);
     color: var(--filled-color);
@@ -196,6 +198,7 @@ body {
     box-shadow: 0px 0px;
     transform: translate(2px, 2px);
 }
+
 .btn-undo-redo {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -245,6 +248,40 @@ body {
     gap: 10px;
 }
 
+.auto-start-stop {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+}
+
+
+
+.auttomatic-exec {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 10px;
+}
+
+
+input.auto-on-off {
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
+    
+}
+
+.auto-checkbox {
+font-weight: bold;
+}
+
+.auto-exec-btns {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 10px;
+}
+
+
+
 
 .btn-define, .btn-play, .btn-redo, .btn-undo, .btn-automatic {
     padding: 5px;
@@ -260,7 +297,8 @@ body {
 
 .btn-redo, .btn-undo {
     margin-left: 5px;
-    margin-right: 5px;;
+    margin-right: 5px;
+    ;
     border-radius: var(--border-radius);
     box-shadow: 5px 5px #666;
     border: hidden;
@@ -275,8 +313,8 @@ body {
 }
 
 .btn-image {
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
 }
 
 
@@ -285,26 +323,28 @@ body {
 /*======================================*/
 
 .main-btns {
-  /*  border: 5px solid var(--red);  */
+    /*  border: 5px solid var(--red);  */
     margin-top: 5px;
     display: grid;
     grid-template-columns: 1fr 2fr;
-    gap: 10px;      
+    gap: 10px;
 }
+
 .config-btns {
-    margin-right: 10px;;
- /*   border: 5px solid var(--red); */
+    margin-right: 10px;
+    ;
+    /*   border: 5px solid var(--red); */
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2px;      
+    gap: 2px;
 }
 
 .storage-btns {
     margin-left: 10px;
-/*    border: 5px solid var(--red); */
+    /*    border: 5px solid var(--red); */
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-  
+
 }
 
 .main-btn:active {
@@ -362,11 +402,11 @@ body {
 /*======================================*/
 
 
-.storageSaveDialog,.storageRestoreDialog, .storageDeleteDialog  {
+.storageSaveDialog, .storageRestoreDialog, .storageDeleteDialog {
     visibility: hidden;
     position: fixed;
-    width: 500pxx;
-    height: 250px;
+    width: 400px;
+    height: 220px;
 
     background-color: #f2f2f2;
     border-radius: 10px;
@@ -386,8 +426,16 @@ body {
     padding: 5px;
     font-size: 18px;
 }
+.ok-cancel-btns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+}
+
 .okCancelBtn {
-    width:30%
+    display: grid;
+    place-items: center;
+    
 }
 
 .storageSaveFormElement, .storageRestoreFormElement, .storageDeleteFormElement {

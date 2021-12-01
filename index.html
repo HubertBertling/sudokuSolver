@@ -12,9 +12,9 @@
     <!-- google font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Potta+One&display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Potta+One&display=swap" rel="stylesheet"> -->
     <!-- box icons -->
-    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <!--<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'> -->
     <!-- app css -->
     <link rel="stylesheet" href="./app.css">
 
@@ -117,31 +117,44 @@
                         <div class="btn-play" id="btn-play">Spielen</div>
                     </div>
                     <div class="manual-exec-btns">
-                        <h3>Manuelle Ausführung</h2>
-                        <div class="btn-undo-redo">
-                            <div class="btn-undo" id="btn-undo"> <img src="images/back.png" class="btn-image">
+                        <p style="font-weight: bold;">Manuelle Ausführung</p>
+                            <div class="btn-undo-redo">
+                                <div class="btn-undo" id="btn-undo"> <img src="images/back.png" class="btn-image">
+                                </div>
+                                <div class="btn-redo" id="btn-redo"> <img src="images/forward.png" class="btn-image">
+                                </div>
                             </div>
-                            <div class="btn-redo" id="btn-redo"> <img src="images/forward.png" class="btn-image">
+                            <div class="numbers">
+                                <div class="number">1</div>
+                                <div class="number">2</div>
+                                <div class="number">3</div>
+                                <div class="number">4</div>
+                                <div class="number">5</div>
+                                <div class="number">6</div>
+                                <div class="number">7</div>
+                                <div class="number">8</div>
+                                <div class="number">9</div>
+                                <div class="delete" id="btn-delete-cell">X</div>
                             </div>
-                        </div>
-                        <div class="numbers">
-                            <div class="number">1</div>
-                            <div class="number">2</div>
-                            <div class="number">3</div>
-                            <div class="number">4</div>
-                            <div class="number">5</div>
-                            <div class="number">6</div>
-                            <div class="number">7</div>
-                            <div class="number">8</div>
-                            <div class="number">9</div>
-                            <div class="delete" id="btn-delete-cell">X</div>
-                        </div>
                     </div>
-                    <div class="automatic-exec-btns">
-                        <h3>Automatische Ausführung:</h3>
-                        <div class="btn-automatic" id="btn-run"><img src="images/automatic.png" class="btn-image">
+                    <div class="automatic-exec">
+                        <div class="auto-checkbox">
+                            <label for="auto-on-off"> Automatische Ausführung: </label>
+                            <input class="auto-on-off" id="check-auto-on-off" type="checkbox" checked="checked">
                         </div>
-                        <div class="btn-automatic" id="btn-autoStep"><img src="images/nextstep.png" class="btn-image">
+                        <div class="autoMode-radio-btns">
+                            <label for="radio-forward"> Vor </label>
+                            <input class="forward-on-off" id="radio-forward" name="direction" type="radio">
+                            <label for="radio-backward"> Zurück </label>
+                            <input class="backward-on-off" id="radio-backward" name="direction" type="radio">
+                        </div>
+
+                        <div class="auto-exec-btns">
+                            <div class="btn-automatic" id="btn-run"><img src="images/automatic.png" class="btn-image">
+                            </div>
+                            <div class="btn-automatic" id="btn-autoStep"><img src="images/nextstep.png"
+                                    class="btn-image">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -303,12 +316,12 @@
             <div class="main-btns">
                 <div class="config-btns">
                     <div class="main-btn" id="btn-init">Initialisieren</div>
-                    <div class="main-btn" id="btn-reset">Zurücksetzen</div>    
+                    <div class="main-btn" id="btn-reset">Zurücksetzen</div>
                 </div>
-                <div class= "storage-btns">
+                <div class="storage-btns">
                     <div class="main-btn" id="btn-save">Speichern unter ...</div>
                     <div class="main-btn" id="btn-restore">Wiederherstellen</div>
-                    <div class="main-btn" id="btn-delete">Löschen</div>    
+                    <div class="main-btn" id="btn-delete">Löschen</div>
                 </div>
             </div>
         </div>
@@ -328,7 +341,7 @@
                             <option>three</option>
                         </select>
                     </div>
-                    <div class="storageSaveDialogButtons storageSaveFormElement">
+                    <div class="storageSaveDialogButtons storageSaveFormElement ok-cancel-btns">
                         <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageOK" name="ok" value="OK" />
                         <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageCancel" name="cancel"
                             value="Abbrechen" />
@@ -349,7 +362,7 @@
                             <option>three</option>
                         </select>
                     </div>
-                    <div class="storageRestoreDialogButtons storageRestoreFormElement">
+                    <div class="storageRestoreDialogButtons storageRestoreFormElement ok-cancel-btns">
                         <input type="button" class="main-btn okCancelBtn" id="btn-restoreStorageOK" name="ok"
                             value="OK" />
                         <input type="button" class="main-btn okCancelBtn" id="btn-restoreStorageCancel" name="cancel"
@@ -371,7 +384,7 @@
                             <option>three</option>
                         </select>
                     </div>
-                    <div class="storageDeleteDialogButtons storageDeleteFormElement">
+                    <div class="storageDeleteDialogButtons storageDeleteFormElement ok-cancel-btns">
                         <input type="button" class="main-btn okCancelBtn" id="btn-deleteStorageOK" name="ok"
                             value="OK" />
                         <input type="button" class="main-btn okCancelBtn" id="btn-deleteStorageCancel" name="cancel"
