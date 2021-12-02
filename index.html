@@ -118,24 +118,24 @@
                     </div>
                     <div class="manual-exec-btns">
                         <p style="font-weight: bold;">Manuelle Ausführung</p>
-                            <div class="btn-undo-redo">
+                        <!--     <div class="btn-undo-redo">
                                 <div class="btn-undo" id="btn-undo"> <img src="images/back.png" class="btn-image">
                                 </div>
                                 <div class="btn-redo" id="btn-redo"> <img src="images/forward.png" class="btn-image">
                                 </div>
-                            </div>
-                            <div class="numbers">
-                                <div class="number">1</div>
-                                <div class="number">2</div>
-                                <div class="number">3</div>
-                                <div class="number">4</div>
-                                <div class="number">5</div>
-                                <div class="number">6</div>
-                                <div class="number">7</div>
-                                <div class="number">8</div>
-                                <div class="number">9</div>
-                                <div class="delete" id="btn-delete-cell">X</div>
-                            </div>
+                            </div> -->
+                        <div class="numbers">
+                            <div class="number">1</div>
+                            <div class="number">2</div>
+                            <div class="number">3</div>
+                            <div class="number">4</div>
+                            <div class="number">5</div>
+                            <div class="number">6</div>
+                            <div class="number">7</div>
+                            <div class="number">8</div>
+                            <div class="number">9</div>
+                            <div class="delete" id="btn-delete-cell">X</div>
+                        </div>
                     </div>
                     <div class="automatic-exec">
                         <div class="auto-checkbox">
@@ -150,7 +150,12 @@
                         </div>
 
                         <div class="auto-exec-btns">
-                            <div class="btn-automatic" id="btn-run"><img src="images/automatic.png" class="btn-image">
+                            <div class="btn-auto-group">
+                                <div class="btn-automatic" id="btn-run"><img src="images/automatic.png"
+                                        class="btn-image">
+                                </div>
+                                <div class="btn-automatic" id="btn-pause"><img src="images/pause.png" class="btn-image">
+                                </div>
                             </div>
                             <div class="btn-automatic" id="btn-autoStep"><img src="images/nextstep.png"
                                     class="btn-image">
@@ -160,158 +165,10 @@
                 </div>
             </div>
             <div class="progress-box" id="progress-box">
-                <h1>Fortschritt</h1>
-                <div class="progess-table" id="progress-table">
-                    <div class="progress-row">
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField" style="color:black; background-color: var(--nested-color);">{5,
-                            7}/5</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField" style="color: white; background-color:var(--red)">(5,2)</div>
-                    </div>
-                    <div class="progress-row">
-                        <div class="progressField" style="color: white; background-color: blue">i</div>
-                        <div class="progressField" style="color: white; background-color: blue">i</div>
-                        <div class="progressField" style="color: white; background-color: blue">i</div>
-                        <div class="progressField" style="color: white; background-color: blue">i</div>
-                        <div class="progressField" style="color: white; background-color: blue">i</div>
-                        <div class="progressField" style="color: white; background-color: blue">i</div>
-                        <div class="progressField" style="color:black; background-color: var(--nested-color);">{5,
-                            7}/7</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField" style="color: white; background-color:green">Success</div>
-                    </div>
-                    <div class="progress-row">
-                        <div class="progressField" style="color: white; background-color: blue">i</div>
-                        <div class="progressField" style="color: white; background-color: blue">i</div>
-                        <div class="progressField" style="color: white; background-color: blue">i</div>
-                        <div class="progressField" style="color: white; background-color: blue">i</div>
-                        <div class="progressField" style="color: white; background-color: blue">i</div>
-                        <div class="progressField" style="color: white; background-color: blue">i</div>
-                        <div class="progressField" style="color:black; background-color: var(--nested-color);">{5,
-                            7}/7</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField">i</div>
-                        <div class="progressField" style="color: white; background-color:green">Success</div>
-                    </div>
-                </div>
+                <b>Fortschritt:</b> Entschiedene Zellen / Alle Zellen
+                <div class= "progress-bar" id="myProgress">
+                    <div id="myBar">40%</div>
+                  </div>                  
             </div>
             <div class="main-btns">
                 <div class="config-btns">

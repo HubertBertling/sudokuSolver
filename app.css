@@ -208,7 +208,7 @@ body {
 
 
 .numbers {
-    margin-top: var(--space-y);
+    /*margin-top: var(--space-y); */
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 5px;
@@ -242,25 +242,25 @@ body {
 }
 
 
-.automatic-exec-btns {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 10px;
-}
-
-.auto-start-stop {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
-}
-
-
-
 .auttomatic-exec {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     gap: 10px;
 }
+
+.auto-exec-btns {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 10px;
+}
+
+.btn-auto-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+}
+
+
 
 
 input.auto-on-off {
@@ -371,24 +371,30 @@ font-weight: bold;
 /*======================================*/
 /* Progress block */
 /*======================================*/
+
 .progress-box {
     padding: var(--space-y);
     border-left: 5px solid var(--blue);
     border-right: 5px solid var(--blue);
     border-bottom: 5px solid var(--blue);
 }
-
-.progress-row {
-    margin-top: 10px;
+.progress-bar {
+    margin: 5px;
 }
 
-.progressField {
-    display: inline;
-    width: 1%;
-    color: var(--blue);
-    background-color: var(--blue);
-
-}
+#myProgress {
+    width: 100%;
+    background-color: #ddd;
+  }
+  
+  #myBar {
+    width: 10%;
+    height: 30px;
+    background-color: #04AA6D;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+  }
 
 /*======================================*/
 /* Main button block */

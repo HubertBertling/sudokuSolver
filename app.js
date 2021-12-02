@@ -20,9 +20,12 @@ class SudokuApp {
         this.sudokuStorage = new SudokuStateStorage();
         // Die Hauptansicht
         this.suGrid = new SudokuGrid();
-        this.execMode = '';
-        this.automatedRun = undefined;
+        this.progressBar = new ProgressBar();
         this.runner = new AutomatedRunnerOnGrid(this.suGrid);
+        // Die App kann in verschiedenen Ausführungsmodi sein
+        // 'undefined' 'automatic' 'manual'
+        this.execMode = 'undefined';
+        this.timer = undefined;
 
         //Die Buttons der App werden Event-Hhandler zugeordnet
         // Nummer-Buttons
@@ -47,12 +50,13 @@ class SudokuApp {
             sudoApp.setMode('play');
         });
         // Undo- und Redo-Button
-        document.querySelector('#btn-redo').addEventListener('click', () => {
-            sudoApp.redo();
-        });
-        document.querySelector('#btn-undo').addEventListener('click', () => {
-            sudoApp.undo();
-        });
+        /* document.querySelector('#btn-redo').addEventListener('click', () => {
+             sudoApp.redo();
+         });
+         document.querySelector('#btn-undo').addEventListener('click', () => {
+             sudoApp.undo();
+         });
+         */
 
         // Automatische Ausführung: schrittweise
         document.querySelector('#btn-autoStep').addEventListener('click', () => {
@@ -61,7 +65,12 @@ class SudokuApp {
 
         // Automatische Ausführung: vollautomatisch
         document.querySelector('#btn-run').addEventListener('click', () => {
-            sudoApp.automatedRun();
+            sudoApp.autoRun();
+        });
+
+        // Automatische Ausführung: vollautomatisch
+        document.querySelector('#btn-pause').addEventListener('click', () => {
+            sudoApp.autoRunPause();
         });
 
 
@@ -88,6 +97,8 @@ class SudokuApp {
         });
 
     }
+
+
     init() {
         this.storageSaveDialog.close();
         this.storageRestoreDialog.close();
@@ -104,9 +115,32 @@ class SudokuApp {
         // Schritt 3:
         // Fülle die Sudokutabelle initial
         this.suGrid.initGrid();
-        this.setManualExec();
+        this.setExecMode('undefined');
+        this.runner.init();
+        this.progressBar.init();
+        this.progressBar.setValue(20);
     }
 
+    setExecMode(execMode) {
+        if (execMode == 'undefined') {
+            this.execMode = 'undefined';
+            // Checkbox setzen
+            let checkBox = document.getElementById("check-auto-on-off");
+            checkBox.checked = false;
+        } else if (execMode == 'manual') {
+            this.execMode = 'manual';
+            // Checkbox setzen
+            let checkBox = document.getElementById("check-auto-on-off");
+            checkBox.checked = false;
+        } else if (execMode == 'automatic') {
+            this.execMode = 'automatic';
+            // Checkbox setzen
+            let checkBox = document.getElementById("check-auto-on-off");
+            checkBox.checked = true;
+        } else {
+            alert("Ein unzulässiger Exec-Mode is aufgetreten!");
+        }
+    }
 
     setMode(mode) {
         if (mode == 'play') {
@@ -120,56 +154,47 @@ class SudokuApp {
         }
     }
 
-    setAutomatedExec() {
-        if (this.execMode == '' || this.execMode == 'manual') {
-            this.execMode = 'automatic';
-            // Checkbox setzen
-            let checkBox = document.getElementById("check-auto-on-off");
-            checkBox.checked = true;
-            // Forward Mode setzen
-            let mode = document.getElementById("radio-forward");
-            mode.checked = true;
-            // Initialize
-            this.runner.init();
-        }
-    }
-
-    setManualExec() {
-        if (this.execMode == '' || this.execMode == 'automatic') {
-            this.execMode = 'manual';
-            // Checkbox setzen
-            let checkBox = document.getElementById("check-auto-on-off");
-            checkBox.checked = false;
-            // Forward Mode setzen
-            let mode = document.getElementById("radio-forward");
-            mode.checked = true;
-            // Initalize the action history
-            this.suGrid.initActionHistory();
-        }
-    }
-
     autoStep() {
-        this.setAutomatedExec();
-        this.runner.autoStep();
+        if (this.execMode !== 'automatic') {
+            this.setExecMode('automatic');
+        }
+        let finished = this.runner.autoStep();
+        if (finished){
+            this.autoRunPause();
+            alert("Glückwunsch! Sudoku gelöst!");
+        }
     }
+
+
+    autoRun() {
+        // Die automatische Ausführung
+        this.timer = window.setInterval(() => { sudoApp.autoStep(); }, 500);
+    }
+
+    autoRunPause() {
+        // Die automatische Ausführung
+        window.clearInterval(this.timer);
+    }
+
 
     numberButtonPressed(btnNumber) {
         // Ist manuelle Operation
-        // Bricht eine automatisierte Ausaführung ab
-        this.setManualExec();
+        this.setExecMode('manual');
         this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentMode, false);
     }
     deleteCellButtonPressed() {
+        // Ist manuelle Operation
+        this.setExecMode('manual');
         this.suGrid.deleteSelected(this.currentMode, false);
     }
 
     initButtonPressed() {
         this.suGrid.initGrid();
-        this.setManualExec();
+        this.setExecMode('undefined');
     }
     resetBtnPressed() {
         this.suGrid.reset();
-        this.setManualExec();
+        this.setExecMode('undefined');
     }
 
     saveBtnPressed() {
@@ -191,6 +216,9 @@ class SudokuApp {
     }
 
     sudokuCellPressed(cellNode, index) {
+        if (this.execMode !== 'manual') {
+            this.setExecMode('manual');
+        }
         this.suGrid.select(cellNode, index);
     }
 
@@ -234,7 +262,7 @@ class SudokuApp {
             this.suGrid.reCalculateErrorCells();
             // Berechne die notwendigen Zellinhalte
             this.suGrid.reEvaluateNecessarys();
-            this.setManualExec();
+            this.setExecMode('undefined');
         } else {
             alert("Zustand mit diesem Namen existiert nicht");
         }
@@ -264,6 +292,21 @@ class SudokuApp {
         return this.currentMode;
     }
 }
+
+class ProgressBar {
+    constructor() {
+        this.elem = document.getElementById("myBar");
+    }
+    init() {
+        this.elem.style.width = "10%"
+    }
+    setValue(stepCount) {
+        let stepProzent = Math.floor(stepCount / 81 * 100);
+        this.elem.style.width = stepProzent + "%";
+        this.elem.innerHTML = stepCount + " / 81";
+    }
+}
+
 class AutomatedRunnerOnGrid {
     constructor(suGrid) {
         this.suGrid = suGrid;
@@ -273,8 +316,9 @@ class AutomatedRunnerOnGrid {
 
     init() {
         this.solutionPath = [];
-        this.setAutoMode('forward');
+        this.setAutoMode('undefined');
     }
+
 
     isRunning() {
         return this.solutionPath.length > 0;
@@ -299,7 +343,7 @@ class AutomatedRunnerOnGrid {
     }
 
     autoStep() {
-        if (this.autoMode == '') {
+        if (this.autoMode == 'undefined') {
             this.setAutoMode('forward');
         }
         if (this.autoMode == 'forward') {
@@ -309,6 +353,7 @@ class AutomatedRunnerOnGrid {
         } else {
             alert("Unzuässiger Mode im Stepper");
         }
+        return this.suGrid.spielEnde();      
     }
 
     stepForward() {
@@ -319,22 +364,28 @@ class AutomatedRunnerOnGrid {
         }
         if (this.suGrid.indexSelected == -1) {
             let tmpSelection = this.autoSelect();
-            let newStep = {
-                optionalValues: tmpSelection.options,
-                necessaryOnes: tmpSelection.necessaryOnes,
-                actualValue: '0',
-                passedValues: [],
-                cellIndex: tmpSelection.index
-            };
-            // Selektieren 
-            this.suGrid.indexSelect(tmpSelection.index);
-            // Selektion im neuen Schritt dokumentieren
-            this.solutionPath.push(newStep);
+            if (tmpSelection.index == -1) {
+                //Es gibt keine nächste Selektion mehr
+                alert("Softarefehler: es gibt keine nächste Selektion, obwohl das Spiel nicht beendet ist")
+            } else {
+                // Gültige nächste Selektion
+                let newStep = {
+                    optionalValues: tmpSelection.options,
+                    necessaryOnes: tmpSelection.necessaryOnes,
+                    actualValue: '0',
+                    passedValues: [],
+                    cellIndex: tmpSelection.index
+                };
+                // Selektieren 
+                this.suGrid.indexSelect(tmpSelection.index);
+                // Selektion im neuen Schritt dokumentieren
+                this.solutionPath.push(newStep);
+            }
         } else if (this.suGrid.indexSelected !== -1) {
             // Aktuelle Selektion --> Nummer setzen und im Schritt dokumentieren
             let currentStep = this.solutionPath[this.solutionPath.length - 1];
             if (currentStep.actualValue == '0') {
-                // in deraktuellen Zelle ist noch keine Nummer gesetzt
+                // in der aktuellen Zelle ist noch keine Nummer gesetzt
                 // Das geschieht jetzt
                 if (currentStep.optionalValues.length > 0) {
                     // Es gibt noch nicht probierte Nummern
@@ -360,7 +411,7 @@ class AutomatedRunnerOnGrid {
                     this.suGrid.atCurrentSelectionSetNumber(tmpNumber, 'play', false);
                 } else {
                     // Es gibt keine noch nicht probierte Nummern
-                    alert("Das Sudoku ist widersprüchlich und besitzt keine Lösung!")
+                    alert("Das Sudoku ist widersprüchlich und besitzt keine Lösung!");
                 }
             }
         }
@@ -378,8 +429,7 @@ class AutomatedRunnerOnGrid {
             // Schrittinformationen aktualisieren
             //1. Die Zelle ist gelöscht
             solutionStep.actualValue = '0';
-            //2. Die neuen Zulässigen berechnen
-        
+
         } else if (solutionStep.optionalValues.length > 0) {
             // Dieser Schritt muss noch mit weiteren Nummern probiert werden
             this.setAutoMode('forward');
@@ -399,7 +449,7 @@ class AutomatedRunnerOnGrid {
         // Nicht eindeutig; Anfangs gibt es oft mehrere Zellen mit
         // nur einer zulässigen Nummer
         let minSelection = {
-            index: 0,
+            index: -1,
             options: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
             necessaryOnes: []
         }
@@ -420,7 +470,7 @@ class AutomatedRunnerOnGrid {
         }
         // Falls es keine Zellen mit notwendigen Nummern gibt
         let emptySelection = {
-            index: 0,
+            index: -1,
             options: [],
             necessaryOnes: []
         }
@@ -439,6 +489,7 @@ class AutomatedRunnerOnGrid {
                 selectionList.push(selection);
             }
         }
+        // Wenn alle Zellen gesetzt sind, ist diese Liste leer
         return selectionList;
     }
 
@@ -446,10 +497,11 @@ class AutomatedRunnerOnGrid {
         let optionList = this.getOptionalSelections();
         //Bestimmt die nächste Zelle mit notwendiger Nummer unter den zulässigen Nummern
         let tmpSelection = this.calculateNeccesarySelectionFrom(optionList);
-        if (tmpSelection.index == '0') {
+        if (tmpSelection.index == -1) {
             // Bestimmt die nächste Zelle mit minimaler Anzahl zulässiger Nummern
             return this.calculateMinSelectionFrom(optionList);
         } else {
+            // Gibt tmpSelection mit index = -1 zurück, falls keine gültige Selektion mehr gibt
             return tmpSelection;
         }
     }
@@ -467,11 +519,6 @@ class AutomatedRunnerOnGrid {
 
 }
 
-class ManualRun {
-    constructor() {
-
-    }
-}
 class SudokuGrid {
     constructor() {
         // Speichert die Sudokuzellen in der DOM-Version
@@ -484,15 +531,15 @@ class SudokuGrid {
         this.selectedCell = undefined;
         this.indexSelected = -1;
         // Ermöglicht schrittweises undo und redo in der Lösung
-        this.actionHistory = [];
-        this.undoHistory = [];
+        //  this.actionHistory = [];
+        //  this.undoHistory = [];
     }
 
     initGrid() {
         // Die Tabelle wird initialisert
         // Schritt 1: Die aktuelle Zellenselektion wird zurückgesetzt
         this.initCurrentSelection();
-        this.initActionHistory();
+        // this.initActionHistory();
         // Die aktuellen Zellinhalte werden gelöscht
         for (let i = 0; i < 81; i++) {
             this.sudoCells[i].clear();
@@ -505,12 +552,21 @@ class SudokuGrid {
         }
     }
 
+    spielEnde(){
+        for (let i = 0; i < 81; i++) {
+            if(this.sudoCells[i].value() == '0') {
+                return false;
+            }
+        }
+        return true;
+    }
+
     reset() {
         // Alle im Mode 'play' gesetzten Zahlen werden gelöscht
         // Die Zellen der Aufgabenstellung bleiben erhalten
         // Schritt 1: Die aktuelle Selektion wird zurückgesetzt
         this.initCurrentSelection();
-        this.initActionHistory();
+        //this.initActionHistory();
         // Schritt 2: Die aktuellen Zellinhalte werden gelöscht
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getMode() !== 'define') {
@@ -529,59 +585,56 @@ class SudokuGrid {
         this.reEvaluateNecessarys();
     }
 
-    autoStep() {
-        this.runner.autoStep();
-    }
-
-    initActionHistory() {
-        this.actionHistory = [];
-        this.undoHistory = [];
-    }
-
-    undo() {
-        this.setManualExec();
-        //Macht die letzte Tabellenoperation rückgängig
-        if (this.actionHistory.length > '0') {
-            let action = this.actionHistory.pop();
-            this.undoHistory.push(action);
-            let undoOp = true;
-            if (action.op === "setNumber") {
-                // Lösche die gesetzte Nummer
-                this.setMode(action.mode);
-                this.suGrid.select(action.mode, action.cellIndex);
-                this.suGrid.deleteSelected(this.currentMode, undoOp);
-                this.suGrid.deselect();
-            } else if (action.op === "deleteNumber") {
-                // Setze die zuvor gelöschte Nummer erneut
-                this.setMode(action.mode);
-                this.suGrid.select(action.Mode, action.cellIndex);
-                this.suGrid.atCurrentSelectionSetNumber(action.nr, action.mode, undoOp);
-                this.suGrid.deselect();
+    /*
+        initActionHistory() {
+            this.actionHistory = [];
+            this.undoHistory = [];
+        }
+    
+        undo() {
+            this.runner.switchOff();
+            //Macht die letzte Tabellenoperation rückgängig
+            if (this.actionHistory.length > '0') {
+                let action = this.actionHistory.pop();
+                this.undoHistory.push(action);
+                let undoOp = true;
+                if (action.op === "setNumber") {
+                    // Lösche die gesetzte Nummer
+                    this.setMode(action.mode);
+                    this.suGrid.select(action.mode, action.cellIndex);
+                    this.suGrid.deleteSelected(this.currentMode, undoOp);
+                    this.suGrid.deselect();
+                } else if (action.op === "deleteNumber") {
+                    // Setze die zuvor gelöschte Nummer erneut
+                    this.setMode(action.mode);
+                    this.suGrid.select(action.Mode, action.cellIndex);
+                    this.suGrid.atCurrentSelectionSetNumber(action.nr, action.mode, undoOp);
+                    this.suGrid.deselect();
+                }
             }
         }
-    }
-
-    redo() {
-        //Macht undo rückgängig
-        if (this.undoHistory.length > '0') {
-            let action = this.undoHistory.pop();
-            let undoOp = false;
-            if (action.op === "setNumber") {
-                // Wiederhole die Aktion
-                this.setMode(action.mode);
-                this.suGrid.select(action.mode, action.cellIndex);
-                this.suGrid.atCurrentSelectionSetNumber(action.nr, action.mode, undoOp);
-                this.suGrid.deselect();
-            } else if (action.op === "deleteNumber") {
-                // Wiederhole die Aktion
-                this.setMode(action.mode);
-                this.suGrid.select(action.Mode, action.cellIndex);
-                this.suGrid.deleteSelected(this.currentMode, undoOp);
-                this.suGrid.deselect();
+    
+        redo() {
+            //Macht undo rückgängig
+            if (this.undoHistory.length > '0') {
+                let action = this.undoHistory.pop();
+                let undoOp = false;
+                if (action.op === "setNumber") {
+                    // Wiederhole die Aktion
+                    this.setMode(action.mode);
+                    this.suGrid.select(action.mode, action.cellIndex);
+                    this.suGrid.atCurrentSelectionSetNumber(action.nr, action.mode, undoOp);
+                    this.suGrid.deselect();
+                } else if (action.op === "deleteNumber") {
+                    // Wiederhole die Aktion
+                    this.setMode(action.mode);
+                    this.suGrid.select(action.Mode, action.cellIndex);
+                    this.suGrid.deleteSelected(this.currentMode, undoOp);
+                    this.suGrid.deselect();
+                }
             }
         }
-    }
-
+    */
 
 
     getCurrentState() {
@@ -657,9 +710,7 @@ class SudokuGrid {
         }
     }
     initCurrentSelection() {
-        this.selectedCell = undefined;
-        this.indexSelected = -1;
-
+        this.deselect();
     }
     setCurrentSelection(cell, index) {
         this.indexSelected = index;
@@ -694,16 +745,16 @@ class SudokuGrid {
             ) {
                 this.selectedCell.setNumber(btnNumber, currentMode);
                 // Setze action in der action history, aber nur, wenn nicht im Undo
-                let action = null;
-                if (!undoOp) {
-                    action = {
-                        op: "setNumber",
-                        mode: currentMode,
-                        nr: btnNumber,
-                        cellIndex: this.indexSelected
-                    };
-                }
-                this.actionHistory.push(action);
+                /*               let action = null;
+                               if (!undoOp) {
+                                   action = {
+                                       op: "setNumber",
+                                       mode: currentMode,
+                                       nr: btnNumber,
+                                       cellIndex: this.indexSelected
+                                   };
+                               }
+                               this.actionHistory.push(action); */
                 // Berechne die jetzt noch möglichen Inhalte der Zellen
                 this.recalculatePermissibleSets();
                 // Berechne potentiell jetzt vorhandene Konflikte
@@ -722,17 +773,17 @@ class SudokuGrid {
             // Das Löschen kann nur im gleichen Modus
             // eine Neusetzung erfolgen
             if (this.selectedCell.getMode() == currentMode) {
-                let action = null;
-                if (!undoOp) {
-                    action = {
-                        op: "deleteNumber",
-                        mode: currentMode,
-                        nr: this.selectedCell.value(),
-                        cellIndex: this.indexSelected
-                    };
-                }
+                /*                let action = null;
+                                if (!undoOp) {
+                                    action = {
+                                        op: "deleteNumber",
+                                        mode: currentMode,
+                                        nr: this.selectedCell.value(),
+                                        cellIndex: this.indexSelected
+                                    };
+                                } */
                 this.selectedCell.delete();
-                this.actionHistory.push(action);
+                // this.actionHistory.push(action);
                 // Berechne die jetzt noch möglichen Inhalte der Zellen
                 this.recalculatePermissibleSets();
                 // Berechne potentiell jetzt (nicht mehr) vorhandene Konflikte
@@ -757,7 +808,7 @@ class SudokuGrid {
             let tmpCell = this.sudoCells[i];
             tmpCell.necessary = new Set();
         }
-        
+
         // Setze die neuen Werte
         for (let i = 0; i < 9; i++) {
             this.checkUniquesInGroup(i);
@@ -801,7 +852,8 @@ class SudokuGrid {
             // Deselektiere die Zelle selbst
             this.selectedCell.deselect();
             // Lösche die Selektionsinformation der Tabelle
-            this.initCurrentSelection();
+            this.selectedCell = undefined;
+            this.indexSelected = -1;
         }
     }
 
@@ -1121,8 +1173,6 @@ class SudokuCell {
 
     delete() {
         this.unsetNumber();
-        //this.calculatePermissibleNumbers();
-        //this.setPermissibleNumbers();
     }
 
     isSetinError() {
