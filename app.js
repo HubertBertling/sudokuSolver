@@ -1,4 +1,5 @@
 let sudoApp;
+const searchDepth = 4;
 
 const init = () => {
     sudoApp = new (SudokuApp);
@@ -118,7 +119,7 @@ class SudokuApp {
         this.setExecMode('undefined');
         this.runner.init();
         this.progressBar.init();
-        this.progressBar.setValue(20);
+        this.progressBar.setValue(0);
     }
 
     setExecMode(execMode) {
@@ -158,11 +159,21 @@ class SudokuApp {
         if (this.execMode !== 'automatic') {
             this.setExecMode('automatic');
         }
-        let finished = this.runner.autoStep();
-        if (finished){
-            this.autoRunPause();
-            alert("Glückwunsch! Sudoku gelöst!");
+        let result = this.runner.autoStep();
+        if (result == 'success') {
+            this.autoRunStop();
+            alert("Spielende: Glückwunsch! Sudoku gelöst!");
+        } else if (result == 'fail') {
+            this.autoRunStop();
+            alert("Spielende: Sudoku nicht gelöst. Versuche es mit einer größeren Suchtiefe.");
+        } else {
+            // 'stopped' oder 'inProgress'
+            // Keine Aktion
         }
+        let count = this.suGrid.countSolvedSteps();
+        this.progressBar.setValue(count);
+        let depth = document.getElementById("search-depth");
+        depth.innerText = "Aktuelle Suchtiefe: " + this.runner.getCurrentSearchDepth();
     }
 
 
@@ -175,6 +186,13 @@ class SudokuApp {
         // Die automatische Ausführung
         window.clearInterval(this.timer);
     }
+
+    autoRunStop() {
+        // Die automatische Ausführung
+        window.clearInterval(this.timer);
+        this.runner.stop();
+    }
+
 
 
     numberButtonPressed(btnNumber) {
@@ -307,23 +325,236 @@ class ProgressBar {
     }
 }
 
+//========================================================================
+class Stepper {
+    constructor() {
+        this.currentStep = new OptionStep(null, -1, ['0']);
+        console.log("Tiefe 0");
+    }
+    getCurrentStep() {
+        return this.currentStep;
+    }
+    searchDepthLimitReached() {
+        return (!(this.currentStep.getDepth() < searchDepth + 1));
+    }
+    getCurrentSearchDepth() {
+        return this.currentStep.getDepth();
+    }
+    isOnOptionStep() {
+        this.currentStep instanceof OptionStep;
+    }
+    addOptionStep(cellIndex, optionList) {
+        this.currentStep = this.currentStep.addOptionStep(cellIndex, optionList);
+        return this.currentStep;
+    }
+    addRealStep(cellIndex, cellValue) {
+        this.currentStep = this.currentStep.addRealStep(cellIndex, cellValue);
+        return this.currentStep;
+    }
+    getNextRealStep() {
+        this.currentStep = this.currentStep.getNextRealStep();
+        return this.currentStep;
+    }
+    previousStep() {
+        this.currentStep = this.currentStep.previousStep();
+        return this.currentStep;
+    }
+}
+
+class OptionStep {
+    constructor(ownerPath, cellIndex, optionList) {
+        // Der Optinlstep befindet sich in einem Optionpath
+        this.myOwnerPath = ownerPath;
+        // Der Step zeigt auf Sudokuzelle
+        // Der OptionStep zeigt auf eine Grid-Zelle
+        this.myCellIndex = cellIndex;
+        this.myOptionList = optionList.slice();
+        this.myNextOptions = optionList.slice();
+
+        // Der OptonStep hat für jede Option einen eigenen OptionPath
+        if (optionList.length == 1) {
+            // Dann kann es nur einen Pfad geben, und dieser wird sofort angelegt.
+            // Das ist die Startsituation
+            // Später gibt es keine einelementigen Optionlists.
+            // Sie sind durch die Realsteps abgebildet
+            this.myOwnerPath = new OptionPath(optionList[0], this)
+        }
+    }
+    addRealStep(cellIndex, cellValue) {
+        return this.myOwnerPath.addRealStep(cellIndex, cellValue);
+    }
+    addOptionStep(cellIndex, optionList) {
+        return this.myOwnerPath.addOptionStep(cellIndex, optionList);
+    }
+    getNextRealStep() {
+        let nextOption = this.myNextOptions.pop();
+        let nextPath = new OptionPath(nextOption, this);
+        return nextPath.addRealStep(this.myCellIndex, nextOption);
+    }
+    previousStep() {
+        return this.myOwnerPath.previousFromOptionStep();
+    }
+    isCompleted() {
+        return this.myNextOptions.length == 0;
+    }
+    getDepth() {
+        if (this.myCellIndex == -1) {
+            return 0;
+        } else {
+            return this.myOwnerPath.getDepth() + 1;
+        }
+    }
+    isFinished() {
+        // Der OptionStep ist beendet, wenn alle seine Pfade beendet sind
+        for (let i = 0; i < this.myOptionPaths.length; i++) {
+            if (!this.myOptionPaths[i].isFinished()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    getCellIndex() {
+        return this.myCellIndex;
+    }
+    getOwnerPath() {
+        return this.myOwnerPath;
+    }
+}
+class RealStep {
+    constructor(ownerPath, stepIndex, cellIndex, cellValue) {
+        // Der Realstep befindet sich in einem Optionpath
+        this.myOwnerPath = ownerPath;
+        // Der Step zeigt auf Sudokuzelle
+        this.myStepsIndex = stepIndex;
+        this.myCellIndex = cellIndex;
+        // Der Step kennt den Inhalt der Sudoku-Zelle
+        this.myCellValue = cellValue;
+    }
+    addRealStep(cellIndex, cellValue) {
+        return this.myOwnerPath.addRealStep(cellIndex, cellValue);
+    }
+    addOptionStep(cellIndex, optionList) {
+        return this.myOwnerPath.addOptionStep(cellIndex, optionList);
+    }
+    previousStep() {
+        return this.myOwnerPath.previousFromRealStep(this.myStepsIndex);
+    }
+    getValue() {
+        return this.myCellValue;
+    }
+    getCellIndex() {
+        return this.myCellIndex;
+    }
+    getPathIndex() {
+        return this.myStepsIndex;
+    }
+    getOwnerPath() {
+        return this.myOwnerPath;
+    }
+    getDepth() {
+        return this.myOwnerPath.getDepth();
+    }
+}
+
+class OptionPath {
+    // Ein OptionPath besteht im Kern aus zwei Elmenten:
+    // 1. Die Nummer (Option), für die der Pfad gemacht wird.
+    // 2. aus einer Sequenz von RealSteps
+    // 3. Der letzte Schritt ist ein OptonStep, wenn nicht vorher
+    // ein Erfolg oder Unlösbarkeit eingetreten ist.
+    constructor(value, ownerStep) {
+        // Nie nummeer, für die dieser path entsteht
+        this.myValue = value;
+        //Die Schrittsequenz bestehend ausschließlich aus realsteps
+        this.myRealSteps = [];
+        //Weitere Hilfsattribute
+        this.myLastOptionStep; // Der Abschluss dies Pfades
+        this.myOwnerStep = ownerStep; // Der Optionstep, der diesen Pfad besitzt
+    }
+
+    getDepth() {
+        if (this.myValue == '0') {
+            // Ich bin der Rootpath
+            return 0;
+        } else {
+            return this.myOwnerStep.getDepth();
+        }
+    }
+    isFinished() {
+        return (!(this.myLastOptionStep == null));
+    }
+
+    addRealStep(cellIndex, cellValue) {
+        // Der neue Realstep wird in diesem Path angelegt
+        let realStep = new RealStep(this, this.myRealSteps.length, cellIndex, cellValue);
+        this.myRealSteps.push(realStep);
+        return realStep;
+    }
+
+    addOptionStep(cellIndex, optionList) {
+        // Der neue Optionstep wird in diesem Path angelegt
+        this.myLastOptionStep = new OptionStep(this, cellIndex, optionList);
+        console.log("Tiefe " + this.myLastOptionStep.getDepth());
+        // Damit ist dieser Pfad beendet. Es kann nur in seinen Subpfaden weitergehen
+        return this.myLastOptionStep;
+    }
+
+    getValue() {
+        return this.myValue;
+    }
+
+    previousFromRealStep(currentIndex) {
+        // Rückwärtz vom RealStep
+        if (currentIndex == 0) {
+            // der vorige Step liegt nicht in diesem Path
+            // und ist ein Option-Step
+            if (this.myValue == '0') {
+                // Dann ist dieser Pfad er Root-Path
+                // D.h. es gibt keinen Vorgängerschritt mehr
+                // Dann wird der Schritt selbst zurückgegeben
+                return this.myRealSteps[0];
+            } else {
+                // Eon optionstep
+                return this.myOwnerStep;
+            }
+        } else {
+            // der vorige step liegt in diesem Path
+            return this.myRealSteps[currentIndex - 1];
+        }
+    }
+    previousFromOptionStep() {
+        // Rückwärtz vom OptionStep
+        // Es kann vorkommen, dass die realStep Sequenz leer ist
+        if (this.myRealSteps.length == 0) {
+            return this.myOwnerStep;
+        } else
+            return this.myRealSteps[this.myRealSteps.length - 1];
+    }
+}
+
+
+
+//=================================================
 class AutomatedRunnerOnGrid {
     constructor(suGrid) {
         this.suGrid = suGrid;
-        this.solutionPath = [];
+        this.myStepper;
         this.autoMode = 'forward';
+        this.isStopped = false;
     }
 
     init() {
-        this.solutionPath = [];
+        this.isStopped = false;
+        this.myStepper = new Stepper();
         this.setAutoMode('undefined');
     }
 
-
-    isRunning() {
-        return this.solutionPath.length > 0;
+    getCurrentSearchDepth() {
+        return this.myStepper.getCurrentSearchDepth();
     }
-
+    stop() {
+        this.isStopped = true;
+    }
     setAutoMode(mode) {
         this.autoMode = mode;
         // Forward Mode setzen
@@ -343,104 +574,140 @@ class AutomatedRunnerOnGrid {
     }
 
     autoStep() {
-        if (this.autoMode == 'undefined') {
-            this.setAutoMode('forward');
-        }
-        if (this.autoMode == 'forward') {
-            this.stepForward();
-        } else if (this.autoMode == 'backward') {
-            this.stepBackward();
+        if (!this.isStopped) {
+            if (this.autoMode == 'undefined') {
+                this.setAutoMode('forward');
+            }
+            if (this.autoMode == 'forward') {
+                this.stepForward();
+                return 'inProgress'
+            } else if (this.autoMode == 'backward') {
+                if (!this.stepBackward()) {
+                    return 'fail';
+                };
+            } else {
+                alert("Unzuässiger Mode im Stepper");
+            }
+            if (this.suGrid.solved()) {
+                return 'success'
+            }
         } else {
-            alert("Unzuässiger Mode im Stepper");
+            return 'stopped';
         }
-        return this.suGrid.spielEnde();      
     }
 
     stepForward() {
-        if (this.deadlockReached()) {
+        if (this.deadlockReached() || this.myStepper.searchDepthLimitReached()) {
             // deadlock reached
             this.setAutoMode('backward');
             return;
         }
         if (this.suGrid.indexSelected == -1) {
+            // Keine Zelle selekteirt
             let tmpSelection = this.autoSelect();
             if (tmpSelection.index == -1) {
-                //Es gibt keine nächste Selektion mehr
-                alert("Softarefehler: es gibt keine nächste Selektion, obwohl das Spiel nicht beendet ist")
+                if (this.suGrid.solved()) {
+                    return;
+                } else {
+                    alert("Softwarefehler: es gibt keine nächste Selektion, obwohl das Spiel nicht beendet ist")
+                }
             } else {
                 // Gültige nächste Selektion
-                let newStep = {
-                    optionalValues: tmpSelection.options,
-                    necessaryOnes: tmpSelection.necessaryOnes,
-                    actualValue: '0',
-                    passedValues: [],
-                    cellIndex: tmpSelection.index
-                };
-                // Selektieren 
                 this.suGrid.indexSelect(tmpSelection.index);
-                // Selektion im neuen Schritt dokumentieren
-                this.solutionPath.push(newStep);
+                // Jetzt muss für diese Selektion eine Nummer bestimmt werden.
+                // Ergebnis wird sein: realStep mit Nummer
+                /*  if (this.myStepper.isOnOptionStep()) {
+                     // Dann muss die nächste Option verwendet werden
+                     this.myStepper.getNextRealStep();
+                 } else { */
+                // steht auf einem Realstep, dann muss der nächste Realstep konfiguriert werden
+                let tmpValue = '0';
+                if (tmpSelection.options.length == 1) { tmpValue = tmpSelection.options[0]; }
+                if (tmpSelection.necessaryOnes.length == 1) { tmpValue = tmpSelection.necessaryOnes[0]; }
+                if (!(tmpValue == '0')) {
+                    //Die Selektion hat eine eindeutige Nummer.
+                    //D.h. es geht eindeutig weiter.
+                    this.myStepper.addRealStep(tmpSelection.index, tmpValue);
+                } else {
+                    //Die Selektion hat keine eindeutige Nummer.
+                    //D.h. es geht mit mehreren Optionen weiter.
+                    this.myStepper.addOptionStep(tmpSelection.index, tmpSelection.options.slice());
+                    // Nächster realstep mit einer Optionsnummer
+                    // Aber nur wenn das Tiefenlimit nicht überschritten ist
+                    if (this.myStepper.searchDepthLimitReached()) {
+                        this.setAutoMode('backward');
+                        // Schritt vor dem OptionStep
+                        let prevStep = this.myStepper.previousStep();
+                    } else {
+                        if (!this.myStepper.getCurrentStep().isCompleted()) {
+                            this.myStepper.getNextRealStep();
+                        } else {
+                            alert("Softearefehler: Für die selektierte Zelle gibt es keine Nummer");
+                        }
+                    }
+                }
+                //}
             }
         } else if (this.suGrid.indexSelected !== -1) {
-            // Aktuelle Selektion --> Nummer setzen und im Schritt dokumentieren
-            let currentStep = this.solutionPath[this.solutionPath.length - 1];
-            if (currentStep.actualValue == '0') {
-                // in der aktuellen Zelle ist noch keine Nummer gesetzt
-                // Das geschieht jetzt
-                if (currentStep.optionalValues.length > 0) {
-                    // Es gibt noch nicht probierte Nummern
-                    let tmpNumber = '0';
-                    if (currentStep.necessaryOnes.length > 0) {
-                        // Zuerst die notwendige Nummer abarbeiten
-                        tmpNumber = currentStep.necessaryOnes.pop();
-                        //tmpNumber aus optionalValues des Schrittes entfernen
-                        let index = currentStep.optionalValues.indexOf(tmpNumber);
-                        if (index > -1) {
-                            currentStep.optionalValues.splice(index, 1);
-                        }
-
-                    } else {
-                        // Keine notwendige Nummer vorhanden.
-                        // Wähle eine beliebige zuässige Nummer für diesen Schritt
-                        tmpNumber = currentStep.optionalValues.pop();
-                    }
-                    // Dokumentiere die gewählte Nummer im Schritt
-                    currentStep.actualValue = tmpNumber;
-                    currentStep.passedValues.push(tmpNumber);
-                    // Setze die gewählte Nummer
-                    this.suGrid.atCurrentSelectionSetNumber(tmpNumber, 'play', false);
-                } else {
-                    // Es gibt keine noch nicht probierte Nummern
-                    alert("Das Sudoku ist widersprüchlich und besitzt keine Lösung!");
-                }
+            // Eine Zelle ist selektiert
+            // Aktuelle Selektion --> Nummer setzen
+            let currentStep = this.myStepper.getCurrentStep();
+            if (currentStep instanceof RealStep) {
+                // Setze die eindeutige Nummer
+                this.suGrid.atCurrentSelectionSetNumber(currentStep.getValue(), 'play', false);
             }
         }
     }
 
     stepBackward() {
-        let solutionStep = this.solutionPath[this.solutionPath.length - 1];
-        if (this.suGrid.indexSelected !== solutionStep.cellIndex) {
+        let currentStep = this.myStepper.getCurrentStep();
+        // Prüfen, ob das der Wurzelschritt ist. Dann Abbruch.
+        if (currentStep instanceof OptionStep) {
+            if (currentStep.getCellIndex() == -1) {
+                //Wurzel erreicht
+                return false;
+            }
+        } else {
+            // Der erste Schrit im Pfad 0 ist ein korrekter Reastep.
+        }
+        if (this.suGrid.indexSelected !== currentStep.getCellIndex()) {
             // Keine aktuelle Selektion oder falsche Selektion --> Selektion setzen
-            this.suGrid.indexSelect(solutionStep.cellIndex);
-        } else if (solutionStep.actualValue !== '0') {
-            // Die seletierte Zelle ist noch nicht gelöscht
+            this.suGrid.deselect();
+            this.suGrid.indexSelect(currentStep.getCellIndex());
+            return true;
+        } else if (this.suGrid.sudoCells[currentStep.getCellIndex()].value() !== '0') {
+            // Die selektierte Zelle ist noch nicht gelöscht
             // und wird jetz gelöscht
             this.suGrid.deleteSelected('play', false);
-            // Schrittinformationen aktualisieren
-            //1. Die Zelle ist gelöscht
-            solutionStep.actualValue = '0';
-
-        } else if (solutionStep.optionalValues.length > 0) {
-            // Dieser Schritt muss noch mit weiteren Nummern probiert werden
-            this.setAutoMode('forward');
+            // Im Stepper heißt das: einen Schritt zurück
+            let prevStep = this.myStepper.previousStep();
+            return true;
+        } else if (currentStep instanceof RealStep) {
+            //Setze aktuellen Schritt des Steppers rückwärtz
+            let previousStep = this.myStepper.previousStep();
+            // Und gleich nochmal, um auf eine Realstep zu kommen
+            //let prevRealstep = previousStep.previousFromOptionStep();
+            let prevRealstep = this.myStepper.previousStep();
+            if (prevRealstep.getCellIndex == -1) {
+                // Die Wurzel ist erreicht
+                return false;
+            } else {
+                // Den Schritt selekktieren
+                this.suGrid.deselect();
+                this.suGrid.indexSelect(prevRealstep.getCellIndex());
+                return true;
+            }
+        } else if (currentStep instanceof OptionStep) {
+            if (!currentStep.isCompleted()) {
+                // Dieser Schritt muss noch mit weiteren Nummern probiert werden
+                this.myStepper.getNextRealStep();
+                this.setAutoMode('forward');
+            } else {
+                this.myStepper.previousStep();
+            }
+            return true;
         } else {
-            // Dieser Schritt ist vollständig geprüft
-            // Deshalb jetzt ein Schritt rückwärts
-            let tmpStep = this.solutionPath.pop();
-            let tmpIndex = tmpStep.cellIndex;
-            // Selektieren
-            this.suGrid.deselect();
-            this.suGrid.indexSelect(tmpIndex);
+            alert("Softwarefehler: Beim Rückwärtsgehen unerwarteter Fehler")
         }
     }
 
@@ -552,13 +819,22 @@ class SudokuGrid {
         }
     }
 
-    spielEnde(){
+    solved() {
         for (let i = 0; i < 81; i++) {
-            if(this.sudoCells[i].value() == '0') {
+            if (this.sudoCells[i].value() == '0') {
                 return false;
             }
         }
         return true;
+    }
+    countSolvedSteps() {
+        let tmp = 0;
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].value() !== '0') {
+                tmp++;
+            }
+        }
+        return tmp;
     }
 
     reset() {
