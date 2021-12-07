@@ -111,67 +111,88 @@
                     <div class="sudoku-grid-cell"></div>
                     <div class="sudoku-grid-cell"></div>
                 </div>
-                <div class="exec-btn-groups">
-                    <div class="mode-btns">
-                        <div class="btn-define" id="btn-define">Definieren</div>
-                        <div class="btn-play" id="btn-play">Spielen</div>
+                <div class="game-col2">
+                    <div class="sudoku-title">
+                        Sudoku-Solver
                     </div>
-                    <div class="manual-exec-btns">
-                        <p style="font-weight: bold;">Manuelle Ausführung</p>
-                        <!--     <div class="btn-undo-redo">
+                    <div class="exec-btn-groups">
+                        <div class="exec-btn-group mode-btns">
+                            <div class="btn-define" id="btn-define">Definieren</div>
+                            <div class="btn-play" id="btn-play">Spielen</div>
+                        </div>
+                        <div class="exec-btn-group manual-exec-container">
+                            <div class="manual-exec-btns on" id="manual-exec-btns">
+                                <p style="font-weight: bold;">Manuelle Ausführung</p>
+                                <!--     <div class="btn-undo-redo">
                                 <div class="btn-undo" id="btn-undo"> <img src="images/back.png" class="btn-image">
                                 </div>
                                 <div class="btn-redo" id="btn-redo"> <img src="images/forward.png" class="btn-image">
                                 </div>
                             </div> -->
-                        <div class="numbers">
-                            <div class="number">1</div>
-                            <div class="number">2</div>
-                            <div class="number">3</div>
-                            <div class="number">4</div>
-                            <div class="number">5</div>
-                            <div class="number">6</div>
-                            <div class="number">7</div>
-                            <div class="number">8</div>
-                            <div class="number">9</div>
-                            <div class="delete" id="btn-delete-cell">X</div>
-                        </div>
-                    </div>
-                    <div class="automatic-exec">
-                        <div class="auto-checkbox">
-                            <label for="auto-on-off"> Automatische Ausführung: </label>
-                            <input class="auto-on-off" id="check-auto-on-off" type="checkbox" checked="checked">
-                        </div>
-                        <div class="autoMode-radio-btns">
-                            <label for="radio-forward"> Vor </label>
-                            <input class="forward-on-off" id="radio-forward" name="direction" type="radio">
-                            <label for="radio-backward"> Zurück </label>
-                            <input class="backward-on-off" id="radio-backward" name="direction" type="radio">
-                        </div>
-                  
-                        <div class="auto-exec-btns">
-                            <div class="btn-auto-group">
-                                <div class="btn-automatic" id="btn-run"><img src="images/automatic.png"
-                                        class="btn-image">
-                                </div>
-                                <div class="btn-automatic" id="btn-pause"><img src="images/pause.png" class="btn-image">
+                                <div class="numbers">
+                                    <div class="number">1</div>
+                                    <div class="number">2</div>
+                                    <div class="number">3</div>
+                                    <div class="number">4</div>
+                                    <div class="number">5</div>
+                                    <div class="number">6</div>
+                                    <div class="number">7</div>
+                                    <div class="number">8</div>
+                                    <div class="number">9</div>
+                                    <div class="delete" id="btn-delete-cell">X</div>
                                 </div>
                             </div>
-                            <div class="btn-automatic" id="btn-autoStep"><img src="images/nextstep.png"
-                                    class="btn-image">
+                        </div>
+                        <div class="auto-exec-container">
+                            <div class="automatic-exec on" id="automatic-exec">
+                                <p style="font-weight: bold;">Automatische Ausführung</p>
+                                <div class="auto-exec-btns">
+                                    <div class="btn-auto-group">
+                                        <div class="btn-automatic" id="btn-run"><img src="images/automatic.png"
+                                                class="btn-image">
+                                        </div>
+                                        <div class="btn-automatic" id="btn-pause"><img src="images/pause.png"
+                                                class="btn-image">
+                                        </div>
+                                    </div>
+                                    <div class="btn-automatic" id="btn-autoStep"><img src="images/nextstep.png"
+                                            class="btn-image">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="progress-box" id="progress-box">
-                <div class="search-depth" id = "search-depth">
-                    <b>Tiefe:</b>
+
+                <div class="track-group">
+                    <div class="depth-group">
+                        <div>
+                            Aktuelle Suchtiefe:
+                        </div>
+                        <div class="search-depth" id="search-depth">
+                            0
+                        </div>
+                    </div>
+                    <div class="autoMode-radio-btns">
+                        <label for="radio-backward"> Zurück </label>
+                        <input class="backward-on-off" id="radio-backward" name="direction" type="radio">
+                        <label for="radio-forward">Vor </label>
+                        <input class="forward-on-off" id="radio-forward" name="direction" type="radio">
+                    </div>
                 </div>
-                <b>Fortschritt</b>
-                <div class= "progress-bar" id="myProgress">
-                    <div id="myBar">40%</div>
-                  </div>                  
+                <div class="progress-group">
+                    <div>
+                        Fortschritt:
+                    </div>
+                    <div class="progress-bar" id="myProgress">
+                        <div id="myBar">40%</div>
+                    </div>
+                </div>
+
+
+  
             </div>
             <div class="main-btns">
                 <div class="config-btns">
@@ -184,6 +205,8 @@
                     <div class="main-btn" id="btn-delete">Löschen</div>
                 </div>
             </div>
+
+
         </div>
         <!--game dialogs -->
         <div class="Dialogs">

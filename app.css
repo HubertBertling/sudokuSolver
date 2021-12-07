@@ -8,6 +8,7 @@
     --button-bg: #caf0f8;
     --white: #fff;
     --blue: #00aeef;
+    --light-blue: lightblue;
     --red: #e91e63;
     --black: #000;
     --nav-size: 70px;
@@ -52,6 +53,7 @@ body {
 /*======================================*/
 /* Sudoku grid block */
 /*======================================*/
+
 .main-sudoku-grid {
     display: grid;
     gap: var(--gap);
@@ -73,8 +75,9 @@ body {
 }
 
 .sudoku-grid-cell.nested.selected {
-    background-color: var(--blue);
-    color: var(--white);
+    background-color: var(--light-blue);
+    color: var(--black);
+    border: 2px solid var(--blue);
 }
 
 .sudoku-grid-cell.nested {
@@ -85,7 +88,6 @@ body {
     font-size: var(--font-size-sm);
     padding: 1px;
     background-color: lightyellow;
-    ;
     border: 1px solid gray;
 }
 
@@ -97,8 +99,9 @@ body {
 
 
 .sudoku-grid-cell.selected {
-    background-color: var(--blue);
-    color: var(--white);
+    background-color: var(--light-blue);
+    color: var(--black);
+    border: 2px solid var(--blue);
 }
 
 .nested>div.neccessary {
@@ -151,27 +154,39 @@ body {
     grid-template-columns: 1fr 290px;
 }
 
+.sudoku-title {
+    background-color: lightblue;
+    border-bottom: 5px solid var(--blue);
+    text-align: center;
+    padding: 10px;
+    font-size: xx-large;
+   
+}
 
 /*======================================*/
 /* Exec button block                  */
 /*======================================*/
 
-
-.exec-btn-groups {
-    padding: var(--space-y);
+.game-col2 {
     border-top: 5px solid var(--blue);
     border-right: 5px solid var(--blue);
     border-bottom: 5px solid var(--blue);
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 5px;
+}
+
+
+.exec-btn-groups {
+    padding: var(--space-y);
+}
+
+.exec-btn-group, .auto-exec-container {
+    margin-top: 30px;
+    
 }
 
 .manual-exec-btns, .automatic-exec {
     margin-top: 10px;
     padding-top: 10px;
     padding-bottom: 5px;
-    border-top: 5px solid var(--blue);
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     gap: 2px;
@@ -181,6 +196,7 @@ body {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     gap: 2px;
+    padding-right: 10px;
 }
 
 
@@ -208,7 +224,7 @@ body {
 
 
 .numbers {
-    /*margin-top: var(--space-y); */
+    margin-top: 5px;    
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 5px;
@@ -241,14 +257,8 @@ body {
     transform: translate(2px, 2px);
 }
 
-
-.auttomatic-exec {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 10px;
-}
-
 .auto-exec-btns {
+    margin-top: 5px;;
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     gap: 10px;
@@ -260,27 +270,12 @@ body {
     gap: 5px;
 }
 
-
-
-
 input.auto-on-off {
     width: 25px;
     height: 25px;
     font-size: 16px;
     
 }
-
-.auto-checkbox {
-font-weight: bold;
-}
-
-.auto-exec-btns {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 10px;
-}
-
-
 
 
 .btn-define, .btn-play, .btn-redo, .btn-undo, .btn-automatic {
@@ -324,7 +319,12 @@ font-weight: bold;
 
 .main-btns {
     /*  border: 5px solid var(--red);  */
-    margin-top: 5px;
+    border-left: 5px solid var(--blue);
+    border-right: 5px solid var(--blue);
+    border-bottom: 5px solid var(--blue);
+    
+    padding-top: 10px;
+    padding-bottom: 5px;;
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 10px;
@@ -373,10 +373,53 @@ font-weight: bold;
 /*======================================*/
 
 .progress-box {
-    padding: var(--space-y);
+    padding-top: 5px;;
+    padding-left: var(--space-y);
+    padding-right: var(--space-y);
+    padding-bottom: 5px;
     border-left: 5px solid var(--blue);
     border-right: 5px solid var(--blue);
     border-bottom: 5px solid var(--blue);
+    background-color: var(--bg-main);
+}
+
+.track-group, .progress-group {
+    margin-top: 10px;;
+    display: grid;
+    grid-template-columns: 0.5fr 0.51fr;
+    font-weight: bold;
+    font-size: 18px;
+}
+.manual-exec-btns.on, .automatic-exec.on {
+    padding-right: 10px;;
+    border-right: 5px solid var(--blue);
+}
+
+.manual-exec-btns, .automatic-exec {
+ padding-right: 10px;;
+}
+
+.depth-group {
+    display: grid;
+    grid-template-columns: 0.5fr 0.5fr;
+    font-weight: bold;
+    font-size: 18px;
+    
+}
+.progress-group {
+    margin-top: 5px;
+    display: grid;
+    grid-template-columns: 0.15fr 1fr;
+    font-weight: bold;
+    font-size: 18px;
+    
+}
+.autoMode-radio-btns {
+    font-size: large;
+}
+
+.search-depth {
+    color: var(--blue);
 }
 .progress-bar {
     margin: 5px;
@@ -384,15 +427,16 @@ font-weight: bold;
 
 #myProgress {
     width: 100%;
-    background-color: #ddd;
+    background-color: lightyellow;
   }
   
   #myBar {
     width: 10%;
-    height: 30px;
-    background-color: #04AA6D;
+    height: 20px;
+    background-color: var(--blue);
     text-align: center;
-    line-height: 30px;
+    line-height: 20px;
+    font-size: 16px;
     color: white;
   }
 

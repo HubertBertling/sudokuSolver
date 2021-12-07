@@ -117,6 +117,7 @@ class SudokuApp {
         // Fülle die Sudokutabelle initial
         this.suGrid.initGrid();
         this.setExecMode('undefined');
+        this.autoRunStop()
         this.runner.init();
         this.progressBar.init();
         this.progressBar.setValue(0);
@@ -126,19 +127,28 @@ class SudokuApp {
         if (execMode == 'undefined') {
             this.execMode = 'undefined';
             // Checkbox setzen
-            let checkBox = document.getElementById("check-auto-on-off");
-            checkBox.checked = false;
+         
+            let manualGroup = document.getElementById("manual-exec-btns");
+            let autoGroup = document.getElementById("automatic-exec");
+            manualGroup.classList.remove('on');
+            autoGroup.classList.remove('on');
         } else if (execMode == 'manual') {
             this.execMode = 'manual';
             // Checkbox setzen
-            let checkBox = document.getElementById("check-auto-on-off");
-            checkBox.checked = false;
+     
+            let manualGroup = document.getElementById("manual-exec-btns");
+            let autoGroup = document.getElementById("automatic-exec");
+            autoGroup.classList.remove('on');
+            manualGroup.classList.add('on');
+
         } else if (execMode == 'automatic') {
             this.execMode = 'automatic';
             // Checkbox setzen
-            let checkBox = document.getElementById("check-auto-on-off");
-            checkBox.checked = true;
-        } else {
+            let manualGroup = document.getElementById("manual-exec-btns");
+            let autoGroup = document.getElementById("automatic-exec");
+            manualGroup.classList.remove('on');
+            autoGroup.classList.add('on');
+            } else {
             alert("Ein unzulässiger Exec-Mode is aufgetreten!");
         }
     }
@@ -173,7 +183,7 @@ class SudokuApp {
         let count = this.suGrid.countSolvedSteps();
         this.progressBar.setValue(count);
         let depth = document.getElementById("search-depth");
-        depth.innerText = "Aktuelle Suchtiefe: " + this.runner.getCurrentSearchDepth();
+        depth.innerText = this.runner.getCurrentSearchDepth();
     }
 
 
@@ -207,18 +217,29 @@ class SudokuApp {
     }
 
     initButtonPressed() {
-        this.suGrid.initGrid();
+        this.init();
         this.setExecMode('undefined');
     }
     resetBtnPressed() {
         this.suGrid.reset();
+        this.autoRunStop()
+        this.runner.init();
+        this.progressBar.init();
+        this.progressBar.setValue(0);
         this.setExecMode('undefined');
     }
 
     saveBtnPressed() {
         // Zustand soll gespeichert werden
+        this.autoRunStop()
+        this.runner.init();
+        this.progressBar.init();
+        this.progressBar.setValue(0);
+        this.setExecMode('undefined');
+
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageSaveDialog.open(tmpNameList);
+
     }
 
     restoreBtnPressed() {
@@ -236,6 +257,11 @@ class SudokuApp {
     sudokuCellPressed(cellNode, index) {
         if (this.execMode !== 'manual') {
             this.setExecMode('manual');
+            this.autoRunStop()
+            this.runner.init();
+            this.progressBar.init();
+            this.progressBar.setValue(0);
+            this.setExecMode('undefined');
         }
         this.suGrid.select(cellNode, index);
     }
@@ -270,6 +296,12 @@ class SudokuApp {
         // Hole den State mit diesem Namen
         let tmpState = this.sudokuStorage.getNamedState(stateName);
         if (tmpState !== null) {
+            this.setExecMode('undefined');
+            this.autoRunStop()
+            this.runner.init();
+            this.progressBar.init();
+            this.progressBar.setValue(0);
+            this.setExecMode('undefined');
             //Lösche aktuelle Selektio
             this.suGrid.deselect();
             // Setze den aus dem Speicher geholten Zustand
@@ -280,7 +312,6 @@ class SudokuApp {
             this.suGrid.reCalculateErrorCells();
             // Berechne die notwendigen Zellinhalte
             this.suGrid.reEvaluateNecessarys();
-            this.setExecMode('undefined');
         } else {
             alert("Zustand mit diesem Namen existiert nicht");
         }
@@ -321,7 +352,11 @@ class ProgressBar {
     setValue(stepCount) {
         let stepProzent = Math.floor(stepCount / 81 * 100);
         this.elem.style.width = stepProzent + "%";
-        this.elem.innerHTML = stepCount + " / 81";
+        if (stepCount < 10){
+            this.elem.innerHTML = '';       
+        } else {
+            this.elem.innerHTML = stepCount + " / 81";
+        }
     }
 }
 
@@ -609,7 +644,8 @@ class AutomatedRunnerOnGrid {
                 if (this.suGrid.solved()) {
                     return;
                 } else {
-                    alert("Softwarefehler: es gibt keine nächste Selektion, obwohl das Spiel nicht beendet ist")
+                    sudoApp.autoRunStop();
+                    alert("Hinweis:es gibt keine nächste Selektion, obwohl das Spiel nicht beendet ist")
                 }
             } else {
                 // Gültige nächste Selektion
@@ -642,6 +678,7 @@ class AutomatedRunnerOnGrid {
                         if (!this.myStepper.getCurrentStep().isCompleted()) {
                             this.myStepper.getNextRealStep();
                         } else {
+                            sudoApp.autoRunStop();
                             alert("Softearefehler: Für die selektierte Zelle gibt es keine Nummer");
                         }
                     }
@@ -707,6 +744,7 @@ class AutomatedRunnerOnGrid {
             }
             return true;
         } else {
+            sudoApp.autoRunStop();
             alert("Softwarefehler: Beim Rückwärtsgehen unerwarteter Fehler")
         }
     }
@@ -1330,6 +1368,10 @@ class SudokuCell {
         this.myCellNode.classList.remove('define');
         // Hinweis: Die Neuberechnung der möglchen und notwendigen
         // Zahlen erfolgt auf Tabellenebene. 
+        this.myCellNode.classList.add('zoom-in');
+        setTimeout(() => {
+            this.myCellNode.classList.remove('zoom-in');
+        }, 500);
     }
 
     setError() {
