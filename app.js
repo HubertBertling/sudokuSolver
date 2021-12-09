@@ -1,6 +1,4 @@
 let sudoApp;
-const searchDepth = 4;
-
 const init = () => {
     sudoApp = new (SudokuApp);
     sudoApp.init();
@@ -21,12 +19,9 @@ class SudokuApp {
         this.sudokuStorage = new SudokuStateStorage();
         // Die Hauptansicht
         this.suGrid = new SudokuGrid();
-        this.progressBar = new ProgressBar();
-        this.runner = new AutomatedRunnerOnGrid(this.suGrid);
         // Die App kann in verschiedenen Ausführungsmodi sein
         // 'undefined' 'automatic' 'manual'
         this.execMode = 'undefined';
-        this.timer = undefined;
 
         //Die Buttons der App werden Event-Hhandler zugeordnet
         // Nummer-Buttons
@@ -43,6 +38,18 @@ class SudokuApp {
             });
 
         });
+
+
+        // Die Einsttelun der Maximalen Tiefe
+
+        document.querySelector('#sudoDepthSetting').addEventListener('input', (e) => {
+            this.runner.setMaxDepth(e.target.value);
+        });
+
+        document.querySelector('#speedSetting').addEventListener('input', (e) => {
+            sudoApp.runner.setSpeed(e.target.value);
+        });
+
         // Die beiden Mode-button 
         document.querySelector('#btn-define').addEventListener('click', () => {
             sudoApp.setMode('define');
@@ -61,19 +68,21 @@ class SudokuApp {
 
         // Automatische Ausführung: schrittweise
         document.querySelector('#btn-autoStep').addEventListener('click', () => {
-            sudoApp.autoStep();
+            sudoApp.runner.autoStepEventHandler();
         });
 
         // Automatische Ausführung: vollautomatisch
         document.querySelector('#btn-run').addEventListener('click', () => {
-            sudoApp.autoRun();
+            sudoApp.runner.autoRun();
         });
-
         // Automatische Ausführung: vollautomatisch
         document.querySelector('#btn-pause').addEventListener('click', () => {
-            sudoApp.autoRunPause();
+            sudoApp.runner.autoRunPause();
         });
-
+        // Automatische Ausführung: vollautomatisch
+        document.querySelector('#btn-stop').addEventListener('click', () => {
+            sudoApp.runner.autoRunStop();
+        });
 
         // Der Initialisieren-Button: Initialisiert die Tabelle
         document.querySelector('#btn-init').addEventListener('click', () => {
@@ -116,43 +125,14 @@ class SudokuApp {
         // Schritt 3:
         // Fülle die Sudokutabelle initial
         this.suGrid.initGrid();
-        this.setExecMode('undefined');
-        this.autoRunStop()
+        // Die App kann in verschiedenen Ausführungsmodi sein
+        // 'undefined' 'automatic' 'manual'
+        this.setMode('play');
+        // Ein neuer Runner wird angelegt und initialisert
+        this.runner = new AutomatedRunnerOnGrid(this.suGrid);
         this.runner.init();
-        this.progressBar.init();
-        this.progressBar.setValue(0);
     }
-
-    setExecMode(execMode) {
-        if (execMode == 'undefined') {
-            this.execMode = 'undefined';
-            // Checkbox setzen
-         
-            let manualGroup = document.getElementById("manual-exec-btns");
-            let autoGroup = document.getElementById("automatic-exec");
-            manualGroup.classList.remove('on');
-            autoGroup.classList.remove('on');
-        } else if (execMode == 'manual') {
-            this.execMode = 'manual';
-            // Checkbox setzen
-     
-            let manualGroup = document.getElementById("manual-exec-btns");
-            let autoGroup = document.getElementById("automatic-exec");
-            autoGroup.classList.remove('on');
-            manualGroup.classList.add('on');
-
-        } else if (execMode == 'automatic') {
-            this.execMode = 'automatic';
-            // Checkbox setzen
-            let manualGroup = document.getElementById("manual-exec-btns");
-            let autoGroup = document.getElementById("automatic-exec");
-            manualGroup.classList.remove('on');
-            autoGroup.classList.add('on');
-            } else {
-            alert("Ein unzulässiger Exec-Mode is aufgetreten!");
-        }
-    }
-
+    
     setMode(mode) {
         if (mode == 'play') {
             this.currentMode = 'play';
@@ -165,88 +145,48 @@ class SudokuApp {
         }
     }
 
-    autoStep() {
-        if (this.execMode !== 'automatic') {
-            this.setExecMode('automatic');
-        }
-        let result = this.runner.autoStep();
-        if (result == 'success') {
-            this.autoRunStop();
-            alert("Spielende: Glückwunsch! Sudoku gelöst!");
-        } else if (result == 'fail') {
-            this.autoRunStop();
-            alert("Spielende: Sudoku nicht gelöst. Versuche es mit einer größeren Suchtiefe.");
-        } else {
-            // 'stopped' oder 'inProgress'
-            // Keine Aktion
-        }
-        let count = this.suGrid.countSolvedSteps();
-        this.progressBar.setValue(count);
-        let depth = document.getElementById("search-depth");
-        depth.innerText = this.runner.getCurrentSearchDepth();
-    }
 
 
-    autoRun() {
-        // Die automatische Ausführung
-        this.timer = window.setInterval(() => { sudoApp.autoStep(); }, 500);
-    }
-
-    autoRunPause() {
-        // Die automatische Ausführung
-        window.clearInterval(this.timer);
-    }
-
-    autoRunStop() {
-        // Die automatische Ausführung
-        window.clearInterval(this.timer);
-        this.runner.stop();
-    }
 
 
 
     numberButtonPressed(btnNumber) {
         // Ist manuelle Operation
-        this.setExecMode('manual');
+        this.runner.autoRunStop();
+        this.runner.switchOff();
         this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentMode, false);
     }
     deleteCellButtonPressed() {
         // Ist manuelle Operation
-        this.setExecMode('manual');
+        this.runner.autoRunStop();
+        this.runner.switchOff();
         this.suGrid.deleteSelected(this.currentMode, false);
     }
 
     initButtonPressed() {
+        this.runner.autoRunStop();
+        this.runner.switchOff();
         this.init();
-        this.setExecMode('undefined');
     }
+
     resetBtnPressed() {
+        this.runner.autoRunStop();
+        this.runner.switchOff();
         this.suGrid.reset();
-        this.autoRunStop()
-        this.runner.init();
-        this.progressBar.init();
-        this.progressBar.setValue(0);
-        this.setExecMode('undefined');
     }
 
     saveBtnPressed() {
         // Zustand soll gespeichert werden
-        this.autoRunStop()
-        this.runner.init();
-        this.progressBar.init();
-        this.progressBar.setValue(0);
-        this.setExecMode('undefined');
-
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageSaveDialog.open(tmpNameList);
-
     }
 
     restoreBtnPressed() {
         // Zustand soll wiederhergestellt werden
+        this.runner.autoRunStop();
+        this.runner.switchOff();
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageRestoreDialog.open(tmpNameList);
-
     }
     deleteBtnPressed() {
         // Zustand soll gelöscht werden
@@ -255,14 +195,8 @@ class SudokuApp {
     }
 
     sudokuCellPressed(cellNode, index) {
-        if (this.execMode !== 'manual') {
-            this.setExecMode('manual');
-            this.autoRunStop()
-            this.runner.init();
-            this.progressBar.init();
-            this.progressBar.setValue(0);
-            this.setExecMode('undefined');
-        }
+        this.runner.autoRunStop();
+        this.runner.switchOff();
         this.suGrid.select(cellNode, index);
     }
 
@@ -296,12 +230,8 @@ class SudokuApp {
         // Hole den State mit diesem Namen
         let tmpState = this.sudokuStorage.getNamedState(stateName);
         if (tmpState !== null) {
-            this.setExecMode('undefined');
-            this.autoRunStop()
-            this.runner.init();
-            this.progressBar.init();
-            this.progressBar.setValue(0);
-            this.setExecMode('undefined');
+            this.runner.autoRunStop();
+            this.runner.switchOff();
             //Lösche aktuelle Selektio
             this.suGrid.deselect();
             // Setze den aus dem Speicher geholten Zustand
@@ -352,8 +282,8 @@ class ProgressBar {
     setValue(stepCount) {
         let stepProzent = Math.floor(stepCount / 81 * 100);
         this.elem.style.width = stepProzent + "%";
-        if (stepCount < 10){
-            this.elem.innerHTML = '';       
+        if (stepCount < 10) {
+            this.elem.innerHTML = '';
         } else {
             this.elem.innerHTML = stepCount + " / 81";
         }
@@ -362,18 +292,29 @@ class ProgressBar {
 
 //========================================================================
 class Stepper {
-    constructor() {
+    constructor(searchDepth) {
+        this.searchDepth = searchDepth;
         this.currentStep = new OptionStep(null, -1, ['0']);
-        console.log("Tiefe 0");
+        this.maxDepth = 0;
+        // console.log("Tiefe 0");
     }
+
+
     getCurrentStep() {
         return this.currentStep;
     }
     searchDepthLimitReached() {
-        return (!(this.currentStep.getDepth() < searchDepth + 1));
+        return (!(this.currentStep.getDepth() + 1 <= this.searchDepth));
     }
     getCurrentSearchDepth() {
-        return this.currentStep.getDepth();
+        let tmpDepth = this.currentStep.getDepth();
+        if (tmpDepth > this.maxDepth) {
+            this.maxDepth = tmpDepth;
+        }
+        return tmpDepth;
+    }
+    getMaxSearchDepth() {
+        return this.maxDepth;
     }
     isOnOptionStep() {
         this.currentStep instanceof OptionStep;
@@ -529,7 +470,7 @@ class OptionPath {
     addOptionStep(cellIndex, optionList) {
         // Der neue Optionstep wird in diesem Path angelegt
         this.myLastOptionStep = new OptionStep(this, cellIndex, optionList);
-        console.log("Tiefe " + this.myLastOptionStep.getDepth());
+        // console.log("Tiefe " + this.myLastOptionStep.getDepth());
         // Damit ist dieser Pfad beendet. Es kann nur in seinen Subpfaden weitergehen
         return this.myLastOptionStep;
     }
@@ -574,28 +515,101 @@ class AutomatedRunnerOnGrid {
     constructor(suGrid) {
         this.suGrid = suGrid;
         this.myStepper;
+        this.searchDepth = 50;
+        this.timer = false;
+        this.execSpeed = 500;
+        this.isOn = false;
+        this.progressBar = new ProgressBar();
         this.autoMode = 'forward';
-        this.isStopped = false;
+    }
+
+    setMaxDepth(value) {
+        this.searchDepth = value;
     }
 
     init() {
-        this.isStopped = false;
-        this.myStepper = new Stepper();
-        this.setAutoMode('undefined');
+        // Das ist sinnvoll, weil jeder Lauf eine Menge Stepdaten erzeugt,
+        // die in der Regel nicht länger benötigt werden.
+        this.isOn = false;
+        // Der Runner hat immer einen aktuellen Stepper
+        window.clearInterval(this.timer);
+        this.timer = false;
+        this.autoMode = 'forward';
+        this.myStepper = new Stepper(this.searchDepth);
+        this.initRunnerDisplay();
+        //Default Tiefe setzen
+        this.setMaxDepth(5)
+        this.displayStatus();
     }
 
-    getCurrentSearchDepth() {
-        return this.myStepper.getCurrentSearchDepth();
+    initRunnerDisplay() {
+        this.initSpeedElement();
+        this.initDepthSettingElement();
+        this.initDepthElement();
+        this.initProgressElement();
     }
-    stop() {
-        this.isStopped = true;
+    initSpeedElement() {
+        let speedInput = document.getElementById('speedSetting');
+        speedInput.value = 'normal';
     }
-    setAutoMode(mode) {
-        this.autoMode = mode;
-        // Forward Mode setzen
+
+    initDepthSettingElement() {
+        let depthInput = document.getElementById('sudoDepthSetting');
+        depthInput.value = 5;
+    }
+
+    initDepthElement() {
+        let depth = document.getElementById("search-depth");
+        let maxDepth = document.getElementById("search-max-depth");
+        depth.innerText = "0";
+        maxDepth.innerText = "0";
+    }
+
+    initProgressElement() {
+        this.progressBar.setValue(0);
+    }
+
+    switchOn() {
+        if (this.isOn) {
+            // Nichts ist zu tun
+        } else {
+            // Wenn der Runner eingeschaltet wird, bekommt er einen neuen Stepper, sprich einen Backtracker
+            this.autoMode = 'forward';
+            this.myStepper = new Stepper(this.searchDepth);
+            this.isOn = true;
+            this.displayStatus();
+        }
+    }
+    switchOff() {
+        if (this.isOn) {
+            this.isOn = false;
+            this.suGrid.deselect();
+            this.displayStatus();
+        }
+    }
+
+    dispPlayOnOffStatus() {
+        let manualGroup = document.getElementById("manual-exec-btns");
+        let autoGroup = document.getElementById("automatic-exec");
+        if (this.isOn) {
+            manualGroup.classList.remove('on');
+            autoGroup.classList.add('on');
+        } else {
+            autoGroup.classList.remove('on');
+            manualGroup.classList.add('on');
+        }
+    }
+    displayStatus() {
+        this.dispPlayOnOffStatus();
+        this.displayDepth();
+        this.displayAutomode();
+        this.displayProgress();
+    }
+
+    displayAutomode() {
         let forwardNode = document.getElementById("radio-forward");
         let backwardNode = document.getElementById("radio-backward");
-        if (mode == 'forward') {
+        if (this.autoMode == 'forward') {
             forwardNode.checked = true;
             backwardNode.checked = false;
         } else {
@@ -604,59 +618,219 @@ class AutomatedRunnerOnGrid {
         }
     }
 
+    displayDepth() {
+        let depth = document.getElementById("search-depth");
+        let maxDepth = document.getElementById("search-max-depth");
+        if (this.isOn) {
+            depth.innerText = this.myStepper.getCurrentSearchDepth();
+            maxDepth.innerText = this.myStepper.getMaxSearchDepth();
+        } else {
+            depth.innerText = "0";
+            maxDepth.innerText = "0";
+        }
+    }
+
+    displayProgress() {
+        let count = this.suGrid.countSolvedSteps();
+        this.progressBar.setValue(count);
+    }
+
+
+    setAutoMode(mode) {
+        this.autoMode = mode;
+        this.displayAutomode();
+    }
+
     getAutoMode() {
         return this.autoMode;
     }
 
-    autoStep() {
-        if (!this.isStopped) {
-            if (this.autoMode == 'undefined') {
-                this.setAutoMode('forward');
+    // Ehemalig in der App
+    // =========================================================================
+   
+    setSpeed(value) {
+        switch (value) {
+            case 'very-slow': {
+                //Schritt pro 2 Sekunden
+                this.execSpeed = 2000;
+                break;
             }
-            if (this.autoMode == 'forward') {
-                this.stepForward();
-                return 'inProgress'
-            } else if (this.autoMode == 'backward') {
-                if (!this.stepBackward()) {
-                    return 'fail';
-                };
-            } else {
-                alert("Unzuässiger Mode im Stepper");
+            case 'slow': {
+                //Schritt pro 1 Sekunde
+                this.execSpeed = 1000;
+                break;
             }
-            if (this.suGrid.solved()) {
-                return 'success'
+            case 'normal': {
+                //Schritt pro 0,5 Sekunden
+                this.execSpeed = 500;
+                break;
             }
-        } else {
-            return 'stopped';
+            case 'fast': {
+                //Schritt pro 0,25  Sekunden
+                this.execSpeed = 250;
+                break;
+            }
+            default: {
+                alert('Softwarefehler: unbekannte Geschwindigkeitseingabe');
+            }
+        }
+        // Nur, wenn der Timer läuft
+        // Also nur im laufenden Betrieb.Denn sonst schaltet diese Operation den runner ein.
+        // Trickprogrammierung:
+        let isRunning = (this.timer !== false);
+        if(isRunning) {
+            window.clearInterval(this.timer);
+            this.timer = window.setInterval(() => { sudoApp.runner.autoStepEventHandler(); }, this.execSpeed);    
         }
     }
 
-    stepForward() {
-        if (this.deadlockReached() || this.myStepper.searchDepthLimitReached()) {
-            // deadlock reached
-            this.setAutoMode('backward');
-            return;
+    autoRun() {
+        // Die automatische Ausführung
+        if(!this.isOn){
+            this.switchOn();       
         }
+        this.timer = window.setInterval(() => {sudoApp.runner.autoStepEventHandler(); }, this.execSpeed);
+    }
+
+    autoRunPause() {
+        // Die automatische Ausführung
+        window.clearInterval(this.timer);
+        this.timer = false;
+    }
+
+    autoRunStop() {
+        // Die automatische Ausführung
+        window.clearInterval(this.timer);
+        this.timer = false;
+        this.switchOff();
+    }
+
+    autoStepEventHandler() {
+        // Aufgerufen durch den Timer oder
+        // Step-Button
+        if(!this.isOn){
+            this.switchOn();       
+        }
+        let result = this.autoStep();
+        this.displayStatus();
+        if (result == 'success') {
+            this.autoRunPause();
+            alert("Spielende: Glückwunsch! Sudoku gelöst!");
+        } else if (result == 'fail') {
+            this.autoRunPause();
+            alert("Spielende: Sudoku nicht gelöst. Versuche es mit einer größeren Suchtiefe");
+        } else {
+            // 'stopped' oder 'inProgress'
+            // Keine Aktion
+        }
+    }
+
+
+
+    //Das Bisherige
+    //==========================================================================
+    autoStep() {
+        // Rückgabemöglichkeiten: {'success', 'fail', 'inProgress', 'stopped'}
+        //if (!this.isStopped) {
+        if (this.autoMode == 'forward') {
+            let result = this.stepForward();
+            switch (result) {
+                case 'numberSet': {
+                    if (this.deadlockReached()) {
+                        this.setAutoMode('backward');
+                        return 'inProgress';
+                    } else {
+                        return 'inProgress';
+                    }
+                }
+                case 'cellSelected-realStepCreated': {
+                    return 'inProgress';
+                }
+                case 'cellSelected-nextRealStepCreated': {
+                    return 'inProgress';
+                }
+                case 'nothingToSelect': {
+                    // Es gibt erst dann keine Selektion mehr,
+                    // wenn die Tabelle vollständig gefüllt ist
+                    // Dann ist sie auch prinzipbedingt konsistent gefüllt
+                    return 'success';
+                }
+                case 'searchDepthLimitExceeded': {
+                    this.setAutoMode('backward');
+                    return 'inProgress';
+                }
+                default: {
+                    alert('Softwarefehler: Unerwarteter Rückgabewert in stepForward(): ' + result);
+                }
+            }
+        } else
+        if (this.autoMode == 'backward') {
+            let result = this.stepBackward();
+            switch (result) {
+                case 'root-Optionstep-reached': {
+                    // D.h. Es gibt keine Lösung für das Sudoku
+                    return 'fail';
+                }
+                case 'currentStep-cell-selected': {
+                    // Die Zelle des Schrittes selektiert,
+                    // um danach ihre Nummer zu  löschen
+                    return 'inProgress';
+                }
+                case 'cellNumber-unsetted-and-step-backward': {
+                    // Die Nummer des selektierten Schrittes gelöscht
+                    // und einen Schritt rückwärts gegangen
+                    return 'inProgress';
+                }
+                case 'next-option-selected': {
+                    // Für die nächste Option in einem Optionsschritt
+                    // einen Realstep erzeugt
+                    this.setAutoMode('forward');
+                    return 'inProgress';
+                }
+                case 'step backward from a Optionstep': {
+                    // Nach der vollständigen Abarbeitung eines Optionsschrittes
+                    // Zurück vor diesen Schritt
+                    return 'inProgress';
+                }
+                case 'step backward from a Realstep': {
+                    return 'inProgress'
+                }
+                default: {
+                    alert('Softwarefehler: Unerwarteter Rückgabewert in stepBackward(): ' + result);
+                }
+            }
+        } else {
+            alert("Softwarefehler:autoStep() nicht mit forward oder backward aufgerufen");
+        }
+   
+    }
+
+    stepForward() {
+        // Zwei Starsituationnen müssen für diese Operation unterschieden werden:
+        // Situation 1:
+        // 1. a.: In der Sudoku-Tabelle ist eine Zelle selektiert
+        //    b.: Im Stepper sagt der aktuelle Schritt, welche Nummer in der sektierten Zelle gesetzt werden soll.
+        //    Handlung für Situation 1: Nummer setzen. 
+        // Situation 2:
+        // 2. a.: In der Sudoku-Tabelle ist keine Zelle selektiert
+        //    b.: Im Stepper ist noch kein nächster Schritt angelegt.
+        //    Handlung für 2:
+        //      2.a. : In der Sudokutabelle wird die nächste Selektion bestimmt.
+        //        b.: ein dazu passender nächster Schritt wird angelegt     
+        // Rückgabemöglichkeiten: {'numberSet', 'cellSelected-realStepCreated', 'nothingToSelect', 
+        //                          'searchDepthLimitExceeded'}
+        // Und ein neuer aktueller Schritt im Stepper
         if (this.suGrid.indexSelected == -1) {
             // Keine Zelle selekteirt
             let tmpSelection = this.autoSelect();
             if (tmpSelection.index == -1) {
-                if (this.suGrid.solved()) {
-                    return;
-                } else {
-                    sudoApp.autoRunStop();
-                    alert("Hinweis:es gibt keine nächste Selektion, obwohl das Spiel nicht beendet ist")
-                }
+                return 'nothingToSelect'
             } else {
-                // Gültige nächste Selektion
+                // Den nächsten Nummersetzschritt ermitteln
+                // Selektiere die Zelle, für die der nächste Nummernsetzschritt ermittelt wird
                 this.suGrid.indexSelect(tmpSelection.index);
                 // Jetzt muss für diese Selektion eine Nummer bestimmt werden.
                 // Ergebnis wird sein: realStep mit Nummer
-                /*  if (this.myStepper.isOnOptionStep()) {
-                     // Dann muss die nächste Option verwendet werden
-                     this.myStepper.getNextRealStep();
-                 } else { */
-                // steht auf einem Realstep, dann muss der nächste Realstep konfiguriert werden
                 let tmpValue = '0';
                 if (tmpSelection.options.length == 1) { tmpValue = tmpSelection.options[0]; }
                 if (tmpSelection.necessaryOnes.length == 1) { tmpValue = tmpSelection.necessaryOnes[0]; }
@@ -664,28 +838,23 @@ class AutomatedRunnerOnGrid {
                     //Die Selektion hat eine eindeutige Nummer.
                     //D.h. es geht eindeutig weiter.
                     this.myStepper.addRealStep(tmpSelection.index, tmpValue);
+                    return 'cellSelected-realStepCreated';
                 } else {
                     //Die Selektion hat keine eindeutige Nummer.
                     //D.h. es geht mit mehreren Optionen weiter.
-                    this.myStepper.addOptionStep(tmpSelection.index, tmpSelection.options.slice());
                     // Nächster realstep mit einer Optionsnummer
                     // Aber nur wenn das Tiefenlimit nicht überschritten ist
                     if (this.myStepper.searchDepthLimitReached()) {
-                        this.setAutoMode('backward');
-                        // Schritt vor dem OptionStep
-                        let prevStep = this.myStepper.previousStep();
+                        return 'searchDepthLimitExceeded';
                     } else {
-                        if (!this.myStepper.getCurrentStep().isCompleted()) {
-                            this.myStepper.getNextRealStep();
-                        } else {
-                            sudoApp.autoRunStop();
-                            alert("Softearefehler: Für die selektierte Zelle gibt es keine Nummer");
-                        }
+                        this.myStepper.addOptionStep(tmpSelection.index, tmpSelection.options.slice());
+                        // Die erste Option des Optionsschrittes, wird gleich gewählt
+                        let realStep = this.myStepper.getNextRealStep();
+                        return 'cellSelected-nextRealStepCreated';
                     }
                 }
-                //}
             }
-        } else if (this.suGrid.indexSelected !== -1) {
+        } else {
             // Eine Zelle ist selektiert
             // Aktuelle Selektion --> Nummer setzen
             let currentStep = this.myStepper.getCurrentStep();
@@ -693,60 +862,54 @@ class AutomatedRunnerOnGrid {
                 // Setze die eindeutige Nummer
                 this.suGrid.atCurrentSelectionSetNumber(currentStep.getValue(), 'play', false);
             }
+            return 'numberSet';
         }
     }
 
     stepBackward() {
+        // Aus verschiedenen Gründen kommt es dazu, dass der Stepper rückwärtz gehen muss.
+        // Nach jedem Rückwärtzschritt steht der Stepper auf einem RealStep oder einem OptionStep
         let currentStep = this.myStepper.getCurrentStep();
         // Prüfen, ob das der Wurzelschritt ist. Dann Abbruch.
         if (currentStep instanceof OptionStep) {
             if (currentStep.getCellIndex() == -1) {
-                //Wurzel erreicht
-                return false;
+                //Im Wurzel-Optionsschritt gibt es keine Option mehr
+                return 'root-Optionstep-reached';
             }
-        } else {
-            // Der erste Schrit im Pfad 0 ist ein korrekter Reastep.
         }
+        if (currentStep instanceof OptionStep) {
+            if (!currentStep.isCompleted()) {
+                // Dieser Schritt muss noch mit weiteren Nummern probiert werden
+                this.myStepper.getNextRealStep();
+                return 'next-option-selected'
+            } else {
+                this.myStepper.previousStep();
+                return 'step backward from a Optionstep'
+            }
+        }
+        // Jetzt 3 Unterfälle, für den Fall, dass der aktuelle Schritt ein RealStep ist
+        // Unterfall 1: Keine Zelle selektiert
         if (this.suGrid.indexSelected !== currentStep.getCellIndex()) {
-            // Keine aktuelle Selektion oder falsche Selektion --> Selektion setzen
+            // Keine aktuelle Selektion 
             this.suGrid.deselect();
             this.suGrid.indexSelect(currentStep.getCellIndex());
-            return true;
-        } else if (this.suGrid.sudoCells[currentStep.getCellIndex()].value() !== '0') {
+            return 'currentStep-cell-selected';
+        }
+        // Unterfall 2: Die selektierte Zelle ist noch nicht gelöscht
+        if (this.suGrid.sudoCells[currentStep.getCellIndex()].value() !== '0') {
             // Die selektierte Zelle ist noch nicht gelöscht
             // und wird jetz gelöscht
             this.suGrid.deleteSelected('play', false);
             // Im Stepper heißt das: einen Schritt zurück
             let prevStep = this.myStepper.previousStep();
-            return true;
-        } else if (currentStep instanceof RealStep) {
-            //Setze aktuellen Schritt des Steppers rückwärtz
-            let previousStep = this.myStepper.previousStep();
-            // Und gleich nochmal, um auf eine Realstep zu kommen
-            //let prevRealstep = previousStep.previousFromOptionStep();
-            let prevRealstep = this.myStepper.previousStep();
-            if (prevRealstep.getCellIndex == -1) {
-                // Die Wurzel ist erreicht
-                return false;
-            } else {
-                // Den Schritt selekktieren
-                this.suGrid.deselect();
-                this.suGrid.indexSelect(prevRealstep.getCellIndex());
-                return true;
-            }
-        } else if (currentStep instanceof OptionStep) {
-            if (!currentStep.isCompleted()) {
-                // Dieser Schritt muss noch mit weiteren Nummern probiert werden
-                this.myStepper.getNextRealStep();
-                this.setAutoMode('forward');
-            } else {
-                this.myStepper.previousStep();
-            }
-            return true;
-        } else {
-            sudoApp.autoRunStop();
-            alert("Softwarefehler: Beim Rückwärtsgehen unerwarteter Fehler")
+            return 'cellNumber-unsetted-and-step-backward';
         }
+        // Unterfall 3: Realstep, dessen Nummer bereits gelöscht ist
+
+        //Setze aktuellen Schritt des Steppers rückwärtz
+        let previousStep = this.myStepper.previousStep();
+        return 'step backward from a Realstep';
+
     }
 
     calculateMinSelectionFrom(selectionList) {
@@ -759,7 +922,7 @@ class AutomatedRunnerOnGrid {
             necessaryOnes: []
         }
         for (let i = 0; i < selectionList.length; i++) {
-            if (selectionList[i].options.length < minSelection.options.length) {
+            if (selectionList[i].options.length <= minSelection.options.length) {
                 minSelection = selectionList[i];
             }
         }
@@ -800,15 +963,25 @@ class AutomatedRunnerOnGrid {
 
     autoSelect() {
         let optionList = this.getOptionalSelections();
-        //Bestimmt die nächste Zelle mit notwendiger Nummer unter den zulässigen Nummern
-        let tmpSelection = this.calculateNeccesarySelectionFrom(optionList);
-        if (tmpSelection.index == -1) {
-            // Bestimmt die nächste Zelle mit minimaler Anzahl zulässiger Nummern
-            return this.calculateMinSelectionFrom(optionList);
-        } else {
-            // Gibt tmpSelection mit index = -1 zurück, falls keine gültige Selektion mehr gibt
-            return tmpSelection;
+        if (optionList.length == 0) {
+            let emptySelection = {
+                index: -1,
+                options: [],
+                necessaryOnes: []
+            }
+            return emptySelection;
         }
+        //Bestimmt die nächste Zelle mit notwendiger Nummer unter den zulässigen Nummern
+        let tmpNeccessary = this.calculateNeccesarySelectionFrom(optionList);
+        if (tmpNeccessary.index !== -1) {
+            return tmpNeccessary;
+        }
+        let tmpMin = this.calculateMinSelectionFrom(optionList);
+        // Falls es keine notwendigen Nummern gibt:
+        // Bestimmt eine nächste Zelle mit minimaler Anzahl zulässiger Nummern
+        // Diese Zelle ist nicht eindeuitig
+        // Diese Zelle kann eine mit der vollen Optionsmenge sein
+        return tmpMin;
     }
     deadlockReached() {
         // Deadlock ist erreicht, wenn es eine unlösbare Zelle gibt

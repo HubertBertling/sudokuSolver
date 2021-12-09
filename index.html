@@ -148,14 +148,17 @@
                                 <p style="font-weight: bold;">Automatische Ausführung</p>
                                 <div class="auto-exec-btns">
                                     <div class="btn-auto-group">
-                                        <div class="btn-automatic" id="btn-run"><img src="images/automatic.png"
+                                        <div class="btn-automatic" id="btn-run"><img src="images/play-96.png"
                                                 class="btn-image">
                                         </div>
-                                        <div class="btn-automatic" id="btn-pause"><img src="images/pause.png"
+                                        <div class="btn-automatic" id="btn-pause"><img src="images/pause-96.png"
+                                                class="btn-image">
+                                        </div>
+                                        <div class="btn-automatic" id="btn-stop"><img src="images/stop-96.png"
                                                 class="btn-image">
                                         </div>
                                     </div>
-                                    <div class="btn-automatic" id="btn-autoStep"><img src="images/nextstep.png"
+                                    <div class="btn-automatic" id="btn-autoStep"><img src="images/step-96.png"
                                             class="btn-image">
                                     </div>
                                 </div>
@@ -168,23 +171,51 @@
 
                 <div class="track-group">
                     <div class="depth-group">
+                        <div class="depth-label">
+                            Suchtiefe:
+                        </div>
                         <div>
-                            Aktuelle Suchtiefe:
+                            <div>
+                                <div class="name-value">
+                                    Aktuelle Suchtiefe:
+                                </div>
+                                <div class="name-value search-depth" id="search-depth">
+                                    0
+                                </div>
+                            </div>
+                            <div class = "search-max-depth">
+                                <div class="name-value">
+                                    Maximal erreichte Suchtiefe:
+                                </div>
+                                <div class="name-value search-depth" id="search-max-depth">
+                                    0
+                                </div>
+                            </div>
                         </div>
-                        <div class="search-depth" id="search-depth">
-                            0
+                        <div>
+                            <div>
+                                Wähle maxmale Suchtiefe: <input class="sudoSettingDepth" type="number" min="1" max="50"
+                                    step="1" id="sudoDepthSetting" name="maxDepth" value="5" />
+                            </div>
+                            <div class ="speed-field">
+                                <label for="speed">Wähle Geschwindigkeit:</label>
+                                <select class="speedSetting"  name="speed" id="speedSetting">
+                                    <option value="very-slow">Sehr langsam</option>
+                                    <option value="slow">Langsam</option>
+                                    <option selected value="normal">Normal</option>
+                                    <option value="fast">Schnell</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="autoMode-radio-btns">
-                        <label for="radio-backward"> Zurück </label>
-                        <input class="backward-on-off" id="radio-backward" name="direction" type="radio">
-                        <label for="radio-forward">Vor </label>
-                        <input class="forward-on-off" id="radio-forward" name="direction" type="radio">
                     </div>
                 </div>
                 <div class="progress-group">
-                    <div>
+                    <div class="progress-label">
                         Fortschritt:
+                    </div>
+                    <div class="autoMode-radio-btns">
+                        <input class="backward-forward" id="radio-backward" name="direction" type="radio"> Zurück <br>
+                        <input class="backward-forward" id="radio-forward" name="direction" type="radio"> Vor
                     </div>
                     <div class="progress-bar" id="myProgress">
                         <div id="myBar">40%</div>
@@ -192,7 +223,7 @@
                 </div>
 
 
-  
+
             </div>
             <div class="main-btns">
                 <div class="config-btns">
