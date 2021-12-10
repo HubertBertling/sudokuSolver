@@ -149,18 +149,26 @@ class SudokuApp {
 
     numberButtonPressed(btnNumber) {
         // Ist manuelle Operation
-        this.runner.init();
+        this.runner.stopTimer();
+        if (this.runner.isOn){
+            this.runner.switchOff();
+        }
         this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentMode, false);
     }
     deleteCellButtonPressed() {
         // Ist manuelle Operation
-        this.runner.init();
+        this.runner.stopTimer();
+        if (this.runner.isOn){
+            this.runner.switchOff();
+        }
         this.suGrid.deleteSelected(this.currentMode, false);
+        this.suGrid.deselect();
     }
 
     initButtonPressed() {
         this.runner.stopTimer();
-        this.init();
+        this.suGrid.initGrid();
+        this.runner.init();
     }
 
     resetBtnPressed() {
@@ -171,25 +179,28 @@ class SudokuApp {
 
     saveBtnPressed() {
         // Zustand soll gespeichert werden
+        this.runner.stopTimer();
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageSaveDialog.open(tmpNameList);
     }
 
     restoreBtnPressed() {
         // Zustand soll wiederhergestellt werden
-        this.runner.init();
+        this.runner.stopTimer();
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageRestoreDialog.open(tmpNameList);
     }
     deleteBtnPressed() {
         // Zustand soll gelöscht werden
+        this.runner.stopTimer();
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageDeleteDialog.open(tmpNameList);
     }
 
     sudokuCellPressed(cellNode, index) {
-        this.runner.init();
+        this.runner.stopTimer();
         this.suGrid.select(cellNode, index);
+        this.runner.init();
     }
 
     saveStorageDlgOKPressed() {
@@ -222,11 +233,11 @@ class SudokuApp {
         // Hole den State mit diesem Namen
         let tmpState = this.sudokuStorage.getNamedState(stateName);
         if (tmpState !== null) {
-            this.runner.init();
             //Lösche aktuelle Selektio
             this.suGrid.deselect();
             // Setze den aus dem Speicher geholten Zustand
             this.suGrid.setCurrentState(tmpState);
+            this.runner.init();
         } else {
             alert("Zustand mit diesem Namen existiert nicht");
         }
@@ -467,17 +478,7 @@ class OptionPath {
     previousFromRealStep(currentIndex) {
         // Rückwärtz vom RealStep
         if (currentIndex == 0) {
-            // der vorige Step liegt nicht in diesem Path
-            // und ist ein Option-Step
-            if (this.myValue == '0') {
-                // Dann ist dieser Pfad er Root-Path
-                // D.h. es gibt keinen Vorgängerschritt mehr
-                // Dann wird der Schritt selbst zurückgegeben
-                return this.myRealSteps[0];
-            } else {
-                // Eon optionstep
-                return this.myOwnerStep;
-            }
+            return this.myOwnerStep;
         } else {
             // der vorige step liegt in diesem Path
             return this.myRealSteps[currentIndex - 1];
@@ -515,8 +516,6 @@ class AutomatedRunnerOnGrid {
         this.searchDepth = value;
     }
     basicInit() {
-        window.clearInterval(this.timer);
-        this.timer = false;
         this.goneSteps = 0;
         this.autoMode = 'forward';
         // Der Runner hat immer einen aktuellen Stepper
@@ -572,7 +571,7 @@ class AutomatedRunnerOnGrid {
         this.displayAutomode();
         this.displayProgress();
         this.displayGoneSteps();
-        this.displaySpeedSetting()
+        this.displaySpeedSetting();
     }
     displaySpeedSetting() {
         let option = document.getElementById('speedSetting').selectedIndex = 3;
@@ -677,9 +676,14 @@ class AutomatedRunnerOnGrid {
     autoRun() {
         // Die automatische Ausführung
         if (!this.isOn) {
+            //Manueller Mode aktiv
+            this.init;
             this.switchOn();
         }
-        this.timer = window.setInterval(() => { sudoApp.runner.autoStepEventHandler(); }, this.execSpeed);
+        // Manuell oder automatischer Mode, der Timer wird gestartet
+        if (!this.isRunning()) {
+            this.timer = window.setInterval(() => { sudoApp.runner.autoStepEventHandler(); }, this.execSpeed);
+        }
     }
 
     stopTimer() {
@@ -690,8 +694,7 @@ class AutomatedRunnerOnGrid {
 
     autoRunStop() {
         // Die automatische Ausführung
-        window.clearInterval(this.timer);
-        this.timer = false;
+        this.stopTimer();
         this.init();
     }
 
@@ -699,8 +702,12 @@ class AutomatedRunnerOnGrid {
         // Aufgerufen durch den Timer oder
         // Step-Button
         if (!this.isOn) {
+            //Manueller Mode aktiv
+            this.suGrid.deselect();
+            this.init;
             this.switchOn();
         }
+        // In beiden Fällen folgt der eigentlche Schritt
         this.goneSteps++;
         let result = this.autoStep();
         this.displayStatus();
@@ -709,7 +716,7 @@ class AutomatedRunnerOnGrid {
             alert("Spielende: Glückwunsch! Sudoku gelöst!");
         } else if (result == 'fail') {
             this.stopTimer();
-            alert("Spielende: Sudoku nicht gelöst. Versuche es mit einer größeren Suchtiefe");
+            alert("Spielende: Das Sudoku ist inkonsistent und besitzt daher keine Lösung!");
         } else {
             // 'stopped' oder 'inProgress'
             // Keine Aktion
