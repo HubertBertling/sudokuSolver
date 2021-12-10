@@ -68,11 +68,13 @@ class SudokuApp {
 
         // Automatische Ausführung: schrittweise
         document.querySelector('#btn-autoStep').addEventListener('click', () => {
+            this.setMode('play');
             sudoApp.runner.autoStepEventHandler();
         });
 
         // Automatische Ausführung: vollautomatisch
         document.querySelector('#btn-run').addEventListener('click', () => {
+            this.setMode('play');
             sudoApp.runner.autoRun();
         });
         // Automatische Ausführung: vollautomatisch
@@ -144,11 +146,6 @@ class SudokuApp {
             document.querySelector('#btn-play').classList.remove('pressed');
         }
     }
-
-
-
-
-
 
     numberButtonPressed(btnNumber) {
         // Ist manuelle Operation
@@ -230,8 +227,10 @@ class SudokuApp {
         // Hole den State mit diesem Namen
         let tmpState = this.sudokuStorage.getNamedState(stateName);
         if (tmpState !== null) {
+            /*
             this.runner.autoRunStop();
-            this.runner.switchOff();
+            this.runner.switchOff(); */
+            this.runner.init();
             //Lösche aktuelle Selektio
             this.suGrid.deselect();
             // Setze den aus dem Speicher geholten Zustand
@@ -538,7 +537,7 @@ class AutomatedRunnerOnGrid {
         this.myStepper = new Stepper(this.searchDepth);
         this.initRunnerDisplay();
         //Default Tiefe setzen
-        this.setMaxDepth(5)
+        this.setMaxDepth(50)
         this.displayStatus();
     }
 
@@ -555,7 +554,7 @@ class AutomatedRunnerOnGrid {
 
     initDepthSettingElement() {
         let depthInput = document.getElementById('sudoDepthSetting');
-        depthInput.value = 5;
+        depthInput.value = 50;
     }
 
     initDepthElement() {
@@ -602,6 +601,7 @@ class AutomatedRunnerOnGrid {
     displayStatus() {
         this.dispPlayOnOffStatus();
         this.displayDepth();
+        this.displayDepthSettingElement();
         this.displayAutomode();
         this.displayProgress();
     }
@@ -628,6 +628,11 @@ class AutomatedRunnerOnGrid {
             depth.innerText = "0";
             maxDepth.innerText = "0";
         }
+    }
+
+    displayDepthSettingElement() {
+        let depthInput = document.getElementById('sudoDepthSetting');
+        depthInput.value = this.searchDepth;
     }
 
     displayProgress() {

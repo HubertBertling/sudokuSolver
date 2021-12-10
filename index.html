@@ -183,7 +183,7 @@
                                     0
                                 </div>
                             </div>
-                            <div class = "search-max-depth">
+                            <div class="search-max-depth">
                                 <div class="name-value">
                                     Maximal erreichte Suchtiefe:
                                 </div>
@@ -197,9 +197,9 @@
                                 Wähle maxmale Suchtiefe: <input class="sudoSettingDepth" type="number" min="1" max="50"
                                     step="1" id="sudoDepthSetting" name="maxDepth" value="5" />
                             </div>
-                            <div class ="speed-field">
+                            <div class="speed-field">
                                 <label for="speed">Wähle Geschwindigkeit:</label>
-                                <select class="speedSetting"  name="speed" id="speedSetting">
+                                <select class="speedSetting" name="speed" id="speedSetting">
                                     <option value="very-slow">Sehr langsam</option>
                                     <option value="slow">Langsam</option>
                                     <option selected value="normal">Normal</option>
@@ -243,17 +243,19 @@
         <div class="Dialogs">
             <div class="storageSaveDialog" id="storageSaveDialog">
                 <form name="saveForm" id="storageSaveForm">
-                    <div class="storageSaveFormElement">
-                        <h1>Zustand speichern unter ...</h1>
+                    <div class="textInDlgs">
+                        Zustand speichern unter ...
                     </div>
-                    <div class="combBox">Zustandsname: </div>
-                    <div name="comboBox" class="storageSaveFormElement" id="storageSaveComboBox">
-                        <input class="combBox" type="text" id="saveStorageName" name="saveStorageName" />
-                        <select class="combBox" name="saveStorageList" id="saveStorageList">
-                            <option>oneoneone</option>
-                            <option>two</option>
-                            <option>three</option>
-                        </select>
+                    <div class="input-row">
+                        <div class="textInDlgs">Zustandsname: </div>
+                        <div name="comboBox" class="storageSaveFormElement" id="storageSaveComboBox">
+                            <input class="textInDlgs" type="text" id="saveStorageName" name="saveStorageName" />
+                            <select class="textInDlgs" name="saveStorageList" id="saveStorageList">
+                                <option>oneoneone</option>
+                                <option>two</option>
+                                <option>three</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="storageSaveDialogButtons storageSaveFormElement ok-cancel-btns">
                         <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageOK" name="ok" value="OK" />
@@ -264,13 +266,13 @@
             </div>
             <div class="storageRestoreDialog" id="storageRestoreDialog">
                 <form name="restoreForm" id="storageRestoreForm">
-                    <div class="storageRestoreFormElement">
-                        <h1>Zustand wiederherstellen</h1>
+                    <div class="textInDlgs">
+                        Zustand wiederherstellen ...
                     </div>
-                    <div>Zustandsname: </div>
+                    <div class="textInDlgs">Zustandsname: </div>
                     <div name="comboBox" class="storageRestoreFormElement" id="storageRestoreComboBox">
-                        <input class="combBox" type="text" id="restoreStorageName" name="restoreStorageName" />
-                        <select class="combBox" name="restoreStorageList" id="restoreStorageList">
+                        <input class="textInDlgs" type="text" id="restoreStorageName" name="restoreStorageName" />
+                        <select class="textInDlgs" name="restoreStorageList" id="restoreStorageList">
                             <option>oneoneone</option>
                             <option>two</option>
                             <option>three</option>
@@ -286,13 +288,13 @@
             </div>
             <div class="storageDeleteDialog" id="storageDeleteDialog">
                 <form name="deleteForm" id="storageDeleteForm">
-                    <div class="storageDeleteFormElement">
-                        <h1>Zustand löschen</h1>
+                    <div class="textInDlgs">
+                        Zustand löschen ...
                     </div>
-                    <div>Zustandsname: </div>
+                    <div class="textInDlgs">Zustandsname: </div>
                     <div name="comboBox" class="storageDeleteFormElement" id="storageDeleteComboBox">
-                        <input class="combBox" type="text" id="restoreStorageName" name="restoreStorageName" />
-                        <select class="combBox" name="restoreStorageList" id="restoreStorageList">
+                        <input class="textInDlgs" type="text" id="restoreStorageName" name="restoreStorageName" />
+                        <select class="textInDlgs" name="restoreStorageList" id="restoreStorageList">
                             <option>oneoneone</option>
                             <option>two</option>
                             <option>three</option>

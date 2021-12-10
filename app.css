@@ -471,9 +471,13 @@ body {
     top: 20px;
 }
 
-.combBox {
+.input-row {
+    display: inline;
+}
+
+.textInDlgs {
     padding: 5px;
-    font-size: 18px;
+    font-size: 16px;
 }
 .ok-cancel-btns {
     display: grid;
@@ -482,8 +486,8 @@ body {
 }
 
 .okCancelBtn {
-    display: grid;
-    place-items: center;
+    display: inline;
+   /* place-items: center;*/
     
 }
 
