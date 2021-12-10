@@ -79,7 +79,7 @@ class SudokuApp {
         });
         // Automatische Ausführung: vollautomatisch
         document.querySelector('#btn-pause').addEventListener('click', () => {
-            sudoApp.runner.autoRunPause();
+            sudoApp.runner.stopTimer();
         });
         // Automatische Ausführung: vollautomatisch
         document.querySelector('#btn-stop').addEventListener('click', () => {
@@ -134,7 +134,7 @@ class SudokuApp {
         this.runner = new AutomatedRunnerOnGrid(this.suGrid);
         this.runner.init();
     }
-    
+
     setMode(mode) {
         if (mode == 'play') {
             this.currentMode = 'play';
@@ -149,27 +149,24 @@ class SudokuApp {
 
     numberButtonPressed(btnNumber) {
         // Ist manuelle Operation
-        this.runner.autoRunStop();
-        this.runner.switchOff();
+        this.runner.init();
         this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentMode, false);
     }
     deleteCellButtonPressed() {
         // Ist manuelle Operation
-        this.runner.autoRunStop();
-        this.runner.switchOff();
+        this.runner.init();
         this.suGrid.deleteSelected(this.currentMode, false);
     }
 
     initButtonPressed() {
-        this.runner.autoRunStop();
-        this.runner.switchOff();
+        this.runner.stopTimer();
         this.init();
     }
 
     resetBtnPressed() {
-        this.runner.autoRunStop();
-        this.runner.switchOff();
+        this.runner.stopTimer();
         this.suGrid.reset();
+        this.runner.init();
     }
 
     saveBtnPressed() {
@@ -180,8 +177,7 @@ class SudokuApp {
 
     restoreBtnPressed() {
         // Zustand soll wiederhergestellt werden
-        this.runner.autoRunStop();
-        this.runner.switchOff();
+        this.runner.init();
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageRestoreDialog.open(tmpNameList);
     }
@@ -192,8 +188,7 @@ class SudokuApp {
     }
 
     sudokuCellPressed(cellNode, index) {
-        this.runner.autoRunStop();
-        this.runner.switchOff();
+        this.runner.init();
         this.suGrid.select(cellNode, index);
     }
 
@@ -227,20 +222,11 @@ class SudokuApp {
         // Hole den State mit diesem Namen
         let tmpState = this.sudokuStorage.getNamedState(stateName);
         if (tmpState !== null) {
-            /*
-            this.runner.autoRunStop();
-            this.runner.switchOff(); */
             this.runner.init();
             //Lösche aktuelle Selektio
             this.suGrid.deselect();
             // Setze den aus dem Speicher geholten Zustand
             this.suGrid.setCurrentState(tmpState);
-            // Berechne die möglichen Inhalte der Zellen
-            this.suGrid.recalculatePermissibleSets();
-            // Berechne potentiell vorhandene Konflikte
-            this.suGrid.reCalculateErrorCells();
-            // Berechne die notwendigen Zellinhalte
-            this.suGrid.reEvaluateNecessarys();
         } else {
             alert("Zustand mit diesem Namen existiert nicht");
         }
@@ -517,57 +503,38 @@ class AutomatedRunnerOnGrid {
         this.searchDepth = 50;
         this.timer = false;
         this.execSpeed = 500;
+        this.goneSteps = 0;
         this.isOn = false;
         this.progressBar = new ProgressBar();
         this.autoMode = 'forward';
+        this.basicInit();
     }
 
     setMaxDepth(value) {
         this.searchDepth = value;
     }
+    basicInit() {
+        window.clearInterval(this.timer);
+        this.timer = false;
+        this.goneSteps = 0;
+        this.autoMode = 'forward';
+        // Der Runner hat immer einen aktuellen Stepper
+        this.myStepper = new Stepper(this.searchDepth);
+        //Default Tiefe setzen
+        this.setMaxDepth(50)
+        this.switchOff();
+        this.displayStatus();
+    }
 
     init() {
         // Das ist sinnvoll, weil jeder Lauf eine Menge Stepdaten erzeugt,
         // die in der Regel nicht länger benötigt werden.
-        this.isOn = false;
-        // Der Runner hat immer einen aktuellen Stepper
-        window.clearInterval(this.timer);
-        this.timer = false;
-        this.autoMode = 'forward';
-        this.myStepper = new Stepper(this.searchDepth);
-        this.initRunnerDisplay();
-        //Default Tiefe setzen
-        this.setMaxDepth(50)
-        this.displayStatus();
+        if (this.isOn) {
+            this.basicInit();
+        }
     }
 
-    initRunnerDisplay() {
-        this.initSpeedElement();
-        this.initDepthSettingElement();
-        this.initDepthElement();
-        this.initProgressElement();
-    }
-    initSpeedElement() {
-        let speedInput = document.getElementById('speedSetting');
-        speedInput.value = 'normal';
-    }
-
-    initDepthSettingElement() {
-        let depthInput = document.getElementById('sudoDepthSetting');
-        depthInput.value = 50;
-    }
-
-    initDepthElement() {
-        let depth = document.getElementById("search-depth");
-        let maxDepth = document.getElementById("search-max-depth");
-        depth.innerText = "0";
-        maxDepth.innerText = "0";
-    }
-
-    initProgressElement() {
-        this.progressBar.setValue(0);
-    }
-
+  
     switchOn() {
         if (this.isOn) {
             // Nichts ist zu tun
@@ -580,11 +547,8 @@ class AutomatedRunnerOnGrid {
         }
     }
     switchOff() {
-        if (this.isOn) {
-            this.isOn = false;
-            this.suGrid.deselect();
-            this.displayStatus();
-        }
+        this.isOn = false;
+        this.dispPlayOnOffStatus();
     }
 
     dispPlayOnOffStatus() {
@@ -604,8 +568,13 @@ class AutomatedRunnerOnGrid {
         this.displayDepthSettingElement();
         this.displayAutomode();
         this.displayProgress();
+        this.displayGoneSteps();       
     }
-
+    displayGoneSteps() {
+        let goneStepsNode = document.getElementById("step-count");
+        goneStepsNode.innerText = this.goneSteps;    
+    }
+        
     displayAutomode() {
         let forwardNode = document.getElementById("radio-forward");
         let backwardNode = document.getElementById("radio-backward");
@@ -636,6 +605,7 @@ class AutomatedRunnerOnGrid {
     }
 
     displayProgress() {
+
         let count = this.suGrid.countSolvedSteps();
         this.progressBar.setValue(count);
     }
@@ -652,7 +622,7 @@ class AutomatedRunnerOnGrid {
 
     // Ehemalig in der App
     // =========================================================================
-   
+
     setSpeed(value) {
         switch (value) {
             case 'very-slow': {
@@ -681,23 +651,26 @@ class AutomatedRunnerOnGrid {
         }
         // Nur, wenn der Timer läuft
         // Also nur im laufenden Betrieb.Denn sonst schaltet diese Operation den runner ein.
-        // Trickprogrammierung:
-        let isRunning = (this.timer !== false);
-        if(isRunning) {
+        if (this.isRunning()) {
             window.clearInterval(this.timer);
-            this.timer = window.setInterval(() => { sudoApp.runner.autoStepEventHandler(); }, this.execSpeed);    
+            this.timer = window.setInterval(() => { sudoApp.runner.autoStepEventHandler(); }, this.execSpeed);
         }
+    }
+
+    isRunning() {
+        // Trickprogrammierung:
+        return this.timer !== false;
     }
 
     autoRun() {
         // Die automatische Ausführung
-        if(!this.isOn){
-            this.switchOn();       
+        if (!this.isOn) {
+            this.switchOn();
         }
-        this.timer = window.setInterval(() => {sudoApp.runner.autoStepEventHandler(); }, this.execSpeed);
+        this.timer = window.setInterval(() => { sudoApp.runner.autoStepEventHandler(); }, this.execSpeed);
     }
 
-    autoRunPause() {
+    stopTimer() {
         // Die automatische Ausführung
         window.clearInterval(this.timer);
         this.timer = false;
@@ -707,22 +680,23 @@ class AutomatedRunnerOnGrid {
         // Die automatische Ausführung
         window.clearInterval(this.timer);
         this.timer = false;
-        this.switchOff();
+        this.init();
     }
 
     autoStepEventHandler() {
         // Aufgerufen durch den Timer oder
         // Step-Button
-        if(!this.isOn){
-            this.switchOn();       
+        if (!this.isOn) {
+            this.switchOn();
         }
+        this.goneSteps++;
         let result = this.autoStep();
         this.displayStatus();
         if (result == 'success') {
-            this.autoRunPause();
+            this.stopTimer();
             alert("Spielende: Glückwunsch! Sudoku gelöst!");
         } else if (result == 'fail') {
-            this.autoRunPause();
+            this.stopTimer();
             alert("Spielende: Sudoku nicht gelöst. Versuche es mit einer größeren Suchtiefe");
         } else {
             // 'stopped' oder 'inProgress'
@@ -769,45 +743,45 @@ class AutomatedRunnerOnGrid {
                 }
             }
         } else
-        if (this.autoMode == 'backward') {
-            let result = this.stepBackward();
-            switch (result) {
-                case 'root-Optionstep-reached': {
-                    // D.h. Es gibt keine Lösung für das Sudoku
-                    return 'fail';
+            if (this.autoMode == 'backward') {
+                let result = this.stepBackward();
+                switch (result) {
+                    case 'root-Optionstep-reached': {
+                        // D.h. Es gibt keine Lösung für das Sudoku
+                        return 'fail';
+                    }
+                    case 'currentStep-cell-selected': {
+                        // Die Zelle des Schrittes selektiert,
+                        // um danach ihre Nummer zu  löschen
+                        return 'inProgress';
+                    }
+                    case 'cellNumber-unsetted-and-step-backward': {
+                        // Die Nummer des selektierten Schrittes gelöscht
+                        // und einen Schritt rückwärts gegangen
+                        return 'inProgress';
+                    }
+                    case 'next-option-selected': {
+                        // Für die nächste Option in einem Optionsschritt
+                        // einen Realstep erzeugt
+                        this.setAutoMode('forward');
+                        return 'inProgress';
+                    }
+                    case 'step backward from a Optionstep': {
+                        // Nach der vollständigen Abarbeitung eines Optionsschrittes
+                        // Zurück vor diesen Schritt
+                        return 'inProgress';
+                    }
+                    case 'step backward from a Realstep': {
+                        return 'inProgress'
+                    }
+                    default: {
+                        alert('Softwarefehler: Unerwarteter Rückgabewert in stepBackward(): ' + result);
+                    }
                 }
-                case 'currentStep-cell-selected': {
-                    // Die Zelle des Schrittes selektiert,
-                    // um danach ihre Nummer zu  löschen
-                    return 'inProgress';
-                }
-                case 'cellNumber-unsetted-and-step-backward': {
-                    // Die Nummer des selektierten Schrittes gelöscht
-                    // und einen Schritt rückwärts gegangen
-                    return 'inProgress';
-                }
-                case 'next-option-selected': {
-                    // Für die nächste Option in einem Optionsschritt
-                    // einen Realstep erzeugt
-                    this.setAutoMode('forward');
-                    return 'inProgress';
-                }
-                case 'step backward from a Optionstep': {
-                    // Nach der vollständigen Abarbeitung eines Optionsschrittes
-                    // Zurück vor diesen Schritt
-                    return 'inProgress';
-                }
-                case 'step backward from a Realstep': {
-                    return 'inProgress'
-                }
-                default: {
-                    alert('Softwarefehler: Unerwarteter Rückgabewert in stepBackward(): ' + result);
-                }
+            } else {
+                alert("Softwarefehler:autoStep() nicht mit forward oder backward aufgerufen");
             }
-        } else {
-            alert("Softwarefehler:autoStep() nicht mit forward oder backward aufgerufen");
-        }
-   
+
     }
 
     stepForward() {
@@ -1147,12 +1121,14 @@ class SudokuGrid {
             let storedCell = previousState.shift();
             this.sudoCells[i].massSetNumber(storedCell.cellValue, storedCell.cellMode);
         }
+
         // Berechne die möglichen Inhalte der Zellen
         this.recalculatePermissibleSets();
         // Berechne potentiell vorhandene Konflikte
         this.reCalculateErrorCells();
         // Berechne die notwendigen Zellinhalte
         this.reEvaluateNecessarys();
+
     }
 
     loadGrid() {
