@@ -502,7 +502,8 @@ class AutomatedRunnerOnGrid {
         this.myStepper;
         this.searchDepth = 50;
         this.timer = false;
-        this.execSpeed = 500;
+        this.execSpeed = 250;
+        this.execSpeedLevel = 'fast';
         this.goneSteps = 0;
         this.isOn = false;
         this.progressBar = new ProgressBar();
@@ -521,10 +522,12 @@ class AutomatedRunnerOnGrid {
         // Der Runner hat immer einen aktuellen Stepper
         this.myStepper = new Stepper(this.searchDepth);
         //Default Tiefe setzen
+        this.setSpeed('fast');
         this.setMaxDepth(50)
         this.switchOff();
         this.displayStatus();
     }
+
 
     init() {
         // Das ist sinnvoll, weil jeder Lauf eine Menge Stepdaten erzeugt,
@@ -534,7 +537,7 @@ class AutomatedRunnerOnGrid {
         }
     }
 
-  
+
     switchOn() {
         if (this.isOn) {
             // Nichts ist zu tun
@@ -568,13 +571,18 @@ class AutomatedRunnerOnGrid {
         this.displayDepthSettingElement();
         this.displayAutomode();
         this.displayProgress();
-        this.displayGoneSteps();       
+        this.displayGoneSteps();
+        this.displaySpeedSetting()
     }
+    displaySpeedSetting() {
+        let option = document.getElementById('speedSetting').selectedIndex = 3;
+    }
+
     displayGoneSteps() {
         let goneStepsNode = document.getElementById("step-count");
-        goneStepsNode.innerText = this.goneSteps;    
+        goneStepsNode.innerText = this.goneSteps;
     }
-        
+
     displayAutomode() {
         let forwardNode = document.getElementById("radio-forward");
         let backwardNode = document.getElementById("radio-backward");
@@ -627,21 +635,25 @@ class AutomatedRunnerOnGrid {
         switch (value) {
             case 'very-slow': {
                 //Schritt pro 2 Sekunden
+                this.execSpeedLevel = value;
                 this.execSpeed = 2000;
                 break;
             }
             case 'slow': {
                 //Schritt pro 1 Sekunde
+                this.execSpeedLevel = value;
                 this.execSpeed = 1000;
                 break;
             }
             case 'normal': {
                 //Schritt pro 0,5 Sekunden
+                this.execSpeedLevel = value;
                 this.execSpeed = 500;
                 break;
             }
             case 'fast': {
                 //Schritt pro 0,25  Sekunden
+                this.execSpeedLevel = value;
                 this.execSpeed = 250;
                 break;
             }
