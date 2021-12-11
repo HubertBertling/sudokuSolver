@@ -149,20 +149,20 @@ class SudokuApp {
 
     numberButtonPressed(btnNumber) {
         // Ist manuelle Operation
-        this.runner.stopTimer();
-        if (this.runner.isOn){
-            this.runner.switchOff();
+        if (this.runner.isOn) {
+            this.runner.autoRunStop();
+        } else {
+            this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentMode, false);
         }
-        this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentMode, false);
     }
     deleteCellButtonPressed() {
         // Ist manuelle Operation
-        this.runner.stopTimer();
-        if (this.runner.isOn){
-            this.runner.switchOff();
+        if (this.runner.isOn) {
+            this.runner.autoRunStop();
+        } else {
+            this.suGrid.deleteSelected(this.currentMode, false);
+            this.suGrid.deselect();    
         }
-        this.suGrid.deleteSelected(this.currentMode, false);
-        this.suGrid.deselect();
     }
 
     initButtonPressed() {
@@ -198,9 +198,10 @@ class SudokuApp {
     }
 
     sudokuCellPressed(cellNode, index) {
-        this.runner.stopTimer();
+        if (this.runner.isOn) {
+            this.runner.autoRunStop();
+        } 
         this.suGrid.select(cellNode, index);
-        this.runner.init();
     }
 
     saveStorageDlgOKPressed() {
