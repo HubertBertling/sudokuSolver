@@ -396,7 +396,7 @@ body {
 .depth-group {
     margin-top: 10px;
     display: grid;
-    grid-template-columns: 1fr 2fr 2fr;
+    grid-template-columns: 0.35fr 0.5fr 0.5fr;
     
 }
 .depth-label, .progress-label {
@@ -405,7 +405,7 @@ body {
 .progress-group {
     margin-top: 5px;
     display: grid;
-    grid-template-columns: 0.15fr 0.15fr 1fr;
+    grid-template-columns: 0.17fr 0.17fr 1fr;
     gap: 2px;    
 }
 .search-max-depth,.speed-field {
@@ -418,9 +418,6 @@ body {
 
 .sudoSettingDepth,.speedSetting {
     padding: 1px;
-}
-.progress-bar {
-    margin: 5px;
 }
 
 #myProgress {

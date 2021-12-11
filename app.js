@@ -41,15 +41,15 @@ class SudokuApp {
 
 
         // Die Einsttelun der Maximalen Tiefe
-
+        /*
         document.querySelector('#sudoDepthSetting').addEventListener('input', (e) => {
             this.runner.setMaxDepth(e.target.value);
         });
-
+       */
         document.querySelector('#speedSetting').addEventListener('input', (e) => {
             sudoApp.runner.setSpeed(e.target.value);
         });
-
+     
         // Die beiden Mode-button 
         document.querySelector('#btn-define').addEventListener('click', () => {
             sudoApp.setMode('define');
@@ -300,9 +300,12 @@ class Stepper {
     getCurrentStep() {
         return this.currentStep;
     }
+    /*
     searchDepthLimitReached() {
         return (!(this.currentStep.getDepth() + 1 <= this.searchDepth));
     }
+    */
+
     getCurrentSearchDepth() {
         let tmpDepth = this.currentStep.getDepth();
         if (tmpDepth > this.maxDepth) {
@@ -568,7 +571,7 @@ class AutomatedRunnerOnGrid {
     displayStatus() {
         this.dispPlayOnOffStatus();
         this.displayDepth();
-        this.displayDepthSettingElement();
+      //  this.displayDepthSettingElement();
         this.displayAutomode();
         this.displayProgress();
         this.displayGoneSteps();
@@ -606,11 +609,12 @@ class AutomatedRunnerOnGrid {
             maxDepth.innerText = "0";
         }
     }
-
+    /*
     displayDepthSettingElement() {
         let depthInput = document.getElementById('sudoDepthSetting');
         depthInput.value = this.searchDepth;
     }
+    */
 
     displayProgress() {
 
@@ -754,10 +758,10 @@ class AutomatedRunnerOnGrid {
                     // Dann ist sie auch prinzipbedingt konsistent gefüllt
                     return 'success';
                 }
-                case 'searchDepthLimitExceeded': {
+            /*  case 'searchDepthLimitExceeded': {
                     this.setAutoMode('backward');
                     return 'inProgress';
-                }
+                } */
                 default: {
                     alert('Softwarefehler: Unerwarteter Rückgabewert in stepForward(): ' + result);
                 }
@@ -843,14 +847,14 @@ class AutomatedRunnerOnGrid {
                     //D.h. es geht mit mehreren Optionen weiter.
                     // Nächster realstep mit einer Optionsnummer
                     // Aber nur wenn das Tiefenlimit nicht überschritten ist
-                    if (this.myStepper.searchDepthLimitReached()) {
+                 /* if (this.myStepper.searchDepthLimitReached()) {
                         return 'searchDepthLimitExceeded';
-                    } else {
+                    } else { */
                         this.myStepper.addOptionStep(tmpSelection.index, tmpSelection.options.slice());
                         // Die erste Option des Optionsschrittes, wird gleich gewählt
                         let realStep = this.myStepper.getNextRealStep();
                         return 'cellSelected-nextRealStepCreated';
-                    }
+                // }
                 }
             }
         } else {
