@@ -578,7 +578,8 @@ class AutomatedRunnerOnGrid {
         this.displaySpeedSetting();
     }
     displaySpeedSetting() {
-        let option = document.getElementById('speedSetting').selectedIndex = 3;
+        let element = document.getElementById('speedSetting');
+        element.value = this.execSpeedLevel;
     }
 
     displayGoneSteps() {
