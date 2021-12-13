@@ -8,7 +8,7 @@ Du hast jahrelange Erfahrung mit der Lösung von Sudokus. Und Du bist mit der Ze
 
 ## Überblick
 
-![Anwendungsansicht](./images/AppView.png)
+<img src="./images/AppView.png">
 
 ## Typischer Ablauf
 
@@ -26,20 +26,20 @@ Solltest Du eine Nummern-Setzung zurücknehmen wollen, so selektiere die betroff
 
 |Zelle  |Bedeutung  |
 |---------|---------|
-|![Definitionszelle](./images/definedCell.png) | In dieser Zelle wurde während der Definitionsphase die Nummer 3 gesetzt.|
-|![Spielzelle](./images/playedCell.png) | In dieser Zelle wurde in der Spielphase die Nummer 7 gesetzt.|
-|![Optionszelle](./images/optionCell.png) | Für diese Zelle wurde noch keine Nummer gesetzt. Du kannst nur noch eine der Nummern 1, 3, 7, 8 wählen. Wählst Du dennoch eine andere Nummer, kommt es zu einem Konflikt. Zwei gleiche Nummern in einer Spalte, Reihe oder Zellgruppe. Die betroffenen Zellen werden rot markiert.|
-|![notwendig](./images/neccessary.png) | Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die drei Nummern 2, 7, 9 setzbar. Jedoch hat der Solver ermittelt, dass die Nummer 2 notwendig ist, damit das Sudoku lösbar  bleibt. |
-|![Keine](./images/nochoice.png) | Für diese Zelle wurde noch keine Nummer gesetzt. Allerdings gibt es keine zulässige Nummer mehr, die noch gesetzt werden könnte. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. |
-|![ZweiNotwendige](./images/twoNeccessary.png) |Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die drei Nummern 7, 8, 9 setzbar. Jedoch hat der Solver zwei notwendige Nummern für diese Zelle ermittelt. Das geht natürlich nicht. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. |
-|![Konflikt](./images/conflct.png) |Für diese Zelle wurde die Nummer 8 gesetzt. Das führte zu einem Konflikt. Zwei gleiche Nummern in einer Spalte, Reihe oder Zellgruppe. Das zweite oder dritte Auftreten der Nummer wird ebenfalls rot angezeigt.|
+|<img src="./images/definedCell.png" width="50" height="50">|In dieser Zelle wurde während der Definitionsphase die Nummer 3 gesetzt.|
+|<img src="./images/playedCell.png" width="50" height="50"> | In dieser Zelle wurde in der Spielphase die Nummer 7 gesetzt.|
+|<img src="./images/optionCell.png" width="50" height="50"> | Für diese Zelle wurde noch keine Nummer gesetzt. Du kannst nur noch eine der Nummern 1, 3, 7, 8 wählen. Wählst Du dennoch eine andere Nummer, kommt es zu einem Konflikt. Zwei gleiche Nummern in einer Spalte, Reihe oder Zellgruppe. Die betroffenen Zellen werden rot markiert.|
+|<img src="./images/neccessary.png" width="50" height="50"> | Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die drei Nummern 2, 7, 9 setzbar. Jedoch hat der Solver ermittelt, dass die Nummer 2 notwendig ist, damit das Sudoku lösbar  bleibt. |
+|<img src="./images/nochoice.png" width="50" height="50"> | Für diese Zelle wurde noch keine Nummer gesetzt. Allerdings gibt es keine zulässige Nummer mehr, die noch gesetzt werden könnte. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. |
+|<img src="./images/twoNeccessary.png" width="50" height="50"> |Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die drei Nummern 7, 8, 9 setzbar. Jedoch hat der Solver zwei notwendige Nummern für diese Zelle ermittelt. Das geht natürlich nicht. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. |
+|<img src="./images/conflct.png" width="50" height="50"> |Für diese Zelle wurde die Nummer 8 gesetzt. Das führte zu einem Konflikt. Zwei gleiche Nummern in einer Spalte, Reihe oder Zellgruppe. Das zweite oder dritte Auftreten der Nummer wird ebenfalls rot angezeigt.|
 
 ## Zwei Phasen
 
 |Phase  |Bedeutung  |
 |---------|---------|
-|![Definieren](./images/define.png) |Das Drücken dieser Taste versetzt den Solver in die Definitionsphase. In dieser Phase überträgt man die zu lösende Sudoku-Aufgabe in den Solver.|
-|![Spielen](./images/play.png) |Das Drücken Drücken dieser Taste versetzt den Solver in die Spielphase. Die Spielphase kann manuell oder automatisch durchgeführt werden.|
+|<img src="./images/define.png" width="150"> |Das Drücken dieser Taste versetzt den Solver in die Definitionsphase. In dieser Phase überträgt man die zu lösende Sudoku-Aufgabe in den Solver.|
+|<img src="./images/play.png" width="150"> |Das Drücken Drücken dieser Taste versetzt den Solver in die Spielphase. Die Spielphase kann manuell oder automatisch durchgeführt werden.|
 
 ## Manuelle Ausführung
 
@@ -49,17 +49,17 @@ Die manuelle Ausführung wird in jedem Fall in der Definitionsphase genutzt. In 
 
 |Taste  |Bedeutung  |
 |---------|---------|
-|![Spielen](./images/playButton.png) |Die Play-Taste. Der Solver startet den automatischen Lösungssuchprozess. Zusätzlich wird ein Timer gestartet, der in der eingestellten Geschwindigkeit die Ausführung automatischer Suchschritte anstößt.|
-|![Pause](./images/pauseButton.png) |Die Pause-Taste. Der Taktgeber der automatischen Ausführung wird angehalten, nicht jedoch der Suchprozess abgebrochen. Der Spieler kann jetzt weitere automatische Suchschritte mit der Step-Taste von Hand anstoßen. Oder er kann durch das erneute Drücken der Play-Taste die getaktete automatische Ausführung fortsetzen.|
-|![Stop](./images/stopButton.png) |Die Stop-Taste. Der Taktgeber der automatischen Ausführung wird angehalten und der aktuelle Suchprozess wird abgebrochen.|
-|![Step](./images/stepButton.png) |Die Step-Taste. Der Solver führt den nächsten automatischen Suchschritt aus. Falls noch nicht geschehen, startet er zuvor den Suchprozess überhaupt.|
+|<img src="./images/playButton.png" width="50" height="50"> |Die Play-Taste. Der Solver startet den automatischen Lösungssuchprozess. Zusätzlich wird ein Timer gestartet, der in der eingestellten Geschwindigkeit die Ausführung automatischer Suchschritte anstößt.|
+|<img src="./images/pauseButton.png" width="50" height="50"> |Die Pause-Taste. Der Taktgeber der automatischen Ausführung wird angehalten, nicht jedoch der Suchprozess abgebrochen. Der Spieler kann jetzt weitere automatische Suchschritte mit der Step-Taste von Hand anstoßen. Oder er kann durch das erneute Drücken der Play-Taste die getaktete automatische Ausführung fortsetzen.|
+|<img src="./images/stopButton.png" width="50" height="50"> |Die Stop-Taste. Der Taktgeber der automatischen Ausführung wird angehalten und der aktuelle Suchprozess wird abgebrochen.|
+|<img src="./images/stepButton.png" width="150"> |Die Step-Taste. Der Solver führt den nächsten automatischen Suchschritt aus. Falls noch nicht geschehen, startet er zuvor den Suchprozess überhaupt.|
 
 ## Initialisieren und Zurücksetzen
 
 |Taste  |Bedeutung  |
 |---------|---------|
-|![Initialisieren](./images/initButton.png) |Der Solver wird initialisiert. Danach ist die Sudoku-Tabelle leer.|
-|![Reset](./images/resetButton.png) |Der Solver wird zurückgesetzt auf die Aufgabenstellung. D.h. alle in der Spielphase gesetzten Zellen werden gelöscht. Die Zellen der Definitionsphase bleiben erhalten.|
+|<img src="./images/initButton.png" width="150"> |Der Solver wird initialisiert. Danach ist die Sudoku-Tabelle leer.|
+|<img src="./images/resetButton.png" width="150"> |Der Solver wird zurückgesetzt auf die Aufgabenstellung. D.h. alle in der Spielphase gesetzten Zellen werden gelöscht. Die Zellen der Definitionsphase bleiben erhalten.|
 
 ## Spielstände speichern und wiederherstellen
 
@@ -67,9 +67,9 @@ Spielstände können im lokalen Speicher des Browsers gespeichert werden, nicht 
 
 |Taste  |Bedeutung  |
 |---------|---------|
-|![Speichern](./images/storeButton.png) |Der aktuelle Spielstand kann unter einem Namen gespeichert werden. Oft wird man den Zustand nach der Fertigstellung der Definition speichern wollen.|
-|![Wiederherstellen](./images/restoreButton.png) |Ein gespeicherter Zustand wird wiederhergestellt. Dabei wird der aktuelle Zustand gelöscht.|
-|![Löschen](./images/deleteStoredState.png) |Ein gespeicherter Zustand wird gelöscht.|
+|<img src="./images/storeButton.png" width="150"> |Der aktuelle Spielstand kann unter einem Namen gespeichert werden. Oft wird man den Zustand nach der Fertigstellung der Definition speichern wollen.|
+|<img src="./images/restoreButton.png" width="150"> |Ein gespeicherter Zustand wird wiederhergestellt. Dabei wird der aktuelle Zustand gelöscht.|
+|<img src="./images/deleteStoredState.png" width="150"> |Ein gespeicherter Zustand wird gelöscht.|
 
 ## Den Lösungssuchprozess beobachten
 
