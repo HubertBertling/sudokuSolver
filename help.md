@@ -1,3 +1,7 @@
+---
+layout: default
+---
+
 # Sudoku-Solver
 
 Du hast jahrelange Erfahrung mit der Lösung von Sudokus. Und Du bist mit der Zeit spürbar besser geworden. Und dann kommt ein Sudoku, manchmal auch nur als mittelschwer klassifiziert, und Du findest keine Lösung. Dann benutze diesen Sudoku-Solver. Er löst jedes Sudoku in wenigen Minuten und Du kannst ihm dabei zuschauen.
