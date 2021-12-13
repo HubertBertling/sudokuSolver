@@ -6,6 +6,8 @@ Du hast jahrelange Erfahrung mit der Lösung von Sudokus. Und Du bist mit der Ze
 
 :::image type="content" source="./images/AppView.png" alt-text="Anwendungsansicht":::
 
+![App View](./images/AppView.png)
+
 ## Typischer Ablauf
 
 1. Sudoku eingeben: "Definieren" wählen.
