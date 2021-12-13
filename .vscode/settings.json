@@ -2,5 +2,18 @@
     "liveServer.settings.port": 5501,
     "projectManager.git.baseFolders": [
         "C:\\Users\\huber\\Documents\\GitHub"
-    ]
+    ],
+    "markdownlint.config": {
+        "MD028": false,
+        "MD025": {
+            "front_matter_title": ""
+        }
+    },
+    "markdownConverter.ConversionType": [
+        "HTML"
+    ],
+    "markdown.showToolbar": true,
+    "markdownConverter.Document.Paper.PaperFormat": {
+        "Format": "A4"
+    }
 }

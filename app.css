@@ -154,11 +154,15 @@ body {
     grid-template-columns: 1fr 290px;
 }
 
-.sudoku-title {
+.sudoku-header {
     background-color: LightSteelBlue;
     border-bottom: 5px solid var(--blue);
     text-align: center;
-    padding: 10px;
+ 
+}
+.sudoku-title {
+ 
+    padding-top: 10px;
     font-size: xx-large;
    
 }
