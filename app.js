@@ -49,7 +49,7 @@ class SudokuApp {
         document.querySelector('#speedSetting').addEventListener('input', (e) => {
             sudoApp.runner.setSpeed(e.target.value);
         });
-     
+
         // Die beiden Mode-button 
         document.querySelector('#btn-define').addEventListener('click', () => {
             sudoApp.setMode('define');
@@ -161,7 +161,7 @@ class SudokuApp {
             this.runner.autoRunStop();
         } else {
             this.suGrid.deleteSelected(this.currentMode, false);
-            this.suGrid.deselect();    
+            this.suGrid.deselect();
         }
     }
 
@@ -200,7 +200,7 @@ class SudokuApp {
     sudokuCellPressed(cellNode, index) {
         if (this.runner.isOn) {
             this.runner.autoRunStop();
-        } 
+        }
         this.suGrid.select(cellNode, index);
     }
 
@@ -571,7 +571,7 @@ class AutomatedRunnerOnGrid {
     displayStatus() {
         this.dispPlayOnOffStatus();
         this.displayDepth();
-      //  this.displayDepthSettingElement();
+        //  this.displayDepthSettingElement();
         this.displayAutomode();
         this.displayProgress();
         this.displayGoneSteps();
@@ -759,10 +759,10 @@ class AutomatedRunnerOnGrid {
                     // Dann ist sie auch prinzipbedingt konsistent gefüllt
                     return 'success';
                 }
-            /*  case 'searchDepthLimitExceeded': {
-                    this.setAutoMode('backward');
-                    return 'inProgress';
-                } */
+                /*  case 'searchDepthLimitExceeded': {
+                        this.setAutoMode('backward');
+                        return 'inProgress';
+                    } */
                 default: {
                     alert('Softwarefehler: Unerwarteter Rückgabewert in stepForward(): ' + result);
                 }
@@ -848,14 +848,14 @@ class AutomatedRunnerOnGrid {
                     //D.h. es geht mit mehreren Optionen weiter.
                     // Nächster realstep mit einer Optionsnummer
                     // Aber nur wenn das Tiefenlimit nicht überschritten ist
-                 /* if (this.myStepper.searchDepthLimitReached()) {
-                        return 'searchDepthLimitExceeded';
-                    } else { */
-                        this.myStepper.addOptionStep(tmpSelection.index, tmpSelection.options.slice());
-                        // Die erste Option des Optionsschrittes, wird gleich gewählt
-                        let realStep = this.myStepper.getNextRealStep();
-                        return 'cellSelected-nextRealStepCreated';
-                // }
+                    /* if (this.myStepper.searchDepthLimitReached()) {
+                           return 'searchDepthLimitExceeded';
+                       } else { */
+                    this.myStepper.addOptionStep(tmpSelection.index, tmpSelection.options.slice());
+                    // Die erste Option des Optionsschrittes, wird gleich gewählt
+                    let realStep = this.myStepper.getNextRealStep();
+                    return 'cellSelected-nextRealStepCreated';
+                    // }
                 }
             }
         } else {
@@ -1064,15 +1064,10 @@ class SudokuGrid {
                 this.sudoCells[i].clear();
             }
         }
-        // Die für die Zellen möglichen Inhalte 
-        // werden neu berechnet.
-        for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].getMode() !== 'define') {
-                this.sudoCells[i].init();
-            }
-        }
-        // Schritt 3: Für alle Zellen werden die notwendigen Inhalte
-        // neu berechnet
+        this.recalculatePermissibleSets();
+        // Berechne potentiell jetzt (nicht mehr) vorhandene Konflikte
+        this.reCalculateErrorCells();
+        // Berechne die jetzt (nicht mehr) notwendigen Zellinhalte
         this.reEvaluateNecessarys();
     }
 
