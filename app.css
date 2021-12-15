@@ -158,13 +158,14 @@ body {
     background-color: LightSteelBlue;
     border-bottom: 5px solid var(--blue);
     text-align: center;
- 
+
 }
+
 .sudoku-title {
- 
+
     padding-top: 10px;
     font-size: xx-large;
-   
+
 }
 
 /*======================================*/
@@ -184,7 +185,7 @@ body {
 
 .exec-btn-group, .auto-exec-container {
     margin-top: 30px;
-    
+
 }
 
 .manual-exec-btns, .automatic-exec {
@@ -228,7 +229,7 @@ body {
 
 
 .numbers {
-    margin-top: 5px;    
+    margin-top: 5px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 5px;
@@ -276,7 +277,7 @@ body {
 
 .btn-image {
     width: 25px;
-    height: 25px; 
+    height: 25px;
 }
 
 
@@ -319,9 +320,10 @@ body {
     border-left: 5px solid var(--blue);
     border-right: 5px solid var(--blue);
     border-bottom: 5px solid var(--blue);
-    
+
     padding: 10px;
-    padding-bottom: 5px;;
+    padding-bottom: 5px;
+    ;
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 10px;
@@ -370,7 +372,8 @@ body {
 /*======================================*/
 
 .progress-box {
-    padding-top: 5px;;
+    padding-top: 5px;
+    ;
     padding-left: var(--space-y);
     padding-right: var(--space-y);
     padding-bottom: 5px;
@@ -379,6 +382,7 @@ body {
     border-bottom: 5px solid var(--blue);
     background-color: LightSteelBlue;
 }
+
 /*
 .track-group {
     margin-top: 10px;;
@@ -387,50 +391,58 @@ body {
  }
  */
 .manual-exec-btns.on, .automatic-exec.on {
-    padding-right: 10px;;
+    padding-right: 10px;
+    ;
     border-right: 5px solid var(--blue);
 }
 
 .manual-exec-btns, .automatic-exec {
- padding-right: 10px;;
+    padding-right: 10px;
+    ;
 }
+
 .name-value {
     display: inline;
 }
+
 .depth-group {
     margin-top: 10px;
     display: grid;
     grid-template-columns: 0.35fr 0.5fr 0.5fr;
-    
+
 }
+
 .depth-label, .progress-label {
     font-weight: bold;
 }
+
 .progress-group {
     margin-top: 5px;
     display: grid;
     grid-template-columns: 0.17fr 0.17fr 1fr;
-    gap: 2px;    
+    gap: 2px;
 }
-.search-max-depth,.speed-field {
+
+.search-max-depth, .speed-field {
     margin-top: 3px;
 }
+
 .search-depth {
     color: blue;
     font-weight: bold;
 }
 
-.sudoSettingDepth,.speedSetting {
+.sudoSettingDepth, .speedSetting {
     padding: 1px;
 }
 
 #myProgress {
     width: 100%;
-    height:20px;
+    height: 20px;
     background-color: lightyellow;
-  }
-  
-  #myBar {
+}
+
+#myBar {
     width: 10%;
     height: 20px;
     background-color: var(--blue);
@@ -438,7 +450,7 @@ body {
     line-height: 20px;
     font-size: 16px;
     color: white;
-  }
+}
 
 /*======================================*/
 /* Main button block */
@@ -446,12 +458,17 @@ body {
 
 
 
+/*======================================*/
+/* New Dialogs block */
+/*======================================*/
+
+
 
 /*======================================*/
 /* Dialogs block */
 /*======================================*/
 
-
+/*
 .storageSaveDialog, .storageRestoreDialog, .storageDeleteDialog {
     visibility: hidden;
     position: fixed;
@@ -471,30 +488,66 @@ body {
     left: 50%;
     top: 20px;
 }
-
+*/
+/*
 .input-row {
     display: inline;
+    width: 400px;
 }
+*/
 
 .textInDlgs {
+    size: 100;
     padding: 5px;
     font-size: 16px;
 }
-.ok-cancel-btns {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
 
+.inputField {
+    size: 100;
+    border: 5px solid red;
+}
+
+.ok-cancel-btns {
+    margin-top: 10px;
+    ;
+    margin-left: 100px;
+    margin-right: 100px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.input-row {
+    font-size: 16px;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 5px;
+}
+
+
+.successForm {
+    margin-left: 10px;
+    margin-right: 10px;
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.success-ok-cancel-btns {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+}
+
+.successImg {
+    margin-left: 15px;
+    height: 270px;
+    width: 180px;
 }
 
 .okCancelBtn {
-    display: inline;
-   /* place-items: center;*/
-    
+    display: grid;
 }
 
-.storageSaveFormElement, .storageRestoreFormElement, .storageDeleteFormElement {
-    padding: 10px;
-}
 
 
 /*======================================*/

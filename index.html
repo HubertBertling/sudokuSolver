@@ -17,6 +17,10 @@
     <!--<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'> -->
     <!-- app css -->
     <link rel="stylesheet" href="./app.css">
+    <!-- Dialog specs -->
+
+    <script src="dist/winbox.bundle.js"></script>
+
 
 </head>
 
@@ -113,13 +117,13 @@
                 </div>
                 <div class="game-col2">
 
-                    <div class = "sudoku-header">
+                    <div class="sudoku-header">
                         <div class="sudoku-title">
                             Sudoku-Solver
                         </div>
                         <div>
                             <a href="./help.html" target="_blank">Hilfe</a>
-                        </div>     
+                        </div>
                     </div>
 
                     <div class="exec-btn-groups">
@@ -260,16 +264,14 @@
 
         </div>
         <!--game dialogs -->
-        <div class="Dialogs">
-            <div class="storageSaveDialog" id="storageSaveDialog">
-                <form name="saveForm" id="storageSaveForm">
-                    <div class="textInDlgs">
-                        Zustand speichern unter ...
-                    </div>
+
+        <div id="backstore" style="display: none">
+            <div id="contentSaveDlg">
+                <form>
+                    <div class="textInDlgs">Zustandsname: </div>
                     <div class="input-row">
-                        <div class="textInDlgs">Zustandsname: </div>
-                        <div name="comboBox" class="storageSaveFormElement" id="storageSaveComboBox">
-                            <input class="textInDlgs" type="text" id="saveStorageName" name="saveStorageName" />
+                        <div name="comboBox" id="storageSaveComboBox">
+                            <input class="textInDlgs" type="text" size=30 id="saveStorageName" name="saveStorageName" />
                             <select class="textInDlgs" name="saveStorageList" id="saveStorageList">
                                 <option>oneoneone</option>
                                 <option>two</option>
@@ -277,28 +279,30 @@
                             </select>
                         </div>
                     </div>
-                    <div class="storageSaveDialogButtons storageSaveFormElement ok-cancel-btns">
+                    <div class="ok-cancel-btns">
                         <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageOK" name="ok" value="OK" />
                         <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageCancel" name="cancel"
                             value="Abbrechen" />
                     </div>
                 </form>
             </div>
-            <div class="storageRestoreDialog" id="storageRestoreDialog">
-                <form name="restoreForm" id="storageRestoreForm">
-                    <div class="textInDlgs">
-                        Zustand wiederherstellen ...
-                    </div>
+
+
+            <div id="contentRestoreDlg">
+                <form>
                     <div class="textInDlgs">Zustandsname: </div>
-                    <div name="comboBox" class="storageRestoreFormElement" id="storageRestoreComboBox">
-                        <input class="textInDlgs" type="text" id="restoreStorageName" name="restoreStorageName" />
-                        <select class="textInDlgs" name="restoreStorageList" id="restoreStorageList">
-                            <option>oneoneone</option>
-                            <option>two</option>
-                            <option>three</option>
-                        </select>
+                    <div class="input-row">
+                        <div name="comboBox" id="storageRestoreComboBox">
+                            <input class="textInDlgs" type="text" size=30 id="restoreStorageName"
+                                name="restoreStorageName" />
+                            <select class="textInDlgs" name="restoreStorageList" id="restoreStorageList">
+                                <option>oneoneone</option>
+                                <option>two</option>
+                                <option>three</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="storageRestoreDialogButtons storageRestoreFormElement ok-cancel-btns">
+                    <div class="ok-cancel-btns">
                         <input type="button" class="main-btn okCancelBtn" id="btn-restoreStorageOK" name="ok"
                             value="OK" />
                         <input type="button" class="main-btn okCancelBtn" id="btn-restoreStorageCancel" name="cancel"
@@ -306,21 +310,23 @@
                     </div>
                 </form>
             </div>
-            <div class="storageDeleteDialog" id="storageDeleteDialog">
-                <form name="deleteForm" id="storageDeleteForm">
-                    <div class="textInDlgs">
-                        Zustand löschen ...
-                    </div>
+
+
+            <div id="contentDeleteDlg">
+                <form>
                     <div class="textInDlgs">Zustandsname: </div>
-                    <div name="comboBox" class="storageDeleteFormElement" id="storageDeleteComboBox">
-                        <input class="textInDlgs" type="text" id="restoreStorageName" name="restoreStorageName" />
-                        <select class="textInDlgs" name="restoreStorageList" id="restoreStorageList">
-                            <option>oneoneone</option>
-                            <option>two</option>
-                            <option>three</option>
-                        </select>
+                    <div class="input-row">
+                        <div name="comboBox" id="storageDeleteComboBox">
+                            <input class="textInDlgs" type="text" size=30 id="deleteStorageName"
+                                name="deleteStorageName" />
+                            <select class="textInDlgs" name="deleteStorageList" id="deleteStorageList">
+                                <option>oneoneone</option>
+                                <option>two</option>
+                                <option>three</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="storageDeleteDialogButtons storageDeleteFormElement ok-cancel-btns">
+                    <div class="ok-cancel-btns">
                         <input type="button" class="main-btn okCancelBtn" id="btn-deleteStorageOK" name="ok"
                             value="OK" />
                         <input type="button" class="main-btn okCancelBtn" id="btn-deleteStorageCancel" name="cancel"
@@ -328,10 +334,34 @@
                     </div>
                 </form>
             </div>
-            <!--Dialogs end-->
+
+
+            <div id="contentSuccessDlg">
+                <form class="successForm">
+                    <img src="images/gueckwunsch.jfif" class="successImg">
+                    <div class="further-row">
+                        <input type="checkbox" id="further" name="further" checked>
+                        <label for="further">Weitere Lösung suchen? </label>
+                    </div>
+                    <div class="success-ok-cancel-btns">
+                        <input type="button" class="main-btn okCancelBtn" id="btn-successOK" name="ok" value="OK" />
+                        <input type="button" class="main-btn okCancelBtn" id="btn-successCancel" name="cancel"
+                            value="Abbrechen" />
+                    </div>
+                </form>
+            </div>
+
         </div>
+
+
+    </div>
+
+
+    <!--Dialogs end-->
+    </div>
     </div>
     <script src="./app.js"></script>
+
 </body>
 
 </html>

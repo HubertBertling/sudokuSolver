@@ -11,10 +11,12 @@ class SudokuApp {
         // Die App erhält eine Sudoku-Tabelle. Die als HTML schon existierende Tabelle 
         // erhält hier einen Javascript Wrapper.
 
-        // Die App hat bisher drei  Dialoge
+        // Die App hat bisher vier  Dialoge
         this.storageSaveDialog = new StorageSaveDialog();
         this.storageRestoreDialog = new StorageRestoreDialog();
         this.storageDeleteDialog = new StorageDeleteDialog();
+        this.successDialog = new SuccessDialog();
+
         // Der Zustandsspeicher
         this.sudokuStorage = new SudokuStateStorage();
         // Die Hauptansicht
@@ -23,7 +25,7 @@ class SudokuApp {
         // 'undefined' 'automatic' 'manual'
         this.execMode = 'undefined';
 
-        //Die Buttons der App werden Event-Hhandler zugeordnet
+        //Die Buttons der App werden Event-Handler zugeordnet
         // Nummer-Buttons
         this.number_inputs = document.querySelectorAll('.number');
         // Hinweis: index + 1 = number on button
@@ -40,7 +42,7 @@ class SudokuApp {
         });
 
 
-        // Die Einsttelun der Maximalen Tiefe
+        // Die Einstellung der Maximalen Tiefe
         /*
         document.querySelector('#sudoDepthSetting').addEventListener('input', (e) => {
             this.runner.setMaxDepth(e.target.value);
@@ -115,6 +117,7 @@ class SudokuApp {
         this.storageSaveDialog.close();
         this.storageRestoreDialog.close();
         this.storageDeleteDialog.close();
+        this.successDialog.close();
 
         // Der initiale Modus ist `play'.
         this.setMode('play');
@@ -267,6 +270,23 @@ class SudokuApp {
     getMode() {
         return this.currentMode;
     }
+
+
+
+
+    successDlgOKPressed() {
+        this.successDialog.close();
+        if (sudoApp.successDialog.further()) {
+            this.runner.setAutoMode('backward');
+            this.runner.autoRun();
+        }
+    }
+
+    successDlgCancelPressed() {
+        this.successDialog.close();
+    }
+
+
 }
 
 class ProgressBar {
@@ -533,7 +553,7 @@ class AutomatedRunnerOnGrid {
 
 
     init() {
-        // Das ist sinnvoll, weil jeder Lauf eine Menge Stepdaten erzeugt,
+        // Das ist sinnvoll, weil jeder Lauf eine Menge Step-Daten erzeugt,
         // die in der Regel nicht länger benötigt werden.
         if (this.isOn) {
             this.basicInit();
@@ -718,11 +738,13 @@ class AutomatedRunnerOnGrid {
         let result = this.autoStep();
         this.displayStatus();
         if (result == 'success') {
-            this.stopTimer();
-            alert("Spielende: Glückwunsch! Sudoku gelöst!");
+            if (this.isRunning()) {
+                this.stopTimer();
+            }
+            sudoApp.successDialog.open();
         } else if (result == 'fail') {
             this.stopTimer();
-            alert("Spielende: Das Sudoku ist inkonsistent und besitzt daher keine Lösung!");
+            alert("Keine (weitere) Lösung gefunden!");
         } else {
             // 'stopped' oder 'inProgress'
             // Keine Aktion
@@ -871,7 +893,7 @@ class AutomatedRunnerOnGrid {
     }
 
     stepBackward() {
-        // Aus verschiedenen Gründen kommt es dazu, dass der Stepper rückwärtz gehen muss.
+        // Aus verschiedenen Gründen kommt es dazu, dass der Stepper rückwärts gehen muss.
         // Nach jedem Rückwärtzschritt steht der Stepper auf einem RealStep oder einem OptionStep
         let currentStep = this.myStepper.getCurrentStep();
         // Prüfen, ob das der Wurzelschritt ist. Dann Abbruch.
@@ -1773,7 +1795,17 @@ class Combobox {
 }
 class StorageSaveDialog {
     constructor() {
-        this.storageSaveDlgNode = document.getElementById("storageSaveDialog");
+        //   this.storageSaveDlgNode = document.getElementById("storageSaveDialog");
+        this.winBox = new WinBox("Zustand speichern unter ...", {
+            border: 4,
+            width: 500,
+            height: 180,
+            x: "center",
+            y: "center",
+            html: "width: 600, height: 180",
+            mount: document.getElementById("contentSaveDlg")
+        });
+
         this.myComboBoxNode = document.getElementById("storageSaveComboBox");
         this.myComboBox = new Combobox(this.myComboBoxNode);
         this.okNode = document.getElementById("btn-saveStorageOK");
@@ -1788,11 +1820,21 @@ class StorageSaveDialog {
         });
     }
     open(nameList) {
+        this.winBox = new WinBox("Zustand speichern unter ...", {
+            border: 4,
+            width: 500,
+            height: 180,
+            x: "center",
+            y: "center",
+            html: "width: 600, height: 180",
+            mount: document.getElementById("contentSaveDlg")
+        });
         this.myComboBox.init(nameList);
-        this.storageSaveDlgNode.style.visibility = "visible";
+        //     this.storageSaveDlgNode.style.visibility = "visible";
     }
     close() {
-        this.storageSaveDlgNode.style.visibility = "hidden";
+        //this.storageSaveDlgNode.style.visibility = "hidden";
+        this.winBox.close();
     }
     init(nameList) {
         this.myComboBox.init(nameList);
@@ -1804,7 +1846,16 @@ class StorageSaveDialog {
 
 class StorageRestoreDialog {
     constructor() {
-        this.storageRestoreDialog = document.getElementById("storageRestoreDialog");
+        //this.storageRestoreDialog = document.getElementById("storageRestoreDialog");
+        this.winBox = new WinBox("Zustand wiederherstellen", {
+            border: 4,
+            width: 500,
+            height: 180,
+            x: "center",
+            y: "center",
+            html: "width: 600, height: 180",
+            mount: document.getElementById("contentRestoreDlg")
+        });
         this.myComboBox = new Combobox(document.getElementById("storageRestoreComboBox"));
         this.okNode = document.getElementById("btn-restoreStorageOK");
         this.cancelNode = document.getElementById("btn-restoreStorageCancel");
@@ -1818,11 +1869,19 @@ class StorageRestoreDialog {
         });
     }
     open(nameList) {
+        this.winBox = new WinBox("Zustand wiederherstellen", {
+            border: 4,
+            width: 500,
+            height: 180,
+            x: "center",
+            y: "center",
+            html: "width: 600, height: 180",
+            mount: document.getElementById("contentRestoreDlg")
+        });
         this.myComboBox.init(nameList);
-        this.storageRestoreDialog.style.visibility = "visible";
     }
     close() {
-        this.storageRestoreDialog.style.visibility = "hidden";
+        this.winBox.close();
     }
     init(nameList) {
         this.myComboBox.init(nameList);
@@ -1833,7 +1892,15 @@ class StorageRestoreDialog {
 }
 class StorageDeleteDialog {
     constructor() {
-        this.storageDeleteDialog = document.getElementById("storageDeleteDialog");
+        this.winBox = new WinBox("Zustand wiederherstellen", {
+            border: 4,
+            width: 500,
+            height: 180,
+            x: "center",
+            y: "center",
+            html: "width: 600, height: 180",
+            mount: document.getElementById("contentDeleteDlg")
+        });
         this.myComboBox = new Combobox(document.getElementById("storageDeleteComboBox"));
         this.okNode = document.getElementById("btn-deleteStorageOK");
         this.cancelNode = document.getElementById("btn-deleteStorageCancel");
@@ -1847,11 +1914,19 @@ class StorageDeleteDialog {
         });
     }
     open(nameList) {
+        this.winBox = new WinBox("Zustand löschen", {
+            border: 4,
+            width: 500,
+            height: 180,
+            x: "center",
+            y: "center",
+            html: "width: 600, height: 180",
+            mount: document.getElementById("contentDeleteDlg")
+        });
         this.myComboBox.init(nameList);
-        this.storageDeleteDialog.style.visibility = "visible";
     }
     close() {
-        this.storageDeleteDialog.style.visibility = "hidden";
+        this.winBox.close();
     }
     init(nameList) {
         this.myComboBox.init(nameList);
@@ -1860,6 +1935,61 @@ class StorageDeleteDialog {
         return this.myComboBox.getSelectedName();
     }
 }
+
+
+class SuccessDialog {
+    constructor() {
+        this.myWidth = 240;
+        this.myHeight = 390;
+        this.winBox = new WinBox("Lösung gefunden", {
+            border: 4,
+            width: this.myWidth,
+            height: this.myHeight,
+            //         x: "center",
+            //         y: "center",
+            left: 700,
+            modal: true,
+            html: "width: this.myWidth, height: this.myHeight",
+            mount: document.getElementById("contentSuccessDlg")
+        });
+        this.okNode = document.getElementById("btn-successOK");
+        this.cancelNode = document.getElementById("btn-successCancel");
+        this.checkBoxNode = document.getElementById("further");
+        this.okNode.addEventListener('click', () => {
+            sudoApp.successDlgOKPressed();
+        });
+        this.cancelNode.addEventListener('click', () => {
+            sudoApp.successDlgCancelPressed();
+        });
+    }
+    open() {
+        this.winBox = new WinBox("Lösung gefunden", {
+            border: 4,
+            width: this.myWidth,
+            height: this.myHeight,
+            //         x: "center",
+            //       y: "center",
+            left: 700,
+            html: "width: this.myWidth, height: this.myHeight",
+            mount: document.getElementById("contentSuccessDlg")
+        });
+        this.checkBoxNode.checked = false;
+    }
+    close() {
+        this.winBox.close();
+    }
+    init() {
+        this.checkBoxNode.checked = false;
+    }
+    further() {
+        return this.checkBoxNode.checked;
+    }
+}
+
+
+
+
+
 class SudokuStateStorage {
     constructor() { }
 
