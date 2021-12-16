@@ -4,7 +4,7 @@ layout: default
 
 # Sudoku-Solver
 
-Du hast jahrelange Erfahrung mit der Lösung von Sudokus. Und Du bist mit der Zeit spürbar besser geworden. Und dann kommt ein Sudoku, manchmal auch nur als mittelschwer klassifiziert, und Du findest keine Lösung. Dann benutze diesen Sudoku-Solver. Er löst jedes Sudoku in wenigen Minuten und Du kannst ihm dabei zuschauen.
+Wer kennt das nicht? Beim Kaffee-Trinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Sudoku, manchmal auch nur als mittelschwer klassifiziert, und man findet einfach keine Lösung. Anstatt den Kaffee-Tisch frustriert zu verlassen, benutze diesen Sudoku-Solver. Er löst jedes Sudoku in wenigen Minuten und man kann ihm dabei zuschauen. Schritt für Schritt.
 
 ## Überblick
 
@@ -12,13 +12,13 @@ Du hast jahrelange Erfahrung mit der Lösung von Sudokus. Und Du bist mit der Ze
 
 ## Typischer Ablauf
 
-1. Sudoku eingeben: "Definieren" wählen.
-2. Sudoku lösen: "Spielen" wählen.
+1. ****Sudoku eingeben:**** "Definieren" wählen und die Zellen mit den Nummern der Sudoku-Aufgabe setzen.
+2. ****Sudoku lösen:**** "Spielen" wählen und die Zellen mit den vermutet richtigen Nummern belegen.
 
-In beiden Fällen besteht ein Spielschritt aus zwei Schritten:
+In beiden Fällen besteht ein Spielschritt aus zwei Subschritten:
 
-1. Sudoku-Zelle selektieren.
-2. Nummer setzen: D.h. eine Nummer in der "Manuellen Ausführung" wählen.
+- Sudoku-Zelle selektieren.
+- Nummer setzen: D.h. eine Nummer in der "Manuellen Ausführung" wählen.
 
 Solltest Du eine Nummern-Setzung zurücknehmen wollen, so selektiere die betroffene Zelle und betätige die rote Lösch-Taste.
 
@@ -38,8 +38,8 @@ Solltest Du eine Nummern-Setzung zurücknehmen wollen, so selektiere die betroff
 
 |Phase  |Bedeutung  |
 |---------|---------|
-|![Definieren](./images/define.png)|Das Drücken dieser Taste versetzt den Solver in die Definitionsphase. In dieser Phase überträgt man die zu lösende Sudoku-Aufgabe in den Solver.|
-|![Spielen](./images/play.png)|Das Drücken Drücken dieser Taste versetzt den Solver in die Spielphase. Die Spielphase kann manuell oder automatisch durchgeführt werden.|
+|![Definieren](./images/define.png)|Die Taste ****Definieren****. Das Drücken dieser Taste versetzt den Solver in die Definitionsphase. In dieser Phase überträgt man die zu lösende Sudoku-Aufgabe in den Solver.|
+|![Spielen](./images/play.png)|Die Taste ****Spielen****. Das Drücken dieser Taste versetzt den Solver in die Spielphase. Die Spielphase kann manuell oder automatisch durchgeführt werden.|
 
 ## Manuelle Ausführung
 
@@ -49,30 +49,39 @@ Die manuelle Ausführung wird in jedem Fall in der Definitionsphase genutzt. In 
 
 |Taste  |Bedeutung  |
 |---------|---------|
-|![Spielen](./images/playButton.png)|Die Play-Taste. Der Solver startet den automatischen Lösungssuchprozess. Zusätzlich wird ein Timer gestartet, der in der eingestellten Geschwindigkeit die Ausführung automatischer Suchschritte anstößt.|
-|![Pause](./images/pauseButton.png)|Die Pause-Taste. Der Taktgeber der automatischen Ausführung wird angehalten, nicht jedoch der Suchprozess abgebrochen. Der Spieler kann jetzt weitere automatische Suchschritte mit der Step-Taste von Hand anstoßen. Oder er kann durch das erneute Drücken der Play-Taste die getaktete automatische Ausführung fortsetzen.|
-|![Stop](./images/stopButton.png)|Die Stop-Taste. Der Taktgeber der automatischen Ausführung wird angehalten und der aktuelle Suchprozess wird abgebrochen.|
-|![Step](./images/stepButton.png)|Die Step-Taste. Der Solver führt den nächsten automatischen Suchschritt aus. Falls noch nicht geschehen, startet er zuvor den Suchprozess überhaupt.|
+|![Spielen](./images/playButton.png)|Die ****Play-Taste****. Der Solver startet den automatischen Lösungssuchprozess. Zusätzlich wird ein Timer gestartet, der in der eingestellten Geschwindigkeit die Ausführung automatischer Suchschritte anstößt.|
+|![Pause](./images/pauseButton.png)|Die ****Pause-Taste****. Der Taktgeber der automatischen Ausführung wird angehalten, nicht jedoch der Suchprozess abgebrochen. Der Spieler kann jetzt weitere automatische Suchschritte mit der Step-Taste von Hand anstoßen. Oder er kann durch das erneute Drücken der Play-Taste die getaktete automatische Ausführung fortsetzen.|
+|![Stop](./images/stopButton.png)|Die ****Stop-Taste****. Der Taktgeber der automatischen Ausführung wird angehalten und der aktuelle Suchprozess wird abgebrochen.|
+|![Step](./images/stepButton.png)|Die ****Step-Taste****. Der Solver führt den nächsten automatischen Suchschritt aus. Falls noch nicht geschehen, startet er zuvor den Suchprozess überhaupt.|
 
 ## Initialisieren und Zurücksetzen
 
 |Taste  |Bedeutung  |
 |---------|---------|
-|![Initialisieren](./images/initButton.png)|Der Solver wird initialisiert. Danach ist die Sudoku-Tabelle leer.|
-|![Reset](./images/resetButton.png)|Der Solver wird zurückgesetzt auf die Aufgabenstellung. D.h. alle in der Spielphase gesetzten Zellen werden gelöscht. Die Zellen der Definitionsphase bleiben erhalten.|
+|![Initialisieren](./images/initButton.png)|Die Taste ****Initialisieren****. Durch das Drücken dieser Taste wird der Solver wird initialisiert. Danach ist die Sudoku-Tabelle leer.|
+|![Reset](./images/resetButton.png)|Die Taste ****Zurücksetzen****. Mittels dieser Taste wird der Solver zurückgesetzt auf die Aufgabenstellung. D.h. alle in der Spielphase gesetzten Zellen werden gelöscht. Die Zellen der Definitionsphase bleiben erhalten.|
 
 ## Spielstände speichern und wiederherstellen
 
-Spielstände können im lokalen Speicher des Browsers gespeichert werden, nicht jedoch auf dem Computer selbst. Internet-Anwendungen ist generell nicht gestattet, auf Inhalte des Computers zuzugreifen. D.h. Man kann seine gespeicherten Zustände nur in dem Browser wiederfinden, in dem sie gespeichert wurden.
+Spielstände können im lokalen Speicher des Browsers gespeichert werden, nicht jedoch auf dem Computer selbst. Internet-Anwendungen ist es generell nicht gestattet, auf Inhalte des Computers zuzugreifen. D.h. Man kann seine gespeicherten Zustände nur in dem Browser wiederfinden, in dem sie gespeichert wurden.
 
 |Taste  |Bedeutung  |
 |---------|---------|
-|![Speichern](./images/storeButton.png)|Der aktuelle Spielstand kann unter einem Namen gespeichert werden. Oft wird man den Zustand nach der Fertigstellung der Definition speichern wollen.|
-|![Wiederherstellen](./images/restoreButton.png)|Ein gespeicherter Zustand wird wiederhergestellt. Dabei wird der aktuelle Zustand gelöscht.|
-|![Löschen](./images/deleteStoredState.png)|Ein gespeicherter Zustand wird gelöscht.|
+|![Speichern](./images/storeButton.png)|Die Taste ****Speichern unter...****. Mit dieser Taste kann der aktuelle Spielstand unter einem Namen gespeichert werden. Oft wird man den Zustand nach der Fertigstellung der Definition speichern wollen.|
+|![Wiederherstellen](./images/restoreButton.png)|Die Taste ****Wiederherstellen****. Mit Hilfe dieser Taste kann ein zuvor gespeicherter Zustand wiederhergestellt werden. Dabei wird der aktuelle Zustand gelöscht.|
+|![Löschen](./images/deleteStoredState.png)|Die Taste ****Löschen****. Mit dieser Taste kann ein gespeicherter Zustand  gelöscht werden.|
 
 ## Den Lösungssuchprozess beobachten
 
 Dieser Sudoku-Solver erlaubt es, ihm beim Suchen zuzusehen. Er zeigt an, wie er im Suchprozess vorwärts und rückwärts geht. Rückwärts muss er gehen, wenn er alle zulässigen Nummern einer Zelle durchprobiert hat und noch keine Lösung gefunden hat. Im Fachjargon: Der Solver realisiert einen Back-Track-Algorithmus.
 
 Er zeigt die aktuelle und die bisher maximal erreichte Suchtiefe an. Immer wenn er auf eine Zelle trifft, in der es noch keine eindeutige Nummernwahl gibt, erhöht er seine Suchtiefe.
+
+## Erfolgreiche bzw. nicht erfolgreiche Suche
+
+Der Suchprozess endet erfolgreich oder nicht erfolgreich. Er endet erfolgreich, sobald alle Zellen eine
+zulässige Nummer erhalten haben.
+
+Wenn die Sudoku-Aufgabe keine Lösung besitzt, meldet der Solver: Keine Lösung gefunden. Die in Zeitungen und Magazinen gestellten Sudoku-Aufgaben sind in der Regel konsistent und eindeutig. D.h. sie besitzen überhaupt eine Lösung und diese Lösung ist eindeutig. Der Solver findet diese Lösung auf jeden Fall, und dies in der Regel mit weniger als 500 Schritten.
+
+Der Solver beherrscht auch Sudokus, die mehrere Lösungen haben. Nach der Erfolgsmeldung mit der ersten Lösung kann der Anwender nach der nächsten Lösung suchen lassen, solange bis der Solver meldet: Keine weitere Lösung gefunden.
