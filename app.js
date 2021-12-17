@@ -21,7 +21,11 @@ class SudokuApp {
         this.sudokuStorage = new SudokuStateStorage();
         // Die Hauptansicht
         this.suGrid = new SudokuGrid();
-     
+
+        // Die App kennt zwei Ausführungsmodi.
+        this.autoExecOn = false;
+        this.runner;
+
         //Die Buttons der App werden Event-Handler zugeordnet
         // Nummer-Buttons
         this.number_inputs = document.querySelectorAll('.number');
@@ -45,29 +49,55 @@ class SudokuApp {
         // Die beiden Phase-button 
         document.querySelector('#btn-define').addEventListener('click', () => {
             sudoApp.setGamePhase('define');
+            this.runner.stopTimer();
+            this.runner.init();
+            this.setAutoExecOff();
+            this.suGrid.deselect();
         });
         document.querySelector('#btn-play').addEventListener('click', () => {
             sudoApp.setGamePhase('play');
+            this.runner.stopTimer();
+            this.runner.init();
+            this.setAutoExecOff();
+            this.suGrid.deselect();
         });
 
         // Automatische Ausführung: schrittweise
         document.querySelector('#btn-autoStep').addEventListener('click', () => {
-            this.setGamePhase('play');
-            sudoApp.runner.autoStepEventHandler();
+            if(this.autoExecOn) {
+                this.runner.triggerAutoStep();    
+            } else {
+                this.setGamePhase('play');
+                this.setAutoExecOn();
+                this.suGrid.deselect();
+                this.runner.triggerAutoStep();    
+            }
         });
 
-        // Automatische Ausführung: vollautomatisch
+        // Automatische Ausführung: starten bzw. fortsetzen
         document.querySelector('#btn-run').addEventListener('click', () => {
-            this.setGamePhase('play');
-            sudoApp.runner.autoRun();
+            if(this.autoExecOn) {
+                this.runner.startTimer();                    
+            } else {
+                this.setGamePhase('play');
+                this.setAutoExecOn();
+                this.suGrid.deselect();
+                this.runner.init();
+                this.runner.startTimer();            
+            }
         });
-        // Automatische Ausführung: vollautomatisch
+
+        // Automatische Ausführung pausieren
         document.querySelector('#btn-pause').addEventListener('click', () => {
             sudoApp.runner.stopTimer();
         });
-        // Automatische Ausführung: vollautomatisch
+
+        // Automatische Ausführung beenden
         document.querySelector('#btn-stop').addEventListener('click', () => {
-            sudoApp.runner.autoRunStop();
+            this.runner.stopTimer();
+            this.runner.init();
+            this.setAutoExecOff();
+            this.suGrid.deselect();
         });
 
         // Der Initialisieren-Button: Initialisiert die Tabelle
@@ -111,10 +141,37 @@ class SudokuApp {
         // Die App kann in verschiedenen Ausführungsmodi sein
         // 'automatic' 'manual'
         this.setGamePhase('play');
+        this.setAutoExecOff();
         // Ein neuer Runner wird angelegt und initialisert
         this.runner = new AutomatedRunnerOnGrid(this.suGrid);
         this.runner.init();
     }
+
+    setAutoExecOn() {
+        if (!this.autoExecOn) {
+            this.autoExecOn = true;
+            this.runner.init();
+            this.displayOnOffStatus();
+        }
+    }
+
+    setAutoExecOff() {
+        this.autoExecOn = false;
+        this.displayOnOffStatus();
+    }
+
+    displayOnOffStatus() {
+        let manualGroup = document.getElementById("manual-exec-btns");
+        let autoGroup = document.getElementById("automatic-exec");
+        if (this.autoExecOn) {
+            manualGroup.classList.remove('on');
+            autoGroup.classList.add('on');
+        } else {
+            autoGroup.classList.remove('on');
+            manualGroup.classList.add('on');
+        }
+    }
+
 
     setGamePhase(gamePhase) {
         if (gamePhase == 'play') {
@@ -130,16 +187,21 @@ class SudokuApp {
 
     numberButtonPressed(btnNumber) {
         // Ist manuelle Operation
-        if (this.runner.isOn) {
-            this.runner.autoRunStop();
+        if (this.autoExecOn) {
+            this.runner.stopTimer();
+            this.runner.init();
+            this.setAutoExecOff();
         } else {
             this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentPhase, false);
         }
     }
     deleteCellButtonPressed() {
         // Ist manuelle Operation
-        if (this.runner.isOn) {
-            this.runner.autoRunStop();
+        if (this.autoExecOn) {
+            this.runner.stopTimer();
+            this.runner.init();
+            this.setAutoExecOff();
+            this.suGrid.deselect();
         } else {
             this.suGrid.deleteSelected(this.currentPhase, false);
             this.suGrid.deselect();
@@ -147,20 +209,26 @@ class SudokuApp {
     }
 
     initButtonPressed() {
-        this.runner.stopTimer();
-        this.suGrid.initGrid();
+        this.runner.stopTimer()
         this.runner.init();
+        this.setAutoExecOff();
+        this.suGrid.deselect();
+        this.suGrid.initGrid();
     }
 
     resetBtnPressed() {
         this.runner.stopTimer();
-        this.suGrid.reset();
         this.runner.init();
+        this.setAutoExecOff();
+        this.suGrid.deselect();
+        this.suGrid.reset();
     }
 
     saveBtnPressed() {
         // Zustand soll gespeichert werden
         this.runner.stopTimer();
+        this.runner.init();
+        this.setAutoExecOff();
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageSaveDialog.open(tmpNameList);
     }
@@ -168,20 +236,26 @@ class SudokuApp {
     restoreBtnPressed() {
         // Zustand soll wiederhergestellt werden
         this.runner.stopTimer();
+        this.runner.init();
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageRestoreDialog.open(tmpNameList);
     }
     deleteBtnPressed() {
         // Zustand soll gelöscht werden
         this.runner.stopTimer();
+        this.runner.init();
+        this.setAutoExecOff();
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageDeleteDialog.open(tmpNameList);
     }
 
     sudokuCellPressed(cellNode, index) {
-        if (this.runner.isOn) {
-            this.runner.autoRunStop();
-        }
+        if (this.autoExecOn) {
+            this.runner.stopTimer();
+            this.runner.init();
+            this.setAutoExecOff();
+            this.suGrid.deselect();            
+        }     
         this.suGrid.select(cellNode, index);
     }
 
@@ -215,11 +289,10 @@ class SudokuApp {
         // Hole den State mit diesem Namen
         let tmpState = this.sudokuStorage.getNamedState(stateName);
         if (tmpState !== null) {
-            //Lösche aktuelle Selektio
+            //Lösche aktuelle Selektion
             this.suGrid.deselect();
             // Setze den aus dem Speicher geholten Zustand
             this.suGrid.setCurrentState(tmpState);
-            this.runner.init();
         } else {
             alert("Zustand mit diesem Namen existiert nicht");
         }
@@ -253,7 +326,7 @@ class SudokuApp {
         this.successDialog.close();
         if (sudoApp.successDialog.further()) {
             this.runner.setAutoDirection('backward');
-            this.runner.autoRun();
+            this.runner.startTimer();
         }
     }
 
@@ -496,62 +569,22 @@ class AutomatedRunnerOnGrid {
         this.execSpeed = 250;
         this.execSpeedLevel = 'fast';
         this.goneSteps = 0;
-        this.isOn = false;
         this.progressBar = new ProgressBar();
         this.autoDirection = 'forward';
-        this.basicInit();
+        this.init();
     }
 
-    basicInit() {
+    init() {
         this.goneSteps = 0;
         this.autoDirection = 'forward';
         // Der Runner hat immer einen aktuellen Stepper
         this.myStepper = new Stepper();
         //Default Tiefe setzen
         this.setSpeed('fast');
-        this.switchOff();
         this.displayStatus();
     }
 
-
-    init() {
-        // Das ist sinnvoll, weil jeder Lauf eine Menge Step-Daten erzeugt,
-        // die in der Regel nicht länger benötigt werden.
-        if (this.isOn) {
-            this.basicInit();
-        }
-    }
-
-
-    switchOn() {
-        if (this.isOn) {
-            // Nichts ist zu tun
-        } else {
-            // Wenn der Runner eingeschaltet wird, bekommt er einen neuen Stepper, sprich einen Backtracker
-            this.autoDirection = 'forward';
-            this.myStepper = new Stepper();
-            this.isOn = true;
-            this.displayStatus();
-        }
-    }
-    switchOff() {
-        this.isOn = false;
-        this.dispPlayOnOffStatus();
-    }
-
-    dispPlayOnOffStatus() {
-        let manualGroup = document.getElementById("manual-exec-btns");
-        let autoGroup = document.getElementById("automatic-exec");
-        if (this.isOn) {
-            manualGroup.classList.remove('on');
-            autoGroup.classList.add('on');
-        } else {
-            autoGroup.classList.remove('on');
-            manualGroup.classList.add('on');
-        }
-    }
     displayStatus() {
-        this.dispPlayOnOffStatus();
         this.displayDepth();
         this.displayAutoDirection();
         this.displayProgress();
@@ -583,13 +616,8 @@ class AutomatedRunnerOnGrid {
     displayDepth() {
         let depth = document.getElementById("search-depth");
         let maxDepth = document.getElementById("search-max-depth");
-        if (this.isOn) {
             depth.innerText = this.myStepper.getCurrentSearchDepth();
             maxDepth.innerText = this.myStepper.getMaxSearchDepth();
-        } else {
-            depth.innerText = "0";
-            maxDepth.innerText = "0";
-        }
     }
 
     displayProgress() {
@@ -607,9 +635,6 @@ class AutomatedRunnerOnGrid {
     getAutoDirection() {
         return this.autoDirection;
     }
-
-    // Ehemalig in der App
-    // =========================================================================
 
     setSpeed(value) {
         switch (value) {
@@ -645,7 +670,7 @@ class AutomatedRunnerOnGrid {
         // Also nur im laufenden Betrieb.Denn sonst schaltet diese Operation den runner ein.
         if (this.isRunning()) {
             window.clearInterval(this.timer);
-            this.timer = window.setInterval(() => { sudoApp.runner.autoStepEventHandler(); }, this.execSpeed);
+            this.timer = window.setInterval(() => { sudoApp.runner.triggerAutoStep(); }, this.execSpeed);
         }
     }
 
@@ -654,16 +679,9 @@ class AutomatedRunnerOnGrid {
         return this.timer !== false;
     }
 
-    autoRun() {
-        // Die automatische Ausführung
-        if (!this.isOn) {
-            //Manueller Mode aktiv
-            this.init;
-            this.switchOn();
-        }
-        // Manuell oder automatischer Mode, der Timer wird gestartet
+    startTimer() {
         if (!this.isRunning()) {
-            this.timer = window.setInterval(() => { sudoApp.runner.autoStepEventHandler(); }, this.execSpeed);
+            this.timer = window.setInterval(() => { sudoApp.runner.triggerAutoStep(); }, this.execSpeed);
         }
     }
 
@@ -673,21 +691,7 @@ class AutomatedRunnerOnGrid {
         this.timer = false;
     }
 
-    autoRunStop() {
-        // Die automatische Ausführung
-        this.stopTimer();
-        this.init();
-    }
-
-    autoStepEventHandler() {
-        // Aufgerufen durch den Timer oder Step-Button
-        if (!this.isOn) {
-            //Manueller Mode aktiv
-            this.suGrid.deselect();
-            this.init;
-            this.switchOn();
-        }
-        // In beiden Fällen folgt der eigentlche Schritt
+    triggerAutoStep() {
         this.goneSteps++;
         let result = this.autoStep();
         this.displayStatus();
@@ -705,8 +709,6 @@ class AutomatedRunnerOnGrid {
         }
     }
 
-    //Das Bisherige
-    //==========================================================================
     autoStep() {
         // Rückgabemöglichkeiten: {'success', 'fail', 'inProgress'}
         if (this.autoDirection == 'forward') {
