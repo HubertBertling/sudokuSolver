@@ -140,7 +140,7 @@ class SudokuApp {
         this.suGrid.initGrid();
         // Die App kann in verschiedenen Ausführungsmodi sein
         // 'automatic' 'manual'
-        this.setGamePhase('play');
+        this.setGamePhase('define');
         this.setAutoExecOff();
         // Ein neuer Runner wird angelegt und initialisert
         this.runner = new AutomatedRunnerOnGrid(this.suGrid);
