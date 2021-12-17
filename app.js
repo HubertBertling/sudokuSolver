@@ -214,6 +214,7 @@ class SudokuApp {
         this.setAutoExecOff();
         this.suGrid.deselect();
         this.suGrid.initGrid();
+        this.setGamePhase('define');
     }
 
     resetBtnPressed() {
