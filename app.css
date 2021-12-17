@@ -163,11 +163,14 @@ body {
 
 .sudoku-title {
 
-    padding-top: 10px;
+    padding-top: 20px;
+    padding-bottom: 10px;
     font-size: xx-large;
 
 }
-
+.help {
+    margin-bottom:10px;
+}
 /*======================================*/
 /* Exec button block                  */
 /*======================================*/
@@ -184,7 +187,7 @@ body {
 }
 
 .exec-btn-group, .auto-exec-container {
-    margin-top: 30px;
+    margin-top: 20px;
 
 }
 
@@ -219,13 +222,6 @@ body {
     box-shadow: 0px 0px;
     transform: translate(2px, 2px);
 }
-
-.btn-undo-redo {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 5px;
-}
-
 
 
 .numbers {
@@ -272,16 +268,16 @@ body {
     margin-top: 5px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
+    gap: 10px;
 }
 
 .btn-image {
     width: 25px;
-    height: 25px;
+    height: 20px;
 }
 
 
-.btn-define, .btn-play, .btn-redo, .btn-undo, .btn-automatic {
+.btn-define, .btn-play, .btn-automatic {
     padding: 5px;
     border-radius: var(--border-radius);
     box-shadow: 5px 5px #666;
@@ -290,22 +286,11 @@ body {
     place-items: center;
     font-size: var(--font-size);
     cursor: pointer;
+    
 }
 
 
-.btn-redo, .btn-undo {
-    margin-left: 5px;
-    margin-right: 5px;
-    ;
-    border-radius: var(--border-radius);
-    box-shadow: 5px 5px #666;
-    border: hidden;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-}
-
-.btn-play, .btn-redo, .btn-undo, .btn-automatic {
+.btn-play, .btn-automatic {
     background-color: var(--blue);
     color: var(--black);
 }
@@ -331,8 +316,6 @@ body {
 
 .config-btns {
     margin-right: 10px;
-    ;
-    /*   border: 5px solid var(--red); */
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
@@ -340,7 +323,6 @@ body {
 
 .storage-btns {
     margin-left: 10px;
-    /*    border: 5px solid var(--red); */
     display: grid;
     grid-template-columns: repeat(3, 1fr);
 
@@ -373,7 +355,6 @@ body {
 
 .progress-box {
     padding-top: 5px;
-    ;
     padding-left: var(--space-y);
     padding-right: var(--space-y);
     padding-bottom: 5px;
@@ -383,13 +364,6 @@ body {
     background-color: LightSteelBlue;
 }
 
-/*
-.track-group {
-    margin-top: 10px;;
-    display: grid;
-    grid-template-columns: 0.5fr 0.5fr;
- }
- */
 .manual-exec-btns.on, .automatic-exec.on {
     padding-right: 10px;
     ;
@@ -452,49 +426,6 @@ body {
     color: white;
 }
 
-/*======================================*/
-/* Main button block */
-/*======================================*/
-
-
-
-/*======================================*/
-/* New Dialogs block */
-/*======================================*/
-
-
-
-/*======================================*/
-/* Dialogs block */
-/*======================================*/
-
-/*
-.storageSaveDialog, .storageRestoreDialog, .storageDeleteDialog {
-    visibility: hidden;
-    position: fixed;
-    width: 400px;
-    height: 220px;
-
-    background-color: #f2f2f2;
-    border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border: 1px solid #666666;
-    padding: 10px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 12px;
-    border: 3px solid #cccccc;
-    left: 50%;
-    top: 20px;
-}
-*/
-/*
-.input-row {
-    display: inline;
-    width: 400px;
-}
-*/
 
 .textInDlgs {
     size: 100;
