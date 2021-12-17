@@ -6,8 +6,8 @@ const init = () => {
 
 class SudokuApp {
     constructor() {
-        //Die App kennt zwei Betriebs-Modi 'play' or 'define'
-        this.currentMode = 'play';
+        //Die App kennt zwei Betriebs-Phasen 'play' or 'define'
+        this.currentPhase = 'play';
         // Die App erhält eine Sudoku-Tabelle. Die als HTML schon existierende Tabelle 
         // erhält hier einen Javascript Wrapper.
 
@@ -21,10 +21,7 @@ class SudokuApp {
         this.sudokuStorage = new SudokuStateStorage();
         // Die Hauptansicht
         this.suGrid = new SudokuGrid();
-        // Die App kann in verschiedenen Ausführungsmodi sein
-        // 'undefined' 'automatic' 'manual'
-        this.execMode = 'undefined';
-
+     
         //Die Buttons der App werden Event-Handler zugeordnet
         // Nummer-Buttons
         this.number_inputs = document.querySelectorAll('.number');
@@ -41,42 +38,27 @@ class SudokuApp {
 
         });
 
-
-        // Die Einstellung der Maximalen Tiefe
-        /*
-        document.querySelector('#sudoDepthSetting').addEventListener('input', (e) => {
-            this.runner.setMaxDepth(e.target.value);
-        });
-       */
         document.querySelector('#speedSetting').addEventListener('input', (e) => {
             sudoApp.runner.setSpeed(e.target.value);
         });
 
-        // Die beiden Mode-button 
+        // Die beiden Phase-button 
         document.querySelector('#btn-define').addEventListener('click', () => {
-            sudoApp.setMode('define');
+            sudoApp.setGamePhase('define');
         });
         document.querySelector('#btn-play').addEventListener('click', () => {
-            sudoApp.setMode('play');
+            sudoApp.setGamePhase('play');
         });
-        // Undo- und Redo-Button
-        /* document.querySelector('#btn-redo').addEventListener('click', () => {
-             sudoApp.redo();
-         });
-         document.querySelector('#btn-undo').addEventListener('click', () => {
-             sudoApp.undo();
-         });
-         */
 
         // Automatische Ausführung: schrittweise
         document.querySelector('#btn-autoStep').addEventListener('click', () => {
-            this.setMode('play');
+            this.setGamePhase('play');
             sudoApp.runner.autoStepEventHandler();
         });
 
         // Automatische Ausführung: vollautomatisch
         document.querySelector('#btn-run').addEventListener('click', () => {
-            this.setMode('play');
+            this.setGamePhase('play');
             sudoApp.runner.autoRun();
         });
         // Automatische Ausführung: vollautomatisch
@@ -109,9 +91,7 @@ class SudokuApp {
         document.querySelector('#btn-delete').addEventListener('click', () => {
             sudoApp.deleteBtnPressed();
         });
-
     }
-
 
     init() {
         this.storageSaveDialog.close();
@@ -119,8 +99,6 @@ class SudokuApp {
         this.storageDeleteDialog.close();
         this.successDialog.close();
 
-        // Der initiale Modus ist `play'.
-        this.setMode('play');
         // Die Sudoku-Tabelle wird geladen.
         // Schritt 1: Lade die DOM-Tabelle in die internen Wrapper-Objekte
         this.suGrid.loadGrid();
@@ -131,20 +109,20 @@ class SudokuApp {
         // Fülle die Sudokutabelle initial
         this.suGrid.initGrid();
         // Die App kann in verschiedenen Ausführungsmodi sein
-        // 'undefined' 'automatic' 'manual'
-        this.setMode('play');
+        // 'automatic' 'manual'
+        this.setGamePhase('play');
         // Ein neuer Runner wird angelegt und initialisert
         this.runner = new AutomatedRunnerOnGrid(this.suGrid);
         this.runner.init();
     }
 
-    setMode(mode) {
-        if (mode == 'play') {
-            this.currentMode = 'play';
+    setGamePhase(gamePhase) {
+        if (gamePhase == 'play') {
+            this.currentPhase = 'play';
             document.querySelector('#btn-define').classList.remove('pressed');
             document.querySelector('#btn-play').classList.add('pressed');
-        } else if (mode == 'define') {
-            this.currentMode = 'define';
+        } else if (gamePhase == 'define') {
+            this.currentPhase = 'define';
             document.querySelector('#btn-define').classList.add('pressed');
             document.querySelector('#btn-play').classList.remove('pressed');
         }
@@ -155,7 +133,7 @@ class SudokuApp {
         if (this.runner.isOn) {
             this.runner.autoRunStop();
         } else {
-            this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentMode, false);
+            this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentPhase, false);
         }
     }
     deleteCellButtonPressed() {
@@ -163,7 +141,7 @@ class SudokuApp {
         if (this.runner.isOn) {
             this.runner.autoRunStop();
         } else {
-            this.suGrid.deleteSelected(this.currentMode, false);
+            this.suGrid.deleteSelected(this.currentPhase, false);
             this.suGrid.deselect();
         }
     }
@@ -267,17 +245,14 @@ class SudokuApp {
         comboBoxNode.setInputField();
     }
 
-    getMode() {
-        return this.currentMode;
+    getPhase() {
+        return this.currentPhase;
     }
-
-
-
 
     successDlgOKPressed() {
         this.successDialog.close();
         if (sudoApp.successDialog.further()) {
-            this.runner.setAutoMode('backward');
+            this.runner.setAutoDirection('backward');
             this.runner.autoRun();
         }
     }
@@ -285,8 +260,6 @@ class SudokuApp {
     successDlgCancelPressed() {
         this.successDialog.close();
     }
-
-
 }
 
 class ProgressBar {
@@ -309,8 +282,7 @@ class ProgressBar {
 
 //========================================================================
 class Stepper {
-    constructor(searchDepth) {
-        this.searchDepth = searchDepth;
+    constructor() {
         this.currentStep = new OptionStep(null, -1, ['0']);
         this.maxDepth = 0;
         // console.log("Tiefe 0");
@@ -320,11 +292,6 @@ class Stepper {
     getCurrentStep() {
         return this.currentStep;
     }
-    /*
-    searchDepthLimitReached() {
-        return (!(this.currentStep.getDepth() + 1 <= this.searchDepth));
-    }
-    */
 
     getCurrentSearchDepth() {
         let tmpDepth = this.currentStep.getDepth();
@@ -525,28 +492,23 @@ class AutomatedRunnerOnGrid {
     constructor(suGrid) {
         this.suGrid = suGrid;
         this.myStepper;
-        this.searchDepth = 50;
         this.timer = false;
         this.execSpeed = 250;
         this.execSpeedLevel = 'fast';
         this.goneSteps = 0;
         this.isOn = false;
         this.progressBar = new ProgressBar();
-        this.autoMode = 'forward';
+        this.autoDirection = 'forward';
         this.basicInit();
     }
 
-    setMaxDepth(value) {
-        this.searchDepth = value;
-    }
     basicInit() {
         this.goneSteps = 0;
-        this.autoMode = 'forward';
+        this.autoDirection = 'forward';
         // Der Runner hat immer einen aktuellen Stepper
-        this.myStepper = new Stepper(this.searchDepth);
+        this.myStepper = new Stepper();
         //Default Tiefe setzen
         this.setSpeed('fast');
-        this.setMaxDepth(50)
         this.switchOff();
         this.displayStatus();
     }
@@ -566,8 +528,8 @@ class AutomatedRunnerOnGrid {
             // Nichts ist zu tun
         } else {
             // Wenn der Runner eingeschaltet wird, bekommt er einen neuen Stepper, sprich einen Backtracker
-            this.autoMode = 'forward';
-            this.myStepper = new Stepper(this.searchDepth);
+            this.autoDirection = 'forward';
+            this.myStepper = new Stepper();
             this.isOn = true;
             this.displayStatus();
         }
@@ -591,8 +553,7 @@ class AutomatedRunnerOnGrid {
     displayStatus() {
         this.dispPlayOnOffStatus();
         this.displayDepth();
-        //  this.displayDepthSettingElement();
-        this.displayAutomode();
+        this.displayAutoDirection();
         this.displayProgress();
         this.displayGoneSteps();
         this.displaySpeedSetting();
@@ -607,10 +568,10 @@ class AutomatedRunnerOnGrid {
         goneStepsNode.innerText = this.goneSteps;
     }
 
-    displayAutomode() {
+    displayAutoDirection() {
         let forwardNode = document.getElementById("radio-forward");
         let backwardNode = document.getElementById("radio-backward");
-        if (this.autoMode == 'forward') {
+        if (this.autoDirection == 'forward') {
             forwardNode.checked = true;
             backwardNode.checked = false;
         } else {
@@ -630,12 +591,6 @@ class AutomatedRunnerOnGrid {
             maxDepth.innerText = "0";
         }
     }
-    /*
-    displayDepthSettingElement() {
-        let depthInput = document.getElementById('sudoDepthSetting');
-        depthInput.value = this.searchDepth;
-    }
-    */
 
     displayProgress() {
 
@@ -644,13 +599,13 @@ class AutomatedRunnerOnGrid {
     }
 
 
-    setAutoMode(mode) {
-        this.autoMode = mode;
-        this.displayAutomode();
+    setAutoDirection(direction) {
+        this.autoDirection = direction;
+        this.displayAutoDirection();
     }
 
-    getAutoMode() {
-        return this.autoMode;
+    getAutoDirection() {
+        return this.autoDirection;
     }
 
     // Ehemalig in der App
@@ -725,8 +680,7 @@ class AutomatedRunnerOnGrid {
     }
 
     autoStepEventHandler() {
-        // Aufgerufen durch den Timer oder
-        // Step-Button
+        // Aufgerufen durch den Timer oder Step-Button
         if (!this.isOn) {
             //Manueller Mode aktiv
             this.suGrid.deselect();
@@ -746,24 +700,21 @@ class AutomatedRunnerOnGrid {
             this.stopTimer();
             alert("Keine (weitere) Lösung gefunden!");
         } else {
-            // 'stopped' oder 'inProgress'
+            // 'inProgress'
             // Keine Aktion
         }
     }
 
-
-
     //Das Bisherige
     //==========================================================================
     autoStep() {
-        // Rückgabemöglichkeiten: {'success', 'fail', 'inProgress', 'stopped'}
-        //if (!this.isStopped) {
-        if (this.autoMode == 'forward') {
+        // Rückgabemöglichkeiten: {'success', 'fail', 'inProgress'}
+        if (this.autoDirection == 'forward') {
             let result = this.stepForward();
             switch (result) {
                 case 'numberSet': {
                     if (this.deadlockReached()) {
-                        this.setAutoMode('backward');
+                        this.setAutoDirection('backward');
                         return 'inProgress';
                     } else {
                         return 'inProgress';
@@ -781,54 +732,48 @@ class AutomatedRunnerOnGrid {
                     // Dann ist sie auch prinzipbedingt konsistent gefüllt
                     return 'success';
                 }
-                /*  case 'searchDepthLimitExceeded': {
-                        this.setAutoMode('backward');
-                        return 'inProgress';
-                    } */
                 default: {
                     alert('Softwarefehler: Unerwarteter Rückgabewert in stepForward(): ' + result);
                 }
             }
-        } else
-            if (this.autoMode == 'backward') {
-                let result = this.stepBackward();
-                switch (result) {
-                    case 'root-Optionstep-reached': {
-                        // D.h. Es gibt keine Lösung für das Sudoku
-                        return 'fail';
-                    }
-                    case 'currentStep-cell-selected': {
-                        // Die Zelle des Schrittes selektiert,
-                        // um danach ihre Nummer zu  löschen
-                        return 'inProgress';
-                    }
-                    case 'cellNumber-unsetted-and-step-backward': {
-                        // Die Nummer des selektierten Schrittes gelöscht
-                        // und einen Schritt rückwärts gegangen
-                        return 'inProgress';
-                    }
-                    case 'next-option-selected': {
-                        // Für die nächste Option in einem Optionsschritt
-                        // einen Realstep erzeugt
-                        this.setAutoMode('forward');
-                        return 'inProgress';
-                    }
-                    case 'step backward from a Optionstep': {
-                        // Nach der vollständigen Abarbeitung eines Optionsschrittes
-                        // Zurück vor diesen Schritt
-                        return 'inProgress';
-                    }
-                    case 'step backward from a Realstep': {
-                        return 'inProgress'
-                    }
-                    default: {
-                        alert('Softwarefehler: Unerwarteter Rückgabewert in stepBackward(): ' + result);
-                    }
+        } else if (this.autoDirection == 'backward') {
+            let result = this.stepBackward();
+            switch (result) {
+                case 'root-Optionstep-reached': {
+                    // D.h. Es gibt keine Lösung für das Sudoku
+                    return 'fail';
                 }
-            } else {
-                alert("Softwarefehler:autoStep() nicht mit forward oder backward aufgerufen");
+                case 'currentStep-cell-selected': {
+                    // Die Zelle des Schrittes selektiert,
+                    // um danach ihre Nummer zu  löschen
+                    return 'inProgress';
+                }
+                case 'cellNumber-unsetted-and-step-backward': {
+                    // Die Nummer des selektierten Schrittes gelöscht
+                    // und einen Schritt rückwärts gegangen
+                    return 'inProgress';
+                }
+                case 'next-option-selected': {
+                    // Für die nächste Option in einem Optionsschritt
+                    // einen Realstep erzeugt
+                    this.setAutoDirection('forward');
+                    return 'inProgress';
+                }
+                case 'step backward from a Optionstep': {
+                    // Nach der vollständigen Abarbeitung eines Optionsschrittes
+                    // Zurück vor diesen Schritt
+                    return 'inProgress';
+                }
+                case 'step backward from a Realstep': {
+                    return 'inProgress'
+                }
+                default: {
+                    alert('Softwarefehler: Unerwarteter Rückgabewert in stepBackward(): ' + result);
+                }
             }
-
+        } else {
+            alert("Softwarefehler: autoStep() nicht mit forward oder backward aufgerufen");
+        }
     }
 
     stepForward() {
@@ -843,8 +788,7 @@ class AutomatedRunnerOnGrid {
         //    Handlung für 2:
         //      2.a. : In der Sudokutabelle wird die nächste Selektion bestimmt.
         //        b.: ein dazu passender nächster Schritt wird angelegt     
-        // Rückgabemöglichkeiten: {'numberSet', 'cellSelected-realStepCreated', 'nothingToSelect', 
-        //                          'searchDepthLimitExceeded'}
+        // Rückgabemöglichkeiten: {'numberSet', 'cellSelected-realStepCreated', 'nothingToSelect'}
         // Und ein neuer aktueller Schritt im Stepper
         if (this.suGrid.indexSelected == -1) {
             // Keine Zelle selekteirt
@@ -869,10 +813,6 @@ class AutomatedRunnerOnGrid {
                     //Die Selektion hat keine eindeutige Nummer.
                     //D.h. es geht mit mehreren Optionen weiter.
                     // Nächster realstep mit einer Optionsnummer
-                    // Aber nur wenn das Tiefenlimit nicht überschritten ist
-                    /* if (this.myStepper.searchDepthLimitReached()) {
-                           return 'searchDepthLimitExceeded';
-                       } else { */
                     this.myStepper.addOptionStep(tmpSelection.index, tmpSelection.options.slice());
                     // Die erste Option des Optionsschrittes, wird gleich gewählt
                     let realStep = this.myStepper.getNextRealStep();
@@ -1018,9 +958,6 @@ class AutomatedRunnerOnGrid {
         }
         return false;
     }
-
-
-
 }
 
 class SudokuGrid {
@@ -1034,9 +971,6 @@ class SudokuGrid {
         // Speichert die aktuell selektierte Zelle und ihren Index
         this.selectedCell = undefined;
         this.indexSelected = -1;
-        // Ermöglicht schrittweises undo und redo in der Lösung
-        //  this.actionHistory = [];
-        //  this.undoHistory = [];
     }
 
     initGrid() {
@@ -1075,14 +1009,14 @@ class SudokuGrid {
     }
 
     reset() {
-        // Alle im Mode 'play' gesetzten Zahlen werden gelöscht
+        // Alle in der Phase 'play' gesetzten Zahlen werden gelöscht
         // Die Zellen der Aufgabenstellung bleiben erhalten
         // Schritt 1: Die aktuelle Selektion wird zurückgesetzt
         this.initCurrentSelection();
         //this.initActionHistory();
         // Schritt 2: Die aktuellen Zellinhalte werden gelöscht
         for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].getMode() !== 'define') {
+            if (this.sudoCells[i].getPhase() !== 'define') {
                 this.sudoCells[i].clear();
             }
         }
@@ -1093,65 +1027,13 @@ class SudokuGrid {
         this.reEvaluateNecessarys();
     }
 
-    /*
-        initActionHistory() {
-            this.actionHistory = [];
-            this.undoHistory = [];
-        }
-    
-        undo() {
-            this.runner.switchOff();
-            //Macht die letzte Tabellenoperation rückgängig
-            if (this.actionHistory.length > '0') {
-                let action = this.actionHistory.pop();
-                this.undoHistory.push(action);
-                let undoOp = true;
-                if (action.op === "setNumber") {
-                    // Lösche die gesetzte Nummer
-                    this.setMode(action.mode);
-                    this.suGrid.select(action.mode, action.cellIndex);
-                    this.suGrid.deleteSelected(this.currentMode, undoOp);
-                    this.suGrid.deselect();
-                } else if (action.op === "deleteNumber") {
-                    // Setze die zuvor gelöschte Nummer erneut
-                    this.setMode(action.mode);
-                    this.suGrid.select(action.Mode, action.cellIndex);
-                    this.suGrid.atCurrentSelectionSetNumber(action.nr, action.mode, undoOp);
-                    this.suGrid.deselect();
-                }
-            }
-        }
-    
-        redo() {
-            //Macht undo rückgängig
-            if (this.undoHistory.length > '0') {
-                let action = this.undoHistory.pop();
-                let undoOp = false;
-                if (action.op === "setNumber") {
-                    // Wiederhole die Aktion
-                    this.setMode(action.mode);
-                    this.suGrid.select(action.mode, action.cellIndex);
-                    this.suGrid.atCurrentSelectionSetNumber(action.nr, action.mode, undoOp);
-                    this.suGrid.deselect();
-                } else if (action.op === "deleteNumber") {
-                    // Wiederhole die Aktion
-                    this.setMode(action.mode);
-                    this.suGrid.select(action.Mode, action.cellIndex);
-                    this.suGrid.deleteSelected(this.currentMode, undoOp);
-                    this.suGrid.deselect();
-                }
-            }
-        }
-    */
-
-
     getCurrentState() {
         // Zusammenstellung des Zustandes, um ihn abspeichern zu können
         let tmpGrid = [];
         for (let i = 0; i < 81; i++) {
             let storedCell = {
                 cellValue: this.sudoCells[i].value(),
-                cellMode: this.sudoCells[i].getMode()
+                cellPhase: this.sudoCells[i].getPhase()
             };
             tmpGrid.push(storedCell);
         }
@@ -1161,16 +1043,14 @@ class SudokuGrid {
     setCurrentState(previousState) {
         for (let i = 0; i < 81; i++) {
             let storedCell = previousState.shift();
-            this.sudoCells[i].massSetNumber(storedCell.cellValue, storedCell.cellMode);
+            this.sudoCells[i].massSetNumber(storedCell.cellValue, storedCell.cellPhase);
         }
-
         // Berechne die möglichen Inhalte der Zellen
         this.recalculatePermissibleSets();
         // Berechne potentiell vorhandene Konflikte
         this.reCalculateErrorCells();
         // Berechne die notwendigen Zellinhalte
         this.reEvaluateNecessarys();
-
     }
 
     loadGrid() {
@@ -1243,7 +1123,7 @@ class SudokuGrid {
         }
     }
 
-    atCurrentSelectionSetNumber(btnNumber, currentMode, undoOp) {
+    atCurrentSelectionSetNumber(btnNumber, currentPhase) {
         // Setze Nummer in einer Zelle
         if ( // Das geht nur, wenn eine Zelle selektiert ist
             this.isCellSelected()) {
@@ -1251,20 +1131,9 @@ class SudokuGrid {
                 (this.selectedCell.value() == '0') ||
                 // Wenn die Zelle geüllt ist, kann nur im gleichen Modus
                 // eine Neusetzung erfolgen
-                (this.selectedCell.getMode() == currentMode)
+                (this.selectedCell.getPhase() == currentPhase)
             ) {
-                this.selectedCell.setNumber(btnNumber, currentMode);
-                // Setze action in der action history, aber nur, wenn nicht im Undo
-                /*               let action = null;
-                               if (!undoOp) {
-                                   action = {
-                                       op: "setNumber",
-                                       mode: currentMode,
-                                       nr: btnNumber,
-                                       cellIndex: this.indexSelected
-                                   };
-                               }
-                               this.actionHistory.push(action); */
+                this.selectedCell.setNumber(btnNumber, currentPhase);
                 // Berechne die jetzt noch möglichen Inhalte der Zellen
                 this.recalculatePermissibleSets();
                 // Berechne potentiell jetzt vorhandene Konflikte
@@ -1277,23 +1146,13 @@ class SudokuGrid {
         }
     }
 
-    deleteSelected(currentMode, undoOp) {
+    deleteSelected(currentPhase, undoOp) {
         // Lösche die selektierte Zelle
         if (this.isCellSelected()) {
             // Das Löschen kann nur im gleichen Modus
             // eine Neusetzung erfolgen
-            if (this.selectedCell.getMode() == currentMode) {
-                /*                let action = null;
-                                if (!undoOp) {
-                                    action = {
-                                        op: "deleteNumber",
-                                        mode: currentMode,
-                                        nr: this.selectedCell.value(),
-                                        cellIndex: this.indexSelected
-                                    };
-                                } */
+            if (this.selectedCell.getPhase() == currentPhase) {
                 this.selectedCell.delete();
-                // this.actionHistory.push(action);
                 // Berechne die jetzt noch möglichen Inhalte der Zellen
                 this.recalculatePermissibleSets();
                 // Berechne potentiell jetzt (nicht mehr) vorhandene Konflikte
@@ -1487,9 +1346,9 @@ class SudokuCell {
         this.myCellNode.addEventListener('click', () => {
             sudoApp.sudokuCellPressed(cellNode, index);
         });
-        // Speichert den Modus, der beim Setzen einer Nummer
+        // Speichert die Phase, die beim Setzen einer Nummer
         // in der Zelle aktuell war.
-        this.myMode = '';
+        this.myGamePhase = '';
         // Speichert ein für alle mal bei der Initialisierung
         // die beeinflussenden Zellen dieser Zelle
         this.influencers = [];
@@ -1516,8 +1375,8 @@ class SudokuCell {
         this.setPermissibleNumbers();
     }
 
-    setNumber(number, mode) {
-        this.privateSetNumber(number, mode);
+    setNumber(number, gamePhase) {
+        this.privateSetNumber(number, gamePhase);
 
         this.myCellNode.classList.add('zoom-in');
         setTimeout(() => {
@@ -1525,12 +1384,12 @@ class SudokuCell {
         }, 500);
     }
 
-    massSetNumber(number, mode) {
+    massSetNumber(number, gamePhase) {
         //Wird augerufen für die Wiederherstellung
-        this.privateSetNumber(number, mode);
+        this.privateSetNumber(number, gamePhase);
     }
 
-    privateSetNumber(number, mode) {
+    privateSetNumber(number, gamePhase) {
         this.myCellNode.setAttribute('data-value', number);
         //remove permissible numbers
         while (this.myCellNode.firstChild) {
@@ -1545,9 +1404,9 @@ class SudokuCell {
         // Setze das Zahlelement
         this.myCellNode.innerHTML = number;
         // Notiere den Modus im Wrapper
-        this.myMode = mode;
+        this.myGamePhase = gamePhase;
         // Setze die Klassifizierung in der DOM-Zelle
-        if (mode == 'define') {
+        if (gamePhase == 'define') {
             this.myCellNode.classList.add('define');
         } else {
             this.myCellNode.classList.remove('define');
@@ -1559,7 +1418,7 @@ class SudokuCell {
         // Damit kann man leicht eine leere Zelle bestimmen
         this.myCellNode.setAttribute('data-value', '0');
         this.myCellNode.innerHTML = '';
-        this.myMode = '';
+        this.myGamePhase = '';
         // LÖsche die gegebenfalls vorhandene Define-KLassifizierung
         this.myCellNode.classList.remove('define');
         // Hinweis: Die Neuberechnung der möglchen und notwendigen
@@ -1582,11 +1441,11 @@ class SudokuCell {
         this.myCellNode.classList.remove('err');
     }
 
-    getMode() {
-        return this.myMode;
+    getPhase() {
+        return this.myGamePhase;
     }
-    setMode(mode) {
-        this.myMode = mode;
+    setGamePhase(gamePhase) {
+        this.myGamePhase = gamePhase;
     }
 
     select() {
@@ -1602,12 +1461,9 @@ class SudokuCell {
         this.myCellNode.classList.remove('selected');
         this.influencers.forEach(e => e.unsetSelected());
     }
-
     unsetSelected() {
         this.myCellNode.classList.remove('hover');
     }
-
-
     value() {
         return this.myCellNode.getAttribute('data-value');
     }
@@ -1654,7 +1510,6 @@ class SudokuCell {
                 this.myCellNode.appendChild(permNumberElement);
             });
         }
-
     }
     getPermissibleNumbers() {
         return this.myPermissibles;
@@ -1691,7 +1546,7 @@ class SudokuCell {
 
     isSetinError() {
         let tmpValue = this.value();
-        // Wenn die Zelle gar nicht gesetzt ist, kann sie nicht fehlerhaft gesezt sein
+        // Wenn die Zelle gar nicht gesetzt ist, kann sie nicht fehlerhaft gesetzt sein
         if (tmpValue == '0') {
             return false;
         } else {
@@ -1742,17 +1597,17 @@ class SudokuCell {
         return this.myIndex;
     }
 }
-class Combobox {
+class ComboBox {
     constructor(comboBoxNode) {
-        // Der Combobox Knoten
+        // Der ComboBox Knoten
         this.myComboBoxNode = comboBoxNode;
-        // 1. Kind: das Input-Feld der Combobox
-        this.theinput = comboBoxNode.firstElementChild;
-        // 2. und letztes Kind: das Selektionsfeld Options-Liste
+        // 1. Kind: das Input-Feld der ComboBox
+        this.theInput = comboBoxNode.firstElementChild;
+        // 2. und letztes Kind: das Selektionsfeld der Options-Liste
         this.optionList = comboBoxNode.lastElementChild;
 
         // Mit der Erzeugung des Wrappers wird
-        // auch der Eventhandler der Combobox gesetzt
+        // auch der Eventhandler der ComboBox gesetzt
         this.optionList.addEventListener('change', () => {
             sudoApp.comboBoxNameSelected(this);
         });
@@ -1765,13 +1620,13 @@ class Combobox {
     }
     setInputField() {
         // Eine Selektion in der Optionsliste ruft diese Operation au
-        // und überträgt die Auswahl in das Inputfeld (Combbox)
+        // und überträgt die Auswahl in das Input-Feld (ComboBox)
         let idx = this.optionList.selectedIndex;
         if (idx >= 0) {
             let content = this.optionList.options[idx].innerHTML;
-            this.theinput.value = content;
+            this.theInput.value = content;
         } else {
-            this.theinput.value = '';
+            this.theInput.value = '';
         }
     }
     init(optionListNew) {
@@ -1790,24 +1645,14 @@ class Combobox {
         this.setInputField();
     }
     getSelectedName() {
-        return this.theinput.value;
+        return this.theInput.value;
     }
 }
 class StorageSaveDialog {
     constructor() {
-        //   this.storageSaveDlgNode = document.getElementById("storageSaveDialog");
-        this.winBox = new WinBox("Zustand speichern unter ...", {
-            border: 4,
-            width: 500,
-            height: 180,
-            x: "center",
-            y: "center",
-            html: "width: 600, height: 180",
-            mount: document.getElementById("contentSaveDlg")
-        });
-
+        this.winBox;
         this.myComboBoxNode = document.getElementById("storageSaveComboBox");
-        this.myComboBox = new Combobox(this.myComboBoxNode);
+        this.myComboBox = new ComboBox(this.myComboBoxNode);
         this.okNode = document.getElementById("btn-saveStorageOK");
         this.cancelNode = document.getElementById("btn-saveStorageCancel");
         // Mit der Erzeugung des Wrappers werden 
@@ -1833,8 +1678,9 @@ class StorageSaveDialog {
         //     this.storageSaveDlgNode.style.visibility = "visible";
     }
     close() {
-        //this.storageSaveDlgNode.style.visibility = "hidden";
-        this.winBox.close();
+        if (!(this.winBox == null)) {
+            this.winBox.close();
+        }
     }
     init(nameList) {
         this.myComboBox.init(nameList);
@@ -1847,16 +1693,8 @@ class StorageSaveDialog {
 class StorageRestoreDialog {
     constructor() {
         //this.storageRestoreDialog = document.getElementById("storageRestoreDialog");
-        this.winBox = new WinBox("Zustand wiederherstellen", {
-            border: 4,
-            width: 500,
-            height: 180,
-            x: "center",
-            y: "center",
-            html: "width: 600, height: 180",
-            mount: document.getElementById("contentRestoreDlg")
-        });
-        this.myComboBox = new Combobox(document.getElementById("storageRestoreComboBox"));
+        this.winBox;
+        this.myComboBox = new ComboBox(document.getElementById("storageRestoreComboBox"));
         this.okNode = document.getElementById("btn-restoreStorageOK");
         this.cancelNode = document.getElementById("btn-restoreStorageCancel");
         // Mit der Erzeugung des Wrappers werden 
@@ -1881,7 +1719,9 @@ class StorageRestoreDialog {
         this.myComboBox.init(nameList);
     }
     close() {
-        this.winBox.close();
+        if (!(this.winBox == null)) {
+            this.winBox.close();
+        }
     }
     init(nameList) {
         this.myComboBox.init(nameList);
@@ -1892,16 +1732,8 @@ class StorageRestoreDialog {
 }
 class StorageDeleteDialog {
     constructor() {
-        this.winBox = new WinBox("Zustand wiederherstellen", {
-            border: 4,
-            width: 500,
-            height: 180,
-            x: "center",
-            y: "center",
-            html: "width: 600, height: 180",
-            mount: document.getElementById("contentDeleteDlg")
-        });
-        this.myComboBox = new Combobox(document.getElementById("storageDeleteComboBox"));
+        this.winBox;
+        this.myComboBox = new ComboBox(document.getElementById("storageDeleteComboBox"));
         this.okNode = document.getElementById("btn-deleteStorageOK");
         this.cancelNode = document.getElementById("btn-deleteStorageCancel");
         // Mit der Erzeugung des Wrappers werden 
@@ -1926,7 +1758,9 @@ class StorageDeleteDialog {
         this.myComboBox.init(nameList);
     }
     close() {
-        this.winBox.close();
+        if (!(this.winBox == null)) {
+            this.winBox.close();
+        }
     }
     init(nameList) {
         this.myComboBox.init(nameList);
@@ -1941,17 +1775,7 @@ class SuccessDialog {
     constructor() {
         this.myWidth = 240;
         this.myHeight = 390;
-        this.winBox = new WinBox("Lösung gefunden", {
-            border: 4,
-            width: this.myWidth,
-            height: this.myHeight,
-            //         x: "center",
-            //         y: "center",
-            left: 700,
-            modal: true,
-            html: "width: this.myWidth, height: this.myHeight",
-            mount: document.getElementById("contentSuccessDlg")
-        });
+        this.winBox;
         this.okNode = document.getElementById("btn-successOK");
         this.cancelNode = document.getElementById("btn-successCancel");
         this.checkBoxNode = document.getElementById("further");
@@ -1976,7 +1800,9 @@ class SuccessDialog {
         this.checkBoxNode.checked = false;
     }
     close() {
-        this.winBox.close();
+        if (!(this.winBox == null)) {
+            this.winBox.close();
+        }
     }
     init() {
         this.checkBoxNode.checked = false;
