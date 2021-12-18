@@ -580,8 +580,6 @@ class AutomatedRunnerOnGrid {
         this.autoDirection = 'forward';
         // Der Runner hat immer einen aktuellen Stepper
         this.myStepper = new Stepper();
-        //Default Tiefe setzen
-        this.setSpeed('fast');
         this.displayStatus();
     }
 
