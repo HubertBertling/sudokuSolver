@@ -703,6 +703,7 @@ class AutomatedRunnerOnGrid {
             sudoApp.successDialog.open();
         } else if (result == 'fail') {
             this.stopTimer();
+            this.init();
             alert("Keine (weitere) Lösung gefunden!");
         } else {
             // 'inProgress'
