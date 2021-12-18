@@ -83,6 +83,7 @@ class SudokuApp {
                 this.setAutoExecOn();
                 this.suGrid.deselect();
                 this.runner.init();
+                this.successDialog.close();
                 this.runner.startTimer();            
             }
         });
@@ -151,6 +152,7 @@ class SudokuApp {
         if (!this.autoExecOn) {
             this.autoExecOn = true;
             this.runner.init();
+            this.successDialog.close();
             this.displayOnOffStatus();
         }
     }
@@ -190,6 +192,7 @@ class SudokuApp {
         if (this.autoExecOn) {
             this.runner.stopTimer();
             this.runner.init();
+            this.successDialog.close();
             this.setAutoExecOff();
         } else {
             this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentPhase, false);
@@ -199,7 +202,8 @@ class SudokuApp {
         // Ist manuelle Operation
         if (this.autoExecOn) {
             this.runner.stopTimer();
-            this.runner.init();
+            this.runner.init();   
+            this.successDialog.close();
             this.setAutoExecOff();
             this.suGrid.deselect();
         } else {
@@ -211,6 +215,7 @@ class SudokuApp {
     initButtonPressed() {
         this.runner.stopTimer()
         this.runner.init();
+        this.successDialog.close();
         this.setAutoExecOff();
         this.suGrid.deselect();
         this.suGrid.initGrid();
@@ -220,6 +225,7 @@ class SudokuApp {
     resetBtnPressed() {
         this.runner.stopTimer();
         this.runner.init();
+        this.successDialog.close();
         this.setAutoExecOff();
         this.suGrid.deselect();
         this.suGrid.reset();
@@ -229,6 +235,7 @@ class SudokuApp {
         // Zustand soll gespeichert werden
         this.runner.stopTimer();
         this.runner.init();
+        this.successDialog.close();
         this.setAutoExecOff();
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageSaveDialog.open(tmpNameList);
@@ -238,6 +245,7 @@ class SudokuApp {
         // Zustand soll wiederhergestellt werden
         this.runner.stopTimer();
         this.runner.init();
+        this.successDialog.close();
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageRestoreDialog.open(tmpNameList);
     }
@@ -245,6 +253,7 @@ class SudokuApp {
         // Zustand soll gelöscht werden
         this.runner.stopTimer();
         this.runner.init();
+        this.successDialog.close();
         this.setAutoExecOff();
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageDeleteDialog.open(tmpNameList);
@@ -254,6 +263,7 @@ class SudokuApp {
         if (this.autoExecOn) {
             this.runner.stopTimer();
             this.runner.init();
+            this.successDialog.close();
             this.setAutoExecOff();
             this.suGrid.deselect();            
         }     
@@ -1652,6 +1662,7 @@ class ComboBox {
 class StorageSaveDialog {
     constructor() {
         this.winBox;
+        this.myOpen = false;
         this.myComboBoxNode = document.getElementById("storageSaveComboBox");
         this.myComboBox = new ComboBox(this.myComboBoxNode);
         this.okNode = document.getElementById("btn-saveStorageOK");
@@ -1676,11 +1687,12 @@ class StorageSaveDialog {
             mount: document.getElementById("contentSaveDlg")
         });
         this.myComboBox.init(nameList);
-        //     this.storageSaveDlgNode.style.visibility = "visible";
+        this.myOpen = true;
     }
     close() {
-        if (!(this.winBox == null)) {
+        if (this.myOpen) {
             this.winBox.close();
+            this.myOpen = false;
         }
     }
     init(nameList) {
@@ -1695,6 +1707,7 @@ class StorageRestoreDialog {
     constructor() {
         //this.storageRestoreDialog = document.getElementById("storageRestoreDialog");
         this.winBox;
+        this.myOpen = false;
         this.myComboBox = new ComboBox(document.getElementById("storageRestoreComboBox"));
         this.okNode = document.getElementById("btn-restoreStorageOK");
         this.cancelNode = document.getElementById("btn-restoreStorageCancel");
@@ -1718,10 +1731,12 @@ class StorageRestoreDialog {
             mount: document.getElementById("contentRestoreDlg")
         });
         this.myComboBox.init(nameList);
+        this.myOpen = true;
     }
     close() {
-        if (!(this.winBox == null)) {
+        if (this.myOpen) {
             this.winBox.close();
+            this.myOpen = false;
         }
     }
     init(nameList) {
@@ -1734,6 +1749,7 @@ class StorageRestoreDialog {
 class StorageDeleteDialog {
     constructor() {
         this.winBox;
+        this.myOpen = false;
         this.myComboBox = new ComboBox(document.getElementById("storageDeleteComboBox"));
         this.okNode = document.getElementById("btn-deleteStorageOK");
         this.cancelNode = document.getElementById("btn-deleteStorageCancel");
@@ -1757,10 +1773,12 @@ class StorageDeleteDialog {
             mount: document.getElementById("contentDeleteDlg")
         });
         this.myComboBox.init(nameList);
+        this.myOpen = true;
     }
     close() {
-        if (!(this.winBox == null)) {
+        if (this.myOpen) {
             this.winBox.close();
+            this.myOpen = false;
         }
     }
     init(nameList) {
@@ -1777,6 +1795,7 @@ class SuccessDialog {
         this.myWidth = 240;
         this.myHeight = 390;
         this.winBox;
+        this.myOpen = false;
         this.okNode = document.getElementById("btn-successOK");
         this.cancelNode = document.getElementById("btn-successCancel");
         this.checkBoxNode = document.getElementById("further");
@@ -1799,10 +1818,12 @@ class SuccessDialog {
             mount: document.getElementById("contentSuccessDlg")
         });
         this.checkBoxNode.checked = false;
+        this.myOpen = true;
     }
     close() {
-        if (!(this.winBox == null)) {
+        if (this.myOpen) {
             this.winBox.close();
+            this.myOpen = false;
         }
     }
     init() {
