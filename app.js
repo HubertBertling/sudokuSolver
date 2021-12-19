@@ -1419,7 +1419,9 @@ class SudokuCell {
         // Setze die Klassifizierung in der DOM-Zelle
         if (gamePhase == 'define') {
             this.myCellNode.classList.add('define');
+            this.myCellNode.classList.remove('play');
         } else {
+            this.myCellNode.classList.add('play');
             this.myCellNode.classList.remove('define');
         }
     }
@@ -1430,8 +1432,9 @@ class SudokuCell {
         this.myCellNode.setAttribute('data-value', '0');
         this.myCellNode.innerHTML = '';
         this.myGamePhase = '';
-        // LÖsche die gegebenfalls vorhandene Define-KLassifizierung
+        // Lösche die gegebenfalls vorhandene Define-KLassifizierung
         this.myCellNode.classList.remove('define');
+        this.myCellNode.classList.remove('play');
         // Hinweis: Die Neuberechnung der möglchen und notwendigen
         // Zahlen erfolgt auf Tabellenebene. 
         this.myCellNode.classList.add('zoom-in');
@@ -1455,10 +1458,11 @@ class SudokuCell {
     getPhase() {
         return this.myGamePhase;
     }
+    /*
     setGamePhase(gamePhase) {
         this.myGamePhase = gamePhase;
     }
-
+*/
     select() {
         this.myCellNode.classList.add('selected');
         this.influencers.forEach(e => e.setSelected());

@@ -1,5 +1,38 @@
 :root {
-    --bg-main: #f0f2f5;
+    /* Nested cells */
+    --defined-cell-bg-color: #4E67C8;
+    --defined-cell-color: #5ECCF3;
+    --played-cell-bg-color: #5ECCF3;
+    --played-cell-color: #4E67C8;
+    --nested-cell-bg-color: #56C7AA;
+    --nested-cell-color: black;
+    --insolvable-cell-bg-color:  #F14124;
+    --insolvable-cell-color:  white;
+    --selected-cell-bg-color: #A7EA52;
+    --selected-cell-color: black;
+    --selected-cell-border-color: white;
+    --error-cell-bg-color: #F14124;
+    --error-cell-color: white;
+
+    --header-bg-color: #212745;
+    --header-color: #B4DCFA;
+    --help-color: #56C7AA;
+
+    --number-btn-bg-color: #5ECCF3;
+    --number-btn-color: #4E67C8;
+    --delete-btn-bg-color: #F14124;
+    --delete-btn-color: white;
+    --main-btn-bg-color: #5ECCF3;
+    --main-btn-color: black;
+    --automatic-btn-bg-color: #5ECCF3;
+    --automatic-btn-color:#4E67C8;
+    --border-color: #212745;
+   
+    --speed-setting-bg-color: #F0F8FF;
+    --screen-bg-color : #B4DCFA;
+
+    /* Old definitions */
+    --bg-main: #B4DCFA;
     --bg-body: #fff;
     --color-txt: #000;
     --filled-color: #000;
@@ -11,6 +44,7 @@
     --light-blue: lightblue;
     --red: #e91e63;
     --black: #000;
+
     --nav-size: 70px;
     --sudoku-cell-size: 50px;
     --border-radius: 10px;
@@ -31,7 +65,7 @@
 
 body {
     font-family: 'Open Sans', sans-serif;
-    background-color: var(--bg-body);
+/*      background-color: var(--body-bg-color); */
     overflow-x: hidden;
     user-select: none;
 }
@@ -59,7 +93,7 @@ body {
     gap: var(--gap);
     grid-template-columns: repeat(9, auto);
     padding: var(--space-y);
-    border: 5px solid var(--blue);
+    border: 5px solid var(--border-color);
 }
 
 .sudoku-grid-cell {
@@ -70,14 +104,14 @@ body {
     place-items: center;
     font-size: var(--font-size);
     cursor: pointer;
-    background-color: var(--bg-main);
-    color: var(--blue);
 }
-
-.sudoku-grid-cell.nested.selected {
-    background-color: var(--light-blue);
-    color: var(--black);
-    border: 2px solid var(--blue);
+.sudoku-grid-cell.define {
+    background-color: var(--defined-cell-bg-color);
+    color: var(--defined-cell-color);
+}
+.sudoku-grid-cell.play {
+    background-color: var(--played-cell-bg-color);
+    color: var(--played-cell-color);
 }
 
 .sudoku-grid-cell.nested {
@@ -87,35 +121,37 @@ body {
     place-items: center;
     font-size: var(--font-size-sm);
     padding: 1px;
-    background-color: lightyellow;
-    border: 1px solid gray;
+    background-color: var(--nested-cell-bg-color);
+    color: var(--nested-cell-color);
+    /* border: 1px solid var(--border-color); */
 }
-
-
+/*
+.sudoku-grid-cell.nested.selected {
+    background-color: var(--light-blue);
+    color: var(--black);
+    border: 2px solid var(--border-color);
+}
+*/
 .sudoku-grid-cell.inSolvable {
-    background-color: rgb(247, 137, 137);
+    background-color: var(--insolvable-cell-bg-color);
     color: var(--white);
 }
 
-
 .sudoku-grid-cell.selected {
-    background-color: var(--light-blue);
+    background-color: var(--selected-cell-bg-color);
     color: var(--black);
-    border: 2px solid var(--blue);
+    border: 3px solid var(--border-color);
 }
 
 .nested>div.neccessary {
     padding: 2px;
     border-radius: 3px;
-    background-color: var(--blue);
+    background-color: #FF8021;
     font-size: 1.5em;
     color: white;
+    border: 1px solid white;
 }
-
-.sudoku-grid-cell.define {
-    color: var(--filled-color);
-}
-
+/*
 .sudoku-grid-cell.play-selected {
     background-color: var(--blue);
     color: var(--white);
@@ -130,22 +166,15 @@ body {
     background-color: var(--filled-bg);
     color: var(--filled-color);
 }
-
-.sudoku-grid-cell:hover {
-    border: 2px solid var(--blue);
-}
+*/
 
 .sudoku-grid-cell.hover {
-    border: 3px solid var(--blue);
-}
-
-.dark .sudoku-grid-cell.hover {
-    border: 1px solid var(--blue);
+    border: 3px solid var(--border-color);
 }
 
 .sudoku-grid-cell.err {
-    background-color: var(--red);
-    color: var(--white);
+    background-color: var(--error-cell-bg-color);
+    color: var(--error-cell-color);
 }
 
 
@@ -155,10 +184,14 @@ body {
 }
 
 .sudoku-header {
-    background-color: LightSteelBlue;
-    border-bottom: 5px solid var(--blue);
+    background-color: var(--header-bg-color);
+    color: var(--header-color);
+    border-bottom: 5px solid var(--border-color);
     text-align: center;
 
+}
+.helpNode {
+    color: var(--help-color);
 }
 
 .sudoku-title {
@@ -176,9 +209,9 @@ body {
 /*======================================*/
 
 .game-col2 {
-    border-top: 5px solid var(--blue);
-    border-right: 5px solid var(--blue);
-    border-bottom: 5px solid var(--blue);
+    border-top: 5px solid var(--border-color);
+    border-right: 5px solid var(--border-color);
+    border-bottom: 5px solid var(--border-color);
 }
 
 
@@ -213,8 +246,8 @@ body {
 }
 
 .btn-define {
-    background-color: var(--filled-bg);
-    color: var(--filled-color);
+    background-color: var(--defined-cell-bg-color);
+    color: var(--defined-cell-color);
 }
 
 
@@ -235,8 +268,8 @@ body {
 .number {
     height: var(--sudoku-cell-size);
     border-radius: var(--border-radius);
-    background-color: var(--bg-main);
-    color: var(--color-txt);
+    background-color: var(--number-btn-bg-color);
+    color: var(--number-color);
     display: grid;
     place-items: center;
     font-size: var(--font-size);
@@ -244,8 +277,8 @@ body {
 }
 
 .delete {
-    background-color: var(--red);
-    color: var(--white);
+    background-color: var(--delete-btn-bg-color);
+    color: var(--delete-btn-color);
     height: var(--sudoku-cell-size);
     border-radius: var(--border-radius);
     display: grid;
@@ -290,11 +323,15 @@ body {
 }
 
 
-.btn-play, .btn-automatic {
-    background-color: var(--blue);
-    color: var(--black);
+.btn-play {
+    background-color: var(--played-cell-bg-color);
+    color: var(--played-cell-color);
 }
 
+.btn-automatic {
+    background-color: var(--automatic-btn-bg-color);
+    color: var(--automatic-btn-color);
+}
 
 /*======================================*/
 /* Main button block */
@@ -302,13 +339,11 @@ body {
 
 .main-btns {
     /*  border: 5px solid var(--red);  */
-    border-left: 5px solid var(--blue);
-    border-right: 5px solid var(--blue);
-    border-bottom: 5px solid var(--blue);
-
+    border-left: 5px solid var(--border-color);
+    border-right: 5px solid var(--border-color);
+    border-bottom: 5px solid var(--border-color);
     padding: 10px;
     padding-bottom: 5px;
-    ;
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 10px;
@@ -335,8 +370,8 @@ body {
 
 .main-btn {
     box-shadow: 5px 5px #666;
-    background-color: var(--filled-bg);
-    color: var(--filled-color);
+    background-color: var(--main-btn-bg-color);
+    color: var(--main-btn-color);
     border-radius: var(--border-radius);
     border: hidden;
     display: grid;
@@ -347,7 +382,9 @@ body {
     cursor: pointer;
 }
 
-
+.screen {
+    background-color: var(--screen-bg-color);
+}
 
 /*======================================*/
 /* Progress block */
@@ -358,16 +395,15 @@ body {
     padding-left: var(--space-y);
     padding-right: var(--space-y);
     padding-bottom: 5px;
-    border-left: 5px solid var(--blue);
-    border-right: 5px solid var(--blue);
-    border-bottom: 5px solid var(--blue);
-    background-color: LightSteelBlue;
+    border-left: 5px solid var(--border-color);
+    border-right: 5px solid var(--border-color);
+    border-bottom: 5px solid var(--border-color);
 }
 
 .manual-exec-btns.on, .automatic-exec.on {
     padding-right: 10px;
     ;
-    border-right: 5px solid var(--blue);
+    border-right: 5px solid var(--border-color);
 }
 
 .manual-exec-btns, .automatic-exec {
@@ -402,40 +438,36 @@ body {
 }
 
 .search-depth {
-    color: blue;
+    color: var(--header-bg-color);
     font-weight: bold;
 }
 
 .sudoSettingDepth, .speedSetting {
     padding: 1px;
+    background-color: var(--speed-setting-bg-color);
 }
 
 #myProgress {
     width: 100%;
     height: 20px;
-    background-color: lightyellow;
+    background-color: var(--nested-cell-bg-color);
 }
 
 #myBar {
     width: 10%;
     height: 20px;
-    background-color: var(--blue);
+    background-color: var(--header-bg-color);
+    color: var(--header-color);
     text-align: center;
     line-height: 20px;
     font-size: 16px;
-    color: white;
-}
+   }
 
 
 .textInDlgs {
     size: 100;
     padding: 5px;
     font-size: 16px;
-}
-
-.inputField {
-    size: 100;
-    border: 5px solid red;
 }
 
 .ok-cancel-btns {
