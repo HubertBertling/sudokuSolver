@@ -233,10 +233,13 @@ body {
 }
 
 
+
+
 .btn-define, .btn-play {
     box-shadow: 3px 3px lightgray;
     margin: 5px;
 }
+
 
 .btn-define {
     background-color: var(--defined-cell-bg-color);
@@ -327,7 +330,7 @@ body {
 
 .btn-play {
     background-color: var(--played-cell-bg-color);
-    color: var(--played-cell-color);
+    color: black;
 }
 
 .btn-automatic {
