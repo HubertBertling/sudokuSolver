@@ -25,7 +25,7 @@
     --main-btn-bg-color: #5ECCF3;
     --main-btn-color: black;
     
-    --main-btns-bg-color: #212745;
+    --main-btns-bg-color: #212745; 
 
     --automatic-btn-bg-color: #5ECCF3;
     --automatic-btn-color:#4E67C8;
@@ -40,7 +40,9 @@
 
     --progress-bg-color: #212745;
     --progress-color: #B4DCFA;
-  
+ 
+
+    
     /* Old definitions */
     --bg-main: #B4DCFA;
     --bg-body: #fff;
@@ -407,7 +409,7 @@ body {
 .manual-exec-btns.on, .automatic-exec.on {
     padding-right: 10px;
     ;
-    border-right: 5px solid var(--border-color);
+    border-right: 5px solid var(--number-btn-bg-color);
 }
 
 .manual-exec-btns, .automatic-exec {
