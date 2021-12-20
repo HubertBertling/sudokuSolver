@@ -19,18 +19,28 @@
     --help-color: #56C7AA;
 
     --number-btn-bg-color: #5ECCF3;
-    --number-btn-color: #4E67C8;
+    --number-btn-color: black;
     --delete-btn-bg-color: #F14124;
     --delete-btn-color: white;
     --main-btn-bg-color: #5ECCF3;
     --main-btn-color: black;
+    
+    --main-btns-bg-color: #212745;
+
     --automatic-btn-bg-color: #5ECCF3;
     --automatic-btn-color:#4E67C8;
     --border-color: #212745;
    
-    --speed-setting-bg-color: #F0F8FF;
-    --screen-bg-color : #B4DCFA;
+    --speed-setting-bg-color: #5ECCF3;
 
+  /*  --screen-bg-color : #B4DCFA; */
+    --grid-bg-color: #B4DCFA;
+    --col2-bg-color: #212745;
+    --col2-color: #B4DCFA;
+
+    --progress-bg-color: #212745;
+    --progress-color: #B4DCFA;
+  
     /* Old definitions */
     --bg-main: #B4DCFA;
     --bg-body: #fff;
@@ -94,6 +104,7 @@ body {
     grid-template-columns: repeat(9, auto);
     padding: var(--space-y);
     border: 5px solid var(--border-color);
+    background-color : var(--grid-bg-color);
 }
 
 .sudoku-grid-cell {
@@ -125,13 +136,7 @@ body {
     color: var(--nested-cell-color);
     /* border: 1px solid var(--border-color); */
 }
-/*
-.sudoku-grid-cell.nested.selected {
-    background-color: var(--light-blue);
-    color: var(--black);
-    border: 2px solid var(--border-color);
-}
-*/
+
 .sudoku-grid-cell.inSolvable {
     background-color: var(--insolvable-cell-bg-color);
     color: var(--white);
@@ -151,23 +156,6 @@ body {
     color: white;
     border: 1px solid white;
 }
-/*
-.sudoku-grid-cell.play-selected {
-    background-color: var(--blue);
-    color: var(--white);
-}
-
-.sudoku-grid-cell.approximate-selected {
-    background-color: var(--nested-color);
-    color: var(--black);
-}
-
-.sudoku-grid-cell.define-selected {
-    background-color: var(--filled-bg);
-    color: var(--filled-color);
-}
-*/
-
 .sudoku-grid-cell.hover {
     border: 3px solid var(--border-color);
 }
@@ -212,6 +200,8 @@ body {
     border-top: 5px solid var(--border-color);
     border-right: 5px solid var(--border-color);
     border-bottom: 5px solid var(--border-color);
+    background-color: var(--col2-bg-color);
+    color: var(--col2-color);
 }
 
 
@@ -242,6 +232,7 @@ body {
 
 
 .btn-define, .btn-play {
+    box-shadow: 3px 3px lightgray;
     margin: 5px;
 }
 
@@ -252,7 +243,7 @@ body {
 
 
 .btn-define.pressed, .btn-play.pressed {
-    box-shadow: 0px 0px;
+    box-shadow: 0px 0px lightgray;
     transform: translate(2px, 2px);
 }
 
@@ -269,13 +260,18 @@ body {
     height: var(--sudoku-cell-size);
     border-radius: var(--border-radius);
     background-color: var(--number-btn-bg-color);
-    color: var(--number-color);
+    color: var(--number-btn-color);
     display: grid;
     place-items: center;
     font-size: var(--font-size);
+    box-shadow: 3px 3px lightgray;
     cursor: pointer;
 }
 
+.number:active, .delete:active {
+    box-shadow: 0 0px lightgray;
+    transform: translate(2px, 2px); 
+}
 .delete {
     background-color: var(--delete-btn-bg-color);
     color: var(--delete-btn-color);
@@ -284,6 +280,7 @@ body {
     display: grid;
     place-items: center;
     font-size: var(--font-size);
+    box-shadow: 3px 3px lightgray;
     cursor: pointer;
 }
 
@@ -313,7 +310,7 @@ body {
 .btn-define, .btn-play, .btn-automatic {
     padding: 5px;
     border-radius: var(--border-radius);
-    box-shadow: 5px 5px #666;
+    box-shadow: 3px 3px lightgray;
     border: hidden;
     display: grid;
     place-items: center;
@@ -321,7 +318,10 @@ body {
     cursor: pointer;
     
 }
-
+.btn-automatic:active {
+    box-shadow: 0 0px lightgray;
+    transform: translate(2px, 2px); 
+}
 
 .btn-play {
     background-color: var(--played-cell-bg-color);
@@ -342,8 +342,9 @@ body {
     border-left: 5px solid var(--border-color);
     border-right: 5px solid var(--border-color);
     border-bottom: 5px solid var(--border-color);
-    padding: 10px;
-    padding-bottom: 5px;
+    background-color: var(--main-btns-bg-color);
+    padding: 5px;
+    margin-bottom: 10px;
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 10px;
@@ -364,12 +365,12 @@ body {
 }
 
 .main-btn:active {
-    box-shadow: 0 0px gray;
+    box-shadow: 0 0px lightgray;
     transform: translate(2px, 2px);
 }
 
 .main-btn {
-    box-shadow: 5px 5px #666;
+    box-shadow: 3px 3px lightgray;
     background-color: var(--main-btn-bg-color);
     color: var(--main-btn-color);
     border-radius: var(--border-radius);
@@ -377,14 +378,16 @@ body {
     display: grid;
     place-items: center;
     margin: 5px;
+    margin-bottom: 10px;
     padding: 5px;
     font-size: 16px;
     cursor: pointer;
 }
-
+/*
 .screen {
     background-color: var(--screen-bg-color);
 }
+*/
 
 /*======================================*/
 /* Progress block */
@@ -398,8 +401,9 @@ body {
     border-left: 5px solid var(--border-color);
     border-right: 5px solid var(--border-color);
     border-bottom: 5px solid var(--border-color);
+    background-color: var(--progress-bg-color);
+    color:var(--progress-color);
 }
-
 .manual-exec-btns.on, .automatic-exec.on {
     padding-right: 10px;
     ;
@@ -438,7 +442,7 @@ body {
 }
 
 .search-depth {
-    color: var(--header-bg-color);
+    color: var(--header-color);
     font-weight: bold;
 }
 
@@ -456,8 +460,8 @@ body {
 #myBar {
     width: 10%;
     height: 20px;
-    background-color: var(--header-bg-color);
-    color: var(--header-color);
+    background-color: var(--defined-cell-bg-color);
+    color: var(--defined-cell-color);
     text-align: center;
     line-height: 20px;
     font-size: 16px;
