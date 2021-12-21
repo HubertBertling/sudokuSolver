@@ -451,9 +451,10 @@ body {
     font-weight: bold;
 }
 
-.sudoSettingDepth, .speedSetting {
+.speedSetting {
     padding: 1px;
     background-color: var(--speed-setting-bg-color);
+    border: solid 1px;
 }
 
 #myProgress {
