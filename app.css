@@ -1,45 +1,45 @@
 :root {
     /* Nested cells */
-    --defined-cell-bg-color: #005DBA;/* #4E67C8; */
-    --defined-cell-color: #A5D028; /* #5ECCF3; */
-    --played-cell-bg-color: #A5D028; /* #5ECCF3; */
-    --played-cell-color: #005DBA;/* #4E67C8; */
-    --nested-cell-bg-color: #FFC000; /*#56C7AA; */
+    --defined-cell-bg-color: #7986CB;/* #4E67C8; */
+    --defined-cell-color: #FFF9C4; /* #5ECCF3; */
+    --played-cell-bg-color: #4DB6AC; /* #5ECCF3; */
+    --played-cell-color: #0d1117;/* #4E67C8; */
+    --nested-cell-bg-color: #ebdaa4; /*#56C7AA; */
     --nested-cell-color: black;
-    --insolvable-cell-bg-color:  #F24099; /* #F14124; */
+    --insolvable-cell-bg-color:  #e91e63; /* #F14124; */
     --insolvable-cell-color:  white;
-    --selected-cell-bg-color: #08CC78; /*#A7EA52; */
+    --selected-cell-bg-color: #fff9c4; /*#A7EA52; */
     --selected-cell-color: black;
-    --selected-cell-border-color: white;
-    --error-cell-bg-color:  #F24099; /* #F14124; */
+    --selected-cell-border-color: #0050ffcb;
+    --error-cell-bg-color:  #e91e63; /* #F14124; */
     --error-cell-color: white;
 
-    --header-bg-color: #099BDD; /* #212745; */
-    --header-color:  #F2E2F2;/* #B4DCFA; */
-    --help-color: #FFC000; /* #56C7AA; */
+    --header-bg-color: #f2e2f2; /* #212745; */
+    --header-color:  #0d1117;/* #B4DCFA; */
+    --help-color: #4e67c8; /* #56C7AA; */
 
-    --number-btn-bg-color: #F2E2F2; /* #5ECCF3; */
+    --number-btn-bg-color: rgba(0,0,0,.25); /* #5ECCF3; */
     --number-btn-color: black;
-    --delete-btn-bg-color:  #F24099; /* #F14124; */
+    --delete-btn-bg-color:  #e91e63; /* #F14124; */
     --delete-btn-color: white;
-    --main-btn-bg-color: #F2E2F2; /* #5ECCF3; */
+    --main-btn-bg-color: rgba(0,0,0,.25); /* #5ECCF3; */
     --main-btn-color: black;
     
-    --main-btns-bg-color: #099BDD; /* #212745; */ 
+    --main-btns-bg-color: #f2e2f2; /* #212745; */ 
 
-    --automatic-btn-bg-color: #F2E2F2; /* #5ECCF3; */
+    --automatic-btn-bg-color: rgba(0,0,0,.25); /* #5ECCF3; */
     --automatic-btn-color:#005DBA;/* #4E67C8; */
-    --border-color: #099BDD; /* #212745; */
+    --border-color: #f2e2f2; /* #212745; */
    
     --speed-setting-bg-color: #F2E2F2; /*#5ECCF3; */
 
   /*  --screen-bg-color : #B4DCFA; */
     --grid-bg-color: #F2E2F2;/* #B4DCFA; */
-    --col2-bg-color: #099BDD; /* #212745; */
+    --col2-bg-color: #f2e2f2; /* #212745; */
     --col2-color: #F2E2F2;/* #B4DCFA; */
 
-    --progress-bg-color: #099BDD; /* #212745; */
-    --progress-color: #F2E2F2;/* #B4DCFA; */
+    --progress-bg-color: #f2e2f2; /* #212745; */
+    --progress-color: #0d1117;/* #B4DCFA; */
      
     /* Old definitions */
     --bg-main: #B4DCFA;
@@ -145,19 +145,19 @@ body {
 .sudoku-grid-cell.selected {
     background-color: var(--selected-cell-bg-color);
     color: var(--black);
-    border: 3px solid var(--border-color);
+    border: 4px solid var(--selected-cell-border-color);
 }
 
 .nested>div.neccessary {
     padding: 2px;
     border-radius: 3px;
-    background-color: #F56617; /*#FF8021; */
+    background-color: #56c7aa; /*#FF8021; */
     font-size: 1.5em;
-    color: white;
+    color: #0d1117;
     border: 1px solid white;
 }
 .sudoku-grid-cell.hover {
-    border: 3px solid var(--border-color);
+    border: 4px solid var(--selected-cell-border-color);
 }
 
 .sudoku-grid-cell.err {
@@ -176,6 +176,7 @@ body {
     color: var(--header-color);
     border-bottom: 5px solid var(--border-color);
     text-align: center;
+    font-weight:bold;
 
 }
 .helpNode {
@@ -206,7 +207,8 @@ body {
 
 
 .exec-btn-groups {
-    padding: var(--space-y);
+    padding-left: var(--space-y);
+    padding-right: var(--space-y);
 }
 
 .exec-btn-group, .auto-exec-container {
@@ -215,7 +217,7 @@ body {
 }
 
 .manual-exec-btns, .automatic-exec {
-    margin-top: 10px;
+    margin-top: 5px;
     padding-top: 10px;
     padding-bottom: 5px;
     display: grid;
