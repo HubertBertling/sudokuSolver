@@ -1,48 +1,46 @@
 :root {
     /* Nested cells */
-    --defined-cell-bg-color: #4E67C8;
-    --defined-cell-color: #5ECCF3;
-    --played-cell-bg-color: #5ECCF3;
-    --played-cell-color: #4E67C8;
-    --nested-cell-bg-color: #56C7AA;
+    --defined-cell-bg-color: #005DBA;/* #4E67C8; */
+    --defined-cell-color: #A5D028; /* #5ECCF3; */
+    --played-cell-bg-color: #A5D028; /* #5ECCF3; */
+    --played-cell-color: #005DBA;/* #4E67C8; */
+    --nested-cell-bg-color: #FFC000; /*#56C7AA; */
     --nested-cell-color: black;
-    --insolvable-cell-bg-color:  #F14124;
+    --insolvable-cell-bg-color:  #F24099; /* #F14124; */
     --insolvable-cell-color:  white;
-    --selected-cell-bg-color: #A7EA52;
+    --selected-cell-bg-color: #08CC78; /*#A7EA52; */
     --selected-cell-color: black;
     --selected-cell-border-color: white;
-    --error-cell-bg-color: #F14124;
+    --error-cell-bg-color:  #F24099; /* #F14124; */
     --error-cell-color: white;
 
-    --header-bg-color: #212745;
-    --header-color: #B4DCFA;
-    --help-color: #56C7AA;
+    --header-bg-color: #099BDD; /* #212745; */
+    --header-color:  #F2E2F2;/* #B4DCFA; */
+    --help-color: #FFC000; /* #56C7AA; */
 
-    --number-btn-bg-color: #5ECCF3;
+    --number-btn-bg-color: #F2E2F2; /* #5ECCF3; */
     --number-btn-color: black;
-    --delete-btn-bg-color: #F14124;
+    --delete-btn-bg-color:  #F24099; /* #F14124; */
     --delete-btn-color: white;
-    --main-btn-bg-color: #5ECCF3;
+    --main-btn-bg-color: #F2E2F2; /* #5ECCF3; */
     --main-btn-color: black;
     
-    --main-btns-bg-color: #212745; 
+    --main-btns-bg-color: #099BDD; /* #212745; */ 
 
-    --automatic-btn-bg-color: #5ECCF3;
-    --automatic-btn-color:#4E67C8;
-    --border-color: #212745;
+    --automatic-btn-bg-color: #F2E2F2; /* #5ECCF3; */
+    --automatic-btn-color:#005DBA;/* #4E67C8; */
+    --border-color: #099BDD; /* #212745; */
    
-    --speed-setting-bg-color: #5ECCF3;
+    --speed-setting-bg-color: #F2E2F2; /*#5ECCF3; */
 
   /*  --screen-bg-color : #B4DCFA; */
-    --grid-bg-color: #B4DCFA;
-    --col2-bg-color: #212745;
-    --col2-color: #B4DCFA;
+    --grid-bg-color: #F2E2F2;/* #B4DCFA; */
+    --col2-bg-color: #099BDD; /* #212745; */
+    --col2-color: #F2E2F2;/* #B4DCFA; */
 
-    --progress-bg-color: #212745;
-    --progress-color: #B4DCFA;
- 
-
-    
+    --progress-bg-color: #099BDD; /* #212745; */
+    --progress-color: #F2E2F2;/* #B4DCFA; */
+     
     /* Old definitions */
     --bg-main: #B4DCFA;
     --bg-body: #fff;
@@ -153,7 +151,7 @@ body {
 .nested>div.neccessary {
     padding: 2px;
     border-radius: 3px;
-    background-color: #FF8021;
+    background-color: #F56617; /*#FF8021; */
     font-size: 1.5em;
     color: white;
     border: 1px solid white;
@@ -236,7 +234,7 @@ body {
 
 
 .btn-define, .btn-play {
-    box-shadow: 3px 3px lightgray;
+    box-shadow: 3px 3px darkgray;
     margin: 5px;
 }
 
@@ -248,7 +246,7 @@ body {
 
 
 .btn-define.pressed, .btn-play.pressed {
-    box-shadow: 0px 0px lightgray;
+    box-shadow: 0px 0px darkgray;
     transform: translate(2px, 2px);
 }
 
@@ -269,12 +267,12 @@ body {
     display: grid;
     place-items: center;
     font-size: var(--font-size);
-    box-shadow: 3px 3px lightgray;
+    box-shadow: 3px 3px darkgray;
     cursor: pointer;
 }
 
 .number:active, .delete:active {
-    box-shadow: 0 0px lightgray;
+    box-shadow: 0 0px darkgray;
     transform: translate(2px, 2px); 
 }
 .delete {
@@ -285,7 +283,7 @@ body {
     display: grid;
     place-items: center;
     font-size: var(--font-size);
-    box-shadow: 3px 3px lightgray;
+    box-shadow: 3px 3px darkgray;
     cursor: pointer;
 }
 
@@ -315,7 +313,7 @@ body {
 .btn-define, .btn-play, .btn-automatic {
     padding: 5px;
     border-radius: var(--border-radius);
-    box-shadow: 3px 3px lightgray;
+    box-shadow: 3px 3px darkgray;
     border: hidden;
     display: grid;
     place-items: center;
@@ -324,7 +322,7 @@ body {
     
 }
 .btn-automatic:active {
-    box-shadow: 0 0px lightgray;
+    box-shadow: 0 0px darkgray;
     transform: translate(2px, 2px); 
 }
 
@@ -370,12 +368,12 @@ body {
 }
 
 .main-btn:active {
-    box-shadow: 0 0px lightgray;
+    box-shadow: 0 0px darkgray;
     transform: translate(2px, 2px);
 }
 
 .main-btn {
-    box-shadow: 3px 3px lightgray;
+    box-shadow: 3px 3px darkgray;
     background-color: var(--main-btn-bg-color);
     color: var(--main-btn-color);
     border-radius: var(--border-radius);
@@ -465,8 +463,8 @@ body {
 #myBar {
     width: 10%;
     height: 20px;
-    background-color: var(--defined-cell-bg-color);
-    color: var(--defined-cell-color);
+    background-color: var(--played-cell-bg-color);
+    color: black;
     text-align: center;
     line-height: 20px;
     font-size: 16px;
