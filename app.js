@@ -218,6 +218,7 @@ class SudokuApp {
         this.setAutoExecOff();
         this.suGrid.deselect();
         this.suGrid.initGrid();
+        this.runner.displayProgress();
         this.runner.init();
         this.setGamePhase('define');
     }
@@ -228,6 +229,7 @@ class SudokuApp {
         this.setAutoExecOff();
         this.suGrid.deselect();
         this.suGrid.reset();
+        this.runner.displayProgress();
         this.runner.init();
     }
 
@@ -304,6 +306,7 @@ class SudokuApp {
             this.suGrid.deselect();
             // Setze den aus dem Speicher geholten Zustand
             this.suGrid.setCurrentState(tmpState);
+            this.runner.displayProgress();
         } else {
             alert("Zustand mit diesem Namen existiert nicht");
         }
