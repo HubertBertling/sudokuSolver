@@ -214,23 +214,23 @@ class SudokuApp {
 
     initButtonPressed() {
         this.runner.stopTimer()
+        this.runner.init();
         this.successDialog.close();
         this.setAutoExecOff();
         this.suGrid.deselect();
         this.suGrid.initGrid();
         this.runner.displayProgress();
-        this.runner.init();
         this.setGamePhase('define');
     }
 
     resetBtnPressed() {
         this.runner.stopTimer();
+        this.runner.init();
         this.successDialog.close();
         this.setAutoExecOff();
         this.suGrid.deselect();
         this.suGrid.reset();
         this.runner.displayProgress();
-        this.runner.init();
     }
 
     saveBtnPressed() {
