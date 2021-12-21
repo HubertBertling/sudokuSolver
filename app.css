@@ -36,7 +36,7 @@
   /*  --screen-bg-color : #B4DCFA; */
     --grid-bg-color: #F2E2F2;/* #B4DCFA; */
     --col2-bg-color: #f2e2f2; /* #212745; */
-    --col2-color: #F2E2F2;/* #B4DCFA; */
+    --col2-color: #0d1117;/* #B4DCFA; */
 
     --progress-bg-color: #f2e2f2; /* #212745; */
     --progress-color: #0d1117;/* #B4DCFA; */
@@ -562,7 +562,7 @@ body {
     }
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 900px) {
     :root {
         --nav-size: 50px;
         --sudoku-cell-size: 30px;
