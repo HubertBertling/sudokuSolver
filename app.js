@@ -196,6 +196,7 @@ class SudokuApp {
             this.setAutoExecOff();
         } else {
             this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentPhase, false);
+            this.runner.displayProgress();
         }
     }
     deleteCellButtonPressed() {
@@ -209,6 +210,7 @@ class SudokuApp {
         } else {
             this.suGrid.deleteSelected(this.currentPhase, false);
             this.suGrid.deselect();
+            this.runner.displayProgress();
         }
     }
 
