@@ -8,7 +8,7 @@
     --nested-cell-color: black;
     --insolvable-cell-bg-color:  #e91e63; /* #F14124; */
     --insolvable-cell-color:  white;
-    --selected-cell-bg-color: #fff9c4; /*#A7EA52; */
+    --selected-cell-bg-color: #ff8021fc; /*#A7EA52; */
     --selected-cell-color: black;
     --selected-cell-border-color: #0050ffcb;
     --error-cell-bg-color:  #e91e63; /* #F14124; */
