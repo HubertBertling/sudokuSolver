@@ -134,8 +134,8 @@ body {
     padding: 1px;
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-color);
-    /* border: 1px solid var(--border-color); */
-}
+    border: 1px solid #0050ff
+    }
 
 .sudoku-grid-cell.inSolvable {
     background-color: var(--insolvable-cell-bg-color);
