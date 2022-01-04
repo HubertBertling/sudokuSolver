@@ -1570,8 +1570,10 @@ class SudokuCell {
         if (tmpValue == '0') {
             return false;
         } else {
-            // Wenn die gesetzte Zahl nicht in der Menge der erlaubten Zahlen ist, ist die Zahl fehlerhaft gesetzt
-            return !this.myPermissibles.has(tmpValue);
+            // Wenn die gesetzte Zahl nicht in der Menge der erlaubten Zahlen ist, 
+            // oder, wenn für die gesetzte Zelle mehrere Zahlen gleichzeitig notwendig sind, 
+            // ist die Zahl fehlerhaft gesetzt
+            return !this.myPermissibles.has(tmpValue) || (this.necessary.size > 1);
         }
     }
 
