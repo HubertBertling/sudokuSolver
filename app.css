@@ -8,7 +8,7 @@
     --nested-cell-color: black;
     --insolvable-cell-bg-color:  #e91e63; /* #F14124; */
     --insolvable-cell-color:  white;
-    --selected-cell-bg-color: #ff8021fc; /*#A7EA52; */
+    --selected-cell-bg-color: #8b7777; /*#A7EA52; */
     --selected-cell-color: black;
     --selected-cell-border-color: #0050ffcb;
     --error-cell-bg-color:  #e91e63; /* #F14124; */
@@ -57,6 +57,7 @@
 
     --nav-size: 70px;
     --sudoku-cell-size: 50px;
+    --sudoku-group-size: 165px;
     --border-radius: 10px;
     --space-y: 20px;
     --gap: 5px;
@@ -101,21 +102,33 @@ body {
 .main-sudoku-grid {
     display: grid;
     gap: var(--gap);
-    grid-template-columns: repeat(9, auto);
+    grid-template-columns: repeat(3, auto);
     padding: var(--space-y);
     border: 5px solid var(--border-color);
     background-color : var(--grid-bg-color);
+}
+
+.sudoku-group {
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: repeat(3, auto);
+    border-radius: var(--border-radius);
+    place-items: center;
+    padding: 5px;
 }
 
 .sudoku-grid-cell {
     height: var(--sudoku-cell-size);
     width: var(--sudoku-cell-size);
     border-radius: var(--border-radius);
-    display: grid;
-    place-items: center;
+    display: grid; 
     font-size: var(--font-size);
+    place-items: center;
     cursor: pointer;
 }
+
+
+
 .sudoku-grid-cell.define {
     background-color: var(--defined-cell-bg-color);
     color: var(--defined-cell-color);
@@ -137,14 +150,9 @@ body {
     border: 1px solid #0050ff
     }
 
-.sudoku-grid-cell.inSolvable {
-    background-color: var(--insolvable-cell-bg-color);
-    color: var(--white);
-}
-
 .sudoku-grid-cell.selected {
-    background-color: var(--selected-cell-bg-color);
-    color: var(--black);
+    background-color: black;
+    color: var(--white);
     border: 4px solid var(--selected-cell-border-color);
 }
 
@@ -160,11 +168,10 @@ body {
     border: 4px solid var(--selected-cell-border-color);
 }
 
-.sudoku-grid-cell.err {
+.sudoku-grid-cell.err, .sudoku-group.err {
     background-color: var(--error-cell-bg-color);
     color: var(--error-cell-color);
 }
-
 
 .inputArea {
     display: grid;
@@ -232,14 +239,10 @@ body {
     padding-right: 10px;
 }
 
-
-
-
 .btn-define, .btn-play {
     box-shadow: 3px 3px darkgray;
     margin: 5px;
 }
-
 
 .btn-define {
     background-color: var(--defined-cell-bg-color);
@@ -388,12 +391,6 @@ body {
     font-size: 16px;
     cursor: pointer;
 }
-/*
-.screen {
-    background-color: var(--screen-bg-color);
-}
-*/
-
 /*======================================*/
 /* Progress block */
 /*======================================*/
@@ -495,7 +492,6 @@ body {
     margin-right: 10px;
     padding: 5px;
 }
-
 
 .successForm {
     margin-left: 10px;

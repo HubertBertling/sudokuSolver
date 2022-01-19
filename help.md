@@ -30,9 +30,16 @@ Solltest Du eine Nummern-Setzung zurücknehmen wollen, so selektiere die betroff
 |![Spielzelle](./images/playedCell.png)|In dieser Zelle wurde in der Spielphase die Nummer 5 gesetzt.|
 |![Optionszelle](./images/optionCell.png)|Für diese Zelle wurde noch keine Nummer gesetzt. Du kannst nur noch eine der Nummern 1, 2, 4 und 8 wählen. Wählst Du dennoch eine andere Nummer, kommt es zu einem Konflikt. Zwei gleiche Nummern in einer Spalte, Reihe oder Zellgruppe. Die betroffenen Zellen werden rot markiert.|
 |![notwendig](./images/neccessary.png)|Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die drei Nummern 1, 5 und 8 setzbar. Jedoch hat der Solver ermittelt, dass die Nummer 5 notwendig ist, damit das Sudoku lösbar bleibt.|
-|![Keine](./images/nochoice.png)|Für diese Zelle wurde noch keine Nummer gesetzt. Allerdings gibt es keine zulässige Nummer mehr, die noch gesetzt werden könnte. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden.|
-|![ZweiNotwendige](./images/twoNeccessary.png)|Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die drei Nummern 5, 7 und 8 setzbar. Jedoch hat der Solver zwei notwendige Nummern für diese Zelle ermittelt: 5 und 7. Das geht natürlich nicht. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden.|
+|![Keine](./images/nochoice.png)|Für diese Zelle wurde noch keine Nummer gesetzt. Allerdings gibt es keine zulässige Nummer mehr, die noch gesetzt werden könnte. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet sie in den Rückwärts-Modus um.|
+|![ZweiNotwendige](./images/twoNeccessary.png)|Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die drei Nummern 5, 7 und 8 setzbar. Jedoch hat der Solver zwei notwendige Nummern für diese Zelle ermittelt: 5 und 7. Das geht natürlich nicht. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet sie in den Rückwärts-Modus um.|
 |![Konflikt](./images/conflct.png)|Für diese Zelle wurde die Nummer 8 gesetzt. Das führte zu einem Konflikt. Zwei gleiche Nummern in einer Spalte, Reihe oder Zellgruppe. Das zweite oder dritte Auftreten der Nummer wird ebenfalls rot angezeigt.|
+
+## Unlösbare Gruppen
+
+|    |    |
+|----------|-----|
+|![Unlösbare Gruppe](./images/insolvablegroup.png)| So wie es unlösbare Zellen geben kann - erkennbar an ihrem roten Hintergrund - so kann es auch unlösbare Gruppen geben. Eine Gruppe ist unlösbar, wenn nicht mehr alle Nummern 1 ... 9 in ihr vorkommen. Im Beispiel fehlt die Nummer 8. Tritt während der automatischen Ausführung eine solche Gruppe auf, schaltet sie in den Rückwärts-Modus um. 
+
 
 ## Zwei Phasen
 

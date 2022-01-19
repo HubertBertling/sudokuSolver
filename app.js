@@ -64,27 +64,27 @@ class SudokuApp {
 
         // Automatische Ausführung: schrittweise
         document.querySelector('#btn-autoStep').addEventListener('click', () => {
-            if(this.autoExecOn) {
-                this.runner.triggerAutoStep();    
+            if (this.autoExecOn) {
+                this.runner.triggerAutoStep();
             } else {
                 this.setGamePhase('play');
                 this.setAutoExecOn();
                 this.suGrid.deselect();
-                this.runner.triggerAutoStep();    
+                this.runner.triggerAutoStep();
             }
         });
 
         // Automatische Ausführung: starten bzw. fortsetzen
         document.querySelector('#btn-run').addEventListener('click', () => {
-            if(this.autoExecOn) {
-                this.runner.startTimer();                    
+            if (this.autoExecOn) {
+                this.runner.startTimer();
             } else {
                 this.setGamePhase('play');
                 this.setAutoExecOn();
                 this.suGrid.deselect();
                 this.runner.init();
                 this.successDialog.close();
-                this.runner.startTimer();            
+                this.runner.startTimer();
             }
         });
 
@@ -132,12 +132,8 @@ class SudokuApp {
 
         // Die Sudoku-Tabelle wird geladen.
         // Schritt 1: Lade die DOM-Tabelle in die internen Wrapper-Objekte
-        this.suGrid.loadGrid();
+        this.suGrid.createGrid();
         // Schritt 2: 
-        // Erzeuge das Gruppen-Layout der Sudoku-Tabelle.
-        this.suGrid.setLayout();
-        // Schritt 3:
-        // Fülle die Sudokutabelle initial
         this.suGrid.initGrid();
         // Die App kann in verschiedenen Ausführungsmodi sein
         // 'automatic' 'manual'
@@ -203,7 +199,7 @@ class SudokuApp {
         // Ist manuelle Operation
         if (this.autoExecOn) {
             this.runner.stopTimer();
-            this.runner.init();   
+            this.runner.init();
             this.successDialog.close();
             this.setAutoExecOff();
             this.suGrid.deselect();
@@ -269,8 +265,8 @@ class SudokuApp {
             this.runner.init();
             this.successDialog.close();
             this.setAutoExecOff();
-            this.suGrid.deselect();            
-        }     
+            this.suGrid.deselect();
+        }
         this.suGrid.select(cellNode, index);
     }
 
@@ -630,8 +626,8 @@ class AutomatedRunnerOnGrid {
     displayDepth() {
         let depth = document.getElementById("search-depth");
         let maxDepth = document.getElementById("search-max-depth");
-            depth.innerText = this.myStepper.getCurrentSearchDepth();
-            maxDepth.innerText = this.myStepper.getMaxSearchDepth();
+        depth.innerText = this.myStepper.getCurrentSearchDepth();
+        maxDepth.innerText = this.myStepper.getMaxSearchDepth();
     }
 
     displayProgress() {
@@ -972,9 +968,97 @@ class AutomatedRunnerOnGrid {
                 return true;
             }
         }
+        // Oder wenn es eine unlösbare Gruppe gibt
+        for (let i = 0; i < 9; i++) {
+            if (this.suGrid.sudoGroups[i].isInsolvable()) {
+                return true;
+            }
+        }
         return false;
     }
 }
+
+class SudokuGroup {
+    constructor(suTable, groupNode, groupIndex) {
+        // Die Gruppe kennt ihre Tabelle und ihren Index
+        this.myGrid = suTable;
+        this.myGroupIndex = groupIndex;
+        this.myGroupNode = groupNode;
+        this.myCells = [];
+        this.myMissingNumbers = new Set();
+    }
+    isInsolvable() {
+        return this.myMissingNumbers.size > 0;
+    }
+
+    unsetError() {
+        this.myGroupNode.classList.remove('err');
+    }
+
+    setError() {
+        this.myGroupNode.classList.add('err');
+    }
+
+    addCell(sudoCell) {
+        this.myCells.push(sudoCell);
+        sudoCell.setGroup(this);
+    }
+
+    calculateNecessaryNumbers() {
+        // Notwendige Nummern sind zulässige Nummern einer Zelle,
+        // die in der Gruppe der Zelle genau einmal vorkommen
+        for (let i = 1; i < 10; i++) {
+            let cellIndex = this.occursOnce(i);
+            // Wenn die Nummer i genau einmal in der Gruppe vorkommt
+            // trage sie ein in der necessary-liste der Zelle
+            if (cellIndex !== -1) {
+                this.myCells[cellIndex].setNecessary(i.toString());
+            }
+        }
+    }
+
+    occursOnce(permNr) {
+        // Berechne, ob die Zahl permNr in möglichen Zahlen aller Zellen 
+        // der Gruppe genau einmal vorkommt
+        // Rücgabe: der Index der Zelle, die das einmalige Auftreten enthält
+        // -1, falls die Nummer gar nicht auftaucht oder mehrmals
+        let countOccurrences = 0;
+        let lastCellNr = -1;
+
+        // Iteriere über alle Zellen der Gruppe
+        for (let i = 0; i < 9; i++) {
+
+            if (this.myCells[i].value() == '0') {
+                if (this.myCells[i].hasThisPermNr(permNr)) {
+                    countOccurrences++;
+                    lastCellNr = i;
+                }
+            }
+        }
+        if (countOccurrences == 1) {
+            return lastCellNr;
+        } else {
+            return -1;
+        }
+    }
+
+    calculateMissingNumbers() {
+        let missingNumbers = new Set(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+        // Prüfe alle Zellen der Gruppe
+        for (let i = 0; i < 9; i++) {
+            if (this.myCells[i].value() !== '0') {
+                // Entferne die gesetzten Nummern der Gruppe aus missingNumbers
+                missingNumbers.delete(this.myCells[i].value());
+            } else {
+                //Entferne die Permissibles jeder Zelle der Gruppe aus missingNumbers
+                let permNumbers = this.myCells[i].getPermissibleNumbers();
+                permNumbers.forEach(e => { missingNumbers.delete(e) });
+            }
+        }
+        this.myMissingNumbers = missingNumbers;
+    }
+}
+
 
 class SudokuGrid {
     constructor() {
@@ -983,6 +1067,7 @@ class SudokuGrid {
         // Speichert die Sudokuzellen in der Wrapper-Version
         this.sudoCells = [];
         // Speichert die Wrapper-Zellen in Gruppen
+        this.groups = [];
         this.sudoGroups = [];
         // Speichert die aktuell selektierte Zelle und ihren Index
         this.selectedCell = undefined;
@@ -993,17 +1078,14 @@ class SudokuGrid {
         // Die Tabelle wird initialisert
         // Schritt 1: Die aktuelle Zellenselektion wird zurückgesetzt
         this.initCurrentSelection();
-        // this.initActionHistory();
         // Die aktuellen Zellinhalte werden gelöscht
         for (let i = 0; i < 81; i++) {
             this.sudoCells[i].clear();
         }
         // Die für die Zellen möglichen Inhalte 
         // werden neu berechnet. Notwendige Inhalte gibt
-        // es im initialen Zustand nochnicht
-        for (let i = 0; i < 81; i++) {
-            this.sudoCells[i].init();
-        }
+        // es im initialen Zustand noch nicht
+        this.refresh();
     }
 
     solved() {
@@ -1036,11 +1118,7 @@ class SudokuGrid {
                 this.sudoCells[i].clear();
             }
         }
-        this.recalculatePermissibleSets();
-        // Berechne potentiell jetzt (nicht mehr) vorhandene Konflikte
-        this.reCalculateErrorCells();
-        // Berechne die jetzt (nicht mehr) notwendigen Zellinhalte
-        this.reEvaluateNecessarys();
+        this.refresh();
     }
 
     getCurrentState() {
@@ -1061,20 +1139,10 @@ class SudokuGrid {
             let storedCell = previousState.shift();
             this.sudoCells[i].massSetNumber(storedCell.cellValue, storedCell.cellPhase);
         }
-        // Berechne die möglichen Inhalte der Zellen
-        this.recalculatePermissibleSets();
-        // Berechne potentiell vorhandene Konflikte
-        this.reCalculateErrorCells();
-        // Berechne die notwendigen Zellinhalte
-        this.reEvaluateNecessarys();
+        this.refresh();
     }
 
-    loadGrid() {
-        this.cells = document.querySelectorAll('.sudoku-grid-cell');
-        for (let i = 0; i < 9; i++) {
-            let tmpArr = [];
-            this.sudoGroups.push(tmpArr);
-        }
+    createGrid() {
         // Eine lokale Hilfsfunktion
         function calcIndex(row, col) {
             if (row == 0 && col == 0) {
@@ -1098,21 +1166,43 @@ class SudokuGrid {
             }
         }
 
+        let sudoGridNode = document.getElementById("main-sudoku-grid");
+        // Die 9 Gruppen anlegen
+        for (let i = 0; i < 9; i++) {
+            let groupNode = document.createElement("div");
+            groupNode.setAttribute("class", "sudoku-group");
+            this.groups.push(groupNode);
+            //Neue Gruppe in den Baum einhängen
+            sudoGridNode.appendChild(groupNode);
+            // Die Wrapper-Zellen für die DOM-Zellen werden erzeugt
+            // und im Array sudoGroups gespeicehrt
+            let tmpSudoGroup = new SudokuGroup(this, groupNode, i);
+            this.sudoGroups.push(tmpSudoGroup);
+        }
+        // Die 81 Zellen anlegen
         for (let i = 0; i < 81; i++) {
             let row = Math.floor(i / 9);
             let col = i % 9;
             let groupRow = Math.floor(row / 3);
             let groupCol = Math.floor(col / 3);
 
+            let cellNode = document.createElement("div");
+            cellNode.setAttribute("class", "sudoku-grid-cell");
+            this.cells.push(cellNode);
+            // Neue Zelle in ihre Gruppe einhängen
+            let tmpGroupIndex = calcIndex(groupRow, groupCol);
+            this.groups[tmpGroupIndex].appendChild(cellNode);
             // Die Wrapper-Zellen für die DOM-Zellen werden erzeugt
             // und im Array sudoCells gespeicehrt
-            let tmpSudoCell = new SudokuCell(this, i, this.cells[i]);
+            let tmpSudoCell = new SudokuCell(this, i, cellNode);
             this.sudoCells.push(tmpSudoCell);
-
-            // Gleichzeitig werden die Wrapper-Zellen in Gruppen gespeichert.
+            // Gleichzeitig werden die Wrapper-Zellen in Gruppen-Wrapper gespeichert.
             // Die Tabelle besitzt 9 Gruppen mit jeweils 9 Zellen.
-            let tmpGroupIndex = calcIndex(groupCol, groupRow);
-            this.sudoGroups[tmpGroupIndex].push(tmpSudoCell);
+            this.sudoGroups[tmpGroupIndex].addCell(tmpSudoCell);
+        }
+        //Influencers in den Zellen setzen
+        for (let i = 0; i < 81; i++) {
+            this.sudoCells[i].setInfluencers(this.influencersOfCell(i));
         }
     }
     initCurrentSelection() {
@@ -1127,18 +1217,6 @@ class SudokuGrid {
         return this.indexSelected != -1;
     }
 
-    setLayout() {
-        // Das Gruppen-Layout der Zellen wird erzeugt
-        let index = 0;
-        for (let i = 0; i < Math.pow(9, 2); i++) {
-            let row = Math.floor(i / 9);
-            let col = i % 9;
-            if (row === 2 || row === 5) this.cells[index].style.marginBottom = '10px';
-            if (col === 2 || col === 5) this.cells[index].style.marginRight = '10px';
-            index++;
-        }
-    }
-
     atCurrentSelectionSetNumber(btnNumber, currentPhase) {
         // Setze Nummer in einer Zelle
         if ( // Das geht nur, wenn eine Zelle selektiert ist
@@ -1150,13 +1228,7 @@ class SudokuGrid {
                 (this.selectedCell.getPhase() == currentPhase)
             ) {
                 this.selectedCell.setNumber(btnNumber, currentPhase);
-                // Berechne die jetzt noch möglichen Inhalte der Zellen
-                this.recalculatePermissibleSets();
-                // Berechne potentiell jetzt vorhandene Konflikte
-                this.reCalculateErrorCells();
-                // Berechne die jetzt notwendigen Zellinhalte
-                this.reEvaluateNecessarys();
-                // Nehme die aktuelle Selektion zurück
+                this.refresh();
                 this.deselect();
             }
         }
@@ -1169,67 +1241,17 @@ class SudokuGrid {
             // eine Neusetzung erfolgen
             if (this.selectedCell.getPhase() == currentPhase) {
                 this.selectedCell.delete();
-                // Berechne die jetzt noch möglichen Inhalte der Zellen
-                this.recalculatePermissibleSets();
-                // Berechne potentiell jetzt (nicht mehr) vorhandene Konflikte
-                this.reCalculateErrorCells();
-                // Berechne die jetzt (nicht mehr) notwendigen Zellinhalte
-                this.reEvaluateNecessarys();
-                // Nehme die aktuelle Selektion zurück
-                //this.deselect();
+                this.refresh();
             }
         }
     }
 
-
-    reEvaluateNecessarys() {
-        // Bestimme für alle 9 Gruppen der Tabelle 
-        // ob es eine Ziffer gibt, die in der Gruppe
-        // nur genau einmal vorkommt. 
-        // Dann ist sie notwendig.
-
-        // Initialisiere das necessary Feld in allen Zellen   
-        for (let i = 0; i < this.sudoCells.length; i++) {
-            let tmpCell = this.sudoCells[i];
-            tmpCell.necessary = new Set();
-        }
-
-        // Setze die neuen Werte
-        for (let i = 0; i < 9; i++) {
-            this.checkUniquesInGroup(i);
-        }
-    }
-
-    checkUniquesInGroup(groupNr) {
-        for (let i = 1; i < 10; i++) {
-            let cellIndex = this.isNrUniqueInGroupInCell(groupNr, i);
-            if (cellIndex !== -1) {
-                this.sudoCells[cellIndex].setNecessary(i.toString());
-            }
-        }
-    }
-
-    isNrUniqueInGroupInCell(groupNr, permNr) {
-        // Berechne, ob die Zahl permNr in möglichen Zahlen der Gruppe 
-        // genau einmal vorkommt
-        // Rücgabe: der Index der Zelle, die das einmalige Auftreten enthält
-        let countOccurrences = 0;
-        let lastCellwithNr = undefined;
-        let currentGroup = this.sudoGroups[groupNr];
-        for (let i = 0; i < 9; i++) {
-
-            if (currentGroup[i].value() == '0') {
-                if (currentGroup[i].hasThisPermNr(permNr)) {
-                    countOccurrences++;
-                    lastCellwithNr = currentGroup[i];
-                }
-            }
-        }
-        if (countOccurrences == 1) {
-            return lastCellwithNr.getIndex();
-        } else {
-            return -1;
-        }
+    refresh() {
+        this.calculatePermissibleNumbers();
+        this.calculateNecessaryNumbers();
+        this.calculateMissingNumbers();
+        this.markErrorCells();
+        this.markErrorGroups();
     }
 
     deselect() {
@@ -1242,7 +1264,9 @@ class SudokuGrid {
         }
     }
 
-    recalculatePermissibleSets() {
+    calculatePermissibleNumbers() {
+        // Berechne und setze für jede nicht gesetzte Zelle 
+        // die noch möglichen Nummern
         for (let i = 0; i < this.sudoCells.length; i++) {
             let tmpCell = this.sudoCells[i];
             tmpCell.calculatePermissibleNumbers();
@@ -1253,16 +1277,51 @@ class SudokuGrid {
         }
     }
 
-    reCalculateErrorCells() {
+    calculateNecessaryNumbers() {
+        // Berechne und setze für jede nicht gesetzte Zelle
+        // in der Menge ihrer möglichen Nummern die
+        // notwendigen Nummern
+        // Necessary-Einträge initialisieren
         for (let i = 0; i < this.sudoCells.length; i++) {
             let tmpCell = this.sudoCells[i];
-            tmpCell.unsetError();
-            if (tmpCell.isSetinError()) {
-                tmpCell.setError();
+            if (tmpCell.value() == '0') {
+                tmpCell.clearNecessarys();
             }
+        }
+        // Iteriere über die Gruppen
+        for (let i = 0; i < this.sudoGroups.length; i++) {
+            let tmpGroup = this.sudoGroups[i];
+            tmpGroup.calculateNecessaryNumbers();
         }
     }
 
+    calculateMissingNumbers() {
+        // Iteriere über die Gruppen
+        for (let i = 0; i < this.sudoGroups.length; i++) {
+            let tmpGroup = this.sudoGroups[i];
+            tmpGroup.calculateMissingNumbers();
+        }
+    }
+
+    markErrorCells() {
+        for (let i = 0; i < this.sudoCells.length; i++) {
+            let tmpCell = this.sudoCells[i];
+                tmpCell.unsetError();
+                if (tmpCell.isInsolvable()) {
+                    tmpCell.setError();
+                }
+        }
+    }
+
+    markErrorGroups() {
+        for (let i = 0; i < 9; i++) {
+            let tmpGroup = this.sudoGroups[i];
+            tmpGroup.unsetError();
+            if (tmpGroup.isInsolvable()) {
+                tmpGroup.setError();
+            }
+        }
+    }
 
     cellOf(cellNode) {
         // Get the wrapper of a DOM-Cell
@@ -1352,8 +1411,8 @@ class SudokuGrid {
 
 class SudokuCell {
     constructor(suTable, index, cellNode) {
-        // Die Zelle kennt ihr Tabelle und ihren Index
-        this.myTable = suTable;
+        // Die Zelle kennt ihre Tabelle und ihren Index
+        this.myGrid = suTable;
         this.myIndex = index;
         // Die Zelle kennt ihre DOM-Version
         this.myCellNode = cellNode;
@@ -1365,32 +1424,39 @@ class SudokuCell {
         // Speichert die Phase, die beim Setzen einer Nummer
         // in der Zelle aktuell war.
         this.myGamePhase = '';
+        this.myGroup;
         // Speichert ein für alle mal bei der Initialisierung
         // die beeinflussenden Zellen dieser Zelle
-        this.influencers = [];
+        this.myInfluencers = [];
         // Speiceht die aktuell möglichen Zahlen für diese Zelle
-        this.myPermissibles;
-        // Speichert, falls vorhanden  notwendige Zahlen dieser Zelle. 
+        this.myPermissibles = new Set();
+        // Speichert, falls vorhanden notwendige Zahlen dieser Zelle. 
         // Mehr als eine bedeuten einen Widerspruch in der Lösung.
-        this.necessary = new Set();
+        this.myNecessarys = new Set();
+        this.myMissingNumbers = new Set();
     }
-
-    getNecessaryNumbers() {
-        return this.necessary;
+    initNecessarys() {
+        this.myNecessarys = new Set();
+    }
+    initMissingNumbers() {
+        this.myMissingNumbers = new Set();
     }
 
     clear() {
+        this.myNecessarys = new Set();
         this.unsetNumber();
         this.unsetError();
-        this.unsetNecessary();
+    }
+    getNecessaryNumbers() {
+        return this.myNecessarys;
+    }
+    setInfluencers(influencers) {
+        this.myInfluencers = influencers;
     }
 
-    init() {
-        this.influencers = this.myTable.influencersOfCell(this.myIndex);
-        this.calculatePermissibleNumbers();
-        this.setPermissibleNumbers();
+    setGroup(group) {
+        this.myGroup = group;
     }
-
     setNumber(number, gamePhase) {
         this.privateSetNumber(number, gamePhase);
 
@@ -1413,7 +1479,7 @@ class SudokuCell {
         }
         // Lösche die 'nested'-Klassifizierung 
         this.myCellNode.classList.remove('nested')
-        this.myCellNode.classList.remove('inSolvable');
+        this.myCellNode.classList.remove('err');
 
         //Setze das data-value Attribut der Zelle
         this.myCellNode.setAttribute('data-value', number);
@@ -1442,11 +1508,8 @@ class SudokuCell {
         this.myCellNode.classList.remove('play');
         // Hinweis: Die Neuberechnung der möglchen und notwendigen
         // Zahlen erfolgt auf Tabellenebene. 
-        this.myCellNode.classList.add('zoom-in');
-        setTimeout(() => {
-            this.myCellNode.classList.remove('zoom-in');
-        }, 500);
     }
+
 
     setError() {
         this.myCellNode.classList.add('err');
@@ -1463,14 +1526,10 @@ class SudokuCell {
     getPhase() {
         return this.myGamePhase;
     }
-    /*
-    setGamePhase(gamePhase) {
-        this.myGamePhase = gamePhase;
-    }
-*/
+
     select() {
         this.myCellNode.classList.add('selected');
-        this.influencers.forEach(e => e.setSelected());
+        this.myInfluencers.forEach(e => e.setSelected());
     }
 
     setSelected() {
@@ -1479,7 +1538,7 @@ class SudokuCell {
 
     deselect() {
         this.myCellNode.classList.remove('selected');
-        this.influencers.forEach(e => e.unsetSelected());
+        this.myInfluencers.forEach(e => e.unsetSelected());
     }
     unsetSelected() {
         this.myCellNode.classList.remove('hover');
@@ -1496,9 +1555,9 @@ class SudokuCell {
         // Aus den prinzipiell 9 möglichen Zahlen werden die gestrichen,
         // die bereits in einer der Einflusszellen vorkommt.
         let permissibles = new Set(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
-        for (let i = 0; i < this.influencers.length; i++) {
-            if (this.influencers[i].value() !== '0')
-                permissibles.delete(this.influencers[i].value());
+        for (let i = 0; i < this.myInfluencers.length; i++) {
+            if (this.myInfluencers[i].value() !== '0')
+                permissibles.delete(this.myInfluencers[i].value());
         }
         this.myPermissibles = permissibles;
     }
@@ -1518,18 +1577,12 @@ class SudokuCell {
         // Klassifizire die Zelle als 'nested'
         this.myCellNode.classList.add('nested');
         // Übertrage die berechneten Möglchen in das DOM
-        if (this.myPermissibles.size == 0) {
-            // Klassefiziere diese Zelle als widersprüchlich
-            this.myCellNode.classList.add('inSolvable');
-        } else {
-            this.myCellNode.classList.remove('inSolvable');
-            this.myPermissibles.forEach(e => {
-                let permNumberElement = document.createElement('div');
-                permNumberElement.setAttribute('data-value', e);
-                permNumberElement.innerHTML = e;
-                this.myCellNode.appendChild(permNumberElement);
-            });
-        }
+        this.myPermissibles.forEach(e => {
+            let permNumberElement = document.createElement('div');
+            permNumberElement.setAttribute('data-value', e);
+            permNumberElement.innerHTML = e;
+            this.myCellNode.appendChild(permNumberElement);
+        });
     }
     getPermissibleNumbers() {
         return this.myPermissibles;
@@ -1538,15 +1591,12 @@ class SudokuCell {
     setNecessary(permNr) {
         // Klassifiziere die Zahl permNr in der Menge der möglichen Zahlen
         // als notwendig
-        this.necessary.add(permNr);
+        this.myNecessarys.add(permNr);
         let permNodes = this.myCellNode.children;
         for (let i = 0; i < permNodes.length; i++) {
             if (permNodes[i].getAttribute('data-value') == permNr) {
                 permNodes[i].classList.add('neccessary');
             }
-        }
-        if (this.necessary.size > 1) {
-            this.myCellNode.classList.add('inSolvable');
         }
     }
 
@@ -1557,36 +1607,23 @@ class SudokuCell {
                 permNodes[i].classList.remove('neccessary');
             }
         }
-        this.necessary.delete(permNr);
+        this.myNecessarys.delete(permNr);
     }
+
+    clearNecessarys() {
+        this.myNecessarys.forEach(e => this.unsetNecessary(e));
+        this.myNecessarys = new Set();
+    }
+
 
     delete() {
         this.unsetNumber();
     }
-
-    isSetinError() {
-        let tmpValue = this.value();
-        // Wenn die Zelle gar nicht gesetzt ist, kann sie nicht fehlerhaft gesetzt sein
-        if (tmpValue == '0') {
-            return false;
-        } else {
-            // Wenn die gesetzte Zahl nicht in der Menge der erlaubten Zahlen ist, 
-            // oder, wenn für die gesetzte Zelle mehrere Zahlen gleichzeitig notwendig sind, 
-            // ist die Zahl fehlerhaft gesetzt
-            return !this.myPermissibles.has(tmpValue) || (this.necessary.size > 1);
-        }
-    }
-
     isInsolvable() {
-        // Nur eine nicht gesetzte Zelle kann unlösbar sein
-        let tmpValue = this.value();
-        if (tmpValue !== '0') {
-            return false;
-        } else {
-            return (this.necessary.size > 1 || this.myPermissibles.size == 0);
-        }
+        return (this.myNecessarys.size > 1 ||
+            this.myPermissibles.size == 0 ||
+            !(this.value() == '0' || this.myPermissibles.has(this.value())));
     }
-
 
     hasUniqueSolution() {
         // Gibt, falls vorhanden, die einzig mögliche Zahl zurück 
@@ -1596,8 +1633,8 @@ class SudokuCell {
             // Es kann vorkommen, dass mehrere notwendige Zahlen
             // für eine Zelle berechnet werden. 
             // Dann ist das sudoku unlösbar.
-            if (this.necessary.size == 1) {
-                this.necessary.forEach(e => {
+            if (this.myNecessarys.size == 1) {
+                this.myNecessarys.forEach(e => {
                     tmpValue = e;
                 });
             } else if (this.myPermissibles.size == 1) {
