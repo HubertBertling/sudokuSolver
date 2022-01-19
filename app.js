@@ -67,10 +67,14 @@ class SudokuApp {
             if (this.autoExecOn) {
                 this.runner.triggerAutoStep();
             } else {
-                this.setGamePhase('play');
-                this.setAutoExecOn();
-                this.suGrid.deselect();
-                this.runner.triggerAutoStep();
+                if (this.runner.deadlockReached()) {
+                    alert("Keine (weitere) Lösung gefunden!");
+                } else {
+                    this.setGamePhase('play');
+                    this.setAutoExecOn();
+                    this.suGrid.deselect();
+                    this.runner.triggerAutoStep();
+                }
             }
         });
 
@@ -79,12 +83,16 @@ class SudokuApp {
             if (this.autoExecOn) {
                 this.runner.startTimer();
             } else {
-                this.setGamePhase('play');
-                this.setAutoExecOn();
-                this.suGrid.deselect();
-                this.runner.init();
-                this.successDialog.close();
-                this.runner.startTimer();
+                if (this.runner.deadlockReached()) {
+                    alert("Keine (weitere) Lösung gefunden!");
+                } else {
+                    this.setGamePhase('play');
+                    this.setAutoExecOn();
+                    this.suGrid.deselect();
+                    this.runner.init();
+                    this.successDialog.close();
+                    this.runner.startTimer();
+                }
             }
         });
 
@@ -1306,10 +1314,10 @@ class SudokuGrid {
     markErrorCells() {
         for (let i = 0; i < this.sudoCells.length; i++) {
             let tmpCell = this.sudoCells[i];
-                tmpCell.unsetError();
-                if (tmpCell.isInsolvable()) {
-                    tmpCell.setError();
-                }
+            tmpCell.unsetError();
+            if (tmpCell.isInsolvable()) {
+                tmpCell.setError();
+            }
         }
     }
 
@@ -1620,7 +1628,7 @@ class SudokuCell {
         this.unsetNumber();
     }
     isInsolvable() {
-        return (this.myNecessarys.size > 1 ||
+        return ((this.myNecessarys.size > 1 && (this.value() == '0')) ||
             this.myPermissibles.size == 0 ||
             !(this.value() == '0' || this.myPermissibles.has(this.value())));
     }

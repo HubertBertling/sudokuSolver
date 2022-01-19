@@ -173,6 +173,10 @@ body {
     color: var(--error-cell-color);
 }
 
+.sudoku-grid-cell.err.selected {
+    background-color: black;
+}
+
 .inputArea {
     display: grid;
     grid-template-columns: 1fr 290px;
