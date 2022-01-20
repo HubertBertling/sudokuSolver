@@ -1628,8 +1628,12 @@ class SudokuCell {
         this.unsetNumber();
     }
     isInsolvable() {
-        return ((this.myNecessarys.size > 1 && (this.value() == '0')) ||
+        return (
+            // Für die nicht gesetzte Zelle ist die Anzahl notwendiger Nummern größer 1
+            (this.myNecessarys.size > 1 && (this.value() == '0')) ||
+            // Für die Zelle gibt es keine zulässige Nummer mehr
             this.myPermissibles.size == 0 ||
+            // Die Nummer der gesetzten Zelle ist nicht zulässig.
             !(this.value() == '0' || this.myPermissibles.has(this.value())));
     }
 

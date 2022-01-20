@@ -28,43 +28,50 @@
     --error-cell-color: white;
 
      /* Other definitions */
-    --nav-size: 70px;
+    --nav-size: 50px;
     --sudoku-cell-size: 50px;
     --border-radius: 10px;
     --space-y: 20px;
     --gap: 5px;
-    --font-size-sm: 0.7rem;
-    --font-size: 1.3rem;
-    --font-size-lg: 2rem;
-    --font-size-xl: 3rem;
+    --font-size-btn: 1.9rem;
+    --font-size-sm: 1rem;
+    --font-size: 1.2rem;
+    --font-size-lg: 1.8rem;
+    --font-size-xl: 2.4rem;
+
+    /* Setting the global font size */
+    /* Prozent von der Browser Font-Einstellung */
+    font-size: 62.5%;
+    /* Effekt: 1rem = 10px; */
 }
 
 * {
     padding: 0;
     margin: 0;
+    /* padding and border are included in the width and height */
     box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
 }
 
 body {
     font-family: 'Open Sans', sans-serif;
-    overflow-x: hidden;
+    /* Text kann nicht selektiert werden */
     user-select: none;
 }
 
 .main {
-    /* height: 100vh; */
-    padding-top: var(--nav-size);
+    padding: var(--nav-size);
     display: grid;
     place-items: center;
 }
 
+/*
 .screen {
     position: relative;
-    overflow: hidden;
     height: 100%;
     min-width: 400px;
 }
+
+*/
 
 /*======================================*/
 /* Sudoku grid block */
@@ -90,10 +97,10 @@ body {
 
 .sudoku-grid-cell {
     height: var(--sudoku-cell-size);
-    width: var(--sudoku-cell-size);
+    width: var(--sudoku-cell-size); 
     border-radius: var(--border-radius);
     display: grid; 
-    font-size: var(--font-size);
+    font-size: var(--font-size-btn);
     place-items: center;
     cursor: pointer;
 }
@@ -110,10 +117,8 @@ body {
 .sudoku-grid-cell.nested {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    padding: 2px;
     place-items: center;
-    font-size: var(--font-size-sm);
-    padding: 1px;
+    font-size: 1.2rem;
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-color);
     border: 1px solid #0050ff
@@ -122,19 +127,19 @@ body {
 .sudoku-grid-cell.selected {
     background-color: var(--selected-cell-bg-color);
     color: var(--selected-cell-color);
-    border: 4px solid var(--selected-cell-border-color);
+    border: 3px solid var(--selected-cell-border-color);
 }
 
 .nested>div.neccessary {
     padding: 2px;
     border-radius: 3px;
     background-color: #56c7aa;
-    font-size: 1.5em;
+    font-size: 1rem;
     color: #0d1117;
     border: 1px solid white;
 }
 .sudoku-grid-cell.hover {
-    border: 4px solid var(--selected-cell-border-color);
+    border: 3px solid var(--selected-cell-border-color);
 }
 
 .sudoku-grid-cell.err, .sudoku-group.err {
@@ -161,6 +166,7 @@ body {
 }
 .helpNode {
     color: var(--help-color);
+    font-size: 1.6rem;
 }
 
 .sudoku-title {
@@ -183,6 +189,7 @@ body {
     border-bottom: 5px solid var(--screen-bg-color);
     background-color: var(--screen-bg-color);
     color: var(--screen-color);
+    font-size: 1.6rem;
 }
 
 
@@ -244,7 +251,7 @@ body {
     color: var(--standard-btn-color);
     display: grid;
     place-items: center;
-    font-size: var(--font-size);
+    font-size: var(--font-size-btn);
     box-shadow: 3px 3px darkgray;
     cursor: pointer;
 }
@@ -260,7 +267,7 @@ body {
     border-radius: var(--border-radius);
     display: grid;
     place-items: center;
-    font-size: var(--font-size);
+    font-size: var(--font-size-btn);
     box-shadow: 3px 3px darkgray;
     cursor: pointer;
 }
@@ -295,7 +302,7 @@ body {
     border: hidden;
     display: grid;
     place-items: center;
-    font-size: var(--font-size);
+    font-size: var(--font-size-btn);
     cursor: pointer;
     
 }
@@ -361,7 +368,7 @@ body {
     margin: 5px;
     margin-bottom: 10px;
     padding: 5px;
-    font-size: 16px;
+    font-size: var(--font-size-btn);
     cursor: pointer;
 }
 /*======================================*/
@@ -378,6 +385,7 @@ body {
     border-bottom: 5px solid var(--screen-bg-color);
     background-color: var(--screen-bg-color);
     color:var(--screen-color);
+    font-size: 1.6rem;
 }
 .manual-exec-btns.on, .automatic-exec.on {
     padding-right: 10px;
@@ -438,19 +446,18 @@ body {
     color: black;
     text-align: center;
     line-height: 20px;
-    font-size: 16px;
+    font-size: var(--font-size-btn);
    }
 
 
 .textInDlgs {
     size: 100;
     padding: 5px;
-    font-size: 16px;
+    font-size: 1.6rem;
 }
 
 .ok-cancel-btns {
     margin-top: 10px;
-    ;
     margin-left: 100px;
     margin-right: 100px;
     display: grid;
@@ -458,7 +465,7 @@ body {
 }
 
 .input-row {
-    font-size: 16px;
+    font-size: 1.6rem;
     margin-left: 10px;
     margin-right: 10px;
     padding: 5px;
@@ -487,8 +494,6 @@ body {
 .okCancelBtn {
     display: grid;
 }
-
-
 
 /*======================================*/
 /* Global block */
@@ -528,32 +533,4 @@ body {
         transform: scale(1);
     }
 }
-
-@media only screen and (max-width: 900px) {
-    :root {
-        --nav-size: 50px;
-        --sudoku-cell-size: 30px;
-        --border-radius: 5px;
-        --space-y: 10px;
-        --gap: 2px;
-        --font-size: 1rem;
-        --font-size-lg: 1.5rem;
-        --font-size-xl: 2rem;
-    }
-
-    .input-name, .btn {
-        height: 50px;
-    }
-
-    .sudoku-grid-cell.hover {
-        border-width: 2px;
-    }
-
-    .screen {
-        min-width: unset;
-    }
-
-    .main {
-        height: 100vh;
-    }
 }
