@@ -30,16 +30,15 @@ Solltest Du eine Nummern-Setzung zurücknehmen wollen, so selektiere die betroff
 |![Spielzelle](./images/playedCell.png)|In dieser Zelle wurde in der Spielphase die Nummer 5 gesetzt.|
 |![Optionszelle](./images/optionCell.png)|Für diese Zelle wurde noch keine Nummer gesetzt. Du kannst nur noch eine der Nummern 1, 2, 4 und 8 wählen. Wählst Du dennoch eine andere Nummer, kommt es zu einem Konflikt. Zwei gleiche Nummern in einer Spalte, Reihe oder Zellgruppe. Die betroffenen Zellen werden rot markiert.|
 |![notwendig](./images/neccessary.png)|Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die drei Nummern 1, 5 und 8 setzbar. Jedoch hat der Solver ermittelt, dass die Nummer 5 notwendig ist, damit das Sudoku lösbar bleibt.|
-|![Keine](./images/nochoice.png)|Für diese Zelle wurde noch keine Nummer gesetzt. Allerdings gibt es keine zulässige Nummer mehr, die noch gesetzt werden könnte. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet sie in den Rückwärts-Modus um.|
-|![ZweiNotwendige](./images/twoNeccessary.png)|Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die drei Nummern 5, 7 und 8 setzbar. Jedoch hat der Solver zwei notwendige Nummern für diese Zelle ermittelt: 5 und 7. Das geht natürlich nicht. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet sie in den Rückwärts-Modus um.|
+|![Keine](./images/nochoice.png)|Für diese Zelle wurde noch keine Nummer gesetzt. Allerdings gibt es keine zulässige Nummer mehr, die noch gesetzt werden könnte. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet der Solver in den Rückwärts-Modus um.|
+|![ZweiNotwendige](./images/twoNeccessary.png)|Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die drei Nummern 5, 7 und 8 setzbar. Jedoch hat der Solver zwei notwendige Nummern für diese Zelle ermittelt: 5 und 7. Das geht natürlich nicht. Es können in einer Zelle nicht zwei Nummern gleichzeitig gesetzt werden. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet der Solver in den Rückwärts-Modus um.|
 |![Konflikt](./images/conflct.png)|Für diese Zelle wurde die Nummer 8 gesetzt. Das führte zu einem Konflikt. Zwei gleiche Nummern in einer Spalte, Reihe oder Zellgruppe. Das zweite oder dritte Auftreten der Nummer wird ebenfalls rot angezeigt.|
 
 ## Unlösbare Gruppen
 
 |    |    |
 |----------|-----|
-|![Unlösbare Gruppe](./images/insolvablegroup.png)| So wie es unlösbare Zellen geben kann - erkennbar an ihrem roten Hintergrund - so kann es auch unlösbare Gruppen geben. Eine Gruppe ist unlösbar, wenn nicht mehr alle Nummern 1 ... 9 in ihr vorkommen. Im Beispiel fehlt die Nummer 8. Tritt während der automatischen Ausführung eine solche Gruppe auf, schaltet sie in den Rückwärts-Modus um. 
-
+|![Unlösbare Gruppe](./images/insolvablegroup.png)| So wie es unlösbare Zellen geben kann - erkennbar an ihrem roten Hintergrund - so kann es auch unlösbare Gruppen geben. Eine Gruppe ist unlösbar, wenn nicht mehr alle Nummern 1 ... 9 in ihr vorkommen. Im Beispiel fehlt die Nummer 8. Tritt während der automatischen Ausführung eine solche Gruppe auf, schaltet der Solver in den Rückwärts-Modus um.
 
 ## Zwei Phasen
 
@@ -89,6 +88,6 @@ Er zeigt die aktuelle und die bisher maximal erreichte Suchtiefe an. Immer wenn 
 Der Suchprozess endet erfolgreich oder nicht erfolgreich. Er endet erfolgreich, sobald alle Zellen eine
 zulässige Nummer erhalten haben.
 
-Wenn die Sudoku-Aufgabe keine Lösung besitzt, meldet der Solver: Keine Lösung gefunden. Die in Zeitungen und Magazinen gestellten Sudoku-Aufgaben sind in der Regel konsistent und eindeutig. D.h. sie besitzen überhaupt eine Lösung und diese Lösung ist eindeutig. Der Solver findet diese Lösung auf jeden Fall, und dies in der Regel mit weniger als 500 Schritten.
+Wenn die Sudoku-Aufgabe keine Lösung besitzt, meldet der Solver: Keine Lösung gefunden. Die in Zeitungen und Magazinen gestellten Sudoku-Aufgaben sind in der Regel konsistent und eindeutig. D.h. sie besitzen überhaupt eine Lösung und diese Lösung ist eindeutig. Der Solver findet diese Lösung auf jeden Fall, und dies häufig mit weniger als 500 Schritten. In Einzelfällen sind aber auch mal bis zu 4000 Schritte notwendig, um eine Lösung zu finden.
 
 Der Solver beherrscht auch Sudokus, die mehrere Lösungen haben. Nach der Erfolgsmeldung mit der ersten Lösung kann der Anwender nach der nächsten Lösung suchen lassen, solange bis der Solver meldet: Keine weitere Lösung gefunden.
