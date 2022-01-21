@@ -1719,7 +1719,7 @@ class ComboBox {
 
         // Setze input initial
         if (optionListNew.length > 0) {
-            this.theInput.value = optionListNew[optionListNew.length -1 ];
+            this.theInput.value = optionListNew[0];
         } else {
             this.theInput.value = '';
         } 
