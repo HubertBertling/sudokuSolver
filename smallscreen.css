@@ -1,0 +1,541 @@
+:root {
+    /* app colors */
+    --screen-bg-color: #F2E2F2;
+    --screen-color: #0d1117;
+ 
+    --standard-btn-bg-color: rgba(0,0,0,.25);
+    --standard-btn-color: black;
+    --delete-btn-bg-color:  #e91e63; 
+    --delete-btn-color: white;
+
+    --help-color: #4e67c8; 
+   
+    /* Cell colors */
+    --defined-cell-bg-color: #7986CB;
+    --defined-cell-color: #FFF9C4;
+
+    --played-cell-bg-color: #4DB6AC;
+    --played-cell-color: #0d1117;
+
+    --nested-cell-bg-color: #ebdaa4;
+    --nested-cell-color: black;
+
+    --selected-cell-bg-color: black;
+    --selected-cell-color: white;
+    --selected-cell-border-color: black;
+
+    --error-cell-bg-color:  #e91e63;
+    --error-cell-color: white;
+
+     /* Other definitions */
+
+    --sudoku-cell-size: 35px;
+    --border-radius: 5px;
+    --space-y: 10px;
+    --border-size-standard: 2px;
+    --gap: 2px;
+    --font-size-btn: 1.8rem;
+    --font-size-sm: 1rem;
+    --font-size: 1.2rem;
+    --font-size-lg: 1.8rem;
+    --font-size-xl: 2.4rem;
+
+    /* Setting the global font size */
+    /* Prozent von der Browser Font-Einstellung */
+   /* font-size: 62.5%; */
+    font-size: 45%;
+    /* Effekt: 1rem = 10px; */
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    /* padding and border are included in the width and height */
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    /* Text kann nicht selektiert werden */
+    user-select: none;
+}
+
+.main {
+  
+    padding: 10px;
+    display: grid;
+    place-items: center;
+}
+
+/*
+.screen {
+  
+    position: relative;
+    height: 100%;
+    min-width: 400px;
+}
+*/
+
+/*======================================*/
+/* Sudoku grid block */
+/*======================================*/
+
+.main-sudoku-grid {
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: repeat(3, auto);
+    border: var(--border-size-standard) solid var(--screen-bg-color);
+    background-color : var(--screen-bg-color);
+}
+
+.sudoku-group {
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: repeat(3, auto);
+    border-radius: var(--border-radius);
+    place-items: center;
+    padding: 2px;
+}
+
+.sudoku-grid-cell {
+    height: var(--sudoku-cell-size);
+    width: var(--sudoku-cell-size); 
+    border-radius: var(--border-radius);
+    display: grid; 
+    font-size: var(--font-size-btn);
+    place-items: center;
+    cursor: pointer;
+}
+
+.sudoku-grid-cell.define {
+    background-color: var(--defined-cell-bg-color);
+    color: var(--defined-cell-color);
+}
+.sudoku-grid-cell.play {
+    background-color: var(--played-cell-bg-color);
+    color: var(--played-cell-color);
+}
+
+.sudoku-grid-cell.nested {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    place-items: center;
+    font-size: 1.2rem;
+    background-color: var(--nested-cell-bg-color);
+    color: var(--nested-cell-color);
+    border: 1px solid #0050ff
+    }
+
+.sudoku-grid-cell.selected {
+    background-color: var(--selected-cell-bg-color);
+    color: var(--selected-cell-color);
+    border: 3px solid var(--selected-cell-border-color);
+}
+
+.nested>div.neccessary {
+    padding: 2px;
+    border-radius: 3px;
+    background-color: #56c7aa;
+    font-size: 1rem;
+    color: #0d1117;
+    border: 1px solid white;
+}
+.sudoku-grid-cell.hover {
+    border: 3px solid var(--selected-cell-border-color);
+}
+
+.sudoku-grid-cell.err, .sudoku-group.err {
+    background-color: var(--error-cell-bg-color);
+    color: var(--error-cell-color);
+}
+
+.sudoku-grid-cell.err.selected {
+    background-color: black;
+}
+
+.inputArea {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.sudoku-header {
+    background-color: var(--screen-bg-color);
+    color: var(--screen-color);
+    border-bottom: 5px solid var(--screen-bg-color);
+    text-align: center;
+    font-weight:bold;
+
+}
+.helpNode {
+    display:none;
+    color: var(--help-color);
+    font-size: 1.6rem;
+}
+
+.sudoku-title {
+    display:none;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    font-size: xx-large;
+
+}
+.help {
+    display: none;
+    margin-bottom:10px;
+}
+/*======================================*/
+/* Exec button block                  */
+/*======================================*/
+
+.game-col2 {
+    border-top: 5px solid var(--screen-bg-color);
+    border-right: 5px solid var(--screen-bg-color);
+    border-bottom: 5px solid var(--screen-bg-color);
+    background-color: var(--screen-bg-color);
+    color: var(--screen-color);
+    font-size: 1.6rem;
+}
+
+
+.exec-btn-groups {
+    padding-left: var(--space-y);
+    padding-right: var(--space-y);
+}
+
+.exec-btn-group, .auto-exec-container {
+    margin-top: 10px;
+
+}
+
+.manual-exec-btns, .automatic-exec {
+    margin-top: 1px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 2px;
+}
+
+.mode-btns {
+    display: none;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    padding-right: 5px;
+}
+
+.btn-define, .btn-play {
+    box-shadow: 3px 3px darkgray;
+    margin: 5px;
+}
+
+.btn-define {
+    background-color: var(--defined-cell-bg-color);
+    color: var(--defined-cell-color);
+}
+
+
+.btn-define.pressed, .btn-play.pressed {
+    box-shadow: 0px 0px darkgray;
+    transform: translate(2px, 2px);
+}
+
+
+.numbers {
+    margin-top: 2px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+}
+
+
+.number {
+    height: var(--sudoku-cell-size);
+    border-radius: var(--border-radius);
+    background-color: var(--standard-btn-bg-color);
+    color: var(--standard-btn-color);
+    display: grid;
+    place-items: center;
+    font-size: var(--font-size-btn);
+    box-shadow: 3px 3px darkgray;
+    cursor: pointer;
+}
+
+.number:active, .delete:active {
+    box-shadow: 0 0px darkgray;
+    transform: translate(2px, 2px); 
+}
+.delete {
+    background-color: var(--delete-btn-bg-color);
+    color: var(--delete-btn-color);
+    height: var(--sudoku-cell-size);
+    border-radius: var(--border-radius);
+    display: grid;
+    place-items: center;
+    font-size: var(--font-size-btn);
+    box-shadow: 3px 3px darkgray;
+    cursor: pointer;
+}
+
+.number:active, .delete:active, .btn-redo:active, .btn-undo:active, .btn-automatic:active {
+    transform: translate(2px, 2px);
+}
+
+.auto-exec-btns {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 10px;
+}
+
+.btn-auto-group {
+    margin-top: 5px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+}
+
+.btn-image {
+    width: 10px;
+    height: 10px;
+}
+
+
+.btn-define, .btn-play, .btn-automatic {
+    padding: 5px;
+    border-radius: var(--border-radius);
+    box-shadow: 3px 3px darkgray;
+    border: hidden;
+    display: grid;
+    place-items: center;
+    font-size: var(--font-size-btn);
+    cursor: pointer;
+    
+}
+.btn-automatic:active {
+    box-shadow: 0 0px darkgray;
+    transform: translate(2px, 2px); 
+}
+
+.btn-play {
+    background-color: var(--played-cell-bg-color);
+    color: var(--standard-btn-color);
+}
+
+.btn-automatic {
+    background-color: var(--standard-btn-bg-color);
+    color: var(--standard-btn-color);
+}
+
+/*======================================*/
+/* Main button block */
+/*======================================*/
+
+.main-btns {
+    /*  border: 5px solid var(--red);  */
+    border-left: var(--border-size-standard) solid var(--screen-bg-color);
+    border-right: var(--border-size-standard) solid var(--screen-bg-color);
+    border-bottom: var(--border-size-standard) solid var(--screen-bg-color);
+    background-color: var(--screen-bg-color);
+    padding: 5px;
+    /* margin-bottom: 10px; */
+    /* display: grid;
+    grid-template-columns: 1fr;
+    gap: 5px; */
+}
+
+.config-btns {
+    margin-left: 8px;
+    margin-right: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+}
+
+.storage-btns {
+    display: none;
+    margin-left: 10px;
+  /*  display: grid;
+    grid-template-columns: repeat(3, 1fr); */
+
+}
+
+.main-btn:active {
+    box-shadow: 0 0px darkgray;
+    transform: translate(2px, 2px);
+}
+
+.main-btn {
+    box-shadow: 3px 3px darkgray;
+    background-color: var(--standard-btn-bg-color);
+    color: var(--standard-btn-color);
+    border-radius: var(--border-radius);
+    border: hidden;
+    display: grid;
+    place-items: center;
+    margin: 5px;
+    padding: 5px;
+    font-size: var(--font-size-btn);
+    cursor: pointer;
+}
+/*======================================*/
+/* Progress block */
+/*======================================*/
+
+.progress-box {
+    display: none;
+    padding-top: 2px;
+    padding-left: var(--space-y);
+    padding-right: var(--space-y);
+    padding-bottom: 2px;
+    border-left: var(--border-size-standard) solid var(--screen-bg-color);
+    border-right: var(--border-size-standard) solid var(--screen-bg-color);
+    border-bottom: var(--border-size-standard) solid var(--screen-bg-color);
+    background-color: var(--screen-bg-color);
+    color:var(--screen-color);
+    font-size: 1.6rem;
+}
+.manual-exec-btns.on, .automatic-exec.on {
+    padding-right: 10px;
+    border-right: 5px solid var(--standard-btn-bg-color);
+}
+
+.manual-exec-btns, .automatic-exec {
+    padding-right: 10px;
+}
+
+.name-value {
+    display: inline;
+}
+
+.depth-group {
+    margin-top: 2px;
+    display: grid;
+    grid-template-columns: 0.35fr 0.5fr 0.5fr;
+
+}
+
+.depth-label, .progress-label {
+    font-weight: bold;
+}
+
+.progress-group {
+    margin-top: 2px;
+    display: grid;
+    grid-template-columns: 0.17fr 0.17fr 1fr;
+    gap: 2px;
+}
+
+.search-max-depth, .speed-field {
+    margin-top: 3px;
+}
+
+.search-depth {
+    color: var(--screen-color);
+    font-weight: bold;
+}
+
+.speedSetting {
+    padding: 1px;
+    background-color: var(--screen-bg-color);
+    border: solid 1px;
+}
+
+#myProgress {
+    width: 100%;
+    height: 20px;
+    background-color: var(--nested-cell-bg-color);
+}
+
+#myBar {
+    width: 10%;
+    height: 20px;
+    background-color: var(--played-cell-bg-color);
+    color: black;
+    text-align: center;
+    line-height: 20px;
+    font-size: var(--font-size-btn);
+   }
+
+
+.textInDlgs {
+    size: 100;
+    padding: 5px;
+    font-size: 1.6rem;
+}
+
+.ok-cancel-btns {
+    margin-top: 10px;
+    margin-left: 100px;
+    margin-right: 100px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.input-row {
+    font-size: 1.6rem;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 5px;
+}
+
+.successForm {
+    margin-left: 10px;
+    margin-right: 10px;
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.success-ok-cancel-btns {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+}
+
+.successImg {
+    margin-left: 15px;
+    height: 270px;
+    width: 180px;
+}
+
+.okCancelBtn {
+    display: grid;
+}
+
+/*======================================*/
+/* Global block */
+/*======================================*/
+.zoom-in {
+    animation: zoom-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes zoom-in {
+    0% {
+        transform: scale(3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.cell-err {
+    animation: zoom-out-shake 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes zoom-out-shake {
+    0% {
+        transform: scale(2);
+    }
+
+    25% {
+        transform: scale(2) rotate(30deg);
+    }
+
+    50% {
+        transform: scale(2) rotate(-30deg);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}

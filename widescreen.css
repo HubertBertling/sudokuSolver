@@ -28,13 +28,12 @@
     --error-cell-color: white;
 
      /* Other definitions */
-
+    --nav-size: 50px;
     --sudoku-cell-size: 50px;
     --border-radius: 10px;
     --space-y: 20px;
-    --border-size-standard: 2px;
     --gap: 5px;
-    --font-size-btn: 1.8rem;
+    --font-size-btn: 1.9rem;
     --font-size-sm: 1rem;
     --font-size: 1.2rem;
     --font-size-lg: 1.8rem;
@@ -60,7 +59,7 @@ body {
 }
 
 .main {
-    padding: 10px;
+    padding: var(--nav-size);
     display: grid;
     place-items: center;
 }
@@ -82,7 +81,8 @@ body {
     display: grid;
     gap: var(--gap);
     grid-template-columns: repeat(3, auto);
-    border: var(--border-size-standard) solid var(--screen-bg-color);
+    padding: var(--space-y);
+    border: 5px solid var(--screen-bg-color);
     background-color : var(--screen-bg-color);
 }
 
@@ -327,9 +327,9 @@ body {
 
 .main-btns {
     /*  border: 5px solid var(--red);  */
-    border-left: var(--border-size-standard) solid var(--screen-bg-color);
-    border-right: var(--border-size-standard) solid var(--screen-bg-color);
-    border-bottom: var(--border-size-standard) solid var(--screen-bg-color);
+    border-left: 5px solid var(--screen-bg-color);
+    border-right: 5px solid var(--screen-bg-color);
+    border-bottom: 5px solid var(--screen-bg-color);
     background-color: var(--screen-bg-color);
     padding: 5px;
     margin-bottom: 10px;
@@ -376,13 +376,13 @@ body {
 /*======================================*/
 
 .progress-box {
-    padding-top: 2px;
+    padding-top: 5px;
     padding-left: var(--space-y);
     padding-right: var(--space-y);
-    padding-bottom: 2px;
-    border-left: var(--border-size-standard) solid var(--screen-bg-color);
-    border-right: var(--border-size-standard) solid var(--screen-bg-color);
-    border-bottom: var(--border-size-standard) solid var(--screen-bg-color);
+    padding-bottom: 5px;
+    border-left: 5px solid var(--screen-bg-color);
+    border-right: 5px solid var(--screen-bg-color);
+    border-bottom: 5px solid var(--screen-bg-color);
     background-color: var(--screen-bg-color);
     color:var(--screen-color);
     font-size: 1.6rem;
@@ -401,7 +401,7 @@ body {
 }
 
 .depth-group {
-    margin-top: 2px;
+    margin-top: 10px;
     display: grid;
     grid-template-columns: 0.35fr 0.5fr 0.5fr;
 
@@ -412,7 +412,7 @@ body {
 }
 
 .progress-group {
-    margin-top: 2px;
+    margin-top: 5px;
     display: grid;
     grid-template-columns: 0.17fr 0.17fr 1fr;
     gap: 2px;
@@ -532,5 +532,4 @@ body {
     100% {
         transform: scale(1);
     }
-}
 }
