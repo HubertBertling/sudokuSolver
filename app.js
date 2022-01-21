@@ -334,8 +334,8 @@ class SudokuApp {
         this.storageDeleteDialog.close()
     }
 
-    comboBoxNameSelected(comboBoxNode) {
-        comboBoxNode.setInputField();
+    comboBoxNameSelected(comboBoxNode, e) {
+        comboBoxNode.setInputField(e.target.value);
     }
 
     getPhase() {
@@ -1679,8 +1679,8 @@ class ComboBox {
 
         // Mit der Erzeugung des Wrappers wird
         // auch der Eventhandler der ComboBox gesetzt
-        this.optionList.addEventListener('change', () => {
-            sudoApp.comboBoxNameSelected(this);
+        this.optionList.addEventListener('change', (event) => {
+            sudoApp.comboBoxNameSelected(this,event);
         });
     }
     getNode() {
@@ -1689,16 +1689,18 @@ class ComboBox {
     getDialog() {
         return this.myDialog;
     }
-    setInputField() {
+    setInputField(name) {
         // Eine Selektion in der Optionsliste ruft diese Operation au
         // und überträgt die Auswahl in das Input-Feld (ComboBox)
+        this.theInput.value = name;
+        /*
         let idx = this.optionList.selectedIndex;
         if (idx >= 0) {
             let content = this.optionList.options[idx].innerHTML;
             this.theInput.value = content;
         } else {
             this.theInput.value = '';
-        }
+        } */
     }
     init(optionListNew) {
         // Fülle optionListNew in die comboBoxliste
@@ -1713,7 +1715,7 @@ class ComboBox {
             optionElement.innerHTML = optionListNew[i];
             this.optionList.appendChild(optionElement);
         }
-        this.setInputField();
+        this.setInputField('');
     }
     getSelectedName() {
         return this.theInput.value;
