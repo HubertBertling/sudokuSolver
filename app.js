@@ -1873,7 +1873,7 @@ class SuccessDialog {
             height: this.myHeight,
             //         x: "center",
             //       y: "center",
-            left: 700,
+            left: 100,
             html: "width: this.myWidth, height: this.myHeight",
             mount: document.getElementById("contentSuccessDlg")
         });
