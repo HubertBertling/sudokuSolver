@@ -1739,8 +1739,8 @@ class StorageSaveDialog {
     open(nameList) {
         this.winBox = new WinBox("Zustand speichern unter ...", {
             border: 4,
-            width: 500,
-            height: 180,
+            width: 350,
+            height: 200,
             x: "center",
             y: "center",
             html: "width: 600, height: 180",
@@ -1783,8 +1783,8 @@ class StorageRestoreDialog {
     open(nameList) {
         this.winBox = new WinBox("Zustand wiederherstellen", {
             border: 4,
-            width: 500,
-            height: 180,
+            width: 350,
+            height: 200,
             x: "center",
             y: "center",
             html: "width: 600, height: 180",
@@ -1825,8 +1825,8 @@ class StorageDeleteDialog {
     open(nameList) {
         this.winBox = new WinBox("Zustand löschen", {
             border: 4,
-            width: 500,
-            height: 180,
+            width: 350,
+            height: 200,
             x: "center",
             y: "center",
             html: "width: 600, height: 180",
