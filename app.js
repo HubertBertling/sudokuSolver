@@ -1710,12 +1710,19 @@ class ComboBox {
             this.optionList.removeChild(this.optionList.lastChild);
         }
         //fill new list
+
         for (let i = 0; i < optionListNew.length; i++) {
             let optionElement = document.createElement('option');
             optionElement.innerHTML = optionListNew[i];
             this.optionList.appendChild(optionElement);
         }
-        this.setInputField('');
+
+        // Setze input initial
+        if (optionListNew.length > 0) {
+            this.theInput.value = optionListNew[optionListNew.length -1 ];
+        } else {
+            this.theInput.value = '';
+        } 
     }
     getSelectedName() {
         return this.theInput.value;
