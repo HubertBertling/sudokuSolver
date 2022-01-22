@@ -203,7 +203,7 @@ body {
 }
 
 .exec-btn-group, .auto-exec-container {
-    margin-top: 10px;
+    margin-top: 5px;
 
 }
 
@@ -424,7 +424,7 @@ body {
     margin-top: 5px;
     margin-right: 10px;
     display: grid;
-    grid-template-columns: 0.4fr 0.5fr 1fr;
+    grid-template-columns: 0.4fr 0.6fr 1fr;
     gap: 2px;
 }
 
