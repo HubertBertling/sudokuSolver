@@ -381,7 +381,6 @@ body {
 /*======================================*/
 
 .progress-box {
-    display: none;
     padding-top: 2px;
     padding-left: var(--space-y);
     padding-right: var(--space-y);
@@ -393,6 +392,10 @@ body {
     color:var(--screen-color);
     font-size: 1.6rem;
 }
+.track-group {
+    display:none;
+}
+
 .manual-exec-btns.on, .automatic-exec.on {
     padding-right: 10px;
     border-right: 5px solid var(--standard-btn-bg-color);
@@ -418,9 +421,10 @@ body {
 }
 
 .progress-group {
-    margin-top: 2px;
+    margin-top: 5px;
+    margin-right: 10px;
     display: grid;
-    grid-template-columns: 0.17fr 0.17fr 1fr;
+    grid-template-columns: 0.4fr 0.5fr 1fr;
     gap: 2px;
 }
 
