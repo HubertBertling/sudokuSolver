@@ -414,7 +414,7 @@ body {
 .progress-group {
     margin-top: 5px;
     display: grid;
-    grid-template-columns: 0.25fr 0.25fr 1fr;
+    grid-template-columns: 0.2fr 0.2fr 1fr;
     gap: 2px;
 }
 
@@ -432,6 +432,24 @@ body {
     background-color: var(--screen-bg-color);
     border: solid 1px;
 }
+.forward-backward-image {
+    width: 18px;
+    height: 18px;
+}
+.forward, .backward {
+    height: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.autoMode-radio-btns {
+    place-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background-color: var(--screen-bg-color);   
+}
+.forward.checked, .backward.checked {
+    background-color: var(--played-cell-bg-color);
+}
 
 #myProgress {
     width: 100%;
@@ -446,7 +464,7 @@ body {
     color: black;
     text-align: center;
     line-height: 20px;
-    font-size: var(--font-size-btn);
+    font-size: 1.6rem;
    }
 
 

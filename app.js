@@ -623,11 +623,11 @@ class AutomatedRunnerOnGrid {
         let forwardNode = document.getElementById("radio-forward");
         let backwardNode = document.getElementById("radio-backward");
         if (this.autoDirection == 'forward') {
-            forwardNode.checked = true;
-            backwardNode.checked = false;
+            forwardNode.classList.add('checked');
+            backwardNode.classList.remove('checked');
         } else {
-            forwardNode.checked = false;
-            backwardNode.checked = true;
+            forwardNode.classList.remove('checked');
+            backwardNode.classList.add('checked');
         }
     }
 
