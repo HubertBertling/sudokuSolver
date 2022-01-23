@@ -343,8 +343,7 @@ body {
 }
 
 .config-btns {
-    margin-left: 8px;
-    margin-right: 20px;
+    margin-right: 10px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
@@ -352,7 +351,6 @@ body {
 
 .storage-btns {
     display: grid;
-    margin-left: 2px;
     margin-right: 10px;
     grid-template-columns: repeat(3, 1fr);
 
