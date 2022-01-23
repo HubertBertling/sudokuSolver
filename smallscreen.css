@@ -294,8 +294,8 @@ body {
 }
 
 .btn-image {
-    width: 10px;
-    height: 10px;
+    width: 16px;
+    height: 16px;
 }
 
 
@@ -426,6 +426,7 @@ body {
     display: grid;
     grid-template-columns: 0.4fr 0.2fr 1fr;
     gap: 2px;
+    font-size: 1.6rem;
 }
 
 .search-max-depth, .speed-field {
