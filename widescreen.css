@@ -472,31 +472,28 @@ body {
     font-size: 1.6rem;
    }
 
-
-.textInDlgs {
-    size: 100;
+   .textInDlgs {
     padding: 5px;
     font-size: 1.6rem;
 }
 
+
 .ok-cancel-btns {
     margin-top: 10px;
-    margin-left: 100px;
-    margin-right: 100px;
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
 
 .input-row {
-    font-size: 1.6rem;
+    width:200px;
     margin-left: 10px;
     margin-right: 10px;
-    padding: 5px;
+    padding: 10px;
 }
 
-.successForm {
-    margin-left: 10px;
-    margin-right: 10px;
+.successForm, .dlg-form {
+    margin: 10px;
+    font-size: 1.6rem;
     display: grid;
     grid-template-columns: 1fr;
 }
@@ -507,6 +504,7 @@ body {
     grid-template-columns: 1fr 1fr;
 
 }
+
 
 .successImg {
     margin-left: 15px;

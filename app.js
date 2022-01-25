@@ -1748,11 +1748,11 @@ class StorageSaveDialog {
     open(nameList) {
         this.winBox = new WinBox("Zustand speichern unter ...", {
             border: 4,
-            width: 350,
-            height: 200,
+            width: 330,
+            height: 230,
             x: "center",
             y: "center",
-            html: "width: 600, height: 180",
+            html: "width: 320, height: 220",
             mount: document.getElementById("contentSaveDlg")
         });
         this.myComboBox.init(nameList);
@@ -1792,11 +1792,11 @@ class StorageRestoreDialog {
     open(nameList) {
         this.winBox = new WinBox("Zustand wiederherstellen", {
             border: 4,
-            width: 350,
-            height: 200,
+            width: 330,
+            height: 230,
             x: "center",
             y: "center",
-            html: "width: 600, height: 180",
+            html: "width: 320, height: 220",
             mount: document.getElementById("contentRestoreDlg")
         });
         this.myComboBox.init(nameList);
@@ -1834,11 +1834,11 @@ class StorageDeleteDialog {
     open(nameList) {
         this.winBox = new WinBox("Zustand löschen", {
             border: 4,
-            width: 350,
-            height: 200,
+            width: 330,
+            height: 230,
             x: "center",
             y: "center",
-            html: "width: 600, height: 180",
+            html: "width: 320, height: 220",
             mount: document.getElementById("contentDeleteDlg")
         });
         this.myComboBox.init(nameList);
@@ -1878,11 +1878,10 @@ class SuccessDialog {
     open() {
         this.winBox = new WinBox("Lösung gefunden", {
             border: 4,
-            width: this.myWidth,
-            height: this.myHeight,
-            //         x: "center",
-            //       y: "center",
-            left: 100,
+            width: 260,
+            height: 420,
+            x: "center",
+            y: "center",
             html: "width: this.myWidth, height: this.myHeight",
             mount: document.getElementById("contentSuccessDlg")
         });
