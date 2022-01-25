@@ -616,7 +616,7 @@ class AutomatedRunnerOnGrid {
 
     displayGoneSteps() {
         let goneStepsNode = document.getElementById("step-count");
-        goneStepsNode.innerText = this.goneSteps;
+        goneStepsNode.textContent = this.goneSteps;
     }
 
     displayAutoDirection() {
