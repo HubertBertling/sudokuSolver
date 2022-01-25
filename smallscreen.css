@@ -34,7 +34,7 @@
     --space-y: 10px;
     --border-size-standard: 2px;
     --gap: 2px;
-    --font-size-btn: 1.8rem;
+    --font-size-btn: 1.9rem;
     --font-size-sm: 1rem;
     --font-size: 1.2rem;
     --font-size-lg: 1.8rem;
@@ -388,7 +388,7 @@ body {
     border-bottom: var(--border-size-standard) solid var(--screen-bg-color);
     background-color: var(--screen-bg-color);
     color:var(--screen-color);
-    font-size: 1.2rem;
+    font-size: 1.6rem;
 }
 .track-group {
     display:none;
@@ -424,7 +424,6 @@ body {
     display: grid;
     grid-template-columns: 0.4fr 0.2fr 1fr;
     gap: 2px;
-    font-size: 1.6rem;
 }
 
 .search-max-depth, .speed-field {
@@ -442,6 +441,10 @@ body {
     border: solid 1px;
 }
 
+.step-count-box {
+    height: 20px;
+    padding: 3px;
+}
 .forward-backward-image {
     width: 12px;
     height: 18px;
@@ -474,7 +477,7 @@ body {
     color: black;
     text-align: center;
     line-height: 20px;
-    font-size: var(--font-size-btn);
+    font-size: 1.6rem;
    }
 
 

@@ -432,6 +432,11 @@ body {
     background-color: var(--screen-bg-color);
     border: solid 1px;
 }
+
+
+.step-count-box {
+    height: 20px;  
+}
 .forward-backward-image {
     width: 18px;
     height: 18px;
