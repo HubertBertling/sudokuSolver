@@ -1680,7 +1680,7 @@ class ComboBox {
         // Mit der Erzeugung des Wrappers wird
         // auch der Eventhandler der ComboBox gesetzt
         this.optionList.addEventListener('change', (event) => {
-            sudoApp.comboBoxNameSelected(this,event);
+            sudoApp.comboBoxNameSelected(this, event);
         });
     }
     getNode() {
@@ -1722,7 +1722,7 @@ class ComboBox {
             this.theInput.value = optionListNew[0];
         } else {
             this.theInput.value = '';
-        } 
+        }
     }
     getSelectedName() {
         return this.theInput.value;
@@ -1746,18 +1746,27 @@ class StorageSaveDialog {
         });
     }
     open(nameList) {
-        this.winBox = new WinBox("Zustand speichern unter ...", {
-            border: 4,
-            width: 330,
-            height: 230,
-            x: "center",
-            y: "center",
-            html: "width: 320, height: 220",
-            mount: document.getElementById("contentSaveDlg")
-        });
+        if (window.screen.availWidth < 421) {
+            this.winBox = new WinBox("Zustand speichern unter ...", {
+                x: "center",
+                y: "center",
+                width: "280px",
+                height: "150üx",
+                mount: document.getElementById("contentSaveDlg")
+            });
+        } else {
+            this.winBox = new WinBox("Zustand speichern unter ...", {
+                x: "center",
+                y: "center",
+                width: "370px",
+                height: "180px",
+                mount: document.getElementById("contentSaveDlg")
+            });
+        }
         this.myComboBox.init(nameList);
         this.myOpen = true;
     }
+  
     close() {
         if (this.myOpen) {
             this.winBox.close();
@@ -1790,15 +1799,23 @@ class StorageRestoreDialog {
         });
     }
     open(nameList) {
-        this.winBox = new WinBox("Zustand wiederherstellen", {
-            border: 4,
-            width: 330,
-            height: 230,
-            x: "center",
-            y: "center",
-            html: "width: 320, height: 220",
-            mount: document.getElementById("contentRestoreDlg")
-        });
+        if (window.screen.availWidth < 421) {
+            this.winBox = new WinBox("Zustand wiederherstellen", {
+                x: "center",
+                y: "center",
+                width: "280px",
+                height: "150üx",
+                mount: document.getElementById("contentRestoreDlg")
+            });
+        } else {
+            this.winBox = new WinBox("Zustand wiederherstellen", {
+                x: "center",
+                y: "center",
+                width: "370px",
+                height: "180px",
+                mount: document.getElementById("contentRestoreDlg")
+            });
+        }
         this.myComboBox.init(nameList);
         this.myOpen = true;
     }
@@ -1832,18 +1849,27 @@ class StorageDeleteDialog {
         });
     }
     open(nameList) {
-        this.winBox = new WinBox("Zustand löschen", {
-            border: 4,
-            width: 330,
-            height: 230,
-            x: "center",
-            y: "center",
-            html: "width: 320, height: 220",
-            mount: document.getElementById("contentDeleteDlg")
-        });
+        if (window.screen.availWidth < 421) {
+            this.winBox = new WinBox("Zustand löschen", {
+                x: "center",
+                y: "center",
+                width: "280px",
+                height: "150üx",
+                mount: document.getElementById("contentDeleteDlg")
+            });
+        } else {
+            this.winBox = new WinBox("Zustand löschen", {
+                x: "center",
+                y: "center",
+                width: "370px",
+                height: "180px",
+                mount: document.getElementById("contentDeleteDlg")
+            });
+        }
         this.myComboBox.init(nameList);
         this.myOpen = true;
     }
+
     close() {
         if (this.myOpen) {
             this.winBox.close();
@@ -1876,15 +1902,23 @@ class SuccessDialog {
         });
     }
     open() {
-        this.winBox = new WinBox("Lösung gefunden", {
-            border: 4,
-            width: 260,
-            height: 420,
-            x: "center",
-            y: "center",
-            html: "width: this.myWidth, height: this.myHeight",
-            mount: document.getElementById("contentSuccessDlg")
-        });
+        if (window.screen.availWidth < 421) {
+            this.winBox = new WinBox("Lösung gefunden", {
+                x: "center",
+                y: "center",
+                width: "170px",
+                height: "290px",
+                mount: document.getElementById("contentSuccessDlg")
+            });
+        } else {
+            this.winBox = new WinBox("Lösung gefunden", {
+                x: "center",
+                y: "center",
+                width: "255px",
+                height: "400px",
+                mount: document.getElementById("contentSuccessDlg")
+            });
+        }
         this.checkBoxNode.checked = false;
         this.myOpen = true;
     }
