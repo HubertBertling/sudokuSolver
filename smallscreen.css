@@ -394,10 +394,12 @@ body {
     display:none;
 }
 
+/*
 .manual-exec-btns.on, .automatic-exec.on {
     padding-right: 10px;
     border-right: 5px solid var(--standard-btn-bg-color);
 }
+*/
 
 .manual-exec-btns, .automatic-exec {
     padding-right: 10px;
