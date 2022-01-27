@@ -445,7 +445,7 @@ body {
 
 .step-count-box {
     height: 20px;
-    padding: 3px;
+    line-height: 20px;
 }
 .forward-backward-image {
     width: 12px;
@@ -453,8 +453,8 @@ body {
 }
 .forward, .backward {
     height: 20px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 7px;
+    padding-right: 7px;
 }
 .autoMode-radio-btns {
     place-items: center;
@@ -467,20 +467,37 @@ body {
 }
 
 #myProgress {
+    position: relative;
     width: 100%;
     height: 20px;
+    font-size: 1.4rem;
+    text-align:right;
+    padding-right: 5px;
     background-color: var(--nested-cell-bg-color);
 }
 
-#myBar {
-    width: 10%;
-    height: 20px;
-    background-color: var(--played-cell-bg-color);
+#myBarDef, #myBarPlay {
+    position: absolute;
+    line-height: 20px;
+}
+
+#myBarDef {
+    z-index: 2;
+    background-color: var(--defined-cell-bg-color);
     color: black;
     text-align: center;
+}
+
+#myBarPlay {
+    z-index: 1;
+    background-color: var(--played-cell-bg-color);
+    color: black;
+    text-align:right;
+}
+.total-bar-value {
     line-height: 20px;
-    font-size: 1.6rem;
-   }
+    vertical-align:center;
+}
 
 
 .textInDlgs {

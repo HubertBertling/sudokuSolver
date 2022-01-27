@@ -413,6 +413,7 @@ body {
 
 .progress-group {
     margin-top: 5px;
+    line-height: 20px;
     display: grid;
     grid-template-columns: 0.2fr 0.2fr 1fr;
     gap: 2px;
@@ -435,6 +436,7 @@ body {
 
 
 .step-count-box {
+    line-height: 20px;
     height: 20px;  
 }
 .forward-backward-image {
@@ -457,20 +459,40 @@ body {
 }
 
 #myProgress {
+    position: relative;
     width: 100%;
     height: 20px;
+    font-size: 1.4rem;
+    text-align:right;
+    padding-right: 5px;
     background-color: var(--nested-cell-bg-color);
 }
 
-#myBar {
-    width: 10%;
+#myBarDef, #myBarPlay {
+    position: absolute;
+    width: 20%;
     height: 20px;
-    background-color: var(--played-cell-bg-color);
+    line-height: 20px;
+}
+
+#myBarDef {
+    z-index: 2;
+    background-color: var(--defined-cell-bg-color);
     color: black;
     text-align: center;
+}
+
+#myBarPlay {
+    z-index: 1;
+    background-color: var(--played-cell-bg-color);
+    color: black;
+    text-align:right;
+    padding-right: 5px;
+}
+.total-bar-value {
     line-height: 20px;
-    font-size: 1.6rem;
-   }
+    vertical-align:center;
+}
 
 .textInDlgs {
     font-size: 1.6rem;

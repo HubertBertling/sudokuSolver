@@ -357,18 +357,32 @@ class SudokuApp {
 
 class ProgressBar {
     constructor() {
-        this.elem = document.getElementById("myBar");
+        this.elemPlay = document.getElementById("myBarPlay");
+        this.elemDef = document.getElementById("myBarDef");
     }
     init() {
-        this.elem.style.width = "10%"
+        this.elemPlay.style.width = "10%"
+        this.elemDef.style.width = "10%"
     }
-    setValue(stepCount) {
-        let stepProzent = Math.floor(stepCount / 81 * 100);
-        this.elem.style.width = stepProzent + "%";
-        if (stepCount < 10) {
-            this.elem.innerHTML = '';
+    setValue(defCount, totalCount) {
+        let playCount = totalCount - defCount;
+        let defCountProzent = Math.floor(defCount / 81 * 100);
+        let playCountProzent = Math.floor(totalCount / 81 * 100);
+        
+        this.elemDef.style.width = defCountProzent + "%";
+        this.elemPlay.style.width = playCountProzent + "%";
+        if (defCount < 10) {
+            this.elemDef.innerHTML = '';
         } else {
-            this.elem.innerHTML = stepCount + " / 81";
+            this.elemDef.innerHTML = defCount;
+        }
+        if (playCount < 2) {
+            this.elemPlay.innerHTML = '';
+            this.elemPlay.style.paddingRight = "0px"
+     
+        } else {
+            this.elemPlay.innerHTML = playCount;
+            this.elemPlay.style.paddingRight = "5px"
         }
     }
 }
@@ -639,9 +653,9 @@ class AutomatedRunnerOnGrid {
     }
 
     displayProgress() {
-
-        let count = this.suGrid.countSolvedSteps();
-        this.progressBar.setValue(count);
+        let countDef = this.suGrid.countDefSteps();
+        let countTotal = this.suGrid.countSolvedSteps();
+        this.progressBar.setValue(countDef, countTotal);
     }
 
 
@@ -1108,6 +1122,16 @@ class SudokuGrid {
         let tmp = 0;
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].value() !== '0') {
+                tmp++;
+            }
+        }
+        return tmp;
+    }
+
+    countDefSteps() {
+        let tmp = 0;
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].getPhase() == 'define') {
                 tmp++;
             }
         }
