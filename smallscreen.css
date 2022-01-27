@@ -32,7 +32,7 @@
     --sudoku-cell-size: 35px;
     --border-radius: 5px;
     --space-y: 10px;
-    --border-size-standard: 2px;
+    --border-size-standard: 1px;
     --gap: 2px;
     --font-size-btn: 1.9rem;
     --font-size-sm: 1rem;
@@ -161,7 +161,7 @@ body {
 .sudoku-header {
     background-color: var(--screen-bg-color);
     color: var(--screen-color);
-    border-bottom: 5px solid var(--screen-bg-color);
+    border-bottom: 1px solid var(--screen-bg-color);
     text-align: center;
     font-weight:bold;
 
@@ -188,9 +188,9 @@ body {
 /*======================================*/
 
 .game-col2 {
-    border-top: 5px solid var(--screen-bg-color);
-    border-right: 5px solid var(--screen-bg-color);
-    border-bottom: 5px solid var(--screen-bg-color);
+    border-top: 1px solid var(--screen-bg-color);
+    border-right: 1px solid var(--screen-bg-color);
+    border-bottom: 1px solid var(--screen-bg-color);
     background-color: var(--screen-bg-color);
     color: var(--screen-color);
     font-size: 1.6rem;
@@ -220,7 +220,6 @@ body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
-    padding-right: 5px;
 }
 
 .btn-define, .btn-play {
@@ -316,11 +315,13 @@ body {
 }
 
 .btn-play {
+    margin:5x;
     background-color: var(--played-cell-bg-color);
     color: var(--standard-btn-color);
 }
 
 .btn-automatic {
+    margin:5x;
     background-color: var(--standard-btn-bg-color);
     color: var(--standard-btn-color);
 }
@@ -343,7 +344,6 @@ body {
 }
 
 .config-btns {
-    margin-right: 10px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
@@ -351,9 +351,8 @@ body {
 
 .storage-btns {
     display: grid;
-    margin-right: 10px;
     grid-template-columns: repeat(3, 1fr);
-
+    gap: 2px;
 }
 
 .main-btn:active {
@@ -402,7 +401,7 @@ body {
 */
 
 .manual-exec-btns, .automatic-exec {
-    padding-right: 10px;
+    padding-right: 1px;
 }
 
 .name-value {
@@ -422,7 +421,7 @@ body {
 
 .progress-group {
     margin-top: 5px;
-    margin-right: 10px;
+    margin-right: 1px;
     display: grid;
     grid-template-columns: 0.4fr 0.2fr 1fr;
     gap: 2px;
