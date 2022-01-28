@@ -79,7 +79,6 @@ body {
 
 .main-sudoku-grid {
     display: grid;
-    gap: var(--gap);
     grid-template-columns: repeat(3, auto);
     padding: var(--space-y);
     border: 5px solid var(--screen-bg-color);
@@ -87,13 +86,12 @@ body {
 }
 
 .sudoku-group {
+    margin:5px;
     display: grid;
-    gap: var(--gap);
     grid-template-columns: repeat(3, auto);
     border-radius: var(--border-radius);
     place-items: center;
-    padding: 5px;
-}
+   }
 
 .sudoku-grid-cell {
     height: var(--sudoku-cell-size);
@@ -103,6 +101,7 @@ body {
     font-size: var(--font-size-btn);
     place-items: center;
     cursor: pointer;
+    margin: 3px;
 }
 
 .sudoku-grid-cell.define {
