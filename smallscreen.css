@@ -169,7 +169,7 @@ body {
 
 }
 .helpNode {
-    display:none;
+   
     color: var(--help-color);
     font-size: 1.6rem;
 }
