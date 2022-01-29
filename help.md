@@ -77,22 +77,34 @@ Spielstände können im lokalen Speicher des Browsers gespeichert werden, nicht 
 |![Wiederherstellen](./images/restoreButton.png)|Die Taste **Wiederherstellen**. Mit Hilfe dieser Taste kann ein zuvor gespeicherter Zustand wiederhergestellt werden. Dabei wird der aktuelle Zustand gelöscht.|
 |![Löschen](./images/deleteStoredState.png)|Die Taste **Löschen**. Mit dieser Taste kann ein gespeicherter Zustand  gelöscht werden.|
 
-## Den Lösungssuchprozess beobachten
+## Den Solver bei der Lösungssuche beobachten
 
-Dieser Sudoku-Solver erlaubt es, ihm beim Suchen zuzusehen. Er zeigt an, wie er im Suchprozess vorwärts und rückwärts geht. Rückwärts muss er gehen, wenn die aktuell gesetzte Nummer zur Unlösbarkeit des Sudokus führt. Das Sudoku ist unlösbar in folgenden Situationen:
-1. Ein **Zellkonflikt** tritt auf: zwei oder drei gleiche Nummern in einer Spalte, Zeile oder Gruppe. Die betroffenen Zellen oder die Gruppe sind dann rot unterlegt.
-1. **Keine zulässige Nummer mehr**: es gibt mindestens eine Zelle, für die es keine zulässige Nummer mehr gibt. Eine solche Zelle ist leer und rot unterlegt.
-1. **Mehr als eine notwendige Nummer**: in einer Zelle werden mehr als eine Nummer als notwendig angezeigt. Das ist ein Widerspruch. Denn in einer Zelle können nicht zwei Nummern gleichzeitig gesetzt sein. Die Zelle ist dann rot unterlegt.
-1. **Unvollständige Zellgruppe**: Mindestens eine Zellgruppe ist unvollständig. Eine Zellgruppe ist unvollständig, wenn mindestens eine der Zahlen 1...9 in der Gruppe weder gesetzt ist noch in mindestens einer der noch ungesetzten Zellen als zulässige Nummer vorkommt. Eine solche Zellgruppe ist rot unterlegt.
+Dieser Sudoku-Solver erlaubt es, ihm beim Suchen zuzusehen. Im Vorwärts-Modus führt er abwechselnd eine Zellselektion und eine Nummernsetzung durch, im Rückwärts-Modus, eine Zellselektion und eine Nummernlöschung. 
+### Wie wählt der Solver die nächste Zelle und die in ihr zu setzende Nummer?
 
-Rückwärtsgehen bedeutet, dass der Solver der Reihe nach zuvor gesetzte Nummern wieder zurücknimmt, bis er auf eine Zelle trifft, in der er mehrere zulässigen Nummern zur Auswahl hatte. Er wählt dann die nächste noch nicht probierte Zahl der Auswahl und geht wieder in den Vorwärtsmodus. Sind alle zulässigen Nummern durchprobiert, geht er weiter rückwärts. Wenn er im Rückwärtsgehen bei der ersten gesetzten Zelle ankommt, hat das Sudoku keine Lösung. Im Fachjargon: Der Solver realisiert einen Back-Track-Algorithmus.
+Der Solver sucht gemäß der folgenden Priorität die nächste offene Zelle:
+
+1. **Zellen mit einer notwendigen Nummer:** Der Solver wählt in der Matrix zunächst die offenen Zellen, die in der Menge ihrer zulässigen Nummern eine notwendige Nummer haben. Diese notwendige Nummer wird dann in der Zelle gesetzt. Wenn es mehrere Zellen mit dieser Eigenschaft, wählt er die erste in seiner Liste.
+1. **Zellen mit nur einer zulässigen Nummer**: Dann wählt er Zellen mit nur einer zulässigen Nummer. Denn auch für diese ist die Nummernsetzung eindeutig. Er setzt diese Nummer.
+1. **Zellen mit minimaler Anzahl von zulässigen Nummern**. Sind keine eindeutigen Nummernsetzungen mehr verfügbar, wählt er Zellen mit minimaler Anzahl von zulässigen Nummern. In dieser Menge wählt er zufällig die Nummer, die er dann setzt. Im Laufe der weiteren Suche kann sich herausstellen, dass diese Nummer keine Lösung des Sudokus erlaubt. Der Back-Tracking-Prozess kehrt im weiteren Verlauf zu dieser Zelle zurück und versucht dann mit der Wahl einer anderen Nummer die Lösung zu finden.
+
+### Wie prüft der Solver die neu gesetzte Nummer?
+
+Der Solver prüft nach der Setzung einer neuen Nummer, ob das Sudoku mit dieser gesetzten Nummer unlösbar geworden ist. Falls ja, wird der Solver in den Rückwärts-Modus geschaltet und geht zurück bis zu einer Zelle, die mehrere Optionen für eine Nummernsetzung hatte. Wann ist nun ein Sudoku unlösbar? Ein Sudoku ist unlösbar in folgenden Situationen:
+
+1. Ein **Zellkonflikt** tritt auf: zwei oder drei gleiche Nummern in einer Spalte, Zeile oder Gruppe. Die betroffenen Zellen werden rot unterlegt angezeigt.
+1. **Keine zulässige Nummer mehr**: es gibt mindestens eine ungesetzte Zelle, für die es keine zulässige Nummer mehr gibt. Diese Zelle kann nicht mehr gesetzt werden. Eine solche Zelle ist leer und wird rot unterlegt angezeigt.
+1. **Mehr als eine notwendige Nummer**: es gibt mindestens eine ungesetzte Zelle, in der mehr als eine Nummer als notwendig angezeigt wird. Das ist ein Widerspruch. Denn in einer Zelle können nicht mehrere Nummern gleichzeitig gesetzt werden. Eine solche Zelle wird rot unterlegt angezeigt.
+1. **Unvollständige Zellgruppe**: Mindestens eine Zellgruppe ist unvollständig. Eine Zellgruppe ist unvollständig, wenn mindestens eine der Zahlen 1...9 in der Gruppe weder gesetzt ist noch in mindestens einer der noch ungesetzten Zellen als zulässige Nummer vorkommt. Eine solche Zellgruppe kann keine Lösung haben, da alle Ziffern 1...9 in einer gelösten Gruppe vorkommen müssen. Eine solche unvollständige Gruppe wird rot unterlegt angezeigt.
+
+### Vorwärts und Rückwärts
+
+Der Solver zeigt an, wie er im Suchprozess vorwärts und rückwärts geht. Im Fachjargon: Der Solver realisiert einen Back-Tracking-Algorithmus. Rückwärts muss er gehen, wenn die aktuell gesetzte Nummer zur Unlösbarkeit des Sudokus führt. Rückwärtsgehen bedeutet, dass der Solver der Reihe nach zuvor gesetzte Nummern wieder zurücknimmt, bis er auf eine Zelle trifft, in der er mehrere zulässigen Nummern zur Auswahl hatte. Er wählt dann die nächste noch nicht probierte Zahl der Auswahl und geht wieder in den Vorwärts-Modus. Sind alle zulässigen Nummern durchprobiert, geht er weiter rückwärts. Wenn er im Rückwärtsgehen bei der ersten gesetzten Zelle ankommt, hat das Sudoku keine Lösung.
 
 Der Solver zeigt die aktuelle und die bisher maximal erreichte Suchtiefe an. Immer wenn er auf eine Zelle trifft, in der es keine eindeutige Nummernwahl gibt, erhöht er seine Suchtiefe.
 
 ## Erfolgreiche bzw. nicht erfolgreiche Suche
 
-Der Suchprozess endet erfolgreich oder nicht erfolgreich. Er endet erfolgreich, sobald in allen Zellen eine zulässige Nummer gesetzt wurde.
-
-Wenn die Sudoku-Aufgabe keine Lösung besitzt, meldet der Solver: Keine Lösung gefunden. Die in Zeitungen und Magazinen gestellten Sudoku-Aufgaben sind in der Regel konsistent und eindeutig. D.h. sie besitzen überhaupt eine Lösung und diese Lösung ist eindeutig. Der Solver findet diese Lösung auf jeden Fall, und dies häufig mit weniger als 500 Schritten. In Einzelfällen sind aber auch mal bis zu 4000 Schritte und mehr notwendig, um eine Lösung zu finden.
+Der Suchprozess endet erfolgreich oder nicht erfolgreich. Er endet erfolgreich, sobald in allen Zellen eine zulässige Nummer gesetzt wurde. Wenn die Sudoku-Aufgabe keine Lösung besitzt, meldet der Solver: Keine Lösung gefunden. Die in Zeitungen und Magazinen gestellten Sudoku-Aufgaben sind in der Regel konsistent und eindeutig. D.h. sie besitzen überhaupt eine Lösung und diese Lösung ist eindeutig. Der Solver findet diese Lösung auf jeden Fall, und dies häufig mit weniger als 500 Schritten. In Einzelfällen sind aber auch mal bis zu 4000 Schritte und mehr notwendig, um eine Lösung zu finden.
 
 Der Solver beherrscht auch Sudokus, die mehrere Lösungen haben. Nach der Erfolgsmeldung mit der ersten Lösung kann der Anwender nach der nächsten Lösung suchen lassen, solange bis der Solver meldet: Keine weitere Lösung gefunden.
