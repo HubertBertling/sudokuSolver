@@ -79,15 +79,20 @@ Spielstände können im lokalen Speicher des Browsers gespeichert werden, nicht 
 
 ## Den Lösungssuchprozess beobachten
 
-Dieser Sudoku-Solver erlaubt es, ihm beim Suchen zuzusehen. Er zeigt an, wie er im Suchprozess vorwärts und rückwärts geht. Rückwärts muss er gehen, wenn er alle zulässigen Nummern einer Zelle durchprobiert hat und noch keine Lösung gefunden hat. Im Fachjargon: Der Solver realisiert einen Back-Track-Algorithmus.
+Dieser Sudoku-Solver erlaubt es, ihm beim Suchen zuzusehen. Er zeigt an, wie er im Suchprozess vorwärts und rückwärts geht. Rückwärts muss er gehen, wenn die aktuell gesetzte Nummer zur Unlösbarkeit des Sudokus führt. Das Sudoku ist unlösbar in folgenden Situationen:
+1. Ein **Zellkonflikt** tritt auf: zwei oder drei gleiche Nummern in einer Spalte, Zeile oder Gruppe. Die betroffenen Zellen oder die Gruppe sind dann rot unterlegt.
+1. **Keine zulässige Nummer mehr**: es gibt mindestens eine Zelle, für die es keine zulässige Nummer mehr gibt. Eine solche Zelle ist leer und rot unterlegt.
+1. **Mehr als eine notwendige Nummer**: in einer Zelle werden mehr als eine Nummer als notwendig angezeigt. Das ist ein Widerspruch. Denn in einer Zelle können nicht zwei Nummern gleichzeitig gesetzt sein. Die Zelle ist dann rot unterlegt.
+1. **Unvollständige Zellgruppe**: Mindestens eine Zellgruppe ist unvollständig. Eine Zellgruppe ist unvollständig, wenn mindestens eine der Zahlen 1...9 in der Gruppe weder gesetzt ist noch in mindestens einer der noch ungesetzten Zellen als zulässige Nummer vorkommt. Eine solche Zellgruppe ist rot unterlegt.
 
-Er zeigt die aktuelle und die bisher maximal erreichte Suchtiefe an. Immer wenn er auf eine Zelle trifft, in der es noch keine eindeutige Nummernwahl gibt, erhöht er seine Suchtiefe.
+Rückwärtsgehen bedeutet, dass der Solver der Reihe nach zuvor gesetzte Nummern wieder zurücknimmt, bis er auf eine Zelle trifft, in der er mehrere zulässigen Nummern zur Auswahl hatte. Er wählt dann die nächste noch nicht probierte Zahl der Auswahl und geht wieder in den Vorwärtsmodus. Sind alle zulässigen Nummern durchprobiert, geht er weiter rückwärts. Wenn er im Rückwärtsgehen bei der ersten gesetzten Zelle ankommt, hat das Sudoku keine Lösung. Im Fachjargon: Der Solver realisiert einen Back-Track-Algorithmus.
+
+Der Solver zeigt die aktuelle und die bisher maximal erreichte Suchtiefe an. Immer wenn er auf eine Zelle trifft, in der es keine eindeutige Nummernwahl gibt, erhöht er seine Suchtiefe.
 
 ## Erfolgreiche bzw. nicht erfolgreiche Suche
 
-Der Suchprozess endet erfolgreich oder nicht erfolgreich. Er endet erfolgreich, sobald alle Zellen eine
-zulässige Nummer erhalten haben.
+Der Suchprozess endet erfolgreich oder nicht erfolgreich. Er endet erfolgreich, sobald in allen Zellen eine zulässige Nummer gesetzt wurde.
 
-Wenn die Sudoku-Aufgabe keine Lösung besitzt, meldet der Solver: Keine Lösung gefunden. Die in Zeitungen und Magazinen gestellten Sudoku-Aufgaben sind in der Regel konsistent und eindeutig. D.h. sie besitzen überhaupt eine Lösung und diese Lösung ist eindeutig. Der Solver findet diese Lösung auf jeden Fall, und dies häufig mit weniger als 500 Schritten. In Einzelfällen sind aber auch mal bis zu 4000 Schritte notwendig, um eine Lösung zu finden.
+Wenn die Sudoku-Aufgabe keine Lösung besitzt, meldet der Solver: Keine Lösung gefunden. Die in Zeitungen und Magazinen gestellten Sudoku-Aufgaben sind in der Regel konsistent und eindeutig. D.h. sie besitzen überhaupt eine Lösung und diese Lösung ist eindeutig. Der Solver findet diese Lösung auf jeden Fall, und dies häufig mit weniger als 500 Schritten. In Einzelfällen sind aber auch mal bis zu 4000 Schritte und mehr notwendig, um eine Lösung zu finden.
 
 Der Solver beherrscht auch Sudokus, die mehrere Lösungen haben. Nach der Erfolgsmeldung mit der ersten Lösung kann der Anwender nach der nächsten Lösung suchen lassen, solange bis der Solver meldet: Keine weitere Lösung gefunden.
