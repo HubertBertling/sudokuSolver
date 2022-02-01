@@ -776,7 +776,7 @@ class AutomatedRunnerOnGrid {
     }
 
     triggerAutoStep() {
-        this.goneSteps++;
+      //  this.goneSteps++;
         let result = this.autoStep();
         this.displayStatus();
         if (result == 'success') {
@@ -913,6 +913,7 @@ class AutomatedRunnerOnGrid {
             if (currentStep instanceof RealStep) {
                 // Setze die eindeutige Nummer
                 this.suGrid.atCurrentSelectionSetAutoNumber(currentStep);
+                this.goneSteps++;
             }
             return 'numberSet';
         }
@@ -951,6 +952,7 @@ class AutomatedRunnerOnGrid {
         if (this.suGrid.sudoCells[currentStep.getCellIndex()].value() !== '0') {
             // Die selektierte Zelle ist noch nicht gelöscht
             // und wird jetz gelöscht
+            this.goneSteps++;
             this.suGrid.deleteSelected('play', false);
             // Im Stepper heißt das: einen Schritt zurück
             let prevStep = this.myStepper.previousStep();
@@ -958,7 +960,7 @@ class AutomatedRunnerOnGrid {
         }
         // Unterfall 3: Realstep, dessen Nummer bereits gelöscht ist
 
-        //Setze aktuellen Schritt des Steppers rückwärtz
+        //Setze aktuellen Schritt des Steppers rückwärts
         let previousStep = this.myStepper.previousStep();
         return 'step backward from a Realstep';
 
