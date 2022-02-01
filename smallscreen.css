@@ -118,6 +118,49 @@ body {
     color: var(--played-cell-color);
 }
 
+.sudoku-grid-cell.auto-value {
+    display: grid;
+    grid-template-columns: 0.1fr 0.9fr;
+    place-items: center;
+    font-size: 1.2rem;
+    background-color: var(--played-cell-bg-color);
+    color: var(--played-cell-color);
+ }
+.auto-step-number {
+    padding-left:1px;
+    padding-right: 1px;
+    font-size: 1.0rem;
+}
+.autoValuePair {
+    display: grid;
+    grid-template-columns: 1fr;
+    place-items: center;
+    font-size: 1.2rem;
+    border-left: 2px solid black;
+    padding-left: 2px;
+}
+
+.auto-value {
+    padding: 2px;;
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+
+.value-options{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    place-items: center;
+    border-top: 2px solid black;   
+    font-size: 1rem;
+    padding-top: 2px;
+    padding-left: 2px;
+}
+.open {
+    color: white;
+}
+
+
 .sudoku-grid-cell.nested {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

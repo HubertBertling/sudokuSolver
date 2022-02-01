@@ -163,7 +163,12 @@ class SudokuApp {
 
     setAutoExecOff() {
         this.autoExecOn = false;
+        this.suGrid.removeAutoExecCellInfos();
         this.displayOnOffStatus();
+    }
+
+    autoExecIsOn() {
+        return this.autoExecOn;
     }
 
     displayOnOffStatus() {
@@ -254,6 +259,7 @@ class SudokuApp {
         this.runner.stopTimer();
         this.runner.init();
         this.successDialog.close();
+        this.setAutoExecOff();
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageRestoreDialog.open(tmpNameList);
     }
@@ -368,7 +374,7 @@ class ProgressBar {
         let playCount = totalCount - defCount;
         let defCountProzent = Math.floor(defCount / 81 * 100);
         let playCountProzent = Math.floor(totalCount / 81 * 100);
-        
+
         this.elemDef.style.width = defCountProzent + "%";
         this.elemPlay.style.width = playCountProzent + "%";
         if (defCount < 10) {
@@ -379,7 +385,7 @@ class ProgressBar {
         if (playCount < 2) {
             this.elemPlay.innerHTML = '';
             this.elemPlay.style.paddingRight = "0px"
-     
+
         } else {
             this.elemPlay.innerHTML = playCount;
             this.elemPlay.style.paddingRight = "5px"
@@ -450,6 +456,26 @@ class OptionStep {
             this.myOwnerPath = new OptionPath(optionList[0], this)
         }
     }
+    isOpen(nr) {
+        for (let i = 0; i < this.myNextOptions.length; i++) {
+            if (this.myNextOptions[i] == nr) {
+                return true;
+            }
+        }
+        return false;
+    }
+    options() {
+        let tmpOptionList = [];
+        this.myOptionList.forEach(optionNr => {
+            let tmpOption = {
+                value: optionNr,
+                open: this.isOpen(optionNr)
+            }
+            tmpOptionList.push(tmpOption);
+        });
+        return tmpOptionList;
+    }
+
     addRealStep(cellIndex, cellValue) {
         return this.myOwnerPath.addRealStep(cellIndex, cellValue);
     }
@@ -524,6 +550,9 @@ class RealStep {
     getDepth() {
         return this.myOwnerPath.getDepth();
     }
+    options() {
+        return this.myOwnerPath.options(this.myStepsIndex);
+    }
 }
 
 class OptionPath {
@@ -541,7 +570,30 @@ class OptionPath {
         this.myLastOptionStep; // Der Abschluss dies Pfades
         this.myOwnerStep = ownerStep; // Der Optionstep, der diesen Pfad besitzt
     }
-
+    options(currentIndex) {
+        let tmpOptions = [];
+        if (currentIndex > 0) {
+            // Nur eine Option mitten im Pfad
+            let tmpOption = {
+                value: this.myRealSteps[currentIndex].getValue(),
+                open: false
+            }
+            tmpOptions.push(tmpOption);
+        } else {
+            // Der erste Schritt im Pfad
+            if (this.myValue == '0') {
+                // Der Wurzelpfad
+                let tmpOption = {
+                    value: this.myRealSteps[currentIndex].getValue(),
+                    open: false
+                }
+                tmpOptions.push(tmpOption);
+            } else {
+                tmpOptions = this.myOwnerStep.options();
+            }
+        }
+        return tmpOptions;
+    }
     getDepth() {
         if (this.myValue == '0') {
             // Ich bin der Rootpath
@@ -574,7 +626,7 @@ class OptionPath {
     }
 
     previousFromRealStep(currentIndex) {
-        // Rückwärtz vom RealStep
+        // Rückwärts vom RealStep
         if (currentIndex == 0) {
             return this.myOwnerStep;
         } else {
@@ -583,7 +635,7 @@ class OptionPath {
         }
     }
     previousFromOptionStep() {
-        // Rückwärtz vom OptionStep
+        // Rückwärts vom OptionStep
         // Es kann vorkommen, dass die realStep Sequenz leer ist
         if (this.myRealSteps.length == 0) {
             return this.myOwnerStep;
@@ -860,7 +912,7 @@ class AutomatedRunnerOnGrid {
             let currentStep = this.myStepper.getCurrentStep();
             if (currentStep instanceof RealStep) {
                 // Setze die eindeutige Nummer
-                this.suGrid.atCurrentSelectionSetNumber(currentStep.getValue(), 'play', false);
+                this.suGrid.atCurrentSelectionSetAutoNumber(currentStep);
             }
             return 'numberSet';
         }
@@ -1110,6 +1162,13 @@ class SudokuGrid {
         this.refresh();
     }
 
+    removeAutoExecCellInfos() {
+        for (let i = 0; i < 81; i++) {
+            this.sudoCells[i].clearAutoExecInfo();
+        }
+
+    }
+
     solved() {
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].value() == '0') {
@@ -1260,6 +1319,23 @@ class SudokuGrid {
                 (this.selectedCell.getPhase() == currentPhase)
             ) {
                 this.selectedCell.setNumber(btnNumber, currentPhase);
+                this.refresh();
+                this.deselect();
+            }
+        }
+    }
+
+    atCurrentSelectionSetAutoNumber(currentStep) {
+        // Setze Nummer in einer Zelle
+        if ( // Das geht nur, wenn eine Zelle selektiert ist
+            this.isCellSelected()) {
+            if (// Wenn die Zelle leer ist, kein Problem
+                (this.selectedCell.value() == '0') ||
+                // Wenn die Zelle geüllt ist, kann nur im gleichen Modus
+                // eine Neusetzung erfolgen
+                (this.selectedCell.getPhase() == 'play')
+            ) {
+                this.selectedCell.autoSetNumber(currentStep);
                 this.refresh();
                 this.deselect();
             }
@@ -1529,6 +1605,99 @@ class SudokuCell {
         }
     }
 
+    autoSetNumber(currentStep) {
+        let number = currentStep.getValue();
+        this.myCellNode.setAttribute('data-value', number);
+        //remove permissible numbers
+        while (this.myCellNode.firstChild) {
+            this.myCellNode.removeChild(this.myCellNode.lastChild);
+        }
+        // Lösche die 'nested'-Klassifizierung 
+        this.myCellNode.classList.remove('nested')
+        this.myCellNode.classList.remove('err');
+        this.myCellNode.classList.remove('auto-value');
+
+        // Notiere den Modus im Wrapper
+        this.myGamePhase = 'play';
+        // Setze die Klassifizierung in der DOM-Zelle
+        this.myCellNode.classList.add('play');
+        this.myCellNode.classList.remove('define');
+
+        //Setze das data-value Attribut der Zelle
+        this.myCellNode.setAttribute('data-value', number);
+        // Klassifizire die Zelle als 'auto-value'
+        this.myCellNode.classList.add('auto-value');
+        // Die step-Nummer, also die wievielte Nummer wird gesetzt, setzen
+        let stepNumber = this.myGrid.countSolvedSteps() - this.myGrid.countDefSteps();
+        let autoStepNumberElement = document.createElement('div');
+        autoStepNumberElement.setAttribute('class', 'auto-step-number');
+        autoStepNumberElement.innerHTML = stepNumber;
+
+        this.myCellNode.appendChild(autoStepNumberElement);
+
+        // Die gesetzte Nummer selbst
+        let cellNumberElement = document.createElement('div');
+        cellNumberElement.setAttribute('data-value', number);
+        cellNumberElement.setAttribute('class', 'auto-value');
+        cellNumberElement.innerHTML = number;
+
+        // Die optionalen Elemente dieser Zelle
+        let options = currentStep.options();
+        let optionNode = document.createElement('div');
+        optionNode.setAttribute('class', 'value-options');
+        let optionLength = options.length;
+        if (optionLength > 2) {
+            let startIndex = optionLength - 2;
+            // Lange Liste beginnt mit Sternchen
+            let optionNumberElement = document.createElement('div');
+            optionNumberElement.setAttribute('data-value', '*');
+            optionNumberElement.innerHTML = '*';
+            optionNumberElement.setAttribute('class', 'open');
+            optionNode.appendChild(optionNumberElement);
+            //Die zwei weiteren der Liste
+            for (let i = startIndex; i < options.length; i++) {
+                let option = options[i];
+                let optionNumberElement = document.createElement('div');
+                optionNumberElement.setAttribute('data-value', option.value);
+                if (option.open) {
+                    optionNumberElement.setAttribute('class', 'open');
+                }
+                optionNumberElement.innerHTML = option.value;
+                optionNode.appendChild(optionNumberElement);
+            }
+        } else {
+            for (let i = 0; i < options.length; i++) {
+                let option = options[i];
+                let optionNumberElement = document.createElement('div');
+                optionNumberElement.setAttribute('data-value', option.value);
+                if (option.open) {
+                    optionNumberElement.setAttribute('class', 'open');
+                }
+                optionNumberElement.innerHTML = option.value;
+                optionNode.appendChild(optionNumberElement);
+            }
+        }
+        // Das Paar aus der Nummer und den möglchen Nummern
+        let autoValuePair = document.createElement('div');
+        autoValuePair.setAttribute('class', 'autoValuePair');
+        autoValuePair.appendChild(cellNumberElement);
+        if (optionLength > 1){
+            autoValuePair.appendChild(optionNode);
+        }
+        this.myCellNode.appendChild(autoValuePair);
+    }
+    clearAutoExecInfo() {
+        //remove options
+        if (this.myGamePhase == 'play') {
+            while (this.myCellNode.firstChild) {
+                this.myCellNode.removeChild(this.myCellNode.lastChild);
+            }
+            this.myCellNode.classList.remove('auto-value');
+            // Setze das Zahlelement
+            this.myCellNode.innerHTML = this.myCellNode.getAttribute('data-value');
+        }
+    }
+
     unsetNumber() {
         // Setze das Value-Attribut im Knoten auf 0
         // Damit kann man leicht eine leere Zelle bestimmen
@@ -1538,6 +1707,7 @@ class SudokuCell {
         // Lösche die gegebenfalls vorhandene Define-KLassifizierung
         this.myCellNode.classList.remove('define');
         this.myCellNode.classList.remove('play');
+        this.myCellNode.classList.remove('auto-value');
         // Hinweis: Die Neuberechnung der möglchen und notwendigen
         // Zahlen erfolgt auf Tabellenebene. 
     }
@@ -1790,7 +1960,7 @@ class StorageSaveDialog {
         this.myComboBox.init(nameList);
         this.myOpen = true;
     }
-  
+
     close() {
         if (this.myOpen) {
             this.winBox.close();
