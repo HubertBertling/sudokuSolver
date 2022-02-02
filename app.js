@@ -655,6 +655,7 @@ class AutomatedRunnerOnGrid {
         this.execSpeed = 250;
         this.execSpeedLevel = 'fast';
         this.goneSteps = 0;
+        this.countBackwards = 0;
         this.progressBar = new ProgressBar();
         this.autoDirection = 'forward';
         this.init();
@@ -662,6 +663,7 @@ class AutomatedRunnerOnGrid {
 
     init() {
         this.goneSteps = 0;
+        this.countBackwards = 0;
         this.autoDirection = 'forward';
         // Der Runner hat immer einen aktuellen Stepper
         this.myStepper = new Stepper();
@@ -700,7 +702,8 @@ class AutomatedRunnerOnGrid {
     displayDepth() {
         let depth = document.getElementById("search-depth");
         let maxDepth = document.getElementById("search-max-depth");
-        depth.innerText = this.myStepper.getCurrentSearchDepth();
+        this.myStepper.getCurrentSearchDepth();
+        depth.innerText = this.countBackwards;
         maxDepth.innerText = this.myStepper.getMaxSearchDepth();
     }
 
@@ -801,6 +804,7 @@ class AutomatedRunnerOnGrid {
                 case 'numberSet': {
                     if (this.deadlockReached()) {
                         this.setAutoDirection('backward');
+                        this.countBackwards++;
                         return 'inProgress';
                     } else {
                         return 'inProgress';
