@@ -21,6 +21,7 @@
         "Backtracker",
         "btns",
         "Cellwith",
+        "conflct",
         "disp",
         "Dlgs",
         "eigentlche",
@@ -33,6 +34,7 @@
         "influencers",
         "Influencers",
         "initialisert",
+        "insolvablegroup",
         "jetz",
         "Klassefiziere",
         "Klassifizire",
@@ -44,6 +46,7 @@
         "Neccessary",
         "Necessarys",
         "nochnicht",
+        "nochoice",
         "nummeer",
         "Nummernsetzschritt",
         "Nummersetzschritt",
@@ -61,6 +64,7 @@
         "Rootpath",
         "Rücgabe",
         "Rückgabemöglichkeiten",
+        "Rückwärtsläufe",
         "rückwärtz",
         "Rückwärtz",
         "Rückwärtzschritt",
@@ -78,6 +82,8 @@
         "Sudokuzelle",
         "Sudokuzellen",
         "Tiefenlimit",
+        "ungesetzte",
+        "ungesetzten",
         "unsetted"
     ]
 }
