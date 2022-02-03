@@ -132,7 +132,7 @@ body {
     grid-template-columns: 1fr;
     place-items: center;
     font-size: 1.2rem;
-    border-left: 2px solid black; 
+    border-left: 2px solid var(--nested-cell-bg-color); 
     padding-left: 2px;
 }
 
@@ -149,13 +149,14 @@ body {
     grid-template-columns: repeat(3, 1fr);
     gap: 2px;
     place-items: center;
-    border-top: 2px solid black;
+    border-top: 2px solid var(--nested-cell-bg-color);
     font-size: 1rem;
     padding-top: 2px;
     padding-left: 2px;
 }
 .open {
-    background-color: var(--nested-cell-bg-color); 
+  /*  background-color: var(--nested-cell-bg-color); */
+    color: var(--nested-cell-bg-color); 
     padding-left:1px;
     padding-right: 1px;
 }
@@ -175,7 +176,7 @@ body {
 .sudoku-grid-cell.selected {
     background-color: var(--selected-cell-bg-color);
     color: var(--selected-cell-color);
-    border: 3px solid var(--selected-cell-border-color);
+    border: 3px solid var(--selected-cell-bg-color);
 }
 
 .nested>div.neccessary {

@@ -835,7 +835,7 @@ class AutomatedRunnerOnGrid {
                 }
                 case 'currentStep-cell-selected': {
                     // Die Zelle des Schrittes selektiert,
-                    // um danach ihre Nummer zu  löschen
+                    // um danach ihre Nummer zu löschen
                     return 'inProgress';
                 }
                 case 'cellNumber-unsetted-and-step-backward': {
@@ -881,7 +881,7 @@ class AutomatedRunnerOnGrid {
         // Rückgabemöglichkeiten: {'numberSet', 'cellSelected-realStepCreated', 'nothingToSelect'}
         // Und ein neuer aktueller Schritt im Stepper
         if (this.suGrid.indexSelected == -1) {
-            // Keine Zelle selekteirt
+            // Keine Zelle selektiert
             let tmpSelection = this.autoSelect();
             if (tmpSelection.index == -1) {
                 return 'nothingToSelect'
@@ -925,7 +925,7 @@ class AutomatedRunnerOnGrid {
 
     stepBackward() {
         // Aus verschiedenen Gründen kommt es dazu, dass der Stepper rückwärts gehen muss.
-        // Nach jedem Rückwärtzschritt steht der Stepper auf einem RealStep oder einem OptionStep
+        // Nach jedem Rückwärtsschritt steht der Stepper auf einem RealStep oder einem OptionStep
         let currentStep = this.myStepper.getCurrentStep();
         // Prüfen, ob das der Wurzelschritt ist. Dann Abbruch.
         if (currentStep instanceof OptionStep) {
@@ -938,6 +938,8 @@ class AutomatedRunnerOnGrid {
             if (!currentStep.isCompleted()) {
                 // Dieser Schritt muss noch mit weiteren Nummern probiert werden
                 this.myStepper.getNextRealStep();
+                // Neu: Selektiere den Schritt
+                this.suGrid.indexSelect(this.myStepper.getCurrentStep().getCellIndex());             
                 return 'next-option-selected'
             } else {
                 this.myStepper.previousStep();
@@ -948,7 +950,7 @@ class AutomatedRunnerOnGrid {
         // Unterfall 1: Keine Zelle selektiert
         if (this.suGrid.indexSelected !== currentStep.getCellIndex()) {
             // Keine aktuelle Selektion 
-            this.suGrid.deselect();
+            // this.suGrid.deselect();
             this.suGrid.indexSelect(currentStep.getCellIndex());
             return 'currentStep-cell-selected';
         }
@@ -960,6 +962,9 @@ class AutomatedRunnerOnGrid {
             this.suGrid.deleteSelected('play', false);
             // Im Stepper heißt das: einen Schritt zurück
             let prevStep = this.myStepper.previousStep();
+            //Neu: auch nach dem Löschen wird die Selektion zurückgenommen,
+            //um das Ergebnis besser betrachten zu können
+            this.suGrid.deselect();
             return 'cellNumber-unsetted-and-step-backward';
         }
         // Unterfall 3: Realstep, dessen Nummer bereits gelöscht ist
@@ -1356,6 +1361,8 @@ class SudokuGrid {
             if (this.selectedCell.getPhase() == currentPhase) {
                 this.selectedCell.delete();
                 this.refresh();
+                //Neu
+                this.deselect();
             }
         }
     }
@@ -1691,6 +1698,11 @@ class SudokuCell {
             autoValuePair.appendChild(optionNode);
         }
         this.myCellNode.appendChild(autoValuePair);
+        this.myCellNode.classList.add('zoom-in');
+        setTimeout(() => {
+            this.myCellNode.classList.remove('zoom-in');
+        }, 500);
+
     }
     clearAutoExecInfo() {
         //remove options
@@ -1714,6 +1726,12 @@ class SudokuCell {
         this.myCellNode.classList.remove('define');
         this.myCellNode.classList.remove('play');
         this.myCellNode.classList.remove('auto-value');
+
+        this.myCellNode.classList.add('zoom-in');
+        setTimeout(() => {
+            this.myCellNode.classList.remove('zoom-in');
+        }, 500);
+
         // Hinweis: Die Neuberechnung der möglchen und notwendigen
         // Zahlen erfolgt auf Tabellenebene. 
     }
