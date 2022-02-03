@@ -103,10 +103,17 @@ Der Solver prüft nach der Setzung einer neuen Nummer, ob das Sudoku mit dieser 
 
 Der Solver zeigt an, wie er im Suchprozess vorwärts und rückwärts geht. Im Fachjargon: Der Solver realisiert einen Back-Tracking-Algorithmus. Rückwärts muss er gehen, wenn die aktuell gesetzte Nummer zur Unlösbarkeit des Sudokus führt. Rückwärtsgehen bedeutet, dass der Solver der Reihe nach zuvor gesetzte Nummern wieder zurücknimmt, bis er auf eine Zelle trifft, in der er mehrere zulässigen Nummern zur Auswahl hatte. Er wählt dann die nächste noch nicht probierte Zahl der Auswahl und geht wieder in den Vorwärts-Modus. Sind alle zulässigen Nummern durchprobiert, geht er weiter rückwärts. Wenn er im Rückwärtsgehen bei der ersten gesetzten Zelle ankommt, hat das Sudoku keine Lösung.
 
-Der Solver zeigt die aktuelle und die bisher maximal erreichte Suchtiefe an. Immer wenn er auf eine Zelle trifft, in der es keine eindeutige Nummernwahl gibt, erhöht er seine Suchtiefe.
+Der Solver zeigt die Anzahl der zurückgelegten Schritte an. Jedes Setzen einer Zelle sowie die Rücknahme einer Setzung erhöht den Zähler um 1. Ebenso zeigt der Solver die Anzahl der Rückwärtsläufe und die bisher maximal erreichte Suchtiefe an. Immer wenn er auf eine Zelle trifft, in der es keine eindeutige Nummernwahl gibt, erhöht er seine Suchtiefe. Die vier Parameter
+
+1. Anzahl der Schritte
+1. Anzahl der Rückwärtsläufe
+1. die maximale Suchtiefe und
+1. die Anzahl der in der Definition schon gesetzten Zellen
+
+bilden ein gutes Kriterium für den Schwierigkeitsgrad der Sudoku-Aufgabe. Die in den Zeitungen oder Zeitschriften als leicht oder mittelschwer klassifizierten Sudoku-Aufgaben kommen in der Regel ganz ohne Rückwärtsläufe aus. Meist haben sie um die 30 bereits gesetzte Definitionszellen. Schwere Sudoku-Aufgaben beginnen mit 22 - 25 Definitionszellen. Bei noch geringerer Anzahl von Definitionszellen dürfte die Sicherstellung der eindeutigen Lösung nicht mehr erreichbar sein.
 
 ## Erfolgreiche bzw. nicht erfolgreiche Suche
 
-Der Suchprozess endet erfolgreich oder nicht erfolgreich. Er endet erfolgreich, sobald in allen Zellen eine zulässige Nummer gesetzt wurde. Wenn die Sudoku-Aufgabe keine Lösung besitzt, meldet der Solver: Keine Lösung gefunden. Die in Zeitungen und Magazinen gestellten Sudoku-Aufgaben sind in der Regel konsistent und eindeutig. D.h. sie besitzen überhaupt eine Lösung und diese Lösung ist eindeutig. Der Solver findet diese Lösung auf jeden Fall, und dies häufig mit weniger als 500 Schritten. In Einzelfällen sind aber auch mal bis zu 4000 Schritte und mehr notwendig, um eine Lösung zu finden.
+Der Suchprozess endet erfolgreich oder nicht erfolgreich. Er endet erfolgreich, sobald in allen Zellen eine Nummer gesetzt wurde. Wenn die Sudoku-Aufgabe keine Lösung besitzt, meldet der Solver: Keine Lösung gefunden. Die in Zeitungen und Magazinen gestellten Sudoku-Aufgaben sind in der Regel konsistent und eindeutig. D.h. sie besitzen überhaupt eine Lösung und diese Lösung ist eindeutig. Der Solver findet diese Lösung auf jeden Fall, und dies häufig mit weniger als 500 Schritten. In Einzelfällen sind aber auch mal bis zu 2000 Schritte und mehr notwendig, um eine Lösung zu finden.
 
 Der Solver beherrscht auch Sudokus, die mehrere Lösungen haben. Nach der Erfolgsmeldung mit der ersten Lösung kann der Anwender nach der nächsten Lösung suchen lassen, solange bis der Solver meldet: Keine weitere Lösung gefunden.
