@@ -807,75 +807,68 @@ class AutomatedRunnerOnGrid {
     stepForward() {
         let currentStep = this.myStepper.getCurrentStep();
         if (this.suGrid.indexSelected == -1) {
-            // Startzustand:
-            // a) Noch keine nächste Zelle für eine Nummernsetzung selektiert.
-            // b) Noch keine dazu passende zu setzende Nummer im aktuellen Realstep gespeichert
+            // Annahmen:
+                // a) Noch keine nächste Zelle für eine Nummernsetzung selektiert.
+                // b) Noch keine dazu passende zu setzende Nummer im aktuellen Realstep gespeichert
             // Zielzustand:
-            // a) Die nächste Zelle für eine Nummernsetzung ist selektiert.
-            // b) Die zu setzende Nummer ist im aktuellen Realstep gespeichert
-
-            // Die nächste Zelle selektieren
-            // Falls der aktuelle Schritt ein echter (nicht die Wurzel) Optionstep ist
-            // muss die nächste Option gewählt werden
+                // a) Die nächste Zelle für eine Nummernsetzung ist selektiert.
+                // b) Die zu setzende Nummer ist im neuen, aktuellen Realstep gespeichert
+      
+            // ====================================================================================
+            // Aktion: Die nächste Zelle selektieren
+            // ====================================================================================
+            // Aktion Fall 1: Der Stepper steht auf einem echten Optionsstep (nicht die Wurzel), 
+            // d.h.die nächste Selektion ist die nächste Option dieses Schrittes
             if (currentStep instanceof OptionStep &&
                 currentStep.getCellIndex() !== -1) {
-                // Die nächste Option wählen
+                // Lege einen neuen Step an mit der Nummer der nächsten Option
                 let realStep = this.myStepper.getNextRealStep();
+                // Selektiere die Zelle des Optionsteps, deren Index auch im neuen Realstep gespeichert ist
                 this.suGrid.indexSelect(realStep.getCellIndex());
-                //Zielzustand a) Die nächste Zelle ist selektiert
-                //Zielzustand b) Die zu setzende Nummer ist im Realstep gespeichert.
                 return 'inProgress';
             }
-
-            // Die nächste Zelle selektieren
+            // ====================================================================================
+            // Aktion Fall 2: Die nächste Zelle bestimmen
             let tmpSelection = this.autoSelect();
             if (tmpSelection.index == -1) {
-                // Es gibt erst dann keine Selektion mehr,
-                // wenn die Tabelle vollständig gefüllt ist
-                // Dann ist sie auch prinzipbedingt konsistent gefüllt
+                // Es gibt erst dann keine Selektion mehr, wenn die Tabelle vollständig gefüllt ist.
+                // D.h. das Sudoku ist erfolgreich gelöst
                 return 'success';
             } else {
+                // ================================================================================
+                // Die ermittelte Selektion wird gesetzt
                 this.suGrid.indexSelect(tmpSelection.index);
-                // Zielzustand a) Die Zelle für die nächste Nummernsetzung ist selektiert
+                // ================================================================================
                 // Jetzt muss für diese Selektion eine Nummer bestimmt werden.
                 // Ergebnis wird sein: realStep mit Nummer
                 let tmpValue = '0';
                 if (tmpSelection.options.length == 1) { tmpValue = tmpSelection.options[0]; }
                 if (tmpSelection.necessaryOnes.length == 1) { tmpValue = tmpSelection.necessaryOnes[0]; }
                 if (!(tmpValue == '0')) {
-                    //Die Selektion hat eine eindeutige Nummer.
-                    //D.h. es geht eindeutig weiter.
+                    // Die Selektion hat eine eindeutige Nummer. D.h. es geht eindeutig weiter.
+                    // Lege neuen Realstep mit der eindeutigen Nummer an
                     this.myStepper.addRealStep(tmpSelection.index, tmpValue);
-                    //Zielzustand b) Die zu setzende Nummer ist im Realstep gespeichert.
                     return 'inProgress';
                 } else {
-                    //Die Selektion hat keine eindeutige Nummer.
-                    //D.h. es geht mit mehreren Optionen weiter.
-                    // Nächster realstep mit einer Optionsnummer
+                    // =============================================================================
+                    // Die Selektion hat keine eindeutige Nummer. D.h. es geht mit mehreren Optionen weiter.
                     this.myStepper.addOptionStep(tmpSelection.index, tmpSelection.options.slice());
                     // Die erste Option des Optionsschrittes, wird gleich gewählt
+                    // Neuer realstep mit der ersten Optionsnummer
                     let realStep = this.myStepper.getNextRealStep();
-                    //Zielzustand b) Die zu setzende Nummer ist im Realstep gespeichert.
                     return 'inProgress';
                 }
             }
-
-
         } else {
-            // Startzustand:
-            // a) Die nächste Zelle für eine Nummernsetzung ist selektiert.
-            // b) Die zu setzende Nummer ist im aktuellen Realstep gespeichert
-            if (currentStep instanceof RealStep) {
+            // Annahmen:
+                // a) Die nächste Zelle für eine Nummernsetzung ist selektiert.
+                // b) Die zu setzende Nummer ist im aktuellen Realstep gespeichert
+            // Aktion:
                 // Setze die eindeutige Nummer
-                this.suGrid.atCurrentSelectionSetAutoNumber(currentStep);
-                this.goneSteps++;
-            }
-            // Zielzustand:
-            // a) In der Zelle ist die Nummer gesetzt
-            // b) Die Zellselektion ist aufgehoben
-
-            // Falls die Nummernsetzung zur Unlösbarkeit führt
-            // muss der Solver zurückgehen
+            this.suGrid.atCurrentSelectionSetAutoNumber(currentStep);
+            this.goneSteps++;
+                // Falls die Nummernsetzung zur Unlösbarkeit führt
+                // muss der Solver zurückgehen
             if (this.deadlockReached()) {
                 this.setAutoDirection('backward');
                 this.countBackwards++;
