@@ -218,7 +218,6 @@ class SudokuApp {
             this.suGrid.deselect();
         } else {
             this.suGrid.deleteSelected(this.currentPhase, false);
-            this.suGrid.deselect();
             this.runner.displayProgress();
         }
     }
@@ -779,7 +778,6 @@ class AutomatedRunnerOnGrid {
     }
 
     triggerAutoStep() {
-      //  this.goneSteps++;
         let result = this.autoStep();
         this.displayStatus();
         if (result == 'success') {
@@ -799,96 +797,46 @@ class AutomatedRunnerOnGrid {
     autoStep() {
         // Rückgabemöglichkeiten: {'success', 'fail', 'inProgress'}
         if (this.autoDirection == 'forward') {
-            let result = this.stepForward();
-            switch (result) {
-                case 'numberSet': {
-                    if (this.deadlockReached()) {
-                        this.setAutoDirection('backward');
-                        this.countBackwards++;
-                        return 'inProgress';
-                    } else {
-                        return 'inProgress';
-                    }
-                }
-                case 'cellSelected-realStepCreated': {
-                    return 'inProgress';
-                }
-                case 'cellSelected-nextRealStepCreated': {
-                    return 'inProgress';
-                }
-                case 'nothingToSelect': {
-                    // Es gibt erst dann keine Selektion mehr,
-                    // wenn die Tabelle vollständig gefüllt ist
-                    // Dann ist sie auch prinzipbedingt konsistent gefüllt
-                    return 'success';
-                }
-                default: {
-                    alert('Softwarefehler: Unerwarteter Rückgabewert in stepForward(): ' + result);
-                }
-            }
-        } else if (this.autoDirection == 'backward') {
-            let result = this.stepBackward();
-            switch (result) {
-                case 'root-Optionstep-reached': {
-                    // D.h. Es gibt keine Lösung für das Sudoku
-                    return 'fail';
-                }
-                case 'currentStep-cell-selected': {
-                    // Die Zelle des Schrittes selektiert,
-                    // um danach ihre Nummer zu löschen
-                    return 'inProgress';
-                }
-                case 'cellNumber-unsetted-and-step-backward': {
-                    // Die Nummer des selektierten Schrittes gelöscht
-                    // und einen Schritt rückwärts gegangen
-                    return 'inProgress';
-                }
-                case 'next-option-selected': {
-                    // Für die nächste Option in einem Optionsschritt
-                    // einen Realstep erzeugt
-                    this.setAutoDirection('forward');
-                    return 'inProgress';
-                }
-                case 'step backward from a Optionstep': {
-                    // Nach der vollständigen Abarbeitung eines Optionsschrittes
-                    // Zurück vor diesen Schritt
-                    return 'inProgress';
-                }
-                case 'step backward from a Realstep': {
-                    return 'inProgress'
-                }
-                default: {
-                    alert('Softwarefehler: Unerwarteter Rückgabewert in stepBackward(): ' + result);
-                }
-            }
-        } else {
-            alert("Softwarefehler: autoStep() nicht mit forward oder backward aufgerufen");
+            return this.stepForward();
+        }
+        else if (this.autoDirection == 'backward') {
+            return this.stepBackward();
         }
     }
 
     stepForward() {
-        // Zwei Starsituationnen müssen für diese Operation unterschieden werden:
-        // Situation 1:
-        // 1. a.: In der Sudoku-Tabelle ist eine Zelle selektiert
-        //    b.: Im Stepper sagt der aktuelle Schritt, welche Nummer in der sektierten Zelle gesetzt werden soll.
-        //    Handlung für Situation 1: Nummer setzen. 
-        // Situation 2:
-        // 2. a.: In der Sudoku-Tabelle ist keine Zelle selektiert
-        //    b.: Im Stepper ist noch kein nächster Schritt angelegt.
-        //    Handlung für 2:
-        //      2.a. : In der Sudokutabelle wird die nächste Selektion bestimmt.
-        //        b.: ein dazu passender nächster Schritt wird angelegt     
-        // Rückgabemöglichkeiten: {'numberSet', 'cellSelected-realStepCreated', 'nothingToSelect'}
-        // Und ein neuer aktueller Schritt im Stepper
+        let currentStep = this.myStepper.getCurrentStep();
         if (this.suGrid.indexSelected == -1) {
-            // Keine Zelle selektiert
+            // Startzustand:
+            // a) Noch keine nächste Zelle für eine Nummernsetzung selektiert.
+            // b) Noch keine dazu passende zu setzende Nummer im aktuellen Realstep gespeichert
+            // Zielzustand:
+            // a) Die nächste Zelle für eine Nummernsetzung ist selektiert.
+            // b) Die zu setzende Nummer ist im aktuellen Realstep gespeichert
+
+            // Die nächste Zelle selektieren
+            // Falls der aktuelle Schritt ein echter (nicht die Wurzel) Optionstep ist
+            // muss die nächste Option gewählt werden
+            if (currentStep instanceof OptionStep &&
+                currentStep.getCellIndex() !== -1) {
+                // Die nächste Option wählen
+                let realStep = this.myStepper.getNextRealStep();
+                this.suGrid.indexSelect(realStep.getCellIndex());
+                //Zielzustand a) Die nächste Zelle ist selektiert
+                //Zielzustand b) Die zu setzende Nummer ist im Realstep gespeichert.
+                return 'inProgress';
+            }
+
+            // Die nächste Zelle selektieren
             let tmpSelection = this.autoSelect();
             if (tmpSelection.index == -1) {
-                return 'nothingToSelect'
+                // Es gibt erst dann keine Selektion mehr,
+                // wenn die Tabelle vollständig gefüllt ist
+                // Dann ist sie auch prinzipbedingt konsistent gefüllt
+                return 'success';
             } else {
-                // Den nächsten Nummersetzschritt ermitteln
-                // Selektiere die Zelle, für die der nächste Nummernsetzschritt ermittelt wird
                 this.suGrid.indexSelect(tmpSelection.index);
+                // Zielzustand a) Die Zelle für die nächste Nummernsetzung ist selektiert
                 // Jetzt muss für diese Selektion eine Nummer bestimmt werden.
                 // Ergebnis wird sein: realStep mit Nummer
                 let tmpValue = '0';
@@ -898,7 +846,8 @@ class AutomatedRunnerOnGrid {
                     //Die Selektion hat eine eindeutige Nummer.
                     //D.h. es geht eindeutig weiter.
                     this.myStepper.addRealStep(tmpSelection.index, tmpValue);
-                    return 'cellSelected-realStepCreated';
+                    //Zielzustand b) Die zu setzende Nummer ist im Realstep gespeichert.
+                    return 'inProgress';
                 } else {
                     //Die Selektion hat keine eindeutige Nummer.
                     //D.h. es geht mit mehreren Optionen weiter.
@@ -906,72 +855,89 @@ class AutomatedRunnerOnGrid {
                     this.myStepper.addOptionStep(tmpSelection.index, tmpSelection.options.slice());
                     // Die erste Option des Optionsschrittes, wird gleich gewählt
                     let realStep = this.myStepper.getNextRealStep();
-                    return 'cellSelected-nextRealStepCreated';
-                    // }
+                    //Zielzustand b) Die zu setzende Nummer ist im Realstep gespeichert.
+                    return 'inProgress';
                 }
             }
+
+
         } else {
-            // Eine Zelle ist selektiert
-            // Aktuelle Selektion --> Nummer setzen
-            let currentStep = this.myStepper.getCurrentStep();
+            // Startzustand:
+            // a) Die nächste Zelle für eine Nummernsetzung ist selektiert.
+            // b) Die zu setzende Nummer ist im aktuellen Realstep gespeichert
             if (currentStep instanceof RealStep) {
                 // Setze die eindeutige Nummer
                 this.suGrid.atCurrentSelectionSetAutoNumber(currentStep);
                 this.goneSteps++;
             }
-            return 'numberSet';
+            // Zielzustand:
+            // a) In der Zelle ist die Nummer gesetzt
+            // b) Die Zellselektion ist aufgehoben
+
+            // Falls die Nummernsetzung zur Unlösbarkeit führt
+            // muss der Solver zurückgehen
+            if (this.deadlockReached()) {
+                this.setAutoDirection('backward');
+                this.countBackwards++;
+            }
+            return 'inProgress';
         }
     }
 
     stepBackward() {
-        // Aus verschiedenen Gründen kommt es dazu, dass der Stepper rückwärts gehen muss.
-        // Nach jedem Rückwärtsschritt steht der Stepper auf einem RealStep oder einem OptionStep
+        // Wenn die letzte gesetzte Nummer zur Unlösbarkeit des Sudokus führt, 
+        // muss der Solver rückwärts gehen.
+        // Fall 1: Keine oder eine falsch selektierte Zelle
         let currentStep = this.myStepper.getCurrentStep();
-        // Prüfen, ob das der Wurzelschritt ist. Dann Abbruch.
-        if (currentStep instanceof OptionStep) {
-            if (currentStep.getCellIndex() == -1) {
-                //Im Wurzel-Optionsschritt gibt es keine Option mehr
-                return 'root-Optionstep-reached';
-            }
-        }
-        if (currentStep instanceof OptionStep) {
-            if (!currentStep.isCompleted()) {
-                // Dieser Schritt muss noch mit weiteren Nummern probiert werden
-                this.myStepper.getNextRealStep();
-                // Neu: Selektiere den Schritt
-                this.suGrid.indexSelect(this.myStepper.getCurrentStep().getCellIndex());             
-                return 'next-option-selected'
-            } else {
-                this.myStepper.previousStep();
-                return 'step backward from a Optionstep'
-            }
-        }
-        // Jetzt 3 Unterfälle, für den Fall, dass der aktuelle Schritt ein RealStep ist
-        // Unterfall 1: Keine Zelle selektiert
         if (this.suGrid.indexSelected !== currentStep.getCellIndex()) {
-            // Keine aktuelle Selektion 
-            // this.suGrid.deselect();
             this.suGrid.indexSelect(currentStep.getCellIndex());
-            return 'currentStep-cell-selected';
+            // In der Matrix ist die Zelle des aktuellen Schrittes selektiert
+            return 'inProgress';
         }
-        // Unterfall 2: Die selektierte Zelle ist noch nicht gelöscht
+        // Fall 2: 
+        // Startzustand
+        // a) In der Matrix ist die Zelle des aktuellen Schrittes selektiert
+        // b) Die selektierte Zelle ist noch nicht gelöscht
+        // Zielzustand
+        // a) Die selektierte Zelle ist gelöscht
+        // b) Die bisherige Selektion ist aufgehoben
+        // c) der neue aktuelle Schritt ist bestimmt. Oder es gibt keinen
+        //    nächsten Schritt mehr (keine Lösung gefunden)
         if (this.suGrid.sudoCells[currentStep.getCellIndex()].value() !== '0') {
             // Die selektierte Zelle ist noch nicht gelöscht
             // und wird jetz gelöscht
             this.goneSteps++;
             this.suGrid.deleteSelected('play', false);
-            // Im Stepper heißt das: einen Schritt zurück
-            let prevStep = this.myStepper.previousStep();
-            //Neu: auch nach dem Löschen wird die Selektion zurückgenommen,
-            //um das Ergebnis besser betrachten zu können
-            this.suGrid.deselect();
-            return 'cellNumber-unsetted-and-step-backward';
-        }
-        // Unterfall 3: Realstep, dessen Nummer bereits gelöscht ist
+            // Ziel a) erreicht
+            // Ziel b) erreicht
 
-        //Setze aktuellen Schritt des Steppers rückwärts
-        let previousStep = this.myStepper.previousStep();
-        return 'step backward from a Realstep';
+            // Nach Löschen der Zelle den neuen aktuellen Schritt bestimmen
+            let prevStep = this.myStepper.previousStep();
+            if (prevStep instanceof RealStep) {
+                // Der vorige Schritt ist ein Realstep und ist neuer aktueller Schritt   
+                // Ziel c) erreicht
+                return 'inProgress'
+            }
+            if (prevStep instanceof OptionStep) {
+                // Der vorige Schritt ist ein Optionstep und ist neuer aktueller Schritt
+                if (prevStep.getCellIndex() == -1) {
+                    //Im Wurzel-Optionsschritt gibt es keine Option mehr
+                    // Ziel c) erreicht: Spielende, keine Lösung
+                    return 'fail';
+                }
+                if (prevStep.isCompleted()) {
+                    // Der Optionstep ist vollständig abgearbeitet
+                    // Deshalb wird der Vorgänger dieses Optionsteps neuer aktueller Step
+                    this.myStepper.previousStep();
+                    return 'inProgress'
+                } else {
+                    // Es gibt noch nicht probierte Optionen
+                    // Suchrichtung umschalten!!
+                    this.setAutoDirection('forward');
+                    return 'inProgress';
+                }
+            }
+        }
 
     }
 
@@ -1694,7 +1660,7 @@ class SudokuCell {
         let autoValuePair = document.createElement('div');
         autoValuePair.setAttribute('class', 'autoValuePair');
         autoValuePair.appendChild(cellNumberElement);
-        if (optionLength > 1){
+        if (optionLength > 1) {
             autoValuePair.appendChild(optionNode);
         }
         this.myCellNode.appendChild(autoValuePair);
