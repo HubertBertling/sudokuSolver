@@ -748,6 +748,12 @@ class AutomatedRunnerOnGrid {
                 this.execSpeed = 250;
                 break;
             }
+            case 'very-fast': {
+                //Schritt pro 0,125  Sekunden
+                this.execSpeedLevel = value;
+                this.execSpeed = 125;
+                break;
+            }
             default: {
                 alert('Softwarefehler: unbekannte Geschwindigkeitseingabe');
             }
