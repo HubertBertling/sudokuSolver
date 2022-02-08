@@ -814,16 +814,16 @@ class AutomatedRunnerOnGrid {
         let currentStep = this.myStepper.getCurrentStep();
         if (this.suGrid.indexSelected == -1) {
             // Annahmen:
-                // a) Noch keine nächste Zelle für eine Nummernsetzung selektiert.
-                // b) Noch keine dazu passende zu setzende Nummer im aktuellen Realstep gespeichert
+            // a) Noch keine nächste Zelle für eine Nummernsetzung selektiert.
+            // b) Noch keine dazu passende zu setzende Nummer im aktuellen Realstep gespeichert
             // Zielzustand:
-                // a) Die nächste Zelle für eine Nummernsetzung ist selektiert.
-                // b) Die zu setzende Nummer ist im neuen, aktuellen Realstep gespeichert
-      
+            // a) Die nächste Zelle für eine Nummernsetzung ist selektiert.
+            // b) Die zu setzende Nummer ist im neuen, aktuellen Realstep gespeichert
+
             // ====================================================================================
             // Aktion: Die nächste Zelle selektieren
             // ====================================================================================
-            // Aktion Fall 1: Der Stepper steht auf einem echten Optionsstep (nicht die Wurzel), 
+            // Aktion Fall 1: Der Stepper steht auf einem echten Optionstep (nicht die Wurzel), 
             // d.h.die nächste Selektion ist die nächste Option dieses Schrittes
             if (currentStep instanceof OptionStep &&
                 currentStep.getCellIndex() !== -1) {
@@ -867,14 +867,14 @@ class AutomatedRunnerOnGrid {
             }
         } else {
             // Annahmen:
-                // a) Die nächste Zelle für eine Nummernsetzung ist selektiert.
-                // b) Die zu setzende Nummer ist im aktuellen Realstep gespeichert
+            // a) Die nächste Zelle für eine Nummernsetzung ist selektiert.
+            // b) Die zu setzende Nummer ist im aktuellen Realstep gespeichert
             // Aktion:
-                // Setze die eindeutige Nummer
+            // Setze die eindeutige Nummer
             this.suGrid.atCurrentSelectionSetAutoNumber(currentStep);
             this.goneSteps++;
-                // Falls die Nummernsetzung zur Unlösbarkeit führt
-                // muss der Solver zurückgehen
+            // Falls die Nummernsetzung zur Unlösbarkeit führt
+            // muss der Solver zurückgehen
             if (this.deadlockReached()) {
                 this.setAutoDirection('backward');
                 this.countBackwards++;
@@ -886,58 +886,43 @@ class AutomatedRunnerOnGrid {
     stepBackward() {
         // Wenn die letzte gesetzte Nummer zur Unlösbarkeit des Sudokus führt, 
         // muss der Solver rückwärts gehen.
-        // Fall 1: Keine oder eine falsch selektierte Zelle
         let currentStep = this.myStepper.getCurrentStep();
-        if (this.suGrid.indexSelected !== currentStep.getCellIndex()) {
-            this.suGrid.indexSelect(currentStep.getCellIndex());
-            // In der Matrix ist die Zelle des aktuellen Schrittes selektiert
-            return 'inProgress';
-        }
-        // Fall 2: 
-        // Startzustand
-        // a) In der Matrix ist die Zelle des aktuellen Schrittes selektiert
-        // b) Die selektierte Zelle ist noch nicht gelöscht
-        // Zielzustand
-        // a) Die selektierte Zelle ist gelöscht
-        // b) Die bisherige Selektion ist aufgehoben
-        // c) der neue aktuelle Schritt ist bestimmt. Oder es gibt keinen
-        //    nächsten Schritt mehr (keine Lösung gefunden)
-        if (this.suGrid.sudoCells[currentStep.getCellIndex()].value() !== '0') {
-            // Die selektierte Zelle ist noch nicht gelöscht
-            // und wird jetz gelöscht
-            this.goneSteps++;
-            this.suGrid.deleteSelected('play', false);
-            // Ziel a) erreicht
-            // Ziel b) erreicht
-
-            // Nach Löschen der Zelle den neuen aktuellen Schritt bestimmen
-            let prevStep = this.myStepper.previousStep();
-            if (prevStep instanceof RealStep) {
-                // Der vorige Schritt ist ein Realstep und ist neuer aktueller Schritt   
-                // Ziel c) erreicht
+        if (currentStep instanceof OptionStep) {
+            if (currentStep.getCellIndex() == -1) {
+                // Im Wurzel-Optionsschritt gibt es keine Option mehr
+                // Spielende, keine Lösung
+                return 'fail';
+            }
+            if (currentStep.isCompleted()) {
+                // Der Optionstep ist vollständig abgearbeitet
+                // Deshalb wird der Vorgänger dieses Optionsteps neuer aktueller Step
+                this.myStepper.previousStep();
+                return 'inProgress'
+            } else {
+                // Es gibt noch nicht probierte Optionen
+                // Suchrichtung umschalten!!
+                this.setAutoDirection('forward');
+                return 'inProgress';
+            }
+        } else if (currentStep instanceof RealStep) {
+            if (this.suGrid.indexSelected !== currentStep.getCellIndex()) {
+                // Fall 1: Keine oder eine falsch selektierte Zelle
+                this.suGrid.indexSelect(currentStep.getCellIndex());
+                // In der Matrix ist die Zelle des aktuellen Schrittes selektiert
+                return 'inProgress';
+            }
+            // Fall 2: 
+            // Startzustand
+            // a) In der Matrix ist die Zelle des aktuellen Schrittes selektiert
+            // b) Die selektierte Zelle ist noch nicht gelöscht
+            if (this.suGrid.sudoCells[currentStep.getCellIndex()].value() !== '0') {
+                this.goneSteps++;
+                this.suGrid.deleteSelected('play', false);
+                // Nach Löschen der Zelle den neuen aktuellen Schritt bestimmen
+                let prevStep = this.myStepper.previousStep();
                 return 'inProgress'
             }
-            if (prevStep instanceof OptionStep) {
-                // Der vorige Schritt ist ein Optionstep und ist neuer aktueller Schritt
-                if (prevStep.getCellIndex() == -1) {
-                    //Im Wurzel-Optionsschritt gibt es keine Option mehr
-                    // Ziel c) erreicht: Spielende, keine Lösung
-                    return 'fail';
-                }
-                if (prevStep.isCompleted()) {
-                    // Der Optionstep ist vollständig abgearbeitet
-                    // Deshalb wird der Vorgänger dieses Optionsteps neuer aktueller Step
-                    this.myStepper.previousStep();
-                    return 'inProgress'
-                } else {
-                    // Es gibt noch nicht probierte Optionen
-                    // Suchrichtung umschalten!!
-                    this.setAutoDirection('forward');
-                    return 'inProgress';
-                }
-            }
         }
-
     }
 
     calculateMinSelectionFrom(selectionList) {
