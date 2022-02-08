@@ -897,12 +897,12 @@ class AutomatedRunnerOnGrid {
                 // Der Optionstep ist vollständig abgearbeitet
                 // Deshalb wird der Vorgänger dieses Optionsteps neuer aktueller Step
                 this.myStepper.previousStep();
-                this.stepBackward();
+                return this.stepBackward();
             } else {
                 // Es gibt noch nicht probierte Optionen
                 // Suchrichtung umschalten!!
                 this.setAutoDirection('forward');
-                this.stepForward();
+                return this.stepForward();
             }
         } else if (currentStep instanceof RealStep) {
             if (this.suGrid.indexSelected !== currentStep.getCellIndex()) {
