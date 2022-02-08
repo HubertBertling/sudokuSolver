@@ -879,8 +879,8 @@ class AutomatedRunnerOnGrid {
                 this.setAutoDirection('backward');
                 this.countBackwards++;
             }
-            return 'inProgress';
-        }
+            return 'inProgress';            
+       }
     }
 
     stepBackward() {
@@ -897,12 +897,12 @@ class AutomatedRunnerOnGrid {
                 // Der Optionstep ist vollständig abgearbeitet
                 // Deshalb wird der Vorgänger dieses Optionsteps neuer aktueller Step
                 this.myStepper.previousStep();
-                return 'inProgress'
+                this.stepBackward();
             } else {
                 // Es gibt noch nicht probierte Optionen
                 // Suchrichtung umschalten!!
                 this.setAutoDirection('forward');
-                return 'inProgress';
+                this.stepForward();
             }
         } else if (currentStep instanceof RealStep) {
             if (this.suGrid.indexSelected !== currentStep.getCellIndex()) {
