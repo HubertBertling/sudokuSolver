@@ -936,8 +936,17 @@ class AutomatedRunnerOnGrid {
             necessaryOnes: []
         }
         for (let i = 0; i < selectionList.length; i++) {
-            if (selectionList[i].options.length <= minSelection.options.length) {
+            if (selectionList[i].options.length < minSelection.options.length) {
                 minSelection = selectionList[i];
+            } else if (selectionList[i].options.length == minSelection.options.length) {
+                // Die Größen der Influencer werden verglichen
+                let currentIndex = selectionList[i].index;
+                let currentCount = this.suGrid.sudoCells[currentIndex].countMyInfluencersPermissibleNumbers();
+                let minIndex = minSelection.index;
+                let minCount = this.suGrid.sudoCells[minIndex].countMyInfluencersPermissibleNumbers();
+                if (currentCount <= minCount){
+                    minSelection = selectionList[i];
+                }
             }
         }
         return minSelection;
@@ -1763,6 +1772,17 @@ class SudokuCell {
     }
     getPermissibleNumbers() {
         return this.myPermissibles;
+    }
+    countMyPermissibleNumbers() {
+        return this.myPermissibles.size;
+    }
+
+    countMyInfluencersPermissibleNumbers() {
+        let tmpCount = 0;
+        this.myInfluencers.forEach(influencer => {
+            tmpCount = tmpCount + influencer.countMyPermissibleNumbers();
+        });
+        return tmpCount;
     }
 
     setNecessary(permNr) {
