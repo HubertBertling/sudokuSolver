@@ -150,6 +150,7 @@ class SudokuApp {
         // Ein neuer Runner wird angelegt und initialisert
         this.runner = new AutomatedRunnerOnGrid(this.suGrid);
         this.runner.init();
+        this.sudokuStorage.init();
     }
 
     setAutoExecOn() {
@@ -879,8 +880,8 @@ class AutomatedRunnerOnGrid {
                 this.setAutoDirection('backward');
                 this.countBackwards++;
             }
-            return 'inProgress';            
-       }
+            return 'inProgress';
+        }
     }
 
     stepBackward() {
@@ -2162,34 +2163,73 @@ class SudokuStateStorage {
         if (storageObj == null) {
             storageObj = [];
         }
-        let foundIndex = -1;
-        let i = 0;
-        let tmpNamedState = null;
-        while ((foundIndex == -1) && i < storageObj.length) {
-            tmpNamedState = storageObj[i];
-            if (tmpNamedState.name == name) {
-                foundIndex = i;
+        if (storageObj.length > 1) {
+            let foundIndex = -1;
+            let i = 0;
+            let tmpNamedState = null;
+            while ((foundIndex == -1) && i < storageObj.length) {
+                tmpNamedState = storageObj[i];
+                if (tmpNamedState.name == name) {
+                    foundIndex = i;
+                }
+                i++;
             }
-            i++;
-        }
-        if (foundIndex !== -1) {
-            storageObj.splice(foundIndex, 1);
-            let updateStorageObj = JSON.stringify(storageObj);
-            localStorage.setItem("sudokuStorage", updateStorageObj);
+            if (foundIndex !== -1) {
+                storageObj.splice(foundIndex, 1);
+                let updateStorageObj = JSON.stringify(storageObj);
+                localStorage.setItem("sudokuStorage", updateStorageObj);
+            }
+
         }
     }
     getNameList() {
         // Hole den Speicher als ein Objekt
         let str_storageObj = localStorage.getItem("sudokuStorage");
         let storageObj = JSON.parse(str_storageObj);
-        if (storageObj == null) {
-            storageObj = [];
-        }
+
         let nameList = [];
         for (let i = 0; i < storageObj.length; i++) {
             nameList.push(storageObj[i].name);
         }
         return nameList;
+    }
+    init() {
+
+        // Hole den Speicher als ein Objekt
+
+        if (localStorage.length == 0) {
+            // Definiere neues NamedState
+            let newNamedState = {
+                name: 'example',
+                state:
+                    [{ "cellValue": "0", "cellPhase": "" },
+                    { "cellValue": "0", "cellPhase": "" },
+                    { "cellValue": "7", "cellPhase": "define" },
+                    { "cellValue": "6", "cellPhase": "define" },
+                    { "cellValue": "4", "cellPhase": "define" },
+                    { "cellValue": "0", "cellPhase": "" },
+                    { "cellValue": "0", "cellPhase": "" },
+                    { "cellValue": "0", "cellPhase": "" },
+                    { "cellValue": "2", "cellPhase": "define" },
+                    { "cellValue": "1", "cellPhase": "define" },
+                    { "cellValue": "0", "cellPhase": "" },
+                    { "cellValue": "0", "cellPhase": "" },
+                    { "cellValue": "0", "cellPhase": "" },
+                    { "cellValue": "0", "cellPhase": "" },
+                    { "cellValue": "2", "cellPhase": "define" },
+                    { "cellValue": "0", "cellPhase": "" }, { "cellValue": "9", "cellPhase": "define" }, { "cellValue": "4", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "2", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "3", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "6", "cellPhase": "define" }, { "cellValue": "8", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "9", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "4", "cellPhase": "define" }, { "cellValue": "5", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "1", "cellPhase": "define" }, { "cellValue": "6", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "6", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "5", "cellPhase": "define" }, { "cellValue": "3", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "8", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "9", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "5", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "7", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "9", "cellPhase": "define" },
+                    { "cellValue": "0", "cellPhase": "" },
+                    { "cellValue": "0", "cellPhase": "" }]
+            }
+
+            let storageObj = [];
+            // Füge den namedState in  das Speicherobjekt ein
+            storageObj.push(newNamedState);
+            // Kreiere die JSON-Version des Speicherobjektes
+            // und speichere sie.
+            let updateStorageObj = JSON.stringify(storageObj);
+            localStorage.setItem("sudokuStorage", updateStorageObj);
+        }
     }
 
 }
