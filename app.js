@@ -1441,9 +1441,11 @@ class SudokuGrid {
     influencersOfCell(index) {
         // Jede Zelle besitzt die Menge der sie beeinflussenden Zellen
         // Diese werden hier berechnet.
+
         const grid_size = 9;
         const box_size = 3;
 
+        let indexSet = new Set();
         let tmpInfluencers = [];
 
         let row = Math.floor(index / grid_size);
@@ -1456,40 +1458,43 @@ class SudokuGrid {
             for (let j = 0; j < box_size; j++) {
                 let tmpIndex = 9 * (box_start_row + i) + (box_start_col + j);
                 if (index !== tmpIndex) {
-                    let cell = this.sudoCells[tmpIndex];
-                    tmpInfluencers.push(cell);
+                    indexSet.add(tmpIndex);
                 }
             }
         }
 
         let step = 9;
         while (index - step >= 0) {
-            tmpInfluencers.push(this.sudoCells[index - step]);
+            indexSet.add(index-step);
             step += 9;
         }
 
         step = 9;
         while (index + step < 81) {
-            tmpInfluencers.push(this.sudoCells[index + step]);
+            indexSet.add(index + step);
             step += 9;
         }
 
         step = 1;
         while (index - step >= 9 * row) {
-            tmpInfluencers.push(this.sudoCells[index - step]);
+            indexSet.add(index - step);
             step += 1;
         }
 
         step = 1;
         while (index + step < 9 * row + 9) {
-            tmpInfluencers.push(this.sudoCells[index + step]);
+            indexSet.add(index + step);
             step += 1;
         }
+        indexSet.forEach(i => {
+            tmpInfluencers.push(this.sudoCells[i]);
+        })
         return tmpInfluencers;
     }
 }
-
-
+  
+    
+  
 class SudokuCell {
     constructor(suTable, index, cellNode) {
         // Die Zelle kennt ihre Tabelle und ihren Index
