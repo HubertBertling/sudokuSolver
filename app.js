@@ -925,33 +925,63 @@ class AutomatedRunnerOnGrid {
             }
         }
     }
-
+    
     calculateMinSelectionFrom(selectionList) {
         // Berechnet Zellindex mit der geringsten Anzahl zulässiger Nummern
         // Nicht eindeutig; Anfangs gibt es oft mehrere Zellen mit
         // nur einer zulässigen Nummer
-        let minSelection = {
-            index: -1,
-            options: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
-            necessaryOnes: []
-        }
-        for (let i = 0; i < selectionList.length; i++) {
-            if (selectionList[i].options.length < minSelection.options.length) {
+        
+        let minSelection = selectionList[0];   
+        let minLength = minSelection.options.length;
+        let minIndex = minSelection.index;
+        let minCount = this.suGrid.sudoCells[minIndex].countMyInfluencersPermissibleNumbers();
+
+        for (let i = 1; i < selectionList.length; i++) {
+            if (selectionList[i].options.length < minLength) {
                 minSelection = selectionList[i];
-            } else if (selectionList[i].options.length == minSelection.options.length) {
+                minLength = minSelection.options.length;
+                minIndex = minSelection.index;
+                minCount = this.suGrid.sudoCells[minIndex].countMyInfluencersPermissibleNumbers();
+            } else if (selectionList[i].options.length == minLength) {
                 // Die Größen der Influencer werden verglichen
                 let currentIndex = selectionList[i].index;
                 let currentCount = this.suGrid.sudoCells[currentIndex].countMyInfluencersPermissibleNumbers();
-                let minIndex = minSelection.index;
-                let minCount = this.suGrid.sudoCells[minIndex].countMyInfluencersPermissibleNumbers();
-                if (currentCount <= minCount){
+                if (currentCount < minCount){
                     minSelection = selectionList[i];
+                    // minLength = minSelection.options.length;
+                    minIndex = currentIndex;                  
+                    minCount = currentCount;
                 }
             }
         }
         return minSelection;
     }
 
+/*
+    calculateMinSelectionFrom(selectionList) {
+        // Berechnet Zellindex mit der geringsten Anzahl zulässiger Nummern
+        // Nicht eindeutig; Anfangs gibt es oft mehrere Zellen mit
+        // nur einer zulässigen Nummer
+
+        let minSelection = selectionList[0];
+
+        for (let i = 1; i < selectionList.length; i++) {
+            // Die Größen der Influencer werden verglichen
+            let currentIndex = selectionList[i].index;
+            let currentCount = this.suGrid.sudoCells[currentIndex].countMyInfluencersPermissibleNumbers();
+
+            let minIndex = minSelection.index;
+            let minCount = this.suGrid.sudoCells[minIndex].countMyInfluencersPermissibleNumbers();
+
+            if (currentCount <= minCount) {
+                minSelection = selectionList[i];
+                minCount = currentCount;
+                console.log("minCount: " + minCount);
+            }
+        }
+        return minSelection;
+    }
+*/
     calculateNeccesarySelectionFrom(selectionList) {
         // Berechnet Selektion von Zellen, die eine notwendige Nummer enthalten.
         for (let i = 0; i < selectionList.length; i++) {
@@ -1441,9 +1471,11 @@ class SudokuGrid {
     influencersOfCell(index) {
         // Jede Zelle besitzt die Menge der sie beeinflussenden Zellen
         // Diese werden hier berechnet.
+
         const grid_size = 9;
         const box_size = 3;
 
+        let indexSet = new Set();
         let tmpInfluencers = [];
 
         let row = Math.floor(index / grid_size);
@@ -1456,35 +1488,37 @@ class SudokuGrid {
             for (let j = 0; j < box_size; j++) {
                 let tmpIndex = 9 * (box_start_row + i) + (box_start_col + j);
                 if (index !== tmpIndex) {
-                    let cell = this.sudoCells[tmpIndex];
-                    tmpInfluencers.push(cell);
+                    indexSet.add(tmpIndex);
                 }
             }
         }
 
         let step = 9;
         while (index - step >= 0) {
-            tmpInfluencers.push(this.sudoCells[index - step]);
+            indexSet.add(index-step);
             step += 9;
         }
 
         step = 9;
         while (index + step < 81) {
-            tmpInfluencers.push(this.sudoCells[index + step]);
+            indexSet.add(index + step);
             step += 9;
         }
 
         step = 1;
         while (index - step >= 9 * row) {
-            tmpInfluencers.push(this.sudoCells[index - step]);
+            indexSet.add(index - step);
             step += 1;
         }
 
         step = 1;
         while (index + step < 9 * row + 9) {
-            tmpInfluencers.push(this.sudoCells[index + step]);
+            indexSet.add(index + step);
             step += 1;
         }
+        indexSet.forEach(i => {
+            tmpInfluencers.push(this.sudoCells[i]);
+        })
         return tmpInfluencers;
     }
 }
@@ -1780,7 +1814,9 @@ class SudokuCell {
     countMyInfluencersPermissibleNumbers() {
         let tmpCount = 0;
         this.myInfluencers.forEach(influencer => {
-            tmpCount = tmpCount + influencer.countMyPermissibleNumbers();
+            if (influencer.value() == '0') {
+                tmpCount = tmpCount + influencer.countMyPermissibleNumbers();
+            }
         });
         return tmpCount;
     }
