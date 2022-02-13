@@ -925,32 +925,39 @@ class AutomatedRunnerOnGrid {
             }
         }
     }
-
+    
     calculateMinSelectionFrom(selectionList) {
+        // Gute Lösung für den Langläufer 1952
         // Berechnet Zellindex mit der geringsten Anzahl zulässiger Nummern
         // Nicht eindeutig; Anfangs gibt es oft mehrere Zellen mit
         // nur einer zulässigen Nummer
-        let minSelection = {
-            index: -1,
-            options: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
-            necessaryOnes: []
-        }
-        for (let i = 0; i < selectionList.length; i++) {
-            if (selectionList[i].options.length < minSelection.options.length) {
+        
+        let minSelection = selectionList[0];   
+        let minLength = minSelection.options.length;
+        let minIndex = minSelection.index;
+        let openInfluencerCount = this.suGrid.sudoCells[minIndex].countMyOpenInfluencers();
+
+        for (let i = 1; i < selectionList.length; i++) {
+            if (selectionList[i].options.length < minLength) {
                 minSelection = selectionList[i];
-            } else if (selectionList[i].options.length == minSelection.options.length) {
+                minLength = minSelection.options.length;
+                minIndex = minSelection.index;
+                openInfluencerCount = this.suGrid.sudoCells[minIndex].countMyOpenInfluencers();
+            } else if (selectionList[i].options.length == minLength) {
                 // Die Größen der Influencer werden verglichen
                 let currentIndex = selectionList[i].index;
-                let currentCount = this.suGrid.sudoCells[currentIndex].countMyInfluencersPermissibleNumbers();
-                let minIndex = minSelection.index;
-                let minCount = this.suGrid.sudoCells[minIndex].countMyInfluencersPermissibleNumbers();
-                if (currentCount <= minCount){
+                let currentCount = this.suGrid.sudoCells[currentIndex].countMyOpenInfluencers();
+                if (currentCount >= openInfluencerCount){
                     minSelection = selectionList[i];
+                    // minLength = minSelection.options.length;
+                    minIndex = currentIndex;                  
+                    openInfluencerCount = currentCount;
                 }
             }
         }
         return minSelection;
     }
+
 
     calculateNeccesarySelectionFrom(selectionList) {
         // Berechnet Selektion von Zellen, die eine notwendige Nummer enthalten.
@@ -1321,7 +1328,6 @@ class SudokuGrid {
             if (this.selectedCell.getPhase() == currentPhase) {
                 this.selectedCell.delete();
                 this.refresh();
-                //Neu
                 this.deselect();
             }
         }
@@ -1782,13 +1788,26 @@ class SudokuCell {
         return this.myPermissibles.size;
     }
 
-    countMyInfluencersPermissibleNumbers() {
+    countMyOpenInfluencers() {
         let tmpCount = 0;
         this.myInfluencers.forEach(influencer => {
-            tmpCount = tmpCount + influencer.countMyPermissibleNumbers();
+            if (influencer.value() == '0') {
+                tmpCount++;
+            }
         });
         return tmpCount;
     }
+
+    countMyInfluencersPermissibleNumbers() {
+        let tmpCount = 0;
+        this.myInfluencers.forEach(influencer => {
+            if (influencer.value() == '0') {
+                tmpCount = tmpCount + influencer.countMyPermissibleNumbers();
+            }
+        });
+        return tmpCount;
+    }
+
 
     setNecessary(permNr) {
         // Klassifiziere die Zahl permNr in der Menge der möglichen Zahlen
