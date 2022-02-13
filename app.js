@@ -925,7 +925,48 @@ class AutomatedRunnerOnGrid {
             }
         }
     }
-    
+
+    calculateMinSelectionFrom(selectionList) {
+        // Gute Lösung für den Langläufer 1952
+        // Berechnet Zellindex mit der geringsten Anzahl zulässiger Nummern
+        // Nicht eindeutig; Anfangs gibt es oft mehrere Zellen mit
+        // nur einer zulässigen Nummer
+        
+        let minSelection = selectionList[0];   
+        let minLength = minSelection.options.length;
+        let minIndex = minSelection.index;
+        let openInfluencerCount = this.suGrid.sudoCells[minIndex].countMyInfluencersWeight();
+        //console.log("Optionslänge: "+ minLength + "   currentCount: " + openInfluencerCount + ", index: " + minIndex);
+
+        for (let i = 1; i < selectionList.length; i++) {
+            if (selectionList[i].options.length < minLength) {
+                minSelection = selectionList[i];
+                minLength = minSelection.options.length;
+                minIndex = minSelection.index;
+                openInfluencerCount = this.suGrid.sudoCells[minIndex].countMyInfluencersWeight();
+            } else if (selectionList[i].options.length == minLength) {
+                // Die Größen der Influencer werden verglichen
+                let currentIndex = selectionList[i].index;
+                let currentCount = this.suGrid.sudoCells[currentIndex].countMyInfluencersWeight();
+                //console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
+                //console.log("Optionslänge: "+ minLength + "   currentCount: " + currentCount + ", index: " + currentIndex);
+                
+                if (currentCount >= openInfluencerCount){
+                   // console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
+                    minSelection = selectionList[i];
+                    // minLength = minSelection.options.length;
+                    minIndex = currentIndex;                  
+                    openInfluencerCount = currentCount;
+                }
+            }
+        }
+        // console.log("Entscheidung: ");
+        // console.log("Optionslänge: "+ minLength +" maxCount: " + openInfluencerCount + ", index: " + minIndex);
+        return minSelection;
+    }
+
+
+/*
     calculateMinSelectionFrom(selectionList) {
         // Gute Lösung für den Langläufer 1952
         // Berechnet Zellindex mit der geringsten Anzahl zulässiger Nummern
@@ -936,6 +977,7 @@ class AutomatedRunnerOnGrid {
         let minLength = minSelection.options.length;
         let minIndex = minSelection.index;
         let openInfluencerCount = this.suGrid.sudoCells[minIndex].countMyOpenInfluencers();
+        console.log("   currentCount: " + openInfluencerCount + ", index: " + minIndex);
 
         for (let i = 1; i < selectionList.length; i++) {
             if (selectionList[i].options.length < minLength) {
@@ -947,7 +989,13 @@ class AutomatedRunnerOnGrid {
                 // Die Größen der Influencer werden verglichen
                 let currentIndex = selectionList[i].index;
                 let currentCount = this.suGrid.sudoCells[currentIndex].countMyOpenInfluencers();
+                //console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
+                console.log("   currentCount: " + currentCount + ", index: " + currentIndex);
+             
+                
+                
                 if (currentCount >= openInfluencerCount){
+                   // console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
                     minSelection = selectionList[i];
                     // minLength = minSelection.options.length;
                     minIndex = currentIndex;                  
@@ -955,9 +1003,11 @@ class AutomatedRunnerOnGrid {
                 }
             }
         }
+        console.log("Entscheidung: ");
+        console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
         return minSelection;
     }
-
+*/
 
     calculateNeccesarySelectionFrom(selectionList) {
         // Berechnet Selektion von Zellen, die eine notwendige Nummer enthalten.
@@ -1796,6 +1846,28 @@ class SudokuCell {
             }
         });
         return tmpCount;
+    }
+
+    countMyInfluencersWeight() {
+        // Idee: Kontexte mit einem größeren Endscheidungsgrad zählen mehr,
+        // weil durch sie die Entscheidungen schneller vorangetrieben werden.
+        let tmpWeight = 1;
+        this.myInfluencers.forEach(influencer => {
+            let summand = 1;
+            if (influencer.value() == '0') {
+                if (influencer.myPermissibles.size == 2){
+                    summand = 18;
+                } else {
+                    summand = 9 - influencer.myPermissibles.size;
+                }
+            } else {
+                // Schon entschiedene Influencer-Zellen erhöhen die Bedeutung der
+                // noch nicht entschiedenen
+                summand = 9;
+            }
+            tmpWeight = tmpWeight + summand;
+        });
+        return tmpWeight;
     }
 
     countMyInfluencersPermissibleNumbers() {
