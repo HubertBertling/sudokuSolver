@@ -1089,8 +1089,10 @@ class SudokuGroup {
         this.myCells = [];
         this.myMissingNumbers = new Set();
     }
+    
     isInsolvable() {
-        return this.myMissingNumbers.size > 0;
+        return (this.myMissingNumbers.size > 0 || this.withConflictingSingles());
+
     }
 
     unsetError() {
@@ -1159,6 +1161,29 @@ class SudokuGroup {
         }
         this.myMissingNumbers = missingNumbers;
     }
+    
+    withConflictingSingles() {
+        // Prüfe alle Zellen der Gruppe
+        let numberCounts = [0,0,0,0,0,0,0,0,0];
+        let found = false;
+        for (let i = 0; i < 9; i++) {
+           if (this.myCells[i].value() == '0') {
+               // Speichere Singles
+               let permNumbers = this.myCells[i].getPermissibleNumbers();
+               if (permNumbers.size == 1) {
+                   permNumbers.forEach(nr => {
+                       let iNr = parseInt(nr);
+                       numberCounts[iNr - 1]++;
+                       if (numberCounts[iNr - 1] > 1) {
+                           found = true;
+                       };
+                   }); 
+               }
+           }
+           if (found) return true;
+       }
+       return false;
+   }
 }
 
 
