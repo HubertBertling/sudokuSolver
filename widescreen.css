@@ -196,6 +196,10 @@ body {
     color: var(--error-cell-color);
 }
 
+.sudoku-grid-cell.row-err, .sudoku-grid-cell.col-err  {
+    border: 3px solid var(--error-cell-bg-color);
+}
+
 .sudoku-grid-cell.err.selected {
     background-color: black;
 }

@@ -931,8 +931,8 @@ class AutomatedRunnerOnGrid {
         // Berechnet Zellindex mit der geringsten Anzahl zulässiger Nummern
         // Nicht eindeutig; Anfangs gibt es oft mehrere Zellen mit
         // nur einer zulässigen Nummer
-        
-        let minSelection = selectionList[0];   
+
+        let minSelection = selectionList[0];
         let minLength = minSelection.options.length;
         let minIndex = minSelection.index;
         let openInfluencerCount = this.suGrid.sudoCells[minIndex].countMyInfluencersWeight();
@@ -950,12 +950,12 @@ class AutomatedRunnerOnGrid {
                 let currentCount = this.suGrid.sudoCells[currentIndex].countMyInfluencersWeight();
                 //console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
                 //console.log("Optionslänge: "+ minLength + "   currentCount: " + currentCount + ", index: " + currentIndex);
-                
-                if (currentCount >= openInfluencerCount){
-                   // console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
+
+                if (currentCount >= openInfluencerCount) {
+                    // console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
                     minSelection = selectionList[i];
                     // minLength = minSelection.options.length;
-                    minIndex = currentIndex;                  
+                    minIndex = currentIndex;
                     openInfluencerCount = currentCount;
                 }
             }
@@ -966,48 +966,48 @@ class AutomatedRunnerOnGrid {
     }
 
 
-/*
-    calculateMinSelectionFrom(selectionList) {
-        // Gute Lösung für den Langläufer 1952
-        // Berechnet Zellindex mit der geringsten Anzahl zulässiger Nummern
-        // Nicht eindeutig; Anfangs gibt es oft mehrere Zellen mit
-        // nur einer zulässigen Nummer
-        
-        let minSelection = selectionList[0];   
-        let minLength = minSelection.options.length;
-        let minIndex = minSelection.index;
-        let openInfluencerCount = this.suGrid.sudoCells[minIndex].countMyOpenInfluencers();
-        console.log("   currentCount: " + openInfluencerCount + ", index: " + minIndex);
-
-        for (let i = 1; i < selectionList.length; i++) {
-            if (selectionList[i].options.length < minLength) {
-                minSelection = selectionList[i];
-                minLength = minSelection.options.length;
-                minIndex = minSelection.index;
-                openInfluencerCount = this.suGrid.sudoCells[minIndex].countMyOpenInfluencers();
-            } else if (selectionList[i].options.length == minLength) {
-                // Die Größen der Influencer werden verglichen
-                let currentIndex = selectionList[i].index;
-                let currentCount = this.suGrid.sudoCells[currentIndex].countMyOpenInfluencers();
-                //console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
-                console.log("   currentCount: " + currentCount + ", index: " + currentIndex);
-             
-                
-                
-                if (currentCount >= openInfluencerCount){
-                   // console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
+    /*
+        calculateMinSelectionFrom(selectionList) {
+            // Gute Lösung für den Langläufer 1952
+            // Berechnet Zellindex mit der geringsten Anzahl zulässiger Nummern
+            // Nicht eindeutig; Anfangs gibt es oft mehrere Zellen mit
+            // nur einer zulässigen Nummer
+            
+            let minSelection = selectionList[0];   
+            let minLength = minSelection.options.length;
+            let minIndex = minSelection.index;
+            let openInfluencerCount = this.suGrid.sudoCells[minIndex].countMyOpenInfluencers();
+            console.log("   currentCount: " + openInfluencerCount + ", index: " + minIndex);
+    
+            for (let i = 1; i < selectionList.length; i++) {
+                if (selectionList[i].options.length < minLength) {
                     minSelection = selectionList[i];
-                    // minLength = minSelection.options.length;
-                    minIndex = currentIndex;                  
-                    openInfluencerCount = currentCount;
+                    minLength = minSelection.options.length;
+                    minIndex = minSelection.index;
+                    openInfluencerCount = this.suGrid.sudoCells[minIndex].countMyOpenInfluencers();
+                } else if (selectionList[i].options.length == minLength) {
+                    // Die Größen der Influencer werden verglichen
+                    let currentIndex = selectionList[i].index;
+                    let currentCount = this.suGrid.sudoCells[currentIndex].countMyOpenInfluencers();
+                    //console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
+                    console.log("   currentCount: " + currentCount + ", index: " + currentIndex);
+                 
+                    
+                    
+                    if (currentCount >= openInfluencerCount){
+                       // console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
+                        minSelection = selectionList[i];
+                        // minLength = minSelection.options.length;
+                        minIndex = currentIndex;                  
+                        openInfluencerCount = currentCount;
+                    }
                 }
             }
+            console.log("Entscheidung: ");
+            console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
+            return minSelection;
         }
-        console.log("Entscheidung: ");
-        console.log("maxCount: " + openInfluencerCount + ", index: " + minIndex);
-        return minSelection;
-    }
-*/
+    */
 
     calculateNeccesarySelectionFrom(selectionList) {
         // Berechnet Selektion von Zellen, die eine notwendige Nummer enthalten.
@@ -1076,41 +1076,55 @@ class AutomatedRunnerOnGrid {
                 return true;
             }
         }
+        // Oder wenn es eine unlösbare Reihe gibt
+        for (let i = 0; i < 9; i++) {
+            if (this.suGrid.sudoRows[i].isInsolvable()) {
+                return true;
+            }
+        }
+
+        // Oder wenn es eine unlösbare Spalte gibt
+        for (let i = 0; i < 9; i++) {
+            if (this.suGrid.sudoCols[i].isInsolvable()) {
+                return true;
+            }
+        }
         return false;
     }
 }
 
-class SudokuGroup {
-    constructor(suTable, groupNode, groupIndex) {
-        // Die Gruppe kennt ihre Tabelle und ihren Index
+
+class NineCellCollection {
+    constructor(suTable) {
+        // Die Collection kennt ihre Tabelle
         this.myGrid = suTable;
-        this.myGroupIndex = groupIndex;
-        this.myGroupNode = groupNode;
         this.myCells = [];
         this.myMissingNumbers = new Set();
     }
-    
+
     isInsolvable() {
         return (this.myMissingNumbers.size > 0 || this.withConflictingSingles());
-
     }
 
-    unsetError() {
-        this.myGroupNode.classList.remove('err');
-    }
-
-    setError() {
-        this.myGroupNode.classList.add('err');
-    }
-
-    addCell(sudoCell) {
-        this.myCells.push(sudoCell);
-        sudoCell.setGroup(this);
+    calculateMissingNumbers() {
+        let missingNumbers = new Set(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+        // Prüfe alle Zellen der Gruppe
+        for (let i = 0; i < 9; i++) {
+            if (this.myCells[i].value() !== '0') {
+                // Entferne die gesetzten Nummern der Gruppe aus missingNumbers
+                missingNumbers.delete(this.myCells[i].value());
+            } else {
+                //Entferne die Permissibles jeder Zelle der Gruppe aus missingNumbers
+                let permNumbers = this.myCells[i].getPermissibleNumbers();
+                permNumbers.forEach(e => { missingNumbers.delete(e) });
+            }
+        }
+        this.myMissingNumbers = missingNumbers;
     }
 
     calculateNecessaryNumbers() {
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
-        // die in der Gruppe der Zelle genau einmal vorkommen
+        // die in der Gruppe oder Reihe/Spalte der Zelle genau einmal vorkommen
         for (let i = 1; i < 10; i++) {
             let cellIndex = this.occursOnce(i);
             // Wenn die Nummer i genau einmal in der Gruppe vorkommt
@@ -1146,22 +1160,6 @@ class SudokuGroup {
         }
     }
 
-    calculateMissingNumbers() {
-        let missingNumbers = new Set(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
-        // Prüfe alle Zellen der Gruppe
-        for (let i = 0; i < 9; i++) {
-            if (this.myCells[i].value() !== '0') {
-                // Entferne die gesetzten Nummern der Gruppe aus missingNumbers
-                missingNumbers.delete(this.myCells[i].value());
-            } else {
-                //Entferne die Permissibles jeder Zelle der Gruppe aus missingNumbers
-                let permNumbers = this.myCells[i].getPermissibleNumbers();
-                permNumbers.forEach(e => { missingNumbers.delete(e) });
-            }
-        }
-        this.myMissingNumbers = missingNumbers;
-    }
-    
     withConflictingSingles() {
         // Prüfe alle Zellen der Gruppe
         let numberCounts = [0,0,0,0,0,0,0,0,0];
@@ -1184,8 +1182,53 @@ class SudokuGroup {
        }
        return false;
    }
+
 }
 
+class SudokuGroup extends NineCellCollection {
+    constructor(suTable, groupNode, groupIndex) {
+        // Die Gruppe kennt ihre Tabelle und ihren Index
+        super(suTable);
+        this.myGroupIndex = groupIndex;
+        this.myGroupNode = groupNode;
+    }
+
+    addCell(sudoCell) {
+        this.myCells.push(sudoCell);
+        sudoCell.setGroup(this);
+    }
+    unsetError() {
+        this.myGroupNode.classList.remove('err');
+    }
+    setError() {
+        this.myGroupNode.classList.add('err');
+    }
+}
+class SudokuRow extends NineCellCollection {
+    addCell(sudoCell) {
+        this.myCells.push(sudoCell);
+        sudoCell.setRow(this);
+    }
+    unsetError() {
+        this.myCells.forEach(cell => { cell.unsetRowError(); })
+    }
+    setError() {
+        this.myCells.forEach(cell => { cell.setRowError(); })
+    }
+}
+
+class SudokuCol extends NineCellCollection {
+    addCell(sudoCell) {
+        this.myCells.push(sudoCell);
+        sudoCell.setCol(this);
+    }
+    unsetError() {
+        this.myCells.forEach(cell => { cell.unsetColError(); })
+    }
+    setError() {
+        this.myCells.forEach(cell => { cell.setColError(); })
+    }
+}
 
 class SudokuGrid {
     constructor() {
@@ -1196,6 +1239,8 @@ class SudokuGrid {
         // Speichert die Wrapper-Zellen in Gruppen
         this.groups = [];
         this.sudoGroups = [];
+        this.sudoRows = [];
+        this.sudoCols = [];
         // Speichert die aktuell selektierte Zelle und ihren Index
         this.selectedCell = undefined;
         this.indexSelected = -1;
@@ -1348,6 +1393,22 @@ class SudokuGrid {
         for (let i = 0; i < 81; i++) {
             this.sudoCells[i].setInfluencers(this.influencersOfCell(i));
         }
+        // Setze die Row-Col-Vektoren
+        let currentIndex = 0;
+        for (let i = 0; i < 9; i++) {
+            let col = new SudokuCol();
+            this.sudoCols.push(col);
+        }
+        for (let i = 0; i < 9; i++) {
+            let row = new SudokuRow();
+            for (let j = 0; j < 9; j++) {
+                let currentCell = this.sudoCells[currentIndex];
+                row.addCell(currentCell);
+                this.sudoCols[j].addCell(currentCell);
+                currentIndex++;
+            }
+            this.sudoRows.push(row);
+        }
     }
     initCurrentSelection() {
         this.deselect();
@@ -1414,6 +1475,8 @@ class SudokuGrid {
         this.calculateMissingNumbers();
         this.markErrorCells();
         this.markErrorGroups();
+        this.markErrorRows();
+        this.markErrorCols();
     }
 
     deselect() {
@@ -1451,18 +1514,39 @@ class SudokuGrid {
             }
         }
         // Iteriere über die Gruppen
-        for (let i = 0; i < this.sudoGroups.length; i++) {
+        for (let i = 0; i < 9; i++) {
             let tmpGroup = this.sudoGroups[i];
             tmpGroup.calculateNecessaryNumbers();
+        }
+        // Iteriere über die Reihen
+        for (let i = 0; i < 9; i++) {
+            let tmpRow = this.sudoRows[i];
+            tmpRow.calculateNecessaryNumbers();
+        }
+        // Iteriere über die Spalten
+        for (let i = 0; i < 9; i++) {
+            let tmpCol = this.sudoCols[i];
+            tmpCol.calculateNecessaryNumbers();
         }
     }
 
     calculateMissingNumbers() {
         // Iteriere über die Gruppen
-        for (let i = 0; i < this.sudoGroups.length; i++) {
+        for (let i = 0; i < 9; i++) {
             let tmpGroup = this.sudoGroups[i];
             tmpGroup.calculateMissingNumbers();
         }
+        // Iteriere über die Reihen
+        for (let i = 0; i < 9; i++) {
+            let tmpRow = this.sudoRows[i];
+            tmpRow.calculateMissingNumbers();
+        }
+        // Iteriere über die Spalten
+        for (let i = 0; i < 9; i++) {
+            let tmpCol = this.sudoCols[i];
+            tmpCol.calculateMissingNumbers();
+        }
+
     }
 
     markErrorCells() {
@@ -1485,6 +1569,25 @@ class SudokuGrid {
         }
     }
 
+    markErrorRows() {
+        for (let i = 0; i < 9; i++) {
+            let tmpRow = this.sudoRows[i];
+            tmpRow.unsetError();
+            if (tmpRow.isInsolvable()) {
+                tmpRow.setError();
+            }
+        }
+    }
+
+    markErrorCols() {
+        for (let i = 0; i < 9; i++) {
+            let tmpCol = this.sudoCols[i];
+            tmpCol.unsetError();
+            if (tmpCol.isInsolvable()) {
+                tmpCol.setError();
+            }
+        }
+    }
     cellOf(cellNode) {
         // Get the wrapper of a DOM-Cell
         for (let i = 0; i < this.cells.length; i++) {
@@ -1546,7 +1649,7 @@ class SudokuGrid {
 
         let step = 9;
         while (index - step >= 0) {
-            indexSet.add(index-step);
+            indexSet.add(index - step);
             step += 9;
         }
 
@@ -1573,9 +1676,9 @@ class SudokuGrid {
         return tmpInfluencers;
     }
 }
-  
-    
-  
+
+
+
 class SudokuCell {
     constructor(suTable, index, cellNode) {
         // Die Zelle kennt ihre Tabelle und ihren Index
@@ -1592,6 +1695,8 @@ class SudokuCell {
         // in der Zelle aktuell war.
         this.myGamePhase = '';
         this.myGroup;
+        this.myRow;
+        this.myCellNode;
         // Speichert ein für alle mal bei der Initialisierung
         // die beeinflussenden Zellen dieser Zelle
         this.myInfluencers = [];
@@ -1613,6 +1718,8 @@ class SudokuCell {
         this.myNecessarys = new Set();
         this.unsetNumber();
         this.unsetError();
+        this.unsetRowError();
+        this.unsetColError();
     }
     getNecessaryNumbers() {
         return this.myNecessarys;
@@ -1623,6 +1730,12 @@ class SudokuCell {
 
     setGroup(group) {
         this.myGroup = group;
+    }
+    setRow(row) {
+        this.myRow = row;
+    }
+    setCol(col) {
+        this.myCol = col;
     }
     setNumber(number, gamePhase) {
         this.privateSetNumber(number, gamePhase);
@@ -1795,6 +1908,23 @@ class SudokuCell {
         this.myCellNode.classList.remove('err');
     }
 
+    setRowError() {
+        this.myCellNode.classList.add('row-err');
+    }
+
+    unsetRowError() {
+        this.myCellNode.classList.remove('row-err');
+    }
+    setColError() {
+        this.myCellNode.classList.add('col-err');
+    }
+
+    unsetColError() {
+        this.myCellNode.classList.remove('col-err');
+    }
+
+
+
     getPhase() {
         return this.myGamePhase;
     }
@@ -1880,7 +2010,7 @@ class SudokuCell {
         this.myInfluencers.forEach(influencer => {
             let summand = 1;
             if (influencer.value() == '0') {
-                if (influencer.myPermissibles.size == 2){
+                if (influencer.myPermissibles.size == 2) {
                     summand = 18;
                 } else {
                     summand = 9 - influencer.myPermissibles.size;
