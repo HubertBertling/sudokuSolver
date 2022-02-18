@@ -152,7 +152,7 @@ body {
     gap: 1px;
     place-items: center;
     border-top: 2px solid var(--nested-cell-bg-color); 
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     padding-top: 2px;
     padding-left: 1px;
 }
@@ -181,7 +181,7 @@ body {
     padding: 2px;
     border-radius: 3px;
     background-color: #56c7aa;
-    font-size: 1rem;
+    font-size: 1.5rem;
     color: #0d1117;
     border: 1px solid white;
 }

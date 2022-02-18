@@ -1092,7 +1092,6 @@ class NineCellCollection {
 
         // Iteriere über alle Zellen der Gruppe
         for (let i = 0; i < 9; i++) {
-
             if (this.myCells[i].value() == '0') {
                 if (this.myCells[i].hasThisPermNr(permNr)) {
                     countOccurrences++;
