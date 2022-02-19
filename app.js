@@ -746,13 +746,13 @@ class AutomatedRunnerOnGrid {
             case 'fast': {
                 //Schritt pro 0,25  Sekunden
                 this.execSpeedLevel = value;
-                this.execSpeed = 250;
+                this.execSpeed = 125;
                 break;
             }
             case 'very-fast': {
                 //Schritt pro 0,125  Sekunden
                 this.execSpeedLevel = value;
-                this.execSpeed = 125;
+                this.execSpeed = 75;
                 break;
             }
             default: {
