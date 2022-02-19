@@ -1169,6 +1169,11 @@ class SudokuGroup extends NineCellCollection {
     }
     setError() {
         this.myGroupNode.classList.add('err');
+        this.myGroupNode.classList.add('cell-err');
+        setTimeout(() => {
+            this.myGroupNode.classList.remove('cell-err');
+        }, 500);
+
     }
 }
 class SudokuRow extends NineCellCollection {
@@ -1880,6 +1885,10 @@ class SudokuCell {
 
     setRowError() {
         this.myCellNode.classList.add('row-err');
+        this.myCellNode.classList.add('cell-err');
+        setTimeout(() => {
+            this.myCellNode.classList.remove('cell-err');
+        }, 500);
     }
 
     unsetRowError() {
@@ -1887,6 +1896,10 @@ class SudokuCell {
     }
     setColError() {
         this.myCellNode.classList.add('col-err');
+        this.myCellNode.classList.add('cell-err');
+        setTimeout(() => {
+            this.myCellNode.classList.remove('cell-err');
+        }, 500);
     }
 
     unsetColError() {
@@ -1901,7 +1914,7 @@ class SudokuCell {
 
     select() {
         this.myCellNode.classList.add('selected');
-        this.myInfluencers.forEach(e => e.setSelected());
+        // this.myInfluencers.forEach(e => e.setSelected());
     }
 
     setSelected() {
@@ -1910,7 +1923,7 @@ class SudokuCell {
 
     deselect() {
         this.myCellNode.classList.remove('selected');
-        this.myInfluencers.forEach(e => e.unsetSelected());
+        // this.myInfluencers.forEach(e => e.unsetSelected());
     }
     unsetSelected() {
         this.myCellNode.classList.remove('hover');
