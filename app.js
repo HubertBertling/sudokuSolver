@@ -1046,10 +1046,15 @@ class NineCellCollection {
         // Die Collection kennt ihre Tabelle
         this.myGrid = suTable;
         this.myCells = [];
+        // In jeder Gruppe, Spalte und Zeile müssen alle Zahlen 1..9 einmal vorkommen.
+        // Für eine konkrete Gruppe, Spalte oder Zeile sind MissingNumbers Zahlen,
+        // die nicht in ihr vorkommen.
         this.myMissingNumbers = new Set();
     }
 
     isInsolvable() {
+        // Wenn eine Gruppe, Zeile oder Spalte MissingNumbers hat, ist das Sudoku unlösbar.
+        // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
         return (this.myMissingNumbers.size > 0 || this.withConflictingSingles());
     }
 
@@ -1071,11 +1076,13 @@ class NineCellCollection {
 
     calculateNecessaryNumbers() {
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
-        // die in der Gruppe oder Reihe/Spalte der Zelle genau einmal vorkommen
+        // die in der Gruppe, Reihe oder Spalte der Zelle genau einmal vorkommen.
+        // Hinweis: in den Influencer-Zellen insgesamt können sie dennoch mehrfach
+        // vorkommen. Deshalb muss diese Prüfung hier stattfinden.
         for (let i = 1; i < 10; i++) {
             let cellIndex = this.occursOnce(i);
-            // Wenn die Nummer i genau einmal in der Gruppe vorkommt
-            // trage sie ein in der necessary-liste der Zelle
+            // Wenn die Nummer i genau einmal in der Collection vorkommt
+            // trage sie ein in der Necessary-liste der Zelle
             if (cellIndex !== -1) {
                 this.myCells[cellIndex].setNecessary(i.toString());
             }
@@ -1107,27 +1114,41 @@ class NineCellCollection {
     }
 
     withConflictingSingles() {
-        // Prüfe alle Zellen der Gruppe
-        let numberCounts = [0,0,0,0,0,0,0,0,0];
+        // Singles sind Zellen, die nur noch exakt eine zulässige Nummer haben.
+        // Conflicting singles sind zwei oder mehr singles in einer Collection, 
+        // die dieselbe eine zulässige Nummer haben. Sie fordern ja, dass dieselbe Nummer zweimal
+        // in der Collection vorkommen soll. Mit anderen Worten: 
+        // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
+        
+        // Idee: Zähle für jede Nummer 1 .. 9 die Häufigkeit ihres Auftretens
+        // numberCounts[0] = Häufigkeit der 1, 
+        // numberCounts[1] = Häufigkeit der 2, 
+        // usw.
+        let numberCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         let found = false;
         for (let i = 0; i < 9; i++) {
-           if (this.myCells[i].value() == '0') {
-               // Speichere Singles
-               let permNumbers = this.myCells[i].getPermissibleNumbers();
-               if (permNumbers.size == 1) {
-                   permNumbers.forEach(nr => {
-                       let iNr = parseInt(nr);
-                       numberCounts[iNr - 1]++;
-                       if (numberCounts[iNr - 1] > 1) {
-                           found = true;
-                       };
-                   }); 
-               }
-           }
-           if (found) return true;
-       }
-       return false;
-   }
+            if (this.myCells[i].value() == '0') {
+                // Wir betrachten nur offene Zellen
+                // Denn, wenn eine der Konfliktzellen geschlossen wäre, würde
+                // die noch offene Zelle ohne zulässige Nummer sein. Eine offene Zelle
+                // ohne zulässige Nummer fangen wir schon an anderer Stelle ab.
+                let permNumbers = this.myCells[i].getPermissibleNumbers();
+                if (permNumbers.size == 1) {
+                    permNumbers.forEach(nr => {
+                        let iNr = parseInt(nr);
+                        numberCounts[iNr - 1]++;
+                        if (numberCounts[iNr - 1] > 1) {
+                            found = true;
+                        };
+                    });
+                }
+            }
+            // Wenn wir den ersten Konflikt gefunden haben, können wir die Suche
+            // abbrechen. 
+            if (found) return true;
+        }
+        return false;
+    }
 
 }
 
@@ -1335,21 +1356,27 @@ class SudokuGrid {
             // Die Tabelle besitzt 9 Gruppen mit jeweils 9 Zellen.
             this.sudoGroups[tmpGroupIndex].addCell(tmpSudoCell);
         }
-        //Influencers in den Zellen setzen
+        // Influencers in den Zellen setzen
+        // Das geschieht nur einmal bei der Initialisierung
         for (let i = 0; i < 81; i++) {
             this.sudoCells[i].setInfluencers(this.influencersOfCell(i));
         }
         // Setze die Row-Col-Vektoren
+        // Laufindex über dem Cell-Vektor
         let currentIndex = 0;
+        // Die Col-Vektoren werden angelegt, zunächst leer
         for (let i = 0; i < 9; i++) {
             let col = new SudokuCol();
             this.sudoCols.push(col);
         }
         for (let i = 0; i < 9; i++) {
+            // Ein Row-Vektor wird angelegt
             let row = new SudokuRow();
             for (let j = 0; j < 9; j++) {
                 let currentCell = this.sudoCells[currentIndex];
+                // Die aktuelle Zelle wird der aktuellen Reihe hinzugefügt
                 row.addCell(currentCell);
+                // Die aktuelle Zelle wird dem Spaltenvektor j hinzugefügt
                 this.sudoCols[j].addCell(currentCell);
                 currentIndex++;
             }
@@ -1652,17 +1679,13 @@ class SudokuCell {
         // Speichert, falls vorhanden notwendige Zahlen dieser Zelle. 
         // Mehr als eine bedeuten einen Widerspruch in der Lösung.
         this.myNecessarys = new Set();
-        this.myMissingNumbers = new Set();
     }
     initNecessarys() {
         this.myNecessarys = new Set();
     }
-    initMissingNumbers() {
-        this.myMissingNumbers = new Set();
-    }
 
     clear() {
-        this.myNecessarys = new Set();
+        this.initNecessarys();
         this.unsetNumber();
         this.unsetError();
         this.unsetRowError();
@@ -2022,34 +2045,6 @@ class SudokuCell {
             // Die Nummer der gesetzten Zelle ist nicht zulässig.
             !(this.value() == '0' || this.myPermissibles.has(this.value())));
     }
-
-    hasUniqueSolution() {
-        // Gibt, falls vorhanden, die einzig mögliche Zahl zurück 
-        let tmpValue = '0';
-        // Wir betrachten nicht gesetzte Zellen
-        if (this.value() == '0') {
-            // Es kann vorkommen, dass mehrere notwendige Zahlen
-            // für eine Zelle berechnet werden. 
-            // Dann ist das sudoku unlösbar.
-            if (this.myNecessarys.size == 1) {
-                this.myNecessarys.forEach(e => {
-                    tmpValue = e;
-                });
-            } else if (this.myPermissibles.size == 1) {
-                // Wenn nur eine Zahl zulässig ist, dann ist sie
-                // notwendig. D.h. sie ist die einzig mögliche Lösung
-                this.myPermissibles.forEach(e => {
-                    tmpValue = e;
-                });
-            } else {
-                // Gibt 0 zurück, wenn keine eindeutig mögliche Zahl existiert
-                tmpValue = '0';
-            }
-            return tmpValue;
-        }
-
-    }
-
     getIndex() {
         return this.myIndex;
     }
