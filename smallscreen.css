@@ -185,6 +185,15 @@ body {
     color: #0d1117;
     border: 1px solid white;
 }
+
+.nested>div.inAdmissible {
+    font-size: 1.5rem;
+    background-color: var(--delete-btn-bg-color);
+    color: white;
+    border: 1px solid white;
+}
+
+
 .sudoku-grid-cell.hover {
     border: 3px solid var(--selected-cell-border-color);
 }

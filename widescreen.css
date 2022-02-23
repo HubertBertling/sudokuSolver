@@ -1,6 +1,7 @@
 :root {
     /* app colors */
-    --screen-bg-color: #F2E2F2;
+/*    --screen-bg-color: white; */
+    --screen-bg-color: #F2E2F2; 
     --screen-color: #0d1117;
  
     --standard-btn-bg-color: rgba(0,0,0,.25);
@@ -187,6 +188,15 @@ body {
     color: #0d1117;
     border: 1px solid white;
 }
+
+.nested>div.inAdmissible {
+    font-size: 1.5rem;
+    background-color: var(--delete-btn-bg-color);
+    color: white;
+    border: 1px solid white;
+}
+
+
 .sudoku-grid-cell.hover {
     border: 3px solid var(--selected-cell-border-color);
 }
