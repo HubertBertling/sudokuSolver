@@ -16,14 +16,14 @@ class SudokuSet extends Set {
         return true;
     }
     union(setB) {
-        var _union = new Set(this);
+        var _union = new SudokuSet(this);
         for (var elem of setB) {
             _union.add(elem);
         }
         return _union;
     }
     difference(setB) {
-        var _difference = new Set(this);
+        var _difference = new SudokuSet(this);
         for (var elem of setB) {
             _difference.delete(elem);
         }
@@ -31,7 +31,7 @@ class SudokuSet extends Set {
     }
 
     intersection(setB) {
-        var _intersection = new Set();
+        var _intersection = new SudokuSet();
         for (var elem of setB) {
             if (this.has(elem)) {
                 _intersection.add(elem);
@@ -40,11 +40,11 @@ class SudokuSet extends Set {
         return _intersection;
     }
     equals(setB) {
-        if (this.size !== setB.size) { 
-            return false 
+        if (this.size !== setB.size) {
+            return false
         } else {
             for (var a of this) if (!setB.has(a)) return false;
-            return true;      
+            return true;
         }
     }
 }
@@ -1129,11 +1129,13 @@ class NineCellCollection {
         // In jeder Gruppe, Spalte und Zeile müssen alle Zahlen 1..9 einmal vorkommen.
         // Für eine konkrete Gruppe, Spalte oder Zeile sind MissingNumbers Zahlen,
         // die nicht in ihr vorkommen.
-        this.myMissingNumbers =new SudokuSet();
+        this.myNeccessaryNr = '0';
+        this.myMissingNumbers = new SudokuSet();
         this.myPairInfos = [];
     }
     clear() {
-        this.myMissingNumbers =new SudokuSet();
+        this.myNeccessaryNr = '0';
+        this.myMissingNumbers = new SudokuSet();
         this.myPairInfos = [];
     }
 
@@ -1214,8 +1216,12 @@ class NineCellCollection {
         );
 
         */
-
         this.calculateEqualPairs();
+        this.deriveIndirectInadmissibleNumbersFromEqualPairs();
+    }
+
+
+    deriveIndirectInadmissibleNumbersFromEqualPairs() {
         for (let i = 0; i < this.myPairInfos.length; i++) {
             if (this.myPairInfos[i].pairIndices.length == 2) {
                 // Ein Paar, das zweimal in der Collection vorkommt
@@ -1232,7 +1238,9 @@ class NineCellCollection {
                             // Zelle der Collection, die nicht Paar-Zelle ist
                             let tmpPermissibles = this.myCells[j].getPermissibleNumbers();
                             let tmpIntersection = tmpPermissibles.intersection(pair);
-                            this.myCells[j].myIndirectInadmissibleNumbers = tmpIntersection;
+                            //this.myCells[j].myIndirectInadmissibleNumbers = tmpIntersection;
+                            this.myCells[j].myIndirectInadmissibleNumbers =
+                                this.myCells[j].myIndirectInadmissibleNumbers.union(tmpIntersection);
                         }
                     }
                 }
@@ -1242,7 +1250,7 @@ class NineCellCollection {
 
 
     calculateMissingNumbers() {
-        let missingNumbers =new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+        let missingNumbers = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
         // Prüfe alle Zellen der Gruppe
         for (let i = 0; i < 9; i++) {
             if (this.myCells[i].value() !== '0') {
@@ -1267,6 +1275,7 @@ class NineCellCollection {
             // Wenn die Nummer i genau einmal in der Collection vorkommt
             // trage sie ein in der Necessary-liste der Zelle
             if (cellIndex !== -1) {
+                this.myNeccessaryNr = i.toString();
                 this.myCells[cellIndex].setNecessary(i.toString());
             }
         }
@@ -1283,7 +1292,8 @@ class NineCellCollection {
         // Iteriere über alle Zellen der Gruppe
         for (let i = 0; i < 9; i++) {
             if (this.myCells[i].value() == '0') {
-                if (this.myCells[i].hasThisPermNr(permNr)) {
+                //if(this.myCells[i].getStrongPermissibleNumbers().has(permNr.toString())){
+                if (this.myCells[i].getPermissibleNumbers().has(permNr.toString())) {
                     countOccurrences++;
                     lastCellNr = i;
                 }
@@ -1662,6 +1672,8 @@ class SudokuGrid {
         this.calculatePermissibleNumbers();
         this.calculateIndirectInadmissibleNumbers();
         this.calculateNecessaryNumbers();
+        this.deriveIndirectInadmissibleNumbersFromNecessaryNumbers();
+        this.setIndirectInadmissibleNumbers();
         this.calculateMissingNumbers();
         this.markErrorCells();
         this.markErrorGroups();
@@ -1729,25 +1741,19 @@ class SudokuGrid {
             let tmpCell = this.sudoCells[i];
             tmpCell.clearIndirectInadmissibleNumbers();
         }
-
-        let startCount = -1;
-        let iterationCount = 0;
-        // Wiederhole die Berechnung bis keine Änderung mehr auftritt
         traverseCollections();
-        setzeAnzeige();
-        /*     
-                while (startCount !== iterationCount) {
-                    startCount = iterationCount;
-                    iterationCount = 0;
-                    traverseCollections();
-                    for (let i = 0; i < 81; i++) {
-                        if (sudoApp.suGrid.sudoCells[i].value() == '0') {
-                            iterationCount = iterationCount + sudoApp.suGrid.sudoCells[i].myIndirectInadmissibleNumbers.size
-                        }
-                    }
-                    setzeAnzeige();
-                }
-        */
+    }
+
+    setIndirectInadmissibleNumbers() {
+        for (let i = 0; i < sudoApp.suGrid.sudoCells.length; i++) {
+            let tmpCell = sudoApp.suGrid.sudoCells[i];
+            if (tmpCell.value() == '0') {
+                // Setze die Anzeige
+                tmpCell.myIndirectInadmissibleNumbers.forEach(nr => {
+                    tmpCell.setIndirectInadmissibleNumber(nr);
+                });
+            }
+        }
     }
 
     calculateNecessaryNumbers() {
@@ -1775,6 +1781,27 @@ class SudokuGrid {
         for (let i = 0; i < 9; i++) {
             let tmpCol = this.sudoCols[i];
             tmpCol.calculateNecessaryNumbers();
+        }
+    }
+
+    deriveIndirectInadmissibleNumbersFromNecessaryNumbers() {
+        // Das zweite Auftreten einer notwendigen Nummer ist indirekt unzulässig
+        // Iteriere über alle Zellen
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].value() == '0') {
+                // Die Zelle ist ungesetzt
+                // Die Zelle hat selbst keine notwendige Nummer
+                let perms2check = this.sudoCells[i].getPermissibleNumbers();
+                let neccessaryNrsInContext = new SudokuSet();
+                this.sudoCells[i].myInfluencers.forEach(cell => {
+                    neccessaryNrsInContext = neccessaryNrsInContext.union(cell.getNecessaryNumbers());
+                })
+                let inAdmissibleNrs = perms2check.intersection(neccessaryNrsInContext);
+                inAdmissibleNrs.forEach(necNr => {
+                    this.sudoCells[i].myIndirectInadmissibleNumbers.add(necNr);
+                })
+            }
+
         }
     }
 
@@ -1877,7 +1904,7 @@ class SudokuGrid {
         const grid_size = 9;
         const box_size = 3;
 
-        let indexSet =new SudokuSet();
+        let indexSet = new SudokuSet();
         let tmpInfluencers = [];
 
         let row = Math.floor(index / grid_size);
@@ -1950,7 +1977,7 @@ class SudokuCell {
         // die beeinflussenden Zellen dieser Zelle
         this.myInfluencers = [];
         // Speichert die aktuell zulässigen Zahlen für diese Zelle
-        this.myPermissibles =new SudokuSet();
+        this.myPermissibles = new SudokuSet();
         // Nummern, die Paar-Widersprüche erzeugen, wenn sie gesetzt würden.
         this.myIndirectInadmissibleNumbers = new SudokuSet();
         // Speichert, falls vorhanden notwendige Zahlen dieser Zelle. 
@@ -2228,11 +2255,6 @@ class SudokuCell {
         // Die zulässigen Zahlen einer Zelle sind die noch nicht gesetzten Nummern
         this.myPermissibles = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9'].filter(x =>
             !this.calculateDirectInadmissibleNumbers().has(x)));
-    }
-
-    hasThisPermNr(permNr) {
-        let permNrStr = permNr.toString();
-        return this.myPermissibles.has(permNrStr);
     }
 
     setPermissibleNumbers() {
