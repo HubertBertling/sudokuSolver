@@ -1053,6 +1053,23 @@ class AutomatedRunnerOnGrid {
         return emptySelection;
     }
 
+    calculateOneOptionSelectionFrom(selectionList) {
+        // Berechnet Selektion von Zellen, die genau eine zulässige Nummer enthalten.
+        for (let i = 0; i < selectionList.length; i++) {
+            if (selectionList[i].necessaryOnes.length == 0 &&
+                selectionList[i].options.length == 1) {
+                return selectionList[i];
+            }
+        }
+        // Falls es keine Zellen mit diese Eigenschaft gibt
+        let emptySelection = {
+            index: -1,
+            options: [],
+            necessaryOnes: []
+        }
+        return emptySelection;
+    }
+
     getOptionalSelections() {
         let selectionList = [];
         for (let i = 0; i < 81; i++) {
@@ -1079,11 +1096,20 @@ class AutomatedRunnerOnGrid {
             }
             return emptySelection;
         }
+
+        //Bestimmt die nächste Zelle mit ein-Option-Menge
+        let oneOption = this.calculateOneOptionSelectionFrom(optionList);
+        if (oneOption.index !== -1) {
+            return oneOption;
+        }
+
         //Bestimmt die nächste Zelle mit notwendiger Nummer unter den zulässigen Nummern
         let tmpNeccessary = this.calculateNeccesarySelectionFrom(optionList);
         if (tmpNeccessary.index !== -1) {
             return tmpNeccessary;
         }
+
+
         let tmpMin = this.calculateMinSelectionFrom(optionList);
         // Falls es keine notwendigen Nummern gibt:
         // Bestimmt eine nächste Zelle mit minimaler Anzahl zulässiger Nummern
@@ -1151,7 +1177,7 @@ class NineCellCollection {
         for (let i = 0; i < 9; i++) {
             if (this.myCells[i].value() == '0') {
                 // let tmpPermissibles = this.myCells[i].getPermissibleNumbers()
-                let tmpPermissibles = this.myCells[i].getStrongPermissibleNumbers()
+                let tmpPermissibles = this.myCells[i].getPermissibleNumbers()
                 if (tmpPermissibles.size == 2) {
                     // Infos zum Paar speichern
                     let currentPair = new SudokuSet(tmpPermissibles);
@@ -1189,33 +1215,31 @@ class NineCellCollection {
                 }
             }
         }
-        /*
-        this.myPairInfos.forEach(pair => {
-            console.log('Paar:');
-            for (let item of pair.pairSet) console.log('    ' + item);
-            console.log('   Anzahl Auftreten:' + pair.pairIndices.length)
-        })
-        */
+        /*      this.myPairInfos.forEach(pair => {
+                  console.log('Paar:');
+                  for (let item of pair.pairSet) console.log('    ' + item);
+                  console.log('   Anzahl Auftreten:' + pair.pairIndices.length)
+              })  */
     }
 
     calculateIndirectInadmissibleNumbers() {
-        /* let tmpType = '';
-        if (this instanceof SudokuGroup) { tmpType = 'Gruppe' };
-        if (this instanceof SudokuRow) { tmpType = 'Reihe' };
-        if (this instanceof SudokuCol) { tmpType = 'Spalte' };
-        console.log('Berechnete Paare für ' + tmpType + ' Zellen:  '
-            + ' ' + this.myCells[0].myIndex
-            + ', ' + this.myCells[1].myIndex
-            + ', ' + this.myCells[2].myIndex
-            + ', ' + this.myCells[3].myIndex
-            + ', ' + this.myCells[4].myIndex
-            + ', ' + this.myCells[5].myIndex
-            + ', ' + this.myCells[6].myIndex
-            + ', ' + this.myCells[7].myIndex
-            + ', ' + this.myCells[8].myIndex
-        );
+        /*       let tmpType = '';
+               if (this instanceof SudokuGroup) { tmpType = 'Gruppe' };
+               if (this instanceof SudokuRow) { tmpType = 'Reihe' };
+               if (this instanceof SudokuCol) { tmpType = 'Spalte' };
+               console.log('Berechnete Paare für ' + tmpType + ' Zellen:  '
+                   + ' ' + this.myCells[0].myIndex
+                   + ', ' + this.myCells[1].myIndex
+                   + ', ' + this.myCells[2].myIndex
+                   + ', ' + this.myCells[3].myIndex
+                   + ', ' + this.myCells[4].myIndex
+                   + ', ' + this.myCells[5].myIndex
+                   + ', ' + this.myCells[6].myIndex
+                   + ', ' + this.myCells[7].myIndex
+                   + ', ' + this.myCells[8].myIndex
+               );
+       */
 
-        */
         this.calculateEqualPairs();
         this.deriveIndirectInadmissibleNumbersFromEqualPairs();
     }
@@ -1794,7 +1818,9 @@ class SudokuGrid {
                 let perms2check = this.sudoCells[i].getPermissibleNumbers();
                 let neccessaryNrsInContext = new SudokuSet();
                 this.sudoCells[i].myInfluencers.forEach(cell => {
-                    neccessaryNrsInContext = neccessaryNrsInContext.union(cell.getNecessaryNumbers());
+                    if (cell.value() == '0') {
+                        neccessaryNrsInContext = neccessaryNrsInContext.union(cell.getNecessaryNumbers());
+                    }
                 })
                 let inAdmissibleNrs = perms2check.intersection(neccessaryNrsInContext);
                 inAdmissibleNrs.forEach(necNr => {
