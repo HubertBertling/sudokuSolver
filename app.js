@@ -2395,6 +2395,8 @@ class SudokuCell {
         return (
             // Für die nicht gesetzte Zelle ist die Anzahl notwendiger Nummern größer 1
             (this.myNecessarys.size > 1 && (this.value() == '0')) ||
+            // Eine notwendige Nummer ist gleichzeitig unzulässig      
+            this.myIndirectInadmissibleNumbers.intersection(this.myNecessarys).size > 0 ||
             // Für die Zelle gibt es keine stark zulässige Nummer mehr.
             // Schwach zulässig: nicht direkt unzulässig
             // Stark zulässig: nicht direkt oder indirekt unzulässig
