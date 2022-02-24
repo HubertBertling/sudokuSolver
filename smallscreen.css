@@ -193,6 +193,10 @@ body {
     border: 1px solid white;
 }
 
+.nested>div.neccessary.inAdmissible {
+    background:blueviolet;
+}
+
 
 .sudoku-grid-cell.hover {
     border: 3px solid var(--selected-cell-border-color);
