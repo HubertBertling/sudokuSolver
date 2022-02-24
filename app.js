@@ -1748,18 +1748,6 @@ class SudokuGrid {
             }
         }
 
-        function setzeAnzeige() {
-            for (let i = 0; i < sudoApp.suGrid.sudoCells.length; i++) {
-                let tmpCell = sudoApp.suGrid.sudoCells[i];
-                if (tmpCell.value() == '0') {
-                    // Setze die Anzeige
-                    tmpCell.myIndirectInadmissibleNumbers.forEach(nr => {
-                        tmpCell.setIndirectInadmissibleNumber(nr);
-                    });
-                }
-            }
-        }
-
         // Initialisierung
         for (let i = 0; i < this.sudoCells.length; i++) {
             let tmpCell = this.sudoCells[i];
@@ -2014,8 +2002,6 @@ class SudokuCell {
         this.myNecessarys = new SudokuSet();
     }
 
-
-
     clear() {
         this.initNecessarys();
         this.unsetNumber();
@@ -2241,7 +2227,7 @@ class SudokuCell {
 
     select() {
         this.myCellNode.classList.add('selected');
-        // this.myInfluencers.forEach(e => e.setSelected());
+        this.myInfluencers.forEach(e => e.setSelected());
     }
 
     setSelected() {
@@ -2250,7 +2236,7 @@ class SudokuCell {
 
     deselect() {
         this.myCellNode.classList.remove('selected');
-        // this.myInfluencers.forEach(e => e.unsetSelected());
+        this.myInfluencers.forEach(e => e.unsetSelected());
     }
     unsetSelected() {
         this.myCellNode.classList.remove('hover');
