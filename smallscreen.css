@@ -120,7 +120,7 @@ body {
 
 .sudoku-grid-cell.auto-value {
     display: grid;
-    grid-template-columns: 0.1fr 0.9fr;
+    grid-template-columns: 0.1fr 1.2fr;
     place-items: center;
     font-size: 1.2rem;
     background-color: var(--played-cell-bg-color);
@@ -152,7 +152,7 @@ body {
     gap: 1px;
     place-items: center;
     border-top: 2px solid var(--nested-cell-bg-color); 
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     padding-top: 2px;
     padding-left: 1px;
 }
