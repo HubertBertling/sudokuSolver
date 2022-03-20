@@ -1004,39 +1004,6 @@ class AutomatedRunnerOnGrid {
 
     }
 
-    calculateMinSelectionFromBest(selectionList) {
-        // Berechnet die nächste Selektion
-        // Nicht eindeutig; Anfangs gibt es oft mehrere Zellen mit
-        // nur einer zulässigen Nummer
-        let minSelection = selectionList[0];
-        let minLength = minSelection.options.length;
-        let minIndex = minSelection.index;
-        for (let i = 1; i < selectionList.length; i++) {
-            let currentSelection = selectionList[i];
-            let currentLength = currentSelection.options.length;
-            let currentIndex = currentSelection.index;
-            if (currentLength < minLength) {
-                // Zellen mit weniger Optionen werden bevorzugt
-                minSelection = currentSelection;
-                minLength = currentLength;
-                minIndex = currentIndex;
-            } else if (currentLength == minLength) {
-                // Bei Zellen mit gleicher Anzahl von Optionen (meist sind das 2 Optionen),
-                // werden die Zellen mit einem größeren Endscheidungsgrad (= höheres Gewicht) bevorzugt.
-                let maxWeight = this.suGrid.sudoCells[minIndex].countMyInfluencersWeight();;
-                let currentWeight = this.suGrid.sudoCells[currentIndex].countMyInfluencersWeight();
-                if (currentWeight >= maxWeight) {
-                    minSelection = currentSelection;
-                    minIndex = currentIndex;
-                    maxWeight = currentWeight;
-                }
-            }
-        }
-        return minSelection;
-
-
-    }
-
     calculateNeccesarySelectionFrom(selectionList) {
         // Berechnet Selektion von Zellen, die eine notwendige Nummer enthalten.
         for (let i = 0; i < selectionList.length; i++) {
@@ -1076,7 +1043,7 @@ class AutomatedRunnerOnGrid {
             if (this.suGrid.sudoCells[i].value() == '0') {
                 let selection = {
                     index: i,
-                    options: Array.from(this.suGrid.sudoCells[i].getStrongPermissibleNumbers()),
+                    options: Array.from(this.suGrid.sudoCells[i].getSecondLevelStrongPermissibleNumbers()),
                     necessaryOnes: Array.from(this.suGrid.sudoCells[i].getNecessaryNumbers())
                 }
                 selectionList.push(selection);
@@ -1222,6 +1189,58 @@ class NineCellCollection {
               })  */
     }
 
+    calculateSecondLevelEqualPairs() {
+        this.myPairInfos = [];
+        // Iteriere über die Collection
+        for (let i = 0; i < 9; i++) {
+            if (this.myCells[i].value() == '0') {
+                let tmpPermissibles = this.myCells[i].getStrongPermissibleNumbers()
+                // let tmpPermissibles = this.myCells[i].getPermissibleNumbers()
+                if (tmpPermissibles.size == 2) {
+                    // Infos zum Paar speichern
+                    let currentPair = new SudokuSet(tmpPermissibles);
+                    // Prüfen, ob das Paar schon in der PaarInfoliste ist
+                    if (this.myPairInfos.length == 0) {
+                        let pairInfo = {
+                            pairInfoIndex: i,
+                            pairIndices: [this.myCells[i].getIndex()],
+                            pairSet: tmpPermissibles
+                        }
+                        this.myPairInfos.push(pairInfo);
+                    } else {
+                        let j = 0;
+                        let pairInfoStored = false;
+                        while (j < this.myPairInfos.length && !pairInfoStored) {
+                            if (currentPair.equals(this.myPairInfos[j].pairSet)) {
+                                // Das Paar existiert schon in der Infoliste
+                                this.myPairInfos[j].pairIndices.push(this.myCells[i].getIndex());
+                                pairInfoStored = true;
+                            } else {
+                                if (j == this.myPairInfos.length - 1) {
+                                    // Das Paar ist nicht vorhanden und wird jetzt eingefügt
+                                    let pairInfo = {
+                                        pairInfoIndex: i,
+                                        pairIndices: [this.myCells[i].getIndex()],
+                                        pairSet: tmpPermissibles
+                                    }
+                                    this.myPairInfos.push(pairInfo);
+                                    pairInfoStored = true;
+                                }
+                            }
+                            j++;
+                        }
+                    }
+                }
+            }
+        }
+        /*      this.myPairInfos.forEach(pair => {
+                  console.log('Paar:');
+                  for (let item of pair.pairSet) console.log('    ' + item);
+                  console.log('   Anzahl Auftreten:' + pair.pairIndices.length)
+              })  */
+    }
+
+
     calculateIndirectInadmissibleNumbers() {
         /*       let tmpType = '';
                if (this instanceof SudokuGroup) { tmpType = 'Gruppe' };
@@ -1244,6 +1263,11 @@ class NineCellCollection {
         this.deriveIndirectInadmissibleNumbersFromEqualPairs();
     }
 
+
+    calculateSecondLevelIndirectInadmissibleNumbers() {
+        this.calculateSecondLevelEqualPairs();
+        this.deriveIndirectInadmissibleNumbersFromSecondLevelEqualPairs(); 
+    }
 
     deriveIndirectInadmissibleNumbersFromEqualPairs() {
         for (let i = 0; i < this.myPairInfos.length; i++) {
@@ -1272,6 +1296,35 @@ class NineCellCollection {
         }
     }
 
+    deriveIndirectInadmissibleNumbersFromSecondLevelEqualPairs() {
+        for (let i = 0; i < this.myPairInfos.length; i++) {
+            if (this.myPairInfos[i].pairIndices.length == 2) {
+                // Ein Paar, das zweimal in der Collection vorkommt
+                let pair = this.myPairInfos[i].pairSet;
+                // Prüfe, ob Nummern dieses Paar in den Permissibles der Collection vorkommen
+                for (let j = 0; j < 9; j++) {
+                    if (this.myCells[j].value() == '0') {
+                        //console.log('');
+                        //console.log('this.myCells[j].getIndex() = ' + this.myCells[j].getIndex());
+                        //console.log('this.myPairInfos[i].pairIndices[0] = ' + this.myPairInfos[i].pairIndices[0]);
+                        //console.log('this.myPairInfos[i].pairIndices[1] = ' + this.myPairInfos[i].pairIndices[1]);
+                        if (this.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[0] &&
+                            this.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[1]) {
+                            // Zelle der Collection, die nicht Paar-Zelle ist
+                            // let tmpPermissibles = this.myCells[j].getPermissibleNumbers();
+                            let tmpPermissibles = this.myCells[j].getStrongPermissibleNumbers();
+                            let tmpIntersection = tmpPermissibles.intersection(pair);
+                            //this.myCells[j].myIndirectInadmissibleNumbers = tmpIntersection;
+                            // this.myCells[j].myIndirectInadmissibleNumbers =
+                            //    this.myCells[j].myIndirectInadmissibleNumbers.union(tmpIntersection);
+                            this.myCells[j].mySecondLevelIndirectInadmissibleNumbers =
+                                this.myCells[j].mySecondLevelIndirectInadmissibleNumbers.union(tmpIntersection);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     calculateMissingNumbers() {
         let missingNumbers = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
@@ -1694,10 +1747,17 @@ class SudokuGrid {
         this.clearRows();
         this.clearCols();
         this.calculatePermissibleNumbers();
+
         this.calculateIndirectInadmissibleNumbers();
         this.calculateNecessaryNumbers();
         this.deriveIndirectInadmissibleNumbersFromNecessaryNumbers();
+
+        this.calculateSecondLevelIndirectInadmissibleNumbers();
+
         this.setIndirectInadmissibleNumbers();
+        this.setSecondLevelIndirectInadmissibleNumbers();
+
+
         this.calculateMissingNumbers();
         this.markErrorCells();
         this.markErrorGroups();
@@ -1756,6 +1816,35 @@ class SudokuGrid {
         traverseCollections();
     }
 
+    calculateSecondLevelIndirectInadmissibleNumbers() {
+        function traverseCollections() {
+            // Iteriere über die Gruppen
+            for (let i = 0; i < 9; i++) {
+                let tmpGroup = sudoApp.suGrid.sudoGroups[i];
+                tmpGroup.calculateSecondLevelIndirectInadmissibleNumbers();
+            }
+            // Iteriere über die Reihen
+            for (let i = 0; i < 9; i++) {
+                let tmpRow = sudoApp.suGrid.sudoRows[i];
+                tmpRow.calculateSecondLevelIndirectInadmissibleNumbers();
+            }
+            // Iteriere über die Spalten
+            for (let i = 0; i < 9; i++) {
+                let tmpCol = sudoApp.suGrid.sudoCols[i];
+                tmpCol.calculateSecondLevelIndirectInadmissibleNumbers();
+            }
+        }
+
+        // Initialisierung
+        for (let i = 0; i < this.sudoCells.length; i++) {
+            let tmpCell = this.sudoCells[i];
+            tmpCell.clearSecondLevelIndirectInadmissibleNumbers();
+        }
+        traverseCollections();
+    }
+
+
+
     setIndirectInadmissibleNumbers() {
         for (let i = 0; i < sudoApp.suGrid.sudoCells.length; i++) {
             let tmpCell = sudoApp.suGrid.sudoCells[i];
@@ -1767,6 +1856,19 @@ class SudokuGrid {
             }
         }
     }
+
+    setSecondLevelIndirectInadmissibleNumbers() {
+        for (let i = 0; i < sudoApp.suGrid.sudoCells.length; i++) {
+            let tmpCell = sudoApp.suGrid.sudoCells[i];
+            if (tmpCell.value() == '0') {
+                // Setze die Anzeige
+                tmpCell.mySecondLevelIndirectInadmissibleNumbers.forEach(nr => {
+                    tmpCell.setSecondLevelIndirectInadmissibleNumber(nr);
+                });
+            }
+        }
+    }
+
 
     calculateNecessaryNumbers() {
         // Berechne und setze für jede nicht gesetzte Zelle
@@ -1994,6 +2096,8 @@ class SudokuCell {
         this.myPermissibles = new SudokuSet();
         // Nummern, die Paar-Widersprüche erzeugen, wenn sie gesetzt würden.
         this.myIndirectInadmissibleNumbers = new SudokuSet();
+        // Nummern, die Second Level Paar-Widersprüche erzeugen, wenn sie gesetzt würden.
+        this.mySecondLevelIndirectInadmissibleNumbers = new SudokuSet();
         // Speichert, falls vorhanden notwendige Zahlen dieser Zelle. 
         // Mehr als eine bedeuten einen Widerspruch in der Lösung.
         this.myNecessarys = new SudokuSet();
@@ -2294,6 +2398,11 @@ class SudokuCell {
         return this.myPermissibles.difference(this.myIndirectInadmissibleNumbers);
     }
 
+    getSecondLevelStrongPermissibleNumbers() {
+        let tempAdmissibles = this.myPermissibles.difference(this.myIndirectInadmissibleNumbers);
+        return tempAdmissibles.difference(this.mySecondLevelIndirectInadmissibleNumbers);
+    }
+    
     countMyPermissibleNumbers() {
         return this.myPermissibles.size;
     }
@@ -2316,7 +2425,7 @@ class SudokuCell {
         this.myInfluencers.forEach(influencer => {
             if (influencer.value() == '0') {
                 // Influencer mit geringer Größe werden bevorzugt
-                summand = 9 - influencer.getStrongPermissibleNumbers().size;
+                summand = 9 - influencer.getSecondLevelStrongPermissibleNumbers().size;
             }
             tmpWeight = tmpWeight + summand;
         });
@@ -2358,6 +2467,18 @@ class SudokuCell {
         }
     }
 
+    setSecondLevelIndirectInadmissibleNumber(permNr) {
+        // Klassifiziere die Zahl permNr in der Menge der möglichen Zahlen
+        // als notwendig
+        this.mySecondLevelIndirectInadmissibleNumbers.add(permNr);
+        let permNodes = this.myCellNode.children;
+        for (let i = 0; i < permNodes.length; i++) {
+            if (permNodes[i].getAttribute('data-value') == permNr) {
+                permNodes[i].classList.add('inAdmissible2Level');
+            }
+        }
+    }
+
     unsetNecessary(permNr) {
         let permNodes = this.myCellNode.children;
         for (let i = 1; i < permNodes.length; i++) {
@@ -2378,9 +2499,23 @@ class SudokuCell {
         this.myIndirectInadmissibleNumbers.delete(permNr);
     }
 
+    unsetSecondLevelIndirectInadmissibleNumber(permNr) {
+        let permNodes = this.myCellNode.children;
+        for (let i = 1; i < permNodes.length; i++) {
+            if (permNodes[i].getAttribute('data-value') == permNr) {
+                permNodes[i].classList.remove('inAdmissible2Level');
+            }
+        }
+        this.mySecondLevelIndirectInadmissibleNumbers.delete(permNr);
+    }
+
     clearIndirectInadmissibleNumbers() {
         this.myIndirectInadmissibleNumbers.forEach(e => this.unsetIndirectInadmissibleNumber(e));
         this.myIndirectInadmissibleNumbers = new SudokuSet();
+    }
+    clearSecondLevelIndirectInadmissibleNumbers() {
+        this.mySecondLevelIndirectInadmissibleNumbers.forEach(e => this.unsetSecondLevelIndirectInadmissibleNumber(e));
+        this.mySecondLevelIndirectInadmissibleNumbers = new SudokuSet();
     }
 
     clearNecessarys() {
