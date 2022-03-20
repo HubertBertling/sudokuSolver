@@ -1900,6 +1900,7 @@ class SudokuGrid {
 
     deriveIndirectInadmissibleNumbersFromNecessaryNumbers() {
         // Das zweite Auftreten einer notwendigen Nummer ist indirekt unzulässig
+        // Ebenso ist das zweite Auftreten einer einzig verbliebenen Nummer indirekt unzulässig
         // Iteriere über alle Zellen
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].value() == '0') {
@@ -1910,6 +1911,7 @@ class SudokuGrid {
                 this.sudoCells[i].myInfluencers.forEach(cell => {
                     if (cell.value() == '0') {
                         neccessaryNrsInContext = neccessaryNrsInContext.union(cell.getNecessaryNumbers());
+                        neccessaryNrsInContext = neccessaryNrsInContext.union(cell.getIndirectNecessaryNumbers());
                     }
                 })
                 let inAdmissibleNrs = perms2check.intersection(neccessaryNrsInContext);
@@ -2098,9 +2100,11 @@ class SudokuCell {
         this.myIndirectInadmissibleNumbers = new SudokuSet();
         // Nummern, die Second Level Paar-Widersprüche erzeugen, wenn sie gesetzt würden.
         this.mySecondLevelIndirectInadmissibleNumbers = new SudokuSet();
-        // Speichert, falls vorhanden notwendige Zahlen dieser Zelle. 
+        // Speichert, falls vorhanden direkt notwendige Zahlen dieser Zelle. 
         // Mehr als eine bedeuten einen Widerspruch in der Lösung.
-        this.myNecessarys = new SudokuSet();
+        // Notwendige Nummern sind zulässige Nummern einer Zelle,
+        // die in der Gruppe, Reihe oder Spalte der Zelle genau einmal vorkommen.
+        this.myNecessarys = new SudokuSet();       
     }
     initNecessarys() {
         this.myNecessarys = new SudokuSet();
@@ -2115,6 +2119,14 @@ class SudokuCell {
     }
     getNecessaryNumbers() {
         return this.myNecessarys;
+    }
+    getIndirectNecessaryNumbers() {
+        let tmpSet = this.getStrongPermissibleNumbers();
+        if (tmpSet.size == 1){
+            return tmpSet;
+        } else {
+            return new SudokuSet();
+        }
     }
     setInfluencers(influencers) {
         this.myInfluencers = influencers;
