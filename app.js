@@ -1266,7 +1266,7 @@ class NineCellCollection {
 
     calculateSecondLevelIndirectInadmissibleNumbers() {
         this.calculateSecondLevelEqualPairs();
-        this.deriveIndirectInadmissibleNumbersFromSecondLevelEqualPairs(); 
+        this.deriveIndirectInadmissibleNumbersFromSecondLevelEqualPairs();
     }
 
     deriveIndirectInadmissibleNumbersFromEqualPairs() {
@@ -1754,6 +1754,7 @@ class SudokuGrid {
 
         this.calculateSecondLevelIndirectInadmissibleNumbers();
 
+
         this.setIndirectInadmissibleNumbers();
         this.setSecondLevelIndirectInadmissibleNumbers();
 
@@ -2104,7 +2105,7 @@ class SudokuCell {
         // Mehr als eine bedeuten einen Widerspruch in der Lösung.
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
         // die in der Gruppe, Reihe oder Spalte der Zelle genau einmal vorkommen.
-        this.myNecessarys = new SudokuSet();       
+        this.myNecessarys = new SudokuSet();
     }
     initNecessarys() {
         this.myNecessarys = new SudokuSet();
@@ -2122,7 +2123,7 @@ class SudokuCell {
     }
     getIndirectNecessaryNumbers() {
         let tmpSet = this.getStrongPermissibleNumbers();
-        if (tmpSet.size == 1){
+        if (tmpSet.size == 1) {
             return tmpSet;
         } else {
             return new SudokuSet();
@@ -2381,8 +2382,10 @@ class SudokuCell {
 
     calculatePermissibleNumbers() {
         // Die zulässigen Zahlen einer Zelle sind die noch nicht gesetzten Nummern
-        this.myPermissibles = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9'].filter(x =>
-            !this.calculateDirectInadmissibleNumbers().has(x)));
+        // this.myPermissibles = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9'].filter(x =>
+        //    !this.calculateDirectInadmissibleNumbers().has(x)));
+        this.myPermissibles = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
+            this.calculateDirectInadmissibleNumbers());
     }
 
     setPermissibleNumbers() {
@@ -2414,7 +2417,7 @@ class SudokuCell {
         let tempAdmissibles = this.myPermissibles.difference(this.myIndirectInadmissibleNumbers);
         return tempAdmissibles.difference(this.mySecondLevelIndirectInadmissibleNumbers);
     }
-    
+
     countMyPermissibleNumbers() {
         return this.myPermissibles.size;
     }
