@@ -7,6 +7,7 @@ class SudokuSet extends Set {
     constructor(arr) {
         super(arr);
     }
+
     isSuperset(subset) {
         for (var elem of subset) {
             if (!this.has(elem)) {
@@ -78,7 +79,7 @@ class SudokuApp {
         this.number_inputs.forEach((e, index) => {
 
             e.addEventListener('click', () => {
-                sudoApp.numberButtonPressed(index + 1)
+                sudoApp.numberButtonPressed((index + 1).toString())
             })
             //Der Delete-Button: Löscht aktuelle selektierte Zelle
             document.querySelector('#btn-delete-cell').addEventListener('click', () => {
@@ -183,11 +184,7 @@ class SudokuApp {
         this.storageDeleteDialog.close();
         this.successDialog.close();
 
-        // Die Sudoku-Tabelle wird geladen.
-        // Schritt 1: Lade die DOM-Tabelle in die internen Wrapper-Objekte
-        this.suGrid.createGrid();
-        // Schritt 2: 
-        this.suGrid.initGrid();
+        this.suGrid.init();
         // Die App kann in verschiedenen Ausführungsmodi sein
         // 'automatic' 'manual'
         this.setGamePhase('define');
@@ -274,7 +271,7 @@ class SudokuApp {
         this.successDialog.close();
         this.setAutoExecOff();
         this.suGrid.deselect();
-        this.suGrid.initGrid();
+        this.suGrid.init();
         this.runner.displayProgress();
         this.setGamePhase('define');
     }
@@ -318,7 +315,7 @@ class SudokuApp {
         this.storageDeleteDialog.open(tmpNameList);
     }
 
-    sudokuCellPressed(cellNode, index) {
+    sudokuCellPressed(cellNode, cell, index) {
         if (this.autoExecOn) {
             this.runner.stopTimer();
             this.runner.init();
@@ -326,7 +323,7 @@ class SudokuApp {
             this.setAutoExecOff();
             this.suGrid.deselect();
         }
-        this.suGrid.select(cellNode, index);
+        this.suGrid.select(cellNode, cell, index);
     }
 
     saveStorageDlgOKPressed() {
@@ -961,7 +958,7 @@ class AutomatedRunnerOnGrid {
             // Startzustand
             // a) In der Matrix ist die Zelle des aktuellen Schrittes selektiert
             // b) Die selektierte Zelle ist noch nicht gelöscht
-            if (this.suGrid.sudoCells[currentStep.getCellIndex()].value() !== '0') {
+            if (this.suGrid.sudoCells[currentStep.getCellIndex()].getValue() !== '0') {
                 this.goneSteps++;
                 this.suGrid.deleteSelected('play', false);
                 // Nach Löschen der Zelle den neuen aktuellen Schritt bestimmen
@@ -1040,11 +1037,11 @@ class AutomatedRunnerOnGrid {
     getOptionalSelections() {
         let selectionList = [];
         for (let i = 0; i < 81; i++) {
-            if (this.suGrid.sudoCells[i].value() == '0') {
+            if (this.suGrid.sudoCells[i].getValue() == '0') {
                 let selection = {
                     index: i,
-                    options: Array.from(this.suGrid.sudoCells[i].getSecondLevelStrongPermissibleNumbers()),
-                    necessaryOnes: Array.from(this.suGrid.sudoCells[i].getNecessaryNumbers())
+                    options: Array.from(this.suGrid.sudoCells[i].getTotalAdmissibles()),
+                    necessaryOnes: Array.from(this.suGrid.sudoCells[i].getNecessarys())
                 }
                 selectionList.push(selection);
             }
@@ -1122,38 +1119,38 @@ class NineCellCollection {
         // In jeder Gruppe, Spalte und Zeile müssen alle Zahlen 1..9 einmal vorkommen.
         // Für eine konkrete Gruppe, Spalte oder Zeile sind MissingNumbers Zahlen,
         // die nicht in ihr vorkommen.
-        this.myNeccessaryNr = '0';
-        this.myMissingNumbers = new SudokuSet();
         this.myPairInfos = [];
     }
+
     clear() {
-        this.myNeccessaryNr = '0';
-        this.myMissingNumbers = new SudokuSet();
+        this.clearEvaluations();
+    }
+
+    clearEvaluations() {
         this.myPairInfos = [];
     }
 
     isInsolvable() {
         // Wenn eine Gruppe, Zeile oder Spalte MissingNumbers hat, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
-        return (this.myMissingNumbers.size > 0 || this.withConflictingSingles());
+        return (this.getMissingNumbers().size > 0 || this.withConflictingSingles());
     }
 
     calculateEqualPairs() {
         this.myPairInfos = [];
         // Iteriere über die Collection
         for (let i = 0; i < 9; i++) {
-            if (this.myCells[i].value() == '0') {
-                // let tmpPermissibles = this.myCells[i].getPermissibleNumbers()
-                let tmpPermissibles = this.myCells[i].getPermissibleNumbers()
-                if (tmpPermissibles.size == 2) {
+            if (this.myCells[i].getValue() == '0') {
+                let tmpAdmissibles = this.myCells[i].getTotalAdmissibles()
+                if (tmpAdmissibles.size == 2) {
                     // Infos zum Paar speichern
-                    let currentPair = new SudokuSet(tmpPermissibles);
+                    let currentPair = new SudokuSet(tmpAdmissibles);
                     // Prüfen, ob das Paar schon in der PaarInfoliste ist
                     if (this.myPairInfos.length == 0) {
                         let pairInfo = {
                             pairInfoIndex: i,
                             pairIndices: [this.myCells[i].getIndex()],
-                            pairSet: tmpPermissibles
+                            pairSet: tmpAdmissibles
                         }
                         this.myPairInfos.push(pairInfo);
                     } else {
@@ -1170,7 +1167,7 @@ class NineCellCollection {
                                     let pairInfo = {
                                         pairInfoIndex: i,
                                         pairIndices: [this.myCells[i].getIndex()],
-                                        pairSet: tmpPermissibles
+                                        pairSet: tmpAdmissibles
                                     }
                                     this.myPairInfos.push(pairInfo);
                                     pairInfoStored = true;
@@ -1182,167 +1179,53 @@ class NineCellCollection {
                 }
             }
         }
-        /*      this.myPairInfos.forEach(pair => {
-                  console.log('Paar:');
-                  for (let item of pair.pairSet) console.log('    ' + item);
-                  console.log('   Anzahl Auftreten:' + pair.pairIndices.length)
-              })  */
     }
 
-    calculateSecondLevelEqualPairs() {
-        this.myPairInfos = [];
-        // Iteriere über die Collection
-        for (let i = 0; i < 9; i++) {
-            if (this.myCells[i].value() == '0') {
-                let tmpPermissibles = this.myCells[i].getStrongPermissibleNumbers()
-                // let tmpPermissibles = this.myCells[i].getPermissibleNumbers()
-                if (tmpPermissibles.size == 2) {
-                    // Infos zum Paar speichern
-                    let currentPair = new SudokuSet(tmpPermissibles);
-                    // Prüfen, ob das Paar schon in der PaarInfoliste ist
-                    if (this.myPairInfos.length == 0) {
-                        let pairInfo = {
-                            pairInfoIndex: i,
-                            pairIndices: [this.myCells[i].getIndex()],
-                            pairSet: tmpPermissibles
-                        }
-                        this.myPairInfos.push(pairInfo);
-                    } else {
-                        let j = 0;
-                        let pairInfoStored = false;
-                        while (j < this.myPairInfos.length && !pairInfoStored) {
-                            if (currentPair.equals(this.myPairInfos[j].pairSet)) {
-                                // Das Paar existiert schon in der Infoliste
-                                this.myPairInfos[j].pairIndices.push(this.myCells[i].getIndex());
-                                pairInfoStored = true;
-                            } else {
-                                if (j == this.myPairInfos.length - 1) {
-                                    // Das Paar ist nicht vorhanden und wird jetzt eingefügt
-                                    let pairInfo = {
-                                        pairInfoIndex: i,
-                                        pairIndices: [this.myCells[i].getIndex()],
-                                        pairSet: tmpPermissibles
-                                    }
-                                    this.myPairInfos.push(pairInfo);
-                                    pairInfoStored = true;
-                                }
-                            }
-                            j++;
-                        }
-                    }
-                }
-            }
-        }
-        /*      this.myPairInfos.forEach(pair => {
-                  console.log('Paar:');
-                  for (let item of pair.pairSet) console.log('    ' + item);
-                  console.log('   Anzahl Auftreten:' + pair.pairIndices.length)
-              })  */
-    }
-
-
-    calculateIndirectInadmissibleNumbers() {
-        /*       let tmpType = '';
-               if (this instanceof SudokuGroup) { tmpType = 'Gruppe' };
-               if (this instanceof SudokuRow) { tmpType = 'Reihe' };
-               if (this instanceof SudokuCol) { tmpType = 'Spalte' };
-               console.log('Berechnete Paare für ' + tmpType + ' Zellen:  '
-                   + ' ' + this.myCells[0].myIndex
-                   + ', ' + this.myCells[1].myIndex
-                   + ', ' + this.myCells[2].myIndex
-                   + ', ' + this.myCells[3].myIndex
-                   + ', ' + this.myCells[4].myIndex
-                   + ', ' + this.myCells[5].myIndex
-                   + ', ' + this.myCells[6].myIndex
-                   + ', ' + this.myCells[7].myIndex
-                   + ', ' + this.myCells[8].myIndex
-               );
-       */
-
+    derive_inAdmissiblesFromEqualPairs() {
         this.calculateEqualPairs();
-        this.deriveIndirectInadmissibleNumbersFromEqualPairs();
-    }
-
-
-    calculateSecondLevelIndirectInadmissibleNumbers() {
-        this.calculateSecondLevelEqualPairs();
-        this.deriveIndirectInadmissibleNumbersFromSecondLevelEqualPairs();
-    }
-
-    deriveIndirectInadmissibleNumbersFromEqualPairs() {
+        let inAdmissiblesAdded = false;
         for (let i = 0; i < this.myPairInfos.length; i++) {
             if (this.myPairInfos[i].pairIndices.length == 2) {
                 // Ein Paar, das zweimal in der Collection vorkommt
                 let pair = this.myPairInfos[i].pairSet;
-                // Prüfe, ob Nummern dieses Paar in den Permissibles der Collection vorkommen
+                // Prüfe, ob Nummern dieses Paar in den admissibles der Collection vorkommen
                 for (let j = 0; j < 9; j++) {
-                    if (this.myCells[j].value() == '0') {
-                        //console.log('');
-                        //console.log('this.myCells[j].getIndex() = ' + this.myCells[j].getIndex());
-                        //console.log('this.myPairInfos[i].pairIndices[0] = ' + this.myPairInfos[i].pairIndices[0]);
-                        //console.log('this.myPairInfos[i].pairIndices[1] = ' + this.myPairInfos[i].pairIndices[1]);
+                    if (this.myCells[j].getValue() == '0') {
                         if (this.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[0] &&
                             this.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[1]) {
                             // Zelle der Collection, die nicht Paar-Zelle ist
-                            let tmpPermissibles = this.myCells[j].getPermissibleNumbers();
-                            let tmpIntersection = tmpPermissibles.intersection(pair);
-                            //this.myCells[j].myIndirectInadmissibleNumbers = tmpIntersection;
-                            this.myCells[j].myIndirectInadmissibleNumbers =
-                                this.myCells[j].myIndirectInadmissibleNumbers.union(tmpIntersection);
+                            let tmpAdmissibles = this.myCells[j].getTotalAdmissibles();
+                            let tmpIntersection = tmpAdmissibles.intersection(pair);
+                            let oldInAdmissibles = new SudokuSet(this.myCells[j].myLevel_gt0_inAdmissibles);
+                            this.myCells[j].myLevel_gt0_inAdmissibles =
+                                this.myCells[j].myLevel_gt0_inAdmissibles.union(tmpIntersection);
+                            inAdmissiblesAdded = inAdmissiblesAdded ||
+                                !oldInAdmissibles.equals(this.myCells[j].myLevel_gt0_inAdmissibles);
                         }
                     }
                 }
             }
         }
+        return inAdmissiblesAdded;
     }
 
-    deriveIndirectInadmissibleNumbersFromSecondLevelEqualPairs() {
-        for (let i = 0; i < this.myPairInfos.length; i++) {
-            if (this.myPairInfos[i].pairIndices.length == 2) {
-                // Ein Paar, das zweimal in der Collection vorkommt
-                let pair = this.myPairInfos[i].pairSet;
-                // Prüfe, ob Nummern dieses Paar in den Permissibles der Collection vorkommen
-                for (let j = 0; j < 9; j++) {
-                    if (this.myCells[j].value() == '0') {
-                        //console.log('');
-                        //console.log('this.myCells[j].getIndex() = ' + this.myCells[j].getIndex());
-                        //console.log('this.myPairInfos[i].pairIndices[0] = ' + this.myPairInfos[i].pairIndices[0]);
-                        //console.log('this.myPairInfos[i].pairIndices[1] = ' + this.myPairInfos[i].pairIndices[1]);
-                        if (this.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[0] &&
-                            this.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[1]) {
-                            // Zelle der Collection, die nicht Paar-Zelle ist
-                            // let tmpPermissibles = this.myCells[j].getPermissibleNumbers();
-                            let tmpPermissibles = this.myCells[j].getStrongPermissibleNumbers();
-                            let tmpIntersection = tmpPermissibles.intersection(pair);
-                            //this.myCells[j].myIndirectInadmissibleNumbers = tmpIntersection;
-                            // this.myCells[j].myIndirectInadmissibleNumbers =
-                            //    this.myCells[j].myIndirectInadmissibleNumbers.union(tmpIntersection);
-                            this.myCells[j].mySecondLevelIndirectInadmissibleNumbers =
-                                this.myCells[j].mySecondLevelIndirectInadmissibleNumbers.union(tmpIntersection);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    calculateMissingNumbers() {
+    getMissingNumbers() {
         let missingNumbers = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
         // Prüfe alle Zellen der Gruppe
         for (let i = 0; i < 9; i++) {
-            if (this.myCells[i].value() !== '0') {
+            if (this.myCells[i].getValue() !== '0') {
                 // Entferne die gesetzten Nummern der Gruppe aus missingNumbers
-                missingNumbers.delete(this.myCells[i].value());
+                missingNumbers.delete(this.myCells[i].getValue());
             } else {
-                //Entferne die Permissibles jeder Zelle der Gruppe aus missingNumbers
-                let permNumbers = this.myCells[i].getPermissibleNumbers();
-                permNumbers.forEach(e => { missingNumbers.delete(e) });
+                //Entferne die admissibles jeder Zelle der Gruppe aus missingNumbers
+                let admissibles = this.myCells[i].getAdmissibles();
+                admissibles.forEach(e => { missingNumbers.delete(e) });
             }
         }
-        this.myMissingNumbers = missingNumbers;
+        return missingNumbers;
     }
 
-    calculateNecessaryNumbers() {
+    calculateNecessarys() {
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
         // die in der Gruppe, Reihe oder Spalte der Zelle genau einmal vorkommen.
         // Hinweis: in den Influencer-Zellen insgesamt können sie dennoch mehrfach
@@ -1352,25 +1235,23 @@ class NineCellCollection {
             // Wenn die Nummer i genau einmal in der Collection vorkommt
             // trage sie ein in der Necessary-liste der Zelle
             if (cellIndex !== -1) {
-                this.myNeccessaryNr = i.toString();
-                this.myCells[cellIndex].setNecessary(i.toString());
+                this.myCells[cellIndex].addNecessary(i.toString());
             }
         }
     }
 
     occursOnce(permNr) {
         // Berechne, ob die Zahl permNr in möglichen Zahlen aller Zellen 
-        // der Gruppe genau einmal vorkommt
+        // der Collection genau einmal vorkommt
         // Rücgabe: der Index der Zelle, die das einmalige Auftreten enthält
         // -1, falls die Nummer gar nicht auftaucht oder mehrmals
         let countOccurrences = 0;
         let lastCellNr = -1;
 
-        // Iteriere über alle Zellen der Gruppe
+        // Iteriere über alle Zellen der Collection
         for (let i = 0; i < 9; i++) {
-            if (this.myCells[i].value() == '0') {
-                //if(this.myCells[i].getStrongPermissibleNumbers().has(permNr.toString())){
-                if (this.myCells[i].getPermissibleNumbers().has(permNr.toString())) {
+            if (this.myCells[i].getValue() == '0') {
+                if (this.myCells[i].getAdmissibles().has(permNr.toString())) {
                     countOccurrences++;
                     lastCellNr = i;
                 }
@@ -1397,12 +1278,12 @@ class NineCellCollection {
         let numberCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         let found = false;
         for (let i = 0; i < 9; i++) {
-            if (this.myCells[i].value() == '0') {
+            if (this.myCells[i].getValue() == '0') {
                 // Wir betrachten nur offene Zellen
                 // Denn, wenn eine der Konfliktzellen geschlossen wäre, würde
                 // die noch offene Zelle ohne zulässige Nummer sein. Eine offene Zelle
                 // ohne zulässige Nummer fangen wir schon an anderer Stelle ab.
-                let permNumbers = this.myCells[i].getPermissibleNumbers();
+                let permNumbers = this.myCells[i].getAdmissibles();
                 if (permNumbers.size == 1) {
                     permNumbers.forEach(nr => {
                         let iNr = parseInt(nr);
@@ -1423,10 +1304,49 @@ class NineCellCollection {
 }
 
 class SudokuGroup extends NineCellCollection {
-    constructor(suTable, groupNode, groupIndex) {
+    constructor(suTable, groupIndex) {
         // Die Gruppe kennt ihre Tabelle und ihren Index
         super(suTable);
         this.myGroupIndex = groupIndex;
+        this.myGroupNode = null;
+    }
+
+    display(domGridNode) {
+        let groupNode = document.createElement("div");
+        groupNode.setAttribute("class", "sudoku-group");
+        //Neue Gruppe in den Baum einhängen
+        domGridNode.appendChild(groupNode);
+        this.myGroupNode = groupNode;
+        if (this.isInsolvable()) {
+            this.myGroupNode.classList.add('err');
+            this.myGroupNode.classList.add('cell-err');
+            setTimeout(() => {
+                this.myGroupNode.classList.remove('cell-err');
+            }, 500);
+        } else {
+            this.myGroupNode.classList.remove('err');
+        }
+        // Die Zellen der Gruppe werden angezeigt
+        this.myCells.forEach(sudoCell => {
+            sudoCell.display(groupNode);
+        })
+    }
+
+    clearEvaluations() {
+        super.clearEvaluations();
+        this.myCells.forEach(sudoCell => {
+            sudoCell.clearEvaluations();
+        })
+    }
+
+    clear() {
+        super.clear();
+        this.myCells.forEach(sudoCell => {
+            sudoCell.clear();
+        })
+    }
+
+    setNode(groupNode) {
         this.myGroupNode = groupNode;
     }
 
@@ -1434,28 +1354,18 @@ class SudokuGroup extends NineCellCollection {
         this.myCells.push(sudoCell);
         sudoCell.setGroup(this);
     }
-    unsetError() {
-        this.myGroupNode.classList.remove('err');
-    }
-    setError() {
-        this.myGroupNode.classList.add('err');
-        this.myGroupNode.classList.add('cell-err');
-        setTimeout(() => {
-            this.myGroupNode.classList.remove('cell-err');
-        }, 500);
-
-    }
 }
 class SudokuRow extends NineCellCollection {
     addCell(sudoCell) {
         this.myCells.push(sudoCell);
         sudoCell.setRow(this);
     }
-    unsetError() {
-        this.myCells.forEach(cell => { cell.unsetRowError(); })
-    }
-    setError() {
-        this.myCells.forEach(cell => { cell.setRowError(); })
+
+    display() {
+        // Der Error Status wid in den Zellen angezeigt
+        this.myCells.forEach(sudoCell => {
+            sudoCell.displayRowError(this.isInsolvable());
+        })
     }
 }
 
@@ -1464,79 +1374,45 @@ class SudokuCol extends NineCellCollection {
         this.myCells.push(sudoCell);
         sudoCell.setCol(this);
     }
-    unsetError() {
-        this.myCells.forEach(cell => { cell.unsetColError(); })
-    }
-    setError() {
-        this.myCells.forEach(cell => { cell.setColError(); })
+    display() {
+        // Der Error Status wid in den Zellen angezeigt
+        this.myCells.forEach(sudoCell => {
+            sudoCell.displayColError(this.isInsolvable());
+        })
     }
 }
 
 class SudokuGrid {
     constructor() {
-        // Speichert die Sudokuzellen in der DOM-Version
-        this.cells = [];
         // Speichert die Sudokuzellen in der Wrapper-Version
         this.sudoCells = [];
-        // Speichert die Wrapper-Zellen in Gruppen
-        this.groups = [];
         this.sudoGroups = [];
         this.sudoRows = [];
         this.sudoCols = [];
+        this.init();
+    }
+
+    init() {
         // Speichert die aktuell selektierte Zelle und ihren Index
         this.selectedCell = undefined;
         this.indexSelected = -1;
-    }
-
-    getCells() {
-        return this.sudoCells;
-    }
-
-    clearCells() {
-        for (let i = 0; i < 81; i++) {
-            this.sudoCells[i].clear();
-        }
-    }
-
-    clearGroups() {
-        for (let i = 0; i < 9; i++) {
-            let tmpGroup = this.sudoGroups[i];
-            tmpGroup.clear();
-        }
-    }
-    clearRows() {
-        for (let i = 0; i < 9; i++) {
-            let tmpRow = this.sudoRows[i];
-            tmpRow.clear();
-        }
-    }
-    clearCols() {
-        for (let i = 0; i < 9; i++) {
-            let tmpCol = this.sudoCols[i];
-            tmpCol.clear();
-        }
-    }
-    initGrid() {
-        // Die Tabelle wird initialisert
-        // Schritt 1: Die aktuelle Zellenselektion wird zurückgesetzt
-        this.initCurrentSelection();
-        // Die aktuellen Zellinhalte werden gelöscht
-        this.clearCells();
-        // Die für die Zellen zulässigen Inhalte 
-        // werden neu berechnet.
-        this.refresh();
+        // Erzeuge die interne Tabelle
+        this.createSudoGrid();
+        this.evaluateGrid();
+        // Erzeuge den dazugehörigen DOM-Tree
+        this.display();
     }
 
     removeAutoExecCellInfos() {
         for (let i = 0; i < 81; i++) {
             this.sudoCells[i].clearAutoExecInfo();
         }
-
+        this.display();
     }
 
     solved() {
         for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].value() == '0') {
+            if (this.sudoCells[i].getValue() == '0') {
                 return false;
             }
         }
@@ -1545,7 +1421,7 @@ class SudokuGrid {
     countSolvedSteps() {
         let tmp = 0;
         for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].value() !== '0') {
+            if (this.sudoCells[i].getValue() !== '0') {
                 tmp++;
             }
         }
@@ -1567,7 +1443,7 @@ class SudokuGrid {
         // Die Zellen der Aufgabenstellung bleiben erhalten
         // Schritt 1: Die aktuelle Selektion wird zurückgesetzt
         this.initCurrentSelection();
-        //this.initActionHistory();
+        // this.initActionHistory();
         // Schritt 2: Die aktuellen Zellinhalte werden gelöscht
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getPhase() !== 'define') {
@@ -1582,7 +1458,7 @@ class SudokuGrid {
         let tmpGrid = [];
         for (let i = 0; i < 81; i++) {
             let storedCell = {
-                cellValue: this.sudoCells[i].value(),
+                cellValue: this.sudoCells[i].getValue(),
                 cellPhase: this.sudoCells[i].getPhase()
             };
             tmpGrid.push(storedCell);
@@ -1593,12 +1469,12 @@ class SudokuGrid {
     setCurrentState(previousState) {
         for (let i = 0; i < 81; i++) {
             let storedCell = previousState.shift();
-            this.sudoCells[i].massSetNumber(storedCell.cellValue, storedCell.cellPhase);
+            this.sudoCells[i].manualSetValue(storedCell.cellValue, storedCell.cellPhase);
         }
         this.refresh();
     }
 
-    createGrid() {
+    createSudoGrid() {
         // Eine lokale Hilfsfunktion
         function calcIndex(row, col) {
             if (row == 0 && col == 0) {
@@ -1621,39 +1497,23 @@ class SudokuGrid {
                 return 8;
             }
         }
-
-        let sudoGridNode = document.getElementById("main-sudoku-grid");
+        this.sudoCells = [];
+        this.sudoGroups = [];
+        this.sudoRows = [];
+        this.sudoCols = [];
         // Die 9 Gruppen anlegen
         for (let i = 0; i < 9; i++) {
-            let groupNode = document.createElement("div");
-            groupNode.setAttribute("class", "sudoku-group");
-            this.groups.push(groupNode);
-            //Neue Gruppe in den Baum einhängen
-            sudoGridNode.appendChild(groupNode);
-            // Die Wrapper-Zellen für die DOM-Zellen werden erzeugt
-            // und im Array sudoGroups gespeicehrt
-            let tmpSudoGroup = new SudokuGroup(this, groupNode, i);
-            this.sudoGroups.push(tmpSudoGroup);
+            this.sudoGroups.push(new SudokuGroup(this, i));
         }
-        // Die 81 Zellen anlegen
+        // Die 81 Zellen anlegen und in ihre jeweilige Gruppe einfügen
         for (let i = 0; i < 81; i++) {
             let row = Math.floor(i / 9);
             let col = i % 9;
             let groupRow = Math.floor(row / 3);
             let groupCol = Math.floor(col / 3);
-
-            let cellNode = document.createElement("div");
-            cellNode.setAttribute("class", "sudoku-grid-cell");
-            this.cells.push(cellNode);
-            // Neue Zelle in ihre Gruppe einhängen
             let tmpGroupIndex = calcIndex(groupRow, groupCol);
-            this.groups[tmpGroupIndex].appendChild(cellNode);
-            // Die Wrapper-Zellen für die DOM-Zellen werden erzeugt
-            // und im Array sudoCells gespeicehrt
-            let tmpSudoCell = new SudokuCell(this, i, cellNode);
+            let tmpSudoCell = new SudokuCell(this, i);
             this.sudoCells.push(tmpSudoCell);
-            // Gleichzeitig werden die Wrapper-Zellen in Gruppen-Wrapper gespeichert.
-            // Die Tabelle besitzt 9 Gruppen mit jeweils 9 Zellen.
             this.sudoGroups[tmpGroupIndex].addCell(tmpSudoCell);
         }
         // Influencers in den Zellen setzen
@@ -1683,6 +1543,29 @@ class SudokuGrid {
             this.sudoRows.push(row);
         }
     }
+
+    display() {
+        // Das bisherige DOM-Modell löschen
+        let domInputAreaNode = document.getElementById("inputArea");
+        let old_domGridNode = document.getElementById("main-sudoku-grid");
+        // Das neue DOM-Modell erzeugen
+        let new_domGridNode = document.createElement('div');
+        new_domGridNode.setAttribute('id', 'main-sudoku-grid');
+        new_domGridNode.classList.add('main-sudoku-grid');
+        domInputAreaNode.replaceChild(new_domGridNode, old_domGridNode);
+
+        // Die 9 Gruppen anzeigen
+        this.sudoGroups.forEach(sudoGroup => {
+            sudoGroup.display(new_domGridNode);
+        });
+        this.sudoRows.forEach(sudoRow => {
+            sudoRow.display();
+        });
+        this.sudoCols.forEach(sudoCol => {
+            sudoCol.display();
+        });
+    }
+
     initCurrentSelection() {
         this.deselect();
     }
@@ -1700,12 +1583,12 @@ class SudokuGrid {
         if ( // Das geht nur, wenn eine Zelle selektiert ist
             this.isCellSelected()) {
             if (// Wenn die Zelle leer ist, kein Problem
-                (this.selectedCell.value() == '0') ||
-                // Wenn die Zelle geüllt ist, kann nur im gleichen Modus
+                (this.selectedCell.getValue() == '0') ||
+                // Wenn die Zelle gefüllt ist, kann nur im gleichen Modus
                 // eine Neusetzung erfolgen
                 (this.selectedCell.getPhase() == currentPhase)
             ) {
-                this.selectedCell.setNumber(btnNumber, currentPhase);
+                this.selectedCell.manualSetValue(btnNumber, currentPhase);
                 this.refresh();
                 this.deselect();
             }
@@ -1717,12 +1600,12 @@ class SudokuGrid {
         if ( // Das geht nur, wenn eine Zelle selektiert ist
             this.isCellSelected()) {
             if (// Wenn die Zelle leer ist, kein Problem
-                (this.selectedCell.value() == '0') ||
+                (this.selectedCell.getValue() == '0') ||
                 // Wenn die Zelle geüllt ist, kann nur im gleichen Modus
                 // eine Neusetzung erfolgen
                 (this.selectedCell.getPhase() == 'play')
             ) {
-                this.selectedCell.autoSetNumber(currentStep);
+                this.selectedCell.autoSetValue(currentStep);
                 this.refresh();
                 this.deselect();
             }
@@ -1735,35 +1618,123 @@ class SudokuGrid {
             // Das Löschen kann nur im gleichen Modus
             // eine Neusetzung erfolgen
             if (this.selectedCell.getPhase() == currentPhase) {
-                this.selectedCell.delete();
+                this.selectedCell.clear();
                 this.refresh();
                 this.deselect();
             }
         }
     }
 
+    evaluateGrid() {
+        this.clearEvaluations();
+        this.calculate_level_0_inAdmissibles();
+        this.calculateNecessarys();
+        let c1 = this.derive_inAdmissiblesFromNecessarys();
+        let c2 = this.derive_inAdmissiblesFromSingles();
+        let c3 = this.derive_inAdmissiblesFromEqualPairs();
+        let inAdmissiblesAdded = c1 || c2 || c3;
+        let durchlauf = 1;
+        while (inAdmissiblesAdded) {
+            let c1 = this.derive_inAdmissiblesFromSingles();
+            let c2 = this.derive_inAdmissiblesFromEqualPairs();
+            inAdmissiblesAdded = c1 || c2;
+            durchlauf++;
+        }
+        console.log('durchlauf: ' + durchlauf);
+    }
+
+    clearEvaluations() {
+        // Iteriere über die Gruppen
+        for (let i = 0; i < 9; i++) {
+            let tmpGroup = this.sudoGroups[i];
+            tmpGroup.clearEvaluations();
+        }
+        // Iteriere über die Reihen
+        for (let i = 0; i < 9; i++) {
+            let tmpRow = this.sudoRows[i];
+            tmpRow.clearEvaluations();
+        }
+        // Iteriere über die Spalten
+        for (let i = 0; i < 9; i++) {
+            let tmpCol = this.sudoCols[i];
+            tmpCol.clearEvaluations();
+        }
+    }
+
+
+    derive_inAdmissiblesFromNecessarys() {
+        // Das zweite Auftreten einer notwendigen Nummer ist indirekt unzulässig
+        // Iteriere über alle Zellen
+        let inAdmissiblesAdded = false;
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].getValue() == '0') {
+                // Die Zelle ist ungesetzt
+                // Die Zelle hat selbst keine notwendige Nummer
+                let necessarysInContext = new SudokuSet();
+                this.sudoCells[i].myInfluencers.forEach(cell => {
+                    if (cell.getValue() == '0') {
+                        necessarysInContext = necessarysInContext.union(cell.getNecessarys());
+                    }
+                })
+                let oldInAdmissibles = new SudokuSet(this.sudoCells[i].myLevel_gt0_inAdmissibles);
+                this.sudoCells[i].myLevel_gt0_inAdmissibles =
+                    this.sudoCells[i].myLevel_gt0_inAdmissibles.union(necessarysInContext);
+                inAdmissiblesAdded = inAdmissiblesAdded ||
+                    !oldInAdmissibles.equals(this.sudoCells[i].myLevel_gt0_inAdmissibles);
+            }
+        }
+        return inAdmissiblesAdded;
+    }
+    derive_inAdmissiblesFromSingles() {
+        // Das das zweite Auftreten einer einzig verbliebenen Nummer ist indirekt unzulässig
+        // Iteriere über alle Zellen
+        let inAdmissiblesAdded = false;
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].getValue() == '0') {
+                // Die Zelle ist ungesetzt
+                // Die Zelle hat selbst keine notwendige Nummer
+                let singlesInContext = new SudokuSet();
+                this.sudoCells[i].myInfluencers.forEach(cell => {
+                    if (cell.getValue() == '0') {
+                        singlesInContext = singlesInContext.union(cell.getSingles());
+                    }
+                })
+                let oldInAdmissibles = new SudokuSet(this.sudoCells[i].myLevel_gt0_inAdmissibles);
+                this.sudoCells[i].myLevel_gt0_inAdmissibles =
+                    this.sudoCells[i].myLevel_gt0_inAdmissibles.union(singlesInContext);
+                inAdmissiblesAdded = inAdmissiblesAdded ||
+                    !oldInAdmissibles.equals(this.sudoCells[i].myLevel_gt0_inAdmissibles);
+            }
+        }
+        return inAdmissiblesAdded;
+    }
+
+    derive_inAdmissiblesFromEqualPairs() {
+        let c1 = false;
+        let c2 = false;
+        let c3 = false;
+        // Iteriere über die Gruppen
+        for (let i = 0; i < 9; i++) {
+            let tmpGroup = this.sudoGroups[i];
+            c1 = c1 || tmpGroup.derive_inAdmissiblesFromEqualPairs();
+        }
+        // Iteriere über die Reihen
+        for (let i = 0; i < 9; i++) {
+            let tmpRow = this.sudoRows[i];
+            c2 = c2 || tmpRow.derive_inAdmissiblesFromEqualPairs();
+        }
+        // Iteriere über die Spalten
+        for (let i = 0; i < 9; i++) {
+            let tmpCol = this.sudoCols[i];
+            c3 = c3 || tmpCol.derive_inAdmissiblesFromEqualPairs();
+        }
+        let inAdmissiblesAdded = c1 || c2 || c3;
+        return inAdmissiblesAdded;
+    }
+
     refresh() {
-        this.clearGroups();
-        this.clearRows();
-        this.clearCols();
-        this.calculatePermissibleNumbers();
-
-        this.calculateIndirectInadmissibleNumbers();
-        this.calculateNecessaryNumbers();
-        this.deriveIndirectInadmissibleNumbersFromNecessaryNumbers();
-
-        this.calculateSecondLevelIndirectInadmissibleNumbers();
-
-
-        this.setIndirectInadmissibleNumbers();
-        this.setSecondLevelIndirectInadmissibleNumbers();
-
-
-        this.calculateMissingNumbers();
-        this.markErrorCells();
-        this.markErrorGroups();
-        this.markErrorRows();
-        this.markErrorCols();
+        this.evaluateGrid();
+        this.display();
     }
 
     deselect() {
@@ -1776,153 +1747,36 @@ class SudokuGrid {
         }
     }
 
-
-    calculatePermissibleNumbers() {
+    calculate_level_0_inAdmissibles() {
         // Berechne und setze für jede nicht gesetzte Zelle 
         // die noch möglichen Nummern
-        for (let i = 0; i < this.sudoCells.length; i++) {
+        for (let i = 0; i < 81; i++) {
             let tmpCell = this.sudoCells[i];
-            tmpCell.calculatePermissibleNumbers();
-            // Nur leere Zellen erhalten zulässige Nummern
-            if (tmpCell.value() == '0') {
-                tmpCell.setPermissibleNumbers();
-            }
+            tmpCell.calculate_level_0_inAdmissibles();
         }
     }
 
-    calculateIndirectInadmissibleNumbers() {
-        function traverseCollections() {
-            // Iteriere über die Gruppen
-            for (let i = 0; i < 9; i++) {
-                let tmpGroup = sudoApp.suGrid.sudoGroups[i];
-                tmpGroup.calculateIndirectInadmissibleNumbers();
-            }
-            // Iteriere über die Reihen
-            for (let i = 0; i < 9; i++) {
-                let tmpRow = sudoApp.suGrid.sudoRows[i];
-                tmpRow.calculateIndirectInadmissibleNumbers();
-            }
-            // Iteriere über die Spalten
-            for (let i = 0; i < 9; i++) {
-                let tmpCol = sudoApp.suGrid.sudoCols[i];
-                tmpCol.calculateIndirectInadmissibleNumbers();
-            }
-        }
-
-        // Initialisierung
-        for (let i = 0; i < this.sudoCells.length; i++) {
-            let tmpCell = this.sudoCells[i];
-            tmpCell.clearIndirectInadmissibleNumbers();
-        }
-        traverseCollections();
-    }
-
-    calculateSecondLevelIndirectInadmissibleNumbers() {
-        function traverseCollections() {
-            // Iteriere über die Gruppen
-            for (let i = 0; i < 9; i++) {
-                let tmpGroup = sudoApp.suGrid.sudoGroups[i];
-                tmpGroup.calculateSecondLevelIndirectInadmissibleNumbers();
-            }
-            // Iteriere über die Reihen
-            for (let i = 0; i < 9; i++) {
-                let tmpRow = sudoApp.suGrid.sudoRows[i];
-                tmpRow.calculateSecondLevelIndirectInadmissibleNumbers();
-            }
-            // Iteriere über die Spalten
-            for (let i = 0; i < 9; i++) {
-                let tmpCol = sudoApp.suGrid.sudoCols[i];
-                tmpCol.calculateSecondLevelIndirectInadmissibleNumbers();
-            }
-        }
-
-        // Initialisierung
-        for (let i = 0; i < this.sudoCells.length; i++) {
-            let tmpCell = this.sudoCells[i];
-            tmpCell.clearSecondLevelIndirectInadmissibleNumbers();
-        }
-        traverseCollections();
-    }
-
-
-
-    setIndirectInadmissibleNumbers() {
-        for (let i = 0; i < sudoApp.suGrid.sudoCells.length; i++) {
-            let tmpCell = sudoApp.suGrid.sudoCells[i];
-            if (tmpCell.value() == '0') {
-                // Setze die Anzeige
-                tmpCell.myIndirectInadmissibleNumbers.forEach(nr => {
-                    tmpCell.setIndirectInadmissibleNumber(nr);
-                });
-            }
-        }
-    }
-
-    setSecondLevelIndirectInadmissibleNumbers() {
-        for (let i = 0; i < sudoApp.suGrid.sudoCells.length; i++) {
-            let tmpCell = sudoApp.suGrid.sudoCells[i];
-            if (tmpCell.value() == '0') {
-                // Setze die Anzeige
-                tmpCell.mySecondLevelIndirectInadmissibleNumbers.forEach(nr => {
-                    tmpCell.setSecondLevelIndirectInadmissibleNumber(nr);
-                });
-            }
-        }
-    }
-
-
-    calculateNecessaryNumbers() {
+    calculateNecessarys() {
         // Berechne und setze für jede nicht gesetzte Zelle
         // in der Menge ihrer möglichen Nummern die
         // notwendigen Nummern
-        // Necessary-Einträge initialisieren
-        for (let i = 0; i < this.sudoCells.length; i++) {
-            let tmpCell = this.sudoCells[i];
-            if (tmpCell.value() == '0') {
-                tmpCell.clearNecessarys();
-            }
-        }
         // Iteriere über die Gruppen
         for (let i = 0; i < 9; i++) {
             let tmpGroup = this.sudoGroups[i];
-            tmpGroup.calculateNecessaryNumbers();
+            tmpGroup.calculateNecessarys();
         }
         // Iteriere über die Reihen
         for (let i = 0; i < 9; i++) {
             let tmpRow = this.sudoRows[i];
-            tmpRow.calculateNecessaryNumbers();
+            tmpRow.calculateNecessarys();
         }
         // Iteriere über die Spalten
         for (let i = 0; i < 9; i++) {
             let tmpCol = this.sudoCols[i];
-            tmpCol.calculateNecessaryNumbers();
+            tmpCol.calculateNecessarys();
         }
     }
 
-    deriveIndirectInadmissibleNumbersFromNecessaryNumbers() {
-        // Das zweite Auftreten einer notwendigen Nummer ist indirekt unzulässig
-        // Ebenso ist das zweite Auftreten einer einzig verbliebenen Nummer indirekt unzulässig
-        // Iteriere über alle Zellen
-        for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].value() == '0') {
-                // Die Zelle ist ungesetzt
-                // Die Zelle hat selbst keine notwendige Nummer
-                let perms2check = this.sudoCells[i].getPermissibleNumbers();
-                let neccessaryNrsInContext = new SudokuSet();
-                this.sudoCells[i].myInfluencers.forEach(cell => {
-                    if (cell.value() == '0') {
-                        neccessaryNrsInContext = neccessaryNrsInContext.union(cell.getNecessaryNumbers());
-                        neccessaryNrsInContext = neccessaryNrsInContext.union(cell.getIndirectNecessaryNumbers());
-                    }
-                })
-                let inAdmissibleNrs = perms2check.intersection(neccessaryNrsInContext);
-                inAdmissibleNrs.forEach(necNr => {
-                    this.sudoCells[i].myIndirectInadmissibleNumbers.add(necNr);
-                })
-            }
-
-        }
-    }
 
     calculateMissingNumbers() {
         // Iteriere über die Gruppen
@@ -1943,55 +1797,7 @@ class SudokuGrid {
 
     }
 
-    markErrorCells() {
-        for (let i = 0; i < this.sudoCells.length; i++) {
-            let tmpCell = this.sudoCells[i];
-            tmpCell.unsetError();
-            if (tmpCell.isInsolvable()) {
-                tmpCell.setError();
-            }
-        }
-    }
-
-    markErrorGroups() {
-        for (let i = 0; i < 9; i++) {
-            let tmpGroup = this.sudoGroups[i];
-            tmpGroup.unsetError();
-            if (tmpGroup.isInsolvable()) {
-                tmpGroup.setError();
-            }
-        }
-    }
-
-    markErrorRows() {
-        for (let i = 0; i < 9; i++) {
-            let tmpRow = this.sudoRows[i];
-            tmpRow.unsetError();
-            if (tmpRow.isInsolvable()) {
-                tmpRow.setError();
-            }
-        }
-    }
-
-    markErrorCols() {
-        for (let i = 0; i < 9; i++) {
-            let tmpCol = this.sudoCols[i];
-            tmpCol.unsetError();
-            if (tmpCol.isInsolvable()) {
-                tmpCol.setError();
-            }
-        }
-    }
-    cellOf(cellNode) {
-        // Get the wrapper of a DOM-Cell
-        for (let i = 0; i < this.cells.length; i++) {
-            if (this.sudoCells[i].cellNode() == cellNode) {
-                return this.sudoCells[i];
-            }
-        }
-    }
-
-    selectCell(cell, index) {
+    select(sudoCell, index) {
         // Selektiere in der Tabelle eine Zelle
         // Parameter:
         //      cell: Wrapper der Zelle
@@ -1999,22 +1805,14 @@ class SudokuGrid {
         // 1. Lösche eine möglche alte Selektion
         this.deselect();
         // 2. Setze die neue Selektion in der slektierten Zelle
-        cell.select();
+        sudoCell.select();
         // 3.Setze die information in der Tabelle 
-        this.setCurrentSelection(cell, index);
-    }
-
-    select(cellNode, index) {
-        // Die gleiche Operation wie zuvor, jetzt aber mit dem Knoten der Zelle
-        // Setze eine Zelle auf selektiert
-        let tmpCell = this.cellOf(cellNode);
-        this.selectCell(tmpCell, index);
+        this.setCurrentSelection(sudoCell, index);
     }
 
     indexSelect(index) {
-        this.selectCell(this.sudoCells[index], index);
+        this.select(this.sudoCells[index], index);
     }
-
 
     influencersOfCell(index) {
         // Jede Zelle besitzt die Menge der sie beeinflussenden Zellen
@@ -2074,17 +1872,14 @@ class SudokuGrid {
 
 
 class SudokuCell {
-    constructor(suTable, index, cellNode) {
+    constructor(suTable, index) {
         // Die Zelle kennt ihre Tabelle und ihren Index
         this.myGrid = suTable;
         this.myIndex = index;
         // Die Zelle kennt ihre DOM-Version
-        this.myCellNode = cellNode;
+        this.myCellNode = null;
         // Mit der Erzeugung des Wrappers wird
         // auch der Eventhandler der Zelle gesetzt
-        this.myCellNode.addEventListener('click', () => {
-            sudoApp.sudokuCellPressed(cellNode, index);
-        });
         // Speichert die Phase, die beim Setzen einer Nummer
         // in der Zelle aktuell war.
         this.myGamePhase = '';
@@ -2095,40 +1890,18 @@ class SudokuCell {
         // Speichert ein für alle mal bei der Initialisierung
         // die beeinflussenden Zellen dieser Zelle
         this.myInfluencers = [];
-        // Speichert die aktuell zulässigen Zahlen für diese Zelle
-        this.myPermissibles = new SudokuSet();
-        // Nummern, die Paar-Widersprüche erzeugen, wenn sie gesetzt würden.
-        this.myIndirectInadmissibleNumbers = new SudokuSet();
-        // Nummern, die Second Level Paar-Widersprüche erzeugen, wenn sie gesetzt würden.
-        this.mySecondLevelIndirectInadmissibleNumbers = new SudokuSet();
-        // Speichert, falls vorhanden direkt notwendige Zahlen dieser Zelle. 
-        // Mehr als eine bedeuten einen Widerspruch in der Lösung.
-        // Notwendige Nummern sind zulässige Nummern einer Zelle,
-        // die in der Gruppe, Reihe oder Spalte der Zelle genau einmal vorkommen.
-        this.myNecessarys = new SudokuSet();
-    }
-    initNecessarys() {
+        // Die gesetzte Nummer dieser Zelle. 
+        // Die Nummer '0' bedeutet ungesetzte Nummer.
+        this.myValue = '0';
+        // 'manual' oder 'auto'
+        this.myValueType = 'manual';
+        // Speichert die aktuell unzulässigen Zahlen für diese Zelle
+        this.myLevel_0_inAdmissibles = new SudokuSet();
+        this.myLevel_gt0_inAdmissibles = new SudokuSet();
+        // Außer bei widerspruchsvollen Sudokus einelementig
         this.myNecessarys = new SudokuSet();
     }
 
-    clear() {
-        this.initNecessarys();
-        this.unsetNumber();
-        this.unsetError();
-        this.unsetRowError();
-        this.unsetColError();
-    }
-    getNecessaryNumbers() {
-        return this.myNecessarys;
-    }
-    getIndirectNecessaryNumbers() {
-        let tmpSet = this.getStrongPermissibleNumbers();
-        if (tmpSet.size == 1) {
-            return tmpSet;
-        } else {
-            return new SudokuSet();
-        }
-    }
     setInfluencers(influencers) {
         this.myInfluencers = influencers;
     }
@@ -2142,38 +1915,90 @@ class SudokuCell {
     setCol(col) {
         this.myCol = col;
     }
-    setNumber(number, gamePhase) {
-        this.privateSetNumber(number, gamePhase);
 
-        this.myCellNode.classList.add('zoom-in');
-        setTimeout(() => {
-            this.myCellNode.classList.remove('zoom-in');
-        }, 500);
+    clear() {
+        // Lösche Inhalt der Zelle
+        this.myValue = '0';
+        this.myValueType = 'manual';
+        this.clearEvaluations();
     }
 
-    massSetNumber(number, gamePhase) {
-        //Wird augerufen für die Wiederherstellung
-        this.privateSetNumber(number, gamePhase);
+    clearEvaluations() {
+        this.myLevel_0_inAdmissibles = new SudokuSet();
+        this.myLevel_gt0_inAdmissibles = new SudokuSet();
+        this.myNecessarys = new SudokuSet();
     }
 
-    privateSetNumber(number, gamePhase) {
-        this.myCellNode.setAttribute('data-value', number);
-        //remove permissible numbers
-        while (this.myCellNode.firstChild) {
-            this.myCellNode.removeChild(this.myCellNode.lastChild);
+    calculate_level_0_inAdmissibles() {
+        // Level 0 unzulässige Nummern dieser Zelle sind Nummern,
+        // die an anderer Stelle in der Gruppe, Zeile oder Spalte dieser Zelle
+        // gesetzt sind.Sie werden in der Zelle nicht mehr angezeigt
+        this.myInfluencers.forEach(influenceCell => {
+            if (influenceCell.getValue() !== '0') {
+                // Die Einflusszelle ist gesetzt
+                this.myLevel_0_inAdmissibles.add(influenceCell.getValue());
+            }
+        })
+        return this.myLevel_0_inAdmissibles;
+    }
+
+    getTotalInAdmissibles() {
+        return this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles);
+    }
+    getAdmissibles() {
+        // Die zulässigen Zahlen einer Zelle sind das Komplement der unzulässigen Zahlen
+        return new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
+            this.myLevel_0_inAdmissibles);
+    }
+    getTotalAdmissibles() {
+        // Die zulässigen Zahlen einer Zelle sind das Komplement der unzulässigen Zahlen
+        return new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
+            this.getTotalInAdmissibles());
+    }
+
+    getNecessarys() {
+        return this.myNecessarys;
+    }
+    getSingles() {
+        let singles = this.getTotalAdmissibles();
+        if (singles.size == 1) {
+            return singles;
+        } else {
+            return new SudokuSet();
         }
-        // Lösche die 'nested'-Klassifizierung 
-        this.myCellNode.classList.remove('nested')
-        this.myCellNode.classList.remove('err');
+    }
 
-        //Setze das data-value Attribut der Zelle
-        this.myCellNode.setAttribute('data-value', number);
-        // Setze das Zahlelement
-        this.myCellNode.innerHTML = number;
-        // Notiere den Modus im Wrapper
-        this.myGamePhase = gamePhase;
-        // Setze die Klassifizierung in der DOM-Zelle
-        if (gamePhase == 'define') {
+    displayAdmissibles() {
+        this.myCellNode.classList.add('nested');
+        // Übertrage die berechneten Möglchen in das DOM
+        this.getAdmissibles().forEach(e => {
+            let admissibleNrElement = document.createElement('div');
+            admissibleNrElement.setAttribute('data-value', e);
+            admissibleNrElement.innerHTML = e;
+            this.myCellNode.appendChild(admissibleNrElement);
+        });
+    }
+
+    displayNecessary() {
+        let admissibleNodes = this.myCellNode.children;
+        for (let i = 0; i < admissibleNodes.length; i++) {
+            if (this.myNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
+                admissibleNodes[i].classList.add('neccessary');
+            }
+        }
+    }
+
+    displayLevel_gt0_inAdmissibles() {
+        let admissibleNodes = this.myCellNode.children;
+        for (let i = 0; i < admissibleNodes.length; i++) {
+            if (this.myLevel_gt0_inAdmissibles.has(admissibleNodes[i].getAttribute('data-value'))) {
+                admissibleNodes[i].classList.add('inAdmissible');
+            }
+        }
+    }
+
+    displayGamePhase() {
+        if (this.myGamePhase == 'define') {
             this.myCellNode.classList.add('define');
             this.myCellNode.classList.remove('play');
         } else {
@@ -2182,47 +2007,33 @@ class SudokuCell {
         }
     }
 
-    autoSetNumber(currentStep) {
-        let number = currentStep.getValue();
-        this.myCellNode.setAttribute('data-value', number);
-        //remove permissible numbers
-        while (this.myCellNode.firstChild) {
-            this.myCellNode.removeChild(this.myCellNode.lastChild);
-        }
-        // Lösche die 'nested'-Klassifizierung 
-        this.myCellNode.classList.remove('nested')
-        this.myCellNode.classList.remove('err');
-        this.myCellNode.classList.remove('auto-value');
+    displayMainValueNode() {
+        this.myCellNode.setAttribute('data-value', this.myValue);
+        this.myCellNode.innerHTML = this.myValue;
+    }
 
-        // Notiere den Modus im Wrapper
-        this.myGamePhase = 'play';
-        // Setze die Klassifizierung in der DOM-Zelle
-        this.myCellNode.classList.add('play');
-        this.myCellNode.classList.remove('define');
-
-        //Setze das data-value Attribut der Zelle
-        this.myCellNode.setAttribute('data-value', number);
-        // Klassifizire die Zelle als 'auto-value'
-        this.myCellNode.classList.add('auto-value');
-        // Die step-Nummer, also die wievielte Nummer wird gesetzt, setzen
-        let stepNumber = this.myGrid.countSolvedSteps() - this.myGrid.countDefSteps();
+    displayAutoStepNumber() {
+        // Die step-Nummer, also die wievielte Nummer wird gesetzt
         let autoStepNumberElement = document.createElement('div');
         autoStepNumberElement.setAttribute('class', 'auto-step-number');
-        autoStepNumberElement.innerHTML = stepNumber;
-
+        autoStepNumberElement.innerHTML = this.myAutoStepNumber;
         this.myCellNode.appendChild(autoStepNumberElement);
+    }
 
-        // Die gesetzte Nummer selbst
+    displaySubValueNode() {
+        // Die gesetzte Nummer im Tripel
         let cellNumberElement = document.createElement('div');
-        cellNumberElement.setAttribute('data-value', number);
+        cellNumberElement.setAttribute('data-value', this.myValue);
         cellNumberElement.setAttribute('class', 'auto-value');
-        cellNumberElement.innerHTML = number;
+        cellNumberElement.innerHTML = this.myValue;
+        return cellNumberElement;
+    }
 
+    displayOptions() {
         // Die optionalen Elemente dieser Zelle
-        let options = currentStep.options();
         let optionNode = document.createElement('div');
         optionNode.setAttribute('class', 'value-options');
-        let optionLength = options.length;
+        let optionLength = this.myOptions.length;
         if (optionLength > 2) {
             let startIndex = optionLength - 2;
             // Lange Liste beginnt mit Sternchen
@@ -2232,8 +2043,8 @@ class SudokuCell {
             optionNumberElement.setAttribute('class', 'open');
             optionNode.appendChild(optionNumberElement);
             //Die zwei weiteren der Liste
-            for (let i = startIndex; i < options.length; i++) {
-                let option = options[i];
+            for (let i = startIndex; i < this.myOptions.length; i++) {
+                let option = this.myOptions[i];
                 let optionNumberElement = document.createElement('div');
                 optionNumberElement.setAttribute('data-value', option.value);
                 if (option.open) {
@@ -2243,8 +2054,9 @@ class SudokuCell {
                 optionNode.appendChild(optionNumberElement);
             }
         } else {
-            for (let i = 0; i < options.length; i++) {
-                let option = options[i];
+            // <= 2 Optionen
+            for (let i = 0; i < this.myOptions.length; i++) {
+                let option = this.myOptions[i];
                 let optionNumberElement = document.createElement('div');
                 optionNumberElement.setAttribute('data-value', option.value);
                 if (option.open) {
@@ -2254,89 +2066,127 @@ class SudokuCell {
                 optionNode.appendChild(optionNumberElement);
             }
         }
+        return optionNode;
+    }
+
+    displayAutoValuePair(subValueNode, optionsNode) {
         // Das Paar aus der Nummer und den möglchen Nummern
         let autoValuePair = document.createElement('div');
         autoValuePair.setAttribute('class', 'autoValuePair');
-        autoValuePair.appendChild(cellNumberElement);
-        if (optionLength > 1) {
-            autoValuePair.appendChild(optionNode);
+        autoValuePair.appendChild(subValueNode);
+        if (this.myOptions.length > 1) {
+            autoValuePair.appendChild(optionsNode);
         }
+        return autoValuePair;
+    }
+
+    displayAutoValue() {
+        //Setze das data-value Attribut der Zelle
+        this.myCellNode.setAttribute('data-value', this.myValue);
+        // Automatisch gesetzte Nummer
+        this.myCellNode.classList.add('auto-value');
+        this.displayAutoStepNumber();
+        let subValueNode = this.displaySubValueNode();
+        let optionsNode = this.displayOptions();
+        let autoValuePair = this.displayAutoValuePair(subValueNode, optionsNode);
         this.myCellNode.appendChild(autoValuePair);
-        this.myCellNode.classList.add('zoom-in');
-        setTimeout(() => {
-            this.myCellNode.classList.remove('zoom-in');
-        }, 500);
-
     }
-    clearAutoExecInfo() {
-        //remove options
-        if (this.myGamePhase == 'play') {
-            while (this.myCellNode.firstChild) {
-                this.myCellNode.removeChild(this.myCellNode.lastChild);
+
+    displayManualValue() {
+        this.displayMainValueNode();
+    }
+
+    display(groupNode) {
+        // Die DOM-Version der Zelle wird erzeugt
+        let cellNode = document.createElement("div");
+        cellNode.setAttribute("class", "sudoku-grid-cell");
+        // Neue Zelle in ihre Gruppe einhängen
+        groupNode.appendChild(cellNode);
+        this.myCellNode = cellNode;
+        this.myCellNode.addEventListener('click', () => {
+            sudoApp.sudokuCellPressed(this, this.myIndex);
+        });
+        this.displayCellContent();
+    }
+
+    displayCellContent() {
+        if (this.myValue == '0') {
+            // Die Zelle ist noch nicht gesetzt
+            this.displayAdmissibles();
+            this.displayNecessary();
+            this.displayLevel_gt0_inAdmissibles();
+        } else {
+            // Die Zelle ist mit einer Nummer belegt
+            // Setze die Klassifizierung in der DOM-Zelle
+            this.displayGamePhase();
+            if (this.myValueType == 'auto') {
+                this.displayAutoValue();
+            } else {
+                this.displayManualValue();
             }
-            this.myCellNode.classList.remove('auto-value');
-            // Setze das Zahlelement
-            this.myCellNode.innerHTML = this.myCellNode.getAttribute('data-value');
+        }
+        this.displayError();
+    }
+
+
+    manualSetValue(nr, gamePhase) {
+        this.myValue = nr;
+        this.myValueType = 'manual';
+        this.myGamePhase = gamePhase;
+    }
+
+    autoSetValue(currentStep) {
+        let nr = currentStep.getValue();
+        this.myValue = nr;
+        this.myValueType = 'auto';
+        this.myGamePhase = 'play';
+        this.myAutoStepNumber = this.myGrid.countSolvedSteps() - this.myGrid.countDefSteps();
+        this.myOptions = currentStep.options();
+    }
+
+    clearAutoExecInfo() {
+        this.myValueType = 'manual';
+        this.myAutoStepNumber = 0;
+        this.myOptions = [];
+    }
+
+
+    displayError() {
+        if (this.isInsolvable()) {
+            this.myCellNode.classList.add('err');
+            this.myCellNode.classList.add('cell-err');
+            setTimeout(() => {
+                this.myCellNode.classList.remove('cell-err');
+            }, 500);
+        } else {
+            this.myCellNode.classList.remove('err');
         }
     }
 
-    unsetNumber() {
-        // Setze das Value-Attribut im Knoten auf 0
-        // Damit kann man leicht eine leere Zelle bestimmen
-        this.myCellNode.setAttribute('data-value', '0');
-        this.myCellNode.innerHTML = '';
-        this.myGamePhase = '';
-        // Lösche die gegebenfalls vorhandene Define-KLassifizierung
-        this.myCellNode.classList.remove('define');
-        this.myCellNode.classList.remove('play');
-        this.myCellNode.classList.remove('auto-value');
 
-        this.myCellNode.classList.add('zoom-in');
-        setTimeout(() => {
-            this.myCellNode.classList.remove('zoom-in');
-        }, 500);
-
-        // Hinweis: Die Neuberechnung der möglchen und notwendigen
-        // Zahlen erfolgt auf Tabellenebene. 
+    displayRowError(errorStatus) {
+        if (errorStatus) {
+            this.myCellNode.classList.add('row-err');
+            this.myCellNode.classList.add('cell-err');
+            setTimeout(() => {
+                this.myCellNode.classList.remove('cell-err');
+            }, 500);
+        } else {
+            this.myCellNode.classList.remove('col-err');
+        }
     }
 
-
-    setError() {
-        this.myCellNode.classList.add('err');
-        this.myCellNode.classList.add('cell-err');
-        setTimeout(() => {
-            this.myCellNode.classList.remove('cell-err');
-        }, 500);
+    displayColError(errorStatus) {
+        if (errorStatus) {
+            this.myCellNode.classList.add('col-err');
+            this.myCellNode.classList.add('cell-err');
+            setTimeout(() => {
+                this.myCellNode.classList.remove('cell-err');
+            }, 500);
+        } else {
+            this.myCellNode.classList.remove('col-err');
+        }
     }
-
-    unsetError() {
-        this.myCellNode.classList.remove('err');
-    }
-
-    setRowError() {
-        this.myCellNode.classList.add('row-err');
-        this.myCellNode.classList.add('cell-err');
-        setTimeout(() => {
-            this.myCellNode.classList.remove('cell-err');
-        }, 500);
-    }
-
-    unsetRowError() {
-        this.myCellNode.classList.remove('row-err');
-    }
-    setColError() {
-        this.myCellNode.classList.add('col-err');
-        this.myCellNode.classList.add('cell-err');
-        setTimeout(() => {
-            this.myCellNode.classList.remove('cell-err');
-        }, 500);
-    }
-
-    unsetColError() {
-        this.myCellNode.classList.remove('col-err');
-    }
-
-
 
     getPhase() {
         return this.myGamePhase;
@@ -2358,74 +2208,23 @@ class SudokuCell {
     unsetSelected() {
         this.myCellNode.classList.remove('hover');
     }
-    value() {
-        return this.myCellNode.getAttribute('data-value');
+    getValue() {
+        return this.myValue;
     }
 
-    cellNode() {
+    getCellNode() {
         return this.myCellNode;
     }
 
-    calculateDirectInadmissibleNumbers() {
-        // Direkt unzulässige Nummern sind Nummern,
-        // die in der Gruppe, Zeile oder Spalte der Zelle schon gesetzt sind 
-        let inAdmissibles = new SudokuSet();
-        this.myInfluencers.forEach(influenceCell => {
-            let tmpValue = influenceCell.value();
-            if (tmpValue !== '0') {
-                // tmpValue ist eine gesetzte Nummer
-                inAdmissibles.add(tmpValue);
-            }
-        })
-        return inAdmissibles;
-    }
 
-    calculatePermissibleNumbers() {
-        // Die zulässigen Zahlen einer Zelle sind die noch nicht gesetzten Nummern
-        // this.myPermissibles = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9'].filter(x =>
-        //    !this.calculateDirectInadmissibleNumbers().has(x)));
-        this.myPermissibles = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
-            this.calculateDirectInadmissibleNumbers());
-    }
-
-    setPermissibleNumbers() {
-        // Lösche die bisherigen Zahlen
-        this.myCellNode.innerHTML = '';
-        this.myCellNode.setAttribute('data-value', '0');
-        while (this.myCellNode.firstChild) {
-            this.myCellNode.removeChild(this.myCellNode.lastChild);
-        }
-        // Klassifizire die Zelle als 'nested'
-        this.myCellNode.classList.add('nested');
-        // Übertrage die berechneten Möglchen in das DOM
-        this.myPermissibles.forEach(e => {
-            let permNumberElement = document.createElement('div');
-            permNumberElement.setAttribute('data-value', e);
-            permNumberElement.innerHTML = e;
-            this.myCellNode.appendChild(permNumberElement);
-        });
-    }
-    getPermissibleNumbers() {
-        return this.myPermissibles;
-    }
-
-    getStrongPermissibleNumbers() {
-        return this.myPermissibles.difference(this.myIndirectInadmissibleNumbers);
-    }
-
-    getSecondLevelStrongPermissibleNumbers() {
-        let tempAdmissibles = this.myPermissibles.difference(this.myIndirectInadmissibleNumbers);
-        return tempAdmissibles.difference(this.mySecondLevelIndirectInadmissibleNumbers);
-    }
-
-    countMyPermissibleNumbers() {
-        return this.myPermissibles.size;
+    countMyAdmissibles() {
+        return this.getAdmissibles().size;
     }
 
     countMyOpenInfluencers() {
         let tmpCount = 0;
         this.myInfluencers.forEach(influencer => {
-            if (influencer.value() == '0') {
+            if (influencer.getValue() == '0') {
                 tmpCount++;
             }
         });
@@ -2438,122 +2237,42 @@ class SudokuCell {
         let tmpWeight = 0;
         let summand = 0;
         this.myInfluencers.forEach(influencer => {
-            if (influencer.value() == '0') {
+            if (influencer.getValue() == '0') {
                 // Influencer mit geringer Größe werden bevorzugt
-                summand = 9 - influencer.getSecondLevelStrongPermissibleNumbers().size;
+                summand = 9 - influencer.getTotalAdmissibles().size;
             }
             tmpWeight = tmpWeight + summand;
         });
         return tmpWeight;
     }
 
-    countMyInfluencersPermissibleNumbers() {
+    countMyInfluencersAdmissibles() {
         let tmpCount = 0;
         this.myInfluencers.forEach(influencer => {
-            if (influencer.value() == '0') {
-                tmpCount = tmpCount + influencer.countMyPermissibleNumbers();
+            if (influencer.getValue() == '0') {
+                tmpCount = tmpCount + influencer.countMyAdmissibles();
             }
         });
         return tmpCount;
     }
 
 
-    setNecessary(permNr) {
-        // Klassifiziere die Zahl permNr in der Menge der möglichen Zahlen
-        // als notwendig
-        this.myNecessarys.add(permNr);
-        let permNodes = this.myCellNode.children;
-        for (let i = 0; i < permNodes.length; i++) {
-            if (permNodes[i].getAttribute('data-value') == permNr) {
-                permNodes[i].classList.add('neccessary');
-            }
-        }
+    addNecessary(nr) {
+        this.myNecessarys.add(nr);
     }
 
-    setIndirectInadmissibleNumber(permNr) {
-        // Klassifiziere die Zahl permNr in der Menge der möglichen Zahlen
-        // als notwendig
-        this.myIndirectInadmissibleNumbers.add(permNr);
-        let permNodes = this.myCellNode.children;
-        for (let i = 0; i < permNodes.length; i++) {
-            if (permNodes[i].getAttribute('data-value') == permNr) {
-                permNodes[i].classList.add('inAdmissible');
-            }
-        }
-    }
-
-    setSecondLevelIndirectInadmissibleNumber(permNr) {
-        // Klassifiziere die Zahl permNr in der Menge der möglichen Zahlen
-        // als notwendig
-        this.mySecondLevelIndirectInadmissibleNumbers.add(permNr);
-        let permNodes = this.myCellNode.children;
-        for (let i = 0; i < permNodes.length; i++) {
-            if (permNodes[i].getAttribute('data-value') == permNr) {
-                permNodes[i].classList.add('inAdmissible2Level');
-            }
-        }
-    }
-
-    unsetNecessary(permNr) {
-        let permNodes = this.myCellNode.children;
-        for (let i = 1; i < permNodes.length; i++) {
-            if (permNodes[i].getAttribute('data-value') == permNr) {
-                permNodes[i].classList.remove('neccessary');
-            }
-        }
-        this.myNecessarys.delete(permNr);
-    }
-
-    unsetIndirectInadmissibleNumber(permNr) {
-        let permNodes = this.myCellNode.children;
-        for (let i = 1; i < permNodes.length; i++) {
-            if (permNodes[i].getAttribute('data-value') == permNr) {
-                permNodes[i].classList.remove('inAdmissible');
-            }
-        }
-        this.myIndirectInadmissibleNumbers.delete(permNr);
-    }
-
-    unsetSecondLevelIndirectInadmissibleNumber(permNr) {
-        let permNodes = this.myCellNode.children;
-        for (let i = 1; i < permNodes.length; i++) {
-            if (permNodes[i].getAttribute('data-value') == permNr) {
-                permNodes[i].classList.remove('inAdmissible2Level');
-            }
-        }
-        this.mySecondLevelIndirectInadmissibleNumbers.delete(permNr);
-    }
-
-    clearIndirectInadmissibleNumbers() {
-        this.myIndirectInadmissibleNumbers.forEach(e => this.unsetIndirectInadmissibleNumber(e));
-        this.myIndirectInadmissibleNumbers = new SudokuSet();
-    }
-    clearSecondLevelIndirectInadmissibleNumbers() {
-        this.mySecondLevelIndirectInadmissibleNumbers.forEach(e => this.unsetSecondLevelIndirectInadmissibleNumber(e));
-        this.mySecondLevelIndirectInadmissibleNumbers = new SudokuSet();
-    }
-
-    clearNecessarys() {
-        this.myNecessarys.forEach(e => this.unsetNecessary(e));
-        this.myNecessarys = new SudokuSet();
-    }
-
-    delete() {
-        this.unsetNumber();
-    }
     isInsolvable() {
         return (
             // Für die nicht gesetzte Zelle ist die Anzahl notwendiger Nummern größer 1
-            (this.myNecessarys.size > 1 && (this.value() == '0')) ||
+            (this.getValue() == '0' && this.myNecessarys.size > 1) ||
             // Eine notwendige Nummer ist gleichzeitig unzulässig      
-            this.myIndirectInadmissibleNumbers.intersection(this.myNecessarys).size > 0 ||
-            // Für die Zelle gibt es keine stark zulässige Nummer mehr.
-            // Schwach zulässig: nicht direkt unzulässig
-            // Stark zulässig: nicht direkt oder indirekt unzulässig
-            this.getStrongPermissibleNumbers().size == 0 ||
+            this.getTotalInAdmissibles().intersection(this.myNecessarys).size > 0 ||
+            // Für die Zelle gibt es keine total zulässige Nummer mehr.
+            this.getTotalAdmissibles().size == 0 ||
             // Die Nummer der gesetzten Zelle ist nicht zulässig.
-            !(this.value() == '0' || this.myPermissibles.has(this.value())));
+            (this.getValue() !== '0' && this.myLevel_0_inAdmissibles.has(this.getValue())));
     }
+
     getIndex() {
         return this.myIndex;
     }

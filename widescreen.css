@@ -217,8 +217,13 @@ body {
     border: 3px solid var(--selected-cell-border-color);
 }
 
-.sudoku-grid-cell.err, .sudoku-group.err {
+.sudoku-group.err {
     background-color: var(--error-cell-bg-color);
+    color: var(--error-cell-color);
+}
+
+.sudoku-grid-cell.err {
+    border: 3px solid var(--error-cell-bg-color);
     color: var(--error-cell-color);
 }
 
