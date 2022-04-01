@@ -1133,7 +1133,11 @@ class NineCellCollection {
     isInsolvable() {
         // Wenn eine Gruppe, Zeile oder Spalte MissingNumbers hat, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
-        return (this.getMissingNumbers().size > 0 || this.withConflictingSingles());
+        // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
+        return (this.getMissingNumbers().size > 0 ||
+            this.withConflictingNecessarys() ||
+            this.withConflictingSingles() ||
+            this.withConflictingPairs());
     }
 
     calculateEqualPairs() {
@@ -1264,6 +1268,37 @@ class NineCellCollection {
         }
     }
 
+    withConflictingNecessarys() {
+        // Conflicting necessarys sind zwei oder mehr Notwendige mit derselben Nummer in einer Collection.
+        // Sie fordern ja, dass dieselbe Nummer zweimal
+        // in der Collection vorkommen soll. Mit anderen Worten: 
+        // Wenn es eine Collection mit Conflicting necessarys gibt, ist das Sudoku unlösbar.
+
+        // Idee: Zähle für jede Nummer 1 .. 9 die Häufigkeit ihres Auftretens als notwendige Nummer
+        // numberCounts[0] = Häufigkeit der 1 als notwendige Nummer, 
+        // numberCounts[1] = Häufigkeit der 2 als notwendige Nummer, 
+        // usw.
+        let numberCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let found = false;
+        for (let i = 0; i < 9; i++) {
+            if (this.myCells[i].getValue() == '0') {
+                // Wir betrachten nur offene Zellen
+                let necessarys = this.myCells[i].getNecessarys();
+                necessarys.forEach(nr => {
+                    let iNr = parseInt(nr);
+                    numberCounts[iNr - 1]++;
+                    if (numberCounts[iNr - 1] > 1) {
+                        found = true;
+                    };
+                });
+            }
+            // Wenn wir den ersten Konflikt gefunden haben, können wir die Suche
+            // abbrechen. 
+            if (found) return true;
+        }
+        return false;
+    }
+
     withConflictingSingles() {
         // Singles sind Zellen, die nur noch exakt eine zulässige Nummer haben.
         // Conflicting singles sind zwei oder mehr singles in einer Collection, 
@@ -1283,7 +1318,7 @@ class NineCellCollection {
                 // Denn, wenn eine der Konfliktzellen geschlossen wäre, würde
                 // die noch offene Zelle ohne zulässige Nummer sein. Eine offene Zelle
                 // ohne zulässige Nummer fangen wir schon an anderer Stelle ab.
-                let permNumbers = this.myCells[i].getAdmissibles();
+                let permNumbers = this.myCells[i].getTotalAdmissibles();
                 if (permNumbers.size == 1) {
                     permNumbers.forEach(nr => {
                         let iNr = parseInt(nr);
@@ -1301,13 +1336,32 @@ class NineCellCollection {
         return false;
     }
 
+    withConflictingPairs() {
+        // Pairs sind Zellen, die nur noch exakt zwei zulässige Nummern haben.
+        // Conflicting pairs sind drei oder mehr gleiche Paare in einer Collection.
+        // Denn sie fordern ja, dass drei Zellen mit nur zwei verschiedenen Nummern
+        // gefüllt werden sollen. Mit anderen Worten: 
+        // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
+
+        this.calculateEqualPairs();
+        let inAdmissiblesAdded = false;
+        let found = false;
+        for (let i = 0; i < this.myPairInfos.length; i++) {
+            if (this.myPairInfos[i].pairIndices.length > 2) {
+                // Ein Paar, das dreimal oder mehr in der Collection vorkommt
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 
 class SudokuGroup extends NineCellCollection {
     constructor(suTable, groupIndex) {
         // Die Gruppe kennt ihre Tabelle und ihren Index
         super(suTable);
-        this.myGroupIndex = groupIndex;
+        this.myIndex = groupIndex;
         this.myGroupNode = null;
     }
 
@@ -1640,7 +1694,7 @@ class SudokuGrid {
             inAdmissiblesAdded = c1 || c2;
             durchlauf++;
         }
-        console.log('durchlauf: ' + durchlauf);
+        // console.log('durchlauf: ' + durchlauf);
     }
 
     clearEvaluations() {
@@ -1700,10 +1754,19 @@ class SudokuGrid {
                     }
                 })
                 let oldInAdmissibles = new SudokuSet(this.sudoCells[i].myLevel_gt0_inAdmissibles);
-                this.sudoCells[i].myLevel_gt0_inAdmissibles =
-                    this.sudoCells[i].myLevel_gt0_inAdmissibles.union(singlesInContext);
-                inAdmissiblesAdded = inAdmissiblesAdded ||
-                    !oldInAdmissibles.equals(this.sudoCells[i].myLevel_gt0_inAdmissibles);
+                let mySingle = this.sudoCells[i].getSingles();
+                if (mySingle.size == 1 && singlesInContext.isSuperset(mySingle)) {
+                    // Dann würde jetzt die Menge der zulässigen Nummern leer gemacht werden,
+                    // also eine unlösbares Sudoku festgestellt.
+                    // Wir wollen dies hier nicht tun sondern auf der Collection-Ebene
+                    // soll die Unlösbarkeit festgestellt werden.
+                    // Das ist für den Anwender leichter verständlich
+                } else {
+                    this.sudoCells[i].myLevel_gt0_inAdmissibles =
+                        this.sudoCells[i].myLevel_gt0_inAdmissibles.union(singlesInContext);
+                    inAdmissiblesAdded = inAdmissiblesAdded ||
+                        !oldInAdmissibles.equals(this.sudoCells[i].myLevel_gt0_inAdmissibles);
+                }
             }
         }
         return inAdmissiblesAdded;
@@ -1957,7 +2020,7 @@ class SudokuCell {
     }
 
     getNecessarys() {
-        return this.myNecessarys;
+        return new SudokuSet(this.myNecessarys);
     }
     getSingles() {
         let singles = this.getTotalAdmissibles();
@@ -2163,26 +2226,33 @@ class SudokuCell {
         }
     }
 
-
     displayRowError(errorStatus) {
         if (errorStatus) {
-            this.myCellNode.classList.add('row-err');
-            this.myCellNode.classList.add('cell-err');
-            setTimeout(() => {
-                this.myCellNode.classList.remove('cell-err');
-            }, 500);
+            if (this.myGroup.myGroupNode.classList.contains('err')) {
+                // Dann wird der Row-error nicht angezeigt.
+            } else {
+                this.myCellNode.classList.add('row-err');
+                this.myCellNode.classList.add('cell-err');
+                setTimeout(() => {
+                    this.myCellNode.classList.remove('cell-err');
+                }, 500);
+            }
         } else {
-            this.myCellNode.classList.remove('col-err');
+            this.myCellNode.classList.remove('row-err');
         }
     }
 
     displayColError(errorStatus) {
         if (errorStatus) {
-            this.myCellNode.classList.add('col-err');
-            this.myCellNode.classList.add('cell-err');
-            setTimeout(() => {
-                this.myCellNode.classList.remove('cell-err');
-            }, 500);
+            if (this.myGroup.myGroupNode.classList.contains('err')) {
+                // Dann wird der Row-error nicht angezeigt.
+            } else {
+                this.myCellNode.classList.add('col-err');
+                this.myCellNode.classList.add('cell-err');
+                setTimeout(() => {
+                    this.myCellNode.classList.remove('cell-err');
+                }, 500);
+            }
         } else {
             this.myCellNode.classList.remove('col-err');
         }
@@ -2266,7 +2336,7 @@ class SudokuCell {
             // Für die nicht gesetzte Zelle ist die Anzahl notwendiger Nummern größer 1
             (this.getValue() == '0' && this.myNecessarys.size > 1) ||
             // Eine notwendige Nummer ist gleichzeitig unzulässig      
-            this.getTotalInAdmissibles().intersection(this.myNecessarys).size > 0 ||
+            // this.getTotalInAdmissibles().intersection(this.myNecessarys).size > 0 ||
             // Für die Zelle gibt es keine total zulässige Nummer mehr.
             this.getTotalAdmissibles().size == 0 ||
             // Die Nummer der gesetzten Zelle ist nicht zulässig.

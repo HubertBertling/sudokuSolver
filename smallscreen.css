@@ -188,7 +188,7 @@ body {
 
 .nested>div.inAdmissible {
     font-size: 1.5rem;
-    background-color: var(--delete-btn-bg-color);
+    background-color: Crimson;
     color: white;
     border: 1px solid white;
 }
@@ -204,7 +204,10 @@ body {
 }
 
 .nested>div.neccessary.inAdmissible {
-    background:blueviolet;
+ /*  background:blueviolet; */
+ background-color: #56c7aa;
+ color: #0d1117;
+ 
 }
 
 
@@ -217,10 +220,6 @@ body {
     color: var(--error-cell-color);
 }
 
-.sudoku-grid-cell.err {
-    border: 3px solid var(--error-cell-bg-color);
-    color: var(--error-cell-color);
-}
 
 
 .sudoku-grid-cell.row-err, .sudoku-grid-cell.col-err  {
@@ -234,6 +233,16 @@ body {
     border-left: 5px solid var(--error-cell-bg-color);
     border-right: 5px solid var(--error-cell-bg-color);
 }
+
+
+
+.sudoku-grid-cell.err {
+    border: 3px solid var(--error-cell-bg-color);
+    color: var(--nested-cell-color);
+    border: 1px solid #0050ff;
+}
+
+
 
 .sudoku-grid-cell.err.selected {
     background-color: black;
