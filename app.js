@@ -1135,7 +1135,7 @@ class NineCellCollection {
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
         return (this.getMissingNumbers().size > 0 ||
-            this.withConflictingNecessarys() ||
+           // this.withConflictingNecessarys() ||
             this.withConflictingSingles() ||
             this.withConflictingPairs());
     }
@@ -1268,41 +1268,10 @@ class NineCellCollection {
         }
     }
 
-    withConflictingNecessarys() {
-        // Conflicting necessarys sind zwei oder mehr Notwendige mit derselben Nummer in einer Collection.
-        // Sie fordern ja, dass dieselbe Nummer zweimal
-        // in der Collection vorkommen soll. Mit anderen Worten: 
-        // Wenn es eine Collection mit Conflicting necessarys gibt, ist das Sudoku unlösbar.
-
-        // Idee: Zähle für jede Nummer 1 .. 9 die Häufigkeit ihres Auftretens als notwendige Nummer
-        // numberCounts[0] = Häufigkeit der 1 als notwendige Nummer, 
-        // numberCounts[1] = Häufigkeit der 2 als notwendige Nummer, 
-        // usw.
-        let numberCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-        let found = false;
-        for (let i = 0; i < 9; i++) {
-            if (this.myCells[i].getValue() == '0') {
-                // Wir betrachten nur offene Zellen
-                let necessarys = this.myCells[i].getNecessarys();
-                necessarys.forEach(nr => {
-                    let iNr = parseInt(nr);
-                    numberCounts[iNr - 1]++;
-                    if (numberCounts[iNr - 1] > 1) {
-                        found = true;
-                    };
-                });
-            }
-            // Wenn wir den ersten Konflikt gefunden haben, können wir die Suche
-            // abbrechen. 
-            if (found) return true;
-        }
-        return false;
-    }
-
     withConflictingSingles() {
-        // Singles sind Zellen, die nur noch exakt eine zulässige Nummer haben.
+        // Singles sind Zellen, die nur noch exakt eine zulässige oder notwendige Nummer haben.
         // Conflicting singles sind zwei oder mehr singles in einer Collection, 
-        // die dieselbe eine zulässige Nummer haben. Sie fordern ja, dass dieselbe Nummer zweimal
+        // die dieselbe eine zulässige notwendige Nummer haben. Sie fordern ja, dass dieselbe Nummer zweimal
         // in der Collection vorkommen soll. Mit anderen Worten: 
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
 
@@ -1315,18 +1284,20 @@ class NineCellCollection {
         for (let i = 0; i < 9; i++) {
             if (this.myCells[i].getValue() == '0') {
                 // Wir betrachten nur offene Zellen
-                // Denn, wenn eine der Konfliktzellen geschlossen wäre, würde
-                // die noch offene Zelle ohne zulässige Nummer sein. Eine offene Zelle
-                // ohne zulässige Nummer fangen wir schon an anderer Stelle ab.
+                let singleNr = 0;
+                let necessarys = this.myCells[i].getNecessarys();
                 let permNumbers = this.myCells[i].getTotalAdmissibles();
-                if (permNumbers.size == 1) {
-                    permNumbers.forEach(nr => {
-                        let iNr = parseInt(nr);
-                        numberCounts[iNr - 1]++;
-                        if (numberCounts[iNr - 1] > 1) {
-                            found = true;
-                        };
-                    });
+
+                if (necessarys.size == 1) {
+                    necessarys.forEach(nr => { singleNr = parseInt(nr); })
+                } else if (permNumbers.size == 1) {
+                    permNumbers.forEach(nr => { singleNr = parseInt(nr); })
+                }
+                if (singleNr !== 0) {
+                    numberCounts[singleNr - 1]++;
+                    if (numberCounts[singleNr - 1] > 1) {
+                        found = true;
+                    }
                 }
             }
             // Wenn wir den ersten Konflikt gefunden haben, können wir die Suche
@@ -1683,13 +1654,13 @@ class SudokuGrid {
         this.clearEvaluations();
         this.calculate_level_0_inAdmissibles();
         this.calculateNecessarys();
-        let c1 = this.derive_inAdmissiblesFromNecessarys();
-        let c2 = this.derive_inAdmissiblesFromSingles();
+      //  let c1 = this.derive_inAdmissiblesFromNecessarys();
+        let c2 = this.derive_inAdmissiblesFromSinglesOrNecessarys();
         let c3 = this.derive_inAdmissiblesFromEqualPairs();
-        let inAdmissiblesAdded = c1 || c2 || c3;
+        let inAdmissiblesAdded = c2 || c3;
         let durchlauf = 1;
         while (inAdmissiblesAdded) {
-            let c1 = this.derive_inAdmissiblesFromSingles();
+            let c1 = this.derive_inAdmissiblesFromSinglesOrNecessarys();
             let c2 = this.derive_inAdmissiblesFromEqualPairs();
             inAdmissiblesAdded = c1 || c2;
             durchlauf++;
@@ -1715,52 +1686,33 @@ class SudokuGrid {
         }
     }
 
-
-    derive_inAdmissiblesFromNecessarys() {
-        // Das zweite Auftreten einer notwendigen Nummer ist indirekt unzulässig
+    derive_inAdmissiblesFromSinglesOrNecessarys() {
+        // Das das zweite Auftreten einer einzig verbliebenen Nummer oder einer notwendigen Nummer ist unzulässig
         // Iteriere über alle Zellen
         let inAdmissiblesAdded = false;
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() == '0') {
                 // Die Zelle ist ungesetzt
-                // Die Zelle hat selbst keine notwendige Nummer
-                let necessarysInContext = new SudokuSet();
-                this.sudoCells[i].myInfluencers.forEach(cell => {
-                    if (cell.getValue() == '0') {
-                        necessarysInContext = necessarysInContext.union(cell.getNecessarys());
-                    }
-                })
-                let oldInAdmissibles = new SudokuSet(this.sudoCells[i].myLevel_gt0_inAdmissibles);
-                this.sudoCells[i].myLevel_gt0_inAdmissibles =
-                    this.sudoCells[i].myLevel_gt0_inAdmissibles.union(necessarysInContext);
-                inAdmissiblesAdded = inAdmissiblesAdded ||
-                    !oldInAdmissibles.equals(this.sudoCells[i].myLevel_gt0_inAdmissibles);
-            }
-        }
-        return inAdmissiblesAdded;
-    }
-    derive_inAdmissiblesFromSingles() {
-        // Das das zweite Auftreten einer einzig verbliebenen Nummer ist indirekt unzulässig
-        // Iteriere über alle Zellen
-        let inAdmissiblesAdded = false;
-        for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].getValue() == '0') {
-                // Die Zelle ist ungesetzt
-                // Die Zelle hat selbst keine notwendige Nummer
                 let singlesInContext = new SudokuSet();
                 this.sudoCells[i].myInfluencers.forEach(cell => {
                     if (cell.getValue() == '0') {
+                        singlesInContext = singlesInContext.union(cell.getNecessarys());
                         singlesInContext = singlesInContext.union(cell.getSingles());
                     }
                 })
                 let oldInAdmissibles = new SudokuSet(this.sudoCells[i].myLevel_gt0_inAdmissibles);
                 let mySingle = this.sudoCells[i].getSingles();
+                mySingle = mySingle.union(this.sudoCells[i].getNecessarys());
                 if (mySingle.size == 1 && singlesInContext.isSuperset(mySingle)) {
-                    // Dann würde jetzt die Menge der zulässigen Nummern leer gemacht werden,
-                    // also eine unlösbares Sudoku festgestellt.
-                    // Wir wollen dies hier nicht tun sondern auf der Collection-Ebene
-                    // soll die Unlösbarkeit festgestellt werden.
-                    // Das ist für den Anwender leichter verständlich
+                    // Wenn die Zelle selbst eine single-Nummer enthält und
+                    // diese Nummer ein zweites Mal als Single im Kontext auftaucht,
+                    // dann gibt es eine Gruppe, Reihe oder Spalte, in der zwei Singles mit
+                    // derselben Nummer auftreten. Dies bedeutet die Unlösbarkeit des Sudokus,
+                    // festgestellt auf der Collection-Ebene.
+                    // Würde man hier die einzige Nummer streichen, hätte die Zelle keine zulässige Nummer,
+                    // auch ein Kriterium für ein unlösbares Sudoku.
+                    // Auf der Collection-Ebene ist die Unlösbarkeit einerseits leichter verständlich und wird
+                    // andererseits einen Schritt früher erkannt.
                 } else {
                     this.sudoCells[i].myLevel_gt0_inAdmissibles =
                         this.sudoCells[i].myLevel_gt0_inAdmissibles.union(singlesInContext);
