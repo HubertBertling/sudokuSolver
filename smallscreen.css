@@ -236,11 +236,13 @@ body {
 
 
 
+
 .sudoku-grid-cell.err {
-    border: 3px solid var(--error-cell-bg-color);
-    color: var(--nested-cell-color);
+    background-color: var(--error-cell-bg-color);
+    color: var(--error-cell-color);
     border: 1px solid #0050ff;
 }
+
 
 
 
