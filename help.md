@@ -104,29 +104,33 @@ Es können mehrere dieser Bedingungen gleichzeitig vorliegen.
 
 ### Unlösbare Zellen
 
-![Keine](./images/nochoice.png) ![ZweiNotwendige](./images/twoNeccessary.png) ![Konflikt](./images/conflct.png) ![Widerspruch](./images/contradiction.png)
+![Keine](./images/nochoice.png) ![ZweiNotwendige](./images/twoNeccessary.png) ![Konflikt](./images/conflct.png)
 
-Unlösbare Zellen hatten wir oben schon kennengelernt. Es sind dies Zellen mit leerer Option, Zellen mit widersprüchlicher Notwendigkeit, Zellen mit direkt unzulässiger Nummer und Zellen mit Notwendig-Unzulässig-Widerspruch.
+Unlösbare Zellen hatten wir oben schon kennengelernt. Es sind dies Zellen mit leerer Option, Zellen mit widersprüchlicher Notwendigkeit und Zellen mit direkt unzulässiger Nummer.
 
 ### Unlösbare Gruppen
 
 ![Unlösbare Gruppe](./images/insolvablegroup.png)
 
-So wie es unlösbare Zellen geben kann - erkennbar an ihrem roten Hintergrund - so kann es auch unlösbare Gruppen geben. Eine Gruppe ist unlösbar,
+So wie es unlösbare Zellen geben kann - erkennbar an ihrem roten Hintergrund - so kann es auch unlösbare Gruppen geben. Eine Gruppe ist unlösbar, wenn eine der folgenden Bedingungen vorliegt:
 
-1. wenn nicht mehr alle Nummern 1 ... 9 in ihr vorkommen. Im ersten Beispiel fehlt die Nummer 3. Oder,
-1. wenn eine Nummer gleichzeitig in verschiedene Zellen der Gruppe gesetzt werden soll, wie die 3 im nachfolgenden Beispiel.
-
-![Gruppenkonflikt](./images/groupconflict.png)
+1. **Nummernunvollständigkeit**: In der Gruppe kommen nicht mehr alle Nummern 1 ... 9 vor. Im ersten Beispiel fehlt die Nummer 3.
+1. **Nummernwiderspruch**: Eine Nummer soll gleichzeitig in verschiedene Zellen der Gruppe gesetzt werden wie die 3 im nachfolgenden Beispiel.
+1. **Pairing-Widerspruch**: Das erste Beispiel kann auch anders interpretiert werden: Wegen des Paares {1 9} dürfen weder die 1 noch die 9 ein weiteres mal in der Gruppe vorkommen. Im Beispiel kommt im Widerspruch dazu die 9 ein weiteres mal vor.
 
 Tritt während der automatischen Ausführung eine solche unlösbare Gruppe auf, schaltet der Solver in den Rückwärts-Modus um.
 
+| |
+|---------|
+|Nummernwiderspruch: mit der Nummer 3:   ![Gruppenkonflikt](./images/groupconflict.png)|
+
 ### Unlösbare Zeilen und/oder Spalten
 
-Es kann auch unlösbare Zeilen oder Spalten geben. Eine Spalte oder Zeile ist unlösbar (ganz analog zu der Definition für Gruppen),
+Es kann auch unlösbare Zeilen oder Spalten geben. Eine Spalte oder Zeile ist unlösbar (ganz analog zu der Definition für Gruppen), wenn eine der folgenden Bedingungen vorliegt:
 
-1. wenn nicht mehr alle Nummern 1 ... 9 in ihr vorkommen. Oder,
-1. wenn eine Nummer gleichzeitig in verschiedene Zellen der Zeile/Spalte gesetzt werden soll, wie die 1 im nachfolgenden Beispiel.
+1. **Nummernunvollständigkeit**: In der Zeile und/oder Spalte kommen nicht mehr alle Nummern 1 ... 9 vor.
+1. **Nummernwiderspruch**: Eine Nummer soll gleichzeitig in verschiedene Zellen der Zeile und/oder Spalte gesetzt werden wie die 1 im nachfolgenden Beispiel.
+1. **Pairing-Widerspruch**: Bei Auftreten eines Paares dürfen die Nummern des Paares kein weiteres mal in der Zeile und/oder Spalte vorkommen.
 
 ![Spaltenkonflikt](./images/colconflct.png)
 
