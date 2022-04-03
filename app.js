@@ -1141,7 +1141,6 @@ class NineCellCollection {
             // Vermutlich ist die getMissingNumbers-Prüfung überflüssig.
             // Es dürfte dann auch eine leere Zelle in der Gruppe geben?
             // this.getMissingNumbers().size > 0 ||
-            this.withConflictingNecessarys() ||
             this.withConflictingSingles() ||
             this.withConflictingPairs());
     }
@@ -1272,37 +1271,6 @@ class NineCellCollection {
         } else {
             return -1;
         }
-    }
-
-    withConflictingNecessarys() {
-        // Conflicting necessarys sind zwei oder mehr Notwendige mit derselben Nummer in einer Collection.
-        // Sie fordern ja, dass dieselbe Nummer zweimal
-        // in der Collection vorkommen soll. Mit anderen Worten: 
-        // Wenn es eine Collection mit Conflicting necessarys gibt, ist das Sudoku unlösbar.
-
-        // Idee: Zähle für jede Nummer 1 .. 9 die Häufigkeit ihres Auftretens als notwendige Nummer
-        // numberCounts[0] = Häufigkeit der 1 als notwendige Nummer, 
-        // numberCounts[1] = Häufigkeit der 2 als notwendige Nummer, 
-        // usw.
-        let numberCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-        let found = false;
-        for (let i = 0; i < 9; i++) {
-            if (this.myCells[i].getValue() == '0') {
-                // Wir betrachten nur offene Zellen
-                let necessarys = this.myCells[i].getNecessarys();
-                necessarys.forEach(nr => {
-                    let iNr = parseInt(nr);
-                    numberCounts[iNr - 1]++;
-                    if (numberCounts[iNr - 1] > 1) {
-                        found = true;
-                    };
-                });
-            }
-            // Wenn wir den ersten Konflikt gefunden haben, können wir die Suche
-            // abbrechen. 
-            if (found) return true;
-        }
-        return false;
     }
 
     withConflictingSingles() {

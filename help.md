@@ -114,9 +114,8 @@ Unlösbare Zellen hatten wir oben schon kennengelernt. Es sind dies Zellen mit l
 
 So wie es unlösbare Zellen geben kann - erkennbar an ihrem roten Hintergrund - so kann es auch unlösbare Gruppen geben. Eine Gruppe ist unlösbar, wenn eine der folgenden Bedingungen vorliegt:
 
-1. **Nummernunvollständigkeit**: In der Gruppe kommen nicht mehr alle Nummern 1 ... 9 vor. Im ersten Beispiel fehlt die Nummer 3.
-1. **Nummernwiderspruch**: Eine Nummer soll gleichzeitig in verschiedene Zellen der Gruppe gesetzt werden wie die 3 im nachfolgenden Beispiel.
-1. **Pairing-Widerspruch**: Das erste Beispiel kann auch anders interpretiert werden: Wegen des Paares {1 9} dürfen weder die 1 noch die 9 ein weiteres mal in der Gruppe vorkommen. Im Beispiel kommt im Widerspruch dazu die 9 ein weiteres mal vor.
+1. **Nummernwiderspruch:** Eine Nummer soll gleichzeitig in verschiedene Zellen der Gruppe gesetzt werden wie die 3 im nachfolgenden Beispiel.
+1. **Pairing-Widerspruch:** Wegen des Paares {1 9} im ersten Beispiel dürfen weder die 1 noch die 9 ein weiteres mal in der Gruppe vorkommen. Im Beispiel kommt im Widerspruch dazu die 9 ein weiteres mal vor.
 
 Tritt während der automatischen Ausführung eine solche unlösbare Gruppe auf, schaltet der Solver in den Rückwärts-Modus um.
 
@@ -128,7 +127,6 @@ Tritt während der automatischen Ausführung eine solche unlösbare Gruppe auf, 
 
 Es kann auch unlösbare Zeilen oder Spalten geben. Eine Spalte oder Zeile ist unlösbar (ganz analog zu der Definition für Gruppen), wenn eine der folgenden Bedingungen vorliegt:
 
-1. **Nummernunvollständigkeit**: In der Zeile und/oder Spalte kommen nicht mehr alle Nummern 1 ... 9 vor.
 1. **Nummernwiderspruch**: Eine Nummer soll gleichzeitig in verschiedene Zellen der Zeile und/oder Spalte gesetzt werden wie die 1 im nachfolgenden Beispiel.
 1. **Pairing-Widerspruch**: Bei Auftreten eines Paares dürfen die Nummern des Paares kein weiteres mal in der Zeile und/oder Spalte vorkommen.
 
