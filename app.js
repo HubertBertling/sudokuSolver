@@ -1064,17 +1064,20 @@ class AutomatedRunnerOnGrid {
             return emptySelection;
         }
 
-        //Bestimmt die nächste Zelle mit ein-Option-Menge
-        let oneOption = this.calculateOneOptionSelectionFrom(optionList);
-        if (oneOption.index !== -1) {
-            return oneOption;
-        }
 
         //Bestimmt die nächste Zelle mit notwendiger Nummer unter den zulässigen Nummern
         let tmpNeccessary = this.calculateNeccesarySelectionFrom(optionList);
         if (tmpNeccessary.index !== -1) {
             return tmpNeccessary;
         }
+
+
+        //Bestimmt die nächste Zelle mit ein-Option-Menge
+        let oneOption = this.calculateOneOptionSelectionFrom(optionList);
+        if (oneOption.index !== -1) {
+            return oneOption;
+        }
+
 
 
         let tmpMin = this.calculateMinSelectionFrom(optionList);
@@ -1084,6 +1087,7 @@ class AutomatedRunnerOnGrid {
         // Diese Zelle kann eine mit der vollen Optionsmenge sein
         return tmpMin;
     }
+    
     deadlockReached() {
         // Deadlock ist erreicht, wenn es eine unlösbare Zelle gibt
         for (let i = 0; i < 81; i++) {
