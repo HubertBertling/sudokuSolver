@@ -88,6 +88,9 @@ class SudokuApp {
 
         });
 
+        document.getElementById("inAdmissiblesVisible").addEventListener('input', () => {
+            sudoApp.suGrid.display();
+        })
         document.querySelector('#speedSetting').addEventListener('input', (e) => {
             sudoApp.runner.setSpeed(e.target.value);
         });
@@ -1134,7 +1137,10 @@ class NineCellCollection {
         // Wenn eine Gruppe, Zeile oder Spalte MissingNumbers hat, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
-        return (this.getMissingNumbers().size > 0 ||
+        return (
+            // Vermutlich ist die getMissingNumbers-Prüfung überflüssig.
+            // Es dürfte dann auch eine leere Zelle in der Gruppe geben?
+            // this.getMissingNumbers().size > 0 ||
             this.withConflictingNecessarys() ||
             this.withConflictingSingles() ||
             this.withConflictingPairs());
@@ -1723,7 +1729,6 @@ class SudokuGrid {
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() == '0') {
                 // Die Zelle ist ungesetzt
-                // Die Zelle hat selbst keine notwendige Nummer
                 let necessarysInContext = new SudokuSet();
                 this.sudoCells[i].myInfluencers.forEach(cell => {
                     if (cell.getValue() == '0') {
@@ -1756,11 +1761,11 @@ class SudokuGrid {
                 let oldInAdmissibles = new SudokuSet(this.sudoCells[i].myLevel_gt0_inAdmissibles);
                 let mySingle = this.sudoCells[i].getSingles();
                 if (mySingle.size == 1 && singlesInContext.isSuperset(mySingle)) {
-                    // Dann würde jetzt die Menge der zulässigen Nummern leer gemacht werden,
-                    // also eine unlösbares Sudoku festgestellt.
-                    // Wir wollen dies hier nicht tun sondern auf der Collection-Ebene
-                    // soll die Unlösbarkeit festgestellt werden.
-                    // Das ist für den Anwender leichter verständlich
+                    // Das ist die Situation: Dieselbe Single zweimal in einer Gruppe, Spalte oder Reihe.
+                    // Also eine unlösbares Sudoku.
+                    // Das weitere Ausrechnen bringt nichts, da die Unlösbarkeit
+                    // bereits auf der Collection-Ebene festgestellt werden kann.
+                    // Auch ist auf der Collection-Ebene die Unlösbarkeit für den Anwender leichter verständlich.
                 } else {
                     this.sudoCells[i].myLevel_gt0_inAdmissibles =
                         this.sudoCells[i].myLevel_gt0_inAdmissibles.union(singlesInContext);
@@ -2032,14 +2037,28 @@ class SudokuCell {
     }
 
     displayAdmissibles() {
-        this.myCellNode.classList.add('nested');
-        // Übertrage die berechneten Möglchen in das DOM
-        this.getAdmissibles().forEach(e => {
-            let admissibleNrElement = document.createElement('div');
-            admissibleNrElement.setAttribute('data-value', e);
-            admissibleNrElement.innerHTML = e;
-            this.myCellNode.appendChild(admissibleNrElement);
-        });
+        let inAdmissiblesVisible = document.getElementById("inAdmissiblesVisible").checked;
+        if (inAdmissiblesVisible) {
+            this.myCellNode.classList.add('nested');
+            // Übertrage die berechneten Möglchen in das DOM
+            this.getAdmissibles().forEach(e => {
+                let admissibleNrElement = document.createElement('div');
+                admissibleNrElement.setAttribute('data-value', e);
+                admissibleNrElement.innerHTML = e;
+                this.myCellNode.appendChild(admissibleNrElement);
+            });
+        } else {
+            // Angezeigte inAdmissibles sind zunächst einmal Zulässige
+            // und dürfen jetzt nicht mehr angezeigt werden
+            this.myCellNode.classList.add('nested');
+            // Übertrage die berechneten Möglchen in das DOM
+            this.getTotalAdmissibles().forEach(e => {
+                let admissibleNrElement = document.createElement('div');
+                admissibleNrElement.setAttribute('data-value', e);
+                admissibleNrElement.innerHTML = e;
+                this.myCellNode.appendChild(admissibleNrElement);
+            });
+        }
     }
 
     displayNecessary() {
