@@ -1063,23 +1063,16 @@ class AutomatedRunnerOnGrid {
             }
             return emptySelection;
         }
-
-
         //Bestimmt die nächste Zelle mit notwendiger Nummer unter den zulässigen Nummern
         let tmpNeccessary = this.calculateNeccesarySelectionFrom(optionList);
         if (tmpNeccessary.index !== -1) {
             return tmpNeccessary;
         }
-
-
         //Bestimmt die nächste Zelle mit ein-Option-Menge
         let oneOption = this.calculateOneOptionSelectionFrom(optionList);
         if (oneOption.index !== -1) {
             return oneOption;
         }
-
-
-
         let tmpMin = this.calculateMinSelectionFrom(optionList);
         // Falls es keine notwendigen Nummern gibt:
         // Bestimmt eine nächste Zelle mit minimaler Anzahl zulässiger Nummern
@@ -1138,13 +1131,9 @@ class NineCellCollection {
     }
 
     isInsolvable() {
-        // Wenn eine Gruppe, Zeile oder Spalte MissingNumbers hat, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
         return (
-            // Vermutlich ist die getMissingNumbers-Prüfung überflüssig.
-            // Es dürfte dann auch eine leere Zelle in der Gruppe geben?
-            // this.getMissingNumbers().size > 0 ||
             this.withConflictingSingles() ||
             this.withConflictingPairs());
     }
@@ -1220,22 +1209,6 @@ class NineCellCollection {
             }
         }
         return inAdmissiblesAdded;
-    }
-
-    getMissingNumbers() {
-        let missingNumbers = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
-        // Prüfe alle Zellen der Gruppe
-        for (let i = 0; i < 9; i++) {
-            if (this.myCells[i].getValue() !== '0') {
-                // Entferne die gesetzten Nummern der Gruppe aus missingNumbers
-                missingNumbers.delete(this.myCells[i].getValue());
-            } else {
-                //Entferne die admissibles jeder Zelle der Gruppe aus missingNumbers
-                let admissibles = this.myCells[i].getAdmissibles();
-                admissibles.forEach(e => { missingNumbers.delete(e) });
-            }
-        }
-        return missingNumbers;
     }
 
     calculateNecessarys() {
