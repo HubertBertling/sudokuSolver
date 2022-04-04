@@ -2174,6 +2174,7 @@ class SudokuCell {
         this.myValue = nr;
         this.myValueType = 'manual';
         this.myGamePhase = gamePhase;
+        this.myAutoStepNumber = this.myGrid.countSolvedSteps() - this.myGrid.countDefSteps();       
     }
 
     autoSetValue(currentStep) {
