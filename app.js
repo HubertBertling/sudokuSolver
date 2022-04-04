@@ -1129,7 +1129,7 @@ class NineCellCollection {
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
         return (
-            this.withConflictingNecessarys() ||
+           // this.withConflictingNecessarys() ||
             this.withConflictingSingles() ||
             this.withConflictingPairs());
     }
@@ -1194,8 +1194,6 @@ class NineCellCollection {
                             // Zelle der Collection, die nicht Paar-Zelle ist
                             let tmpAdmissibles = this.myCells[j].getTotalAdmissibles();
                             let tmpIntersection = tmpAdmissibles.intersection(pair);
-                            // Notwendige Nummern können nicht unzulässig werden
-                            tmpIntersection = tmpIntersection.difference(this.myCells[j].getNecessarys());
                             let oldInAdmissibles = new SudokuSet(this.myCells[j].myLevel_gt0_inAdmissibles);
                             this.myCells[j].myLevel_gt0_inAdmissibles =
                                 this.myCells[j].myLevel_gt0_inAdmissibles.union(tmpIntersection);
@@ -1247,7 +1245,7 @@ class NineCellCollection {
             return -1;
         }
     }
-
+/*
     withConflictingNecessarys() {
         // Conflicting necessarys sind zwei oder mehr Notwendige mit derselben Nummer in einer Collection.
         // Sie fordern ja, dass dieselbe Nummer zweimal
@@ -1278,7 +1276,7 @@ class NineCellCollection {
         }
         return false;
     }
-
+*/
     withConflictingSingles() {
         // Singles sind Zellen, die nur noch exakt eine zulässige Nummer haben.
         // Conflicting singles sind zwei oder mehr singles in einer Collection, 
@@ -1701,10 +1699,7 @@ class SudokuGrid {
         // Iteriere über alle Zellen
         let inAdmissiblesAdded = false;
         for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].getValue() == '0' 
-                // Die Zelle ist ungesetzt
-                // Necessarys können nicht unzulässig werden
-                && this.sudoCells[i].getNecessarys().size == 0) {
+            if (this.sudoCells[i].getValue() == '0') {
                 // Die Zelle ist ungesetzt
                 let necessarysInContext = new SudokuSet();
                 this.sudoCells[i].myInfluencers.forEach(cell => {
@@ -1743,10 +1738,7 @@ class SudokuGrid {
                     // Das weitere Ausrechnen bringt nichts, da die Unlösbarkeit
                     // bereits auf der Collection-Ebene festgestellt werden kann.
                     // Auch ist auf der Collection-Ebene die Unlösbarkeit für den Anwender leichter verständlich.
-                } else {
-                    // Necessarys können nicht unzulässig werden
-                    singlesInContext = singlesInContext.difference(this.sudoCells[i].getNecessarys());
-                            
+                } else {        
                     this.sudoCells[i].myLevel_gt0_inAdmissibles =
                         this.sudoCells[i].myLevel_gt0_inAdmissibles.union(singlesInContext);
                     inAdmissiblesAdded = inAdmissiblesAdded ||
@@ -1972,7 +1964,10 @@ class SudokuCell {
     }
 
     getTotalInAdmissibles() {
-        return this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles);
+        let totalInAdmissibles = this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles);
+        // In widerspruchsvollen Sudokus können notwendige Nummern gleichzeitig unzulässig sein.
+        // Aus pragmatischen Gründen zählen wir solche Nummern nicht zu den inAdmissibles.
+        return totalInAdmissibles.difference(this.getNecessarys());
     }
     getAdmissibles() {
         // Die zulässigen Zahlen einer Zelle sind das Komplement der unzulässigen Zahlen
@@ -2012,7 +2007,9 @@ class SudokuCell {
             // Angezeigte inAdmissibles sind zunächst einmal Zulässige
             // und dürfen jetzt nicht mehr angezeigt werden
             this.myCellNode.classList.add('nested');
-            // Übertrage die berechneten Möglchen in das DOM
+            // Übertrage die berechneten Möglichen in das DOM
+            // In widerspruchsvollen Sudokus kann eine Nummer gleichzeitig
+            // notwendig und unzulässig sein. Solche Nummern sollen sichtbar bleiben.
             this.getTotalAdmissibles().forEach(e => {
                 let admissibleNrElement = document.createElement('div');
                 admissibleNrElement.setAttribute('data-value', e);
@@ -2028,6 +2025,7 @@ class SudokuCell {
             if (this.myNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
                 admissibleNodes[i].classList.add('neccessary');
             }
+
         }
     }
 
@@ -2316,7 +2314,7 @@ class SudokuCell {
             // Für die nicht gesetzte Zelle ist die Anzahl notwendiger Nummern größer 1
             (this.getValue() == '0' && this.myNecessarys.size > 1) ||
             // Eine notwendige Nummer ist gleichzeitig unzulässig      
-            // this.getTotalInAdmissibles().intersection(this.myNecessarys).size > 0 ||
+            this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0 ||
             // Für die Zelle gibt es keine total zulässige Nummer mehr.
             this.getTotalAdmissibles().size == 0 ||
             // Die Nummer der gesetzten Zelle ist nicht zulässig.
