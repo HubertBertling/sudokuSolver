@@ -203,11 +203,9 @@ body {
     border: 1px solid white;
 }
 
+
 .nested>div.neccessary.inAdmissible {
- /*  background:blueviolet; */
- background-color: #56c7aa;
- color: #0d1117;
- 
+    background:blueviolet;
 }
 
 

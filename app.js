@@ -1129,7 +1129,6 @@ class NineCellCollection {
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
         return (
-           // this.withConflictingNecessarys() ||
             this.withConflictingSingles() ||
             this.withConflictingPairs());
     }
@@ -1245,38 +1244,7 @@ class NineCellCollection {
             return -1;
         }
     }
-/*
-    withConflictingNecessarys() {
-        // Conflicting necessarys sind zwei oder mehr Notwendige mit derselben Nummer in einer Collection.
-        // Sie fordern ja, dass dieselbe Nummer zweimal
-        // in der Collection vorkommen soll. Mit anderen Worten: 
-        // Wenn es eine Collection mit Conflicting necessarys gibt, ist das Sudoku unlösbar.
 
-        // Idee: Zähle für jede Nummer 1 .. 9 die Häufigkeit ihres Auftretens als notwendige Nummer
-        // numberCounts[0] = Häufigkeit der 1 als notwendige Nummer, 
-        // numberCounts[1] = Häufigkeit der 2 als notwendige Nummer, 
-        // usw.
-        let numberCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-        let found = false;
-        for (let i = 0; i < 9; i++) {
-            if (this.myCells[i].getValue() == '0') {
-                // Wir betrachten nur offene Zellen
-                let necessarys = this.myCells[i].getNecessarys();
-                necessarys.forEach(nr => {
-                    let iNr = parseInt(nr);
-                    numberCounts[iNr - 1]++;
-                    if (numberCounts[iNr - 1] > 1) {
-                        found = true;
-                    };
-                });
-            }
-            // Wenn wir den ersten Konflikt gefunden haben, können wir die Suche
-            // abbrechen. 
-            if (found) return true;
-        }
-        return false;
-    }
-*/
     withConflictingSingles() {
         // Singles sind Zellen, die nur noch exakt eine zulässige Nummer haben.
         // Conflicting singles sind zwei oder mehr singles in einer Collection, 
@@ -1967,6 +1935,9 @@ class SudokuCell {
         let totalInAdmissibles = this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles);
         // In widerspruchsvollen Sudokus können notwendige Nummern gleichzeitig unzulässig sein.
         // Aus pragmatischen Gründen zählen wir solche Nummern nicht zu den inAdmissibles.
+        // Dann werden sie auch angezeigt, wenn die Anzeige von inAdmissibles abgeschaltet ist.
+        // Semantisch ist das kein Problem, da bekanntlich in widerspruchsvollen Mengen beliebiges 
+        // gefolgert werden kann.
         return totalInAdmissibles.difference(this.getNecessarys());
     }
     getAdmissibles() {
