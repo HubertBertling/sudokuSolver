@@ -1125,9 +1125,11 @@ class NineCellCollection {
     }
 
     isInsolvable() {
+        // Wenn  eine Collection mit Conflicting Necessarys gibt, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
         return (
+            this.withConflictingNecessarys() ||
             this.withConflictingSingles() ||
             this.withConflictingPairs());
     }
@@ -1192,6 +1194,8 @@ class NineCellCollection {
                             // Zelle der Collection, die nicht Paar-Zelle ist
                             let tmpAdmissibles = this.myCells[j].getTotalAdmissibles();
                             let tmpIntersection = tmpAdmissibles.intersection(pair);
+                            // Notwendige Nummern können nicht unzulässig werden
+                            tmpIntersection = tmpIntersection.difference(this.myCells[j].getNecessarys());
                             let oldInAdmissibles = new SudokuSet(this.myCells[j].myLevel_gt0_inAdmissibles);
                             this.myCells[j].myLevel_gt0_inAdmissibles =
                                 this.myCells[j].myLevel_gt0_inAdmissibles.union(tmpIntersection);
@@ -1242,6 +1246,37 @@ class NineCellCollection {
         } else {
             return -1;
         }
+    }
+
+    withConflictingNecessarys() {
+        // Conflicting necessarys sind zwei oder mehr Notwendige mit derselben Nummer in einer Collection.
+        // Sie fordern ja, dass dieselbe Nummer zweimal
+        // in der Collection vorkommen soll. Mit anderen Worten: 
+        // Wenn es eine Collection mit Conflicting necessarys gibt, ist das Sudoku unlösbar.
+
+        // Idee: Zähle für jede Nummer 1 .. 9 die Häufigkeit ihres Auftretens als notwendige Nummer
+        // numberCounts[0] = Häufigkeit der 1 als notwendige Nummer, 
+        // numberCounts[1] = Häufigkeit der 2 als notwendige Nummer, 
+        // usw.
+        let numberCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let found = false;
+        for (let i = 0; i < 9; i++) {
+            if (this.myCells[i].getValue() == '0') {
+                // Wir betrachten nur offene Zellen
+                let necessarys = this.myCells[i].getNecessarys();
+                necessarys.forEach(nr => {
+                    let iNr = parseInt(nr);
+                    numberCounts[iNr - 1]++;
+                    if (numberCounts[iNr - 1] > 1) {
+                        found = true;
+                    };
+                });
+            }
+            // Wenn wir den ersten Konflikt gefunden haben, können wir die Suche
+            // abbrechen. 
+            if (found) return true;
+        }
+        return false;
     }
 
     withConflictingSingles() {
@@ -1666,7 +1701,10 @@ class SudokuGrid {
         // Iteriere über alle Zellen
         let inAdmissiblesAdded = false;
         for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].getValue() == '0') {
+            if (this.sudoCells[i].getValue() == '0' 
+                // Die Zelle ist ungesetzt
+                // Necessarys können nicht unzulässig werden
+                && this.sudoCells[i].getNecessarys().size == 0) {
                 // Die Zelle ist ungesetzt
                 let necessarysInContext = new SudokuSet();
                 this.sudoCells[i].myInfluencers.forEach(cell => {
@@ -1706,6 +1744,9 @@ class SudokuGrid {
                     // bereits auf der Collection-Ebene festgestellt werden kann.
                     // Auch ist auf der Collection-Ebene die Unlösbarkeit für den Anwender leichter verständlich.
                 } else {
+                    // Necessarys können nicht unzulässig werden
+                    singlesInContext = singlesInContext.difference(this.sudoCells[i].getNecessarys());
+                            
                     this.sudoCells[i].myLevel_gt0_inAdmissibles =
                         this.sudoCells[i].myLevel_gt0_inAdmissibles.union(singlesInContext);
                     inAdmissiblesAdded = inAdmissiblesAdded ||
@@ -1907,6 +1948,7 @@ class SudokuCell {
         // Lösche Inhalt der Zelle
         this.myValue = '0';
         this.myValueType = 'manual';
+        this.myGamePhase = '';
         this.clearEvaluations();
     }
 
