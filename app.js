@@ -972,33 +972,27 @@ class AutomatedRunnerOnGrid {
     }
 
     calculateMinSelectionFrom(selectionList) {
-        // return this.calculateMinSelectionFromBest(selectionList);
-        return this.calculateMinSelectionFromExperiment1(selectionList);
-    }
-    calculateMinSelectionFromExperiment1(selectionList) {
         // Berechnet die nächste Selektion
-        // Nicht eindeutig; Anfangs gibt es oft mehrere Zellen mit
-        // nur einer zulässigen Nummer
+        // Nicht eindeutig;        
         // In der Regel sind das Zellen mit 2 Optionsnummern.
-        //  console.log('');
         let maxSelection = selectionList[0];
         let maxIndex = maxSelection.index;
-        // Wenige Optionen werden bevorzugt
+        // Selektionen mit wenigen Optionen werden bevorzugt. Deshalb die Länge der Option im Nenner.
         let maxLengthFactor = Math.floor(1000 / maxSelection.options.length);
+        // Die hier gewählte Gewichtungsfunktion ist frei erfunden.
         let maxWeight = maxLengthFactor + this.suGrid.sudoCells[maxIndex].countMyInfluencersWeight();
+        // Kontexte mit einem größeren Entscheidungsgrad, also mit weniger zulässigen Nummern, zählen mehr.
         for (let i = 1; i < selectionList.length; i++) {
             let currentSelection = selectionList[i];
             let currentIndex = currentSelection.index;
             let currentLengthFactor = Math.floor(1000 / currentSelection.options.length);
             let currentWeight = currentLengthFactor + this.suGrid.sudoCells[currentIndex].countMyInfluencersWeight();
-            //    console.log('Laufende-Zelle: ' + currentIndex + ', Gewicht: ' + currentWeight + '   Max-Zelle: ' + maxIndex + ', Gewicht: ' + maxWeight);
             if (currentWeight > maxWeight) {
                 maxSelection = currentSelection;
                 maxIndex = currentIndex;
                 maxWeight = currentWeight;
             }
         }
-        // console.log('Entscheidung: ' + maxIndex + ', Gewicht: ' + maxWeight);
         return maxSelection;
 
 
@@ -1788,26 +1782,6 @@ class SudokuGrid {
             let tmpCol = this.sudoCols[i];
             tmpCol.calculateNecessarys();
         }
-    }
-
-
-    calculateMissingNumbers() {
-        // Iteriere über die Gruppen
-        for (let i = 0; i < 9; i++) {
-            let tmpGroup = this.sudoGroups[i];
-            tmpGroup.calculateMissingNumbers();
-        }
-        // Iteriere über die Reihen
-        for (let i = 0; i < 9; i++) {
-            let tmpRow = this.sudoRows[i];
-            tmpRow.calculateMissingNumbers();
-        }
-        // Iteriere über die Spalten
-        for (let i = 0; i < 9; i++) {
-            let tmpCol = this.sudoCols[i];
-            tmpCol.calculateMissingNumbers();
-        }
-
     }
 
     select(sudoCell, index) {
