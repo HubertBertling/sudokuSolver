@@ -31,7 +31,7 @@ Solltest Du eine Nummern-Setzung zurücknehmen wollen, so selektiere die betroff
 |![Spielzelle Automatisch](./images/auto1option.png)|**Automatisch gesetzte Nummer:** Der Solver hat in dieser Zelle automatisch die Nummer 2 gesetzt. Und zwar in der 17. Setzung einer Nummer. Die Wahl der zu setzenden Nummer war eindeutig.|
 |![Spielzelle Automatisch Nicht eindeutig](./images/auto2option.png)|**Automatisch gesetzte Nummer einer Auswahl:** Der Solver hat in dieser Zelle automatisch die Nummer 9 gesetzt. Und zwar in der 11. Setzung einer Nummer. Er musste zwischen den beiden Nummern 4 und 9 wählen. Der Solver wählt zunächst die Nummer 9. Wenn die Vervollständigung der Matrix gelingt, kommt die zweite Nummer nicht mehr zum Zuge. Gelingt die Vervollständigung nicht, kehrt der Automat zu dieser Zelle zurück und probiert die zweite Option 4. Die Optionen werden von rechts nach links abgearbeitet. Das Bild zeigt die Option 9 als abgearbeitet. Option 4 wurde noch nicht probiert. Noch nicht abgearbeitete Nummern werden in gelber Schrift angezeigt.|
 |![Optionszelle](./images/optionCell.png)|**Zulässige Nummern:** Für diese Zelle wurde noch keine Nummer gesetzt. Du kannst nur noch eine der Nummern 1, 3, 5 und 7 wählen. Das sind die (noch) zulässigen Nummern der Zelle. Die nicht aufgeführten Nummern sind direkt unzulässig. Eine Nummer ist direkt unzulässig, wenn die Nummer bereits gesetzt ist in der Gruppe, Zeile oder Spalte der Zelle. Wählst Du eine direkt unzulässige Nummer, kommt es zu einem direkten Konflikt. Zwei gleiche Nummern in einer Spalte, Reihe oder Zellgruppe. Die betroffenen Zellen werden rot markiert.|
-|![notwendig](./images/neccessary.png)|**Notwendige Nummer:** Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die fünf Nummern 4, 6, 7 und 8 setzbar. Jedoch hat der Solver ermittelt, dass die Nummer 7 notwendig ist, damit das Sudoku lösbar bleibt. 7 ist eine notwendige Nummer für diese Zelle. Eine Nummer in einer Zelle ist notwendig, wenn die Nummer in ihrer Gruppe, Zeile oder Spalte einzig ist. Im Beispiel ist die Nummer 7 nicht eindeutig in ihrer Spalte, ebenso nicht in ihrer Gruppe aber eindeutig in ihrer Zeile. ![Notwendige Nummer](./images/uniqueNeccessary.png)|
+|![notwendig](./images/neccessary.png)|**Notwendige Nummer:** Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die fünf Nummern 4, 6, 7 und 8 setzbar. Jedoch hat der Solver ermittelt, dass die Nummer 7 notwendig ist, damit das Sudoku lösbar bleibt. 7 ist eine notwendige Nummer für diese Zelle. Eine Nummer in einer Zelle ist notwendig, wenn die Nummer in ihrer Gruppe, Zeile oder Spalte einzig ist. D.h. sie kommt in der betreffenden Gruppe, Zeile oder Spalte nur genau einmal vor. Hinweis: Sie darf auch nicht als rote unzulässige Nummer vorkommen. Im nachfolgenden Beispiel ist die Nummer 1 nicht eindeutig in ihrer Gruppe, ebenso nicht in ihrer Spalte aber eindeutig in ihrer Spalte. ![Notwendige Nummer](./images/uniqueNeccessary.png)|
 |![Indirekt unzulässig](./images/indirect.png)|**Indirekt unzulässige Nummer:** Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die fünf Nummern 1, 7 und 8 setzbar. Jedoch ist die Nummer 7 indirekt unzulässig. **Pairing-Kriterium:** Eine Nummer ist z.B. indirekt unzulässig, wenn es in einer Gruppe, Zeile oder Spalte Paare gibt und Nummern dieser Paare zusätzlich in weiteren Zellen dieser Gruppe, Spalte oder Zeile auftauchen. Im Beispiel sind das Paar die beiden Zellen mit den Nummern 3 und 7. Fest steht, dass diese beiden Zellen die Nummern 3 und 7 aufnehmen. Es ist lediglich noch offen, welche der Zellen die 3 oder 7 haben wird. Daraus folgt, dass in der Zeile keine weitere 3 oder 7 mehr auftauchen kann. Die 7 ist indirekt unzulässig und deshalb rot markiert. **Ausschluss-Kriterium:** Ebenso ist eine Nummer indirekt unzulässig, wenn sie in ihrer Spalte, Reihe oder Gruppe auch als notwendige Nummer auftritt. Im vorigen Beispiel sind alle roten Nummern 7 und 9 wegen notwendigen Nummern ausgeschlossene Nummern.![Indirekt unzulässig](./images/pairing.png)|
 |![Indirekter Auschluss](./images/indirectPairCell.png) |**Indirektes Pairing:** Die Nummern 1 und 8 sind indirekt unzulässig, wegen des indirekten Paares (1 8), das seinerseits entstanden ist wegen des Paares (7 9).![Pairing Begründung](./images/indirectPairReason.png)|
 |![Keine](./images/nochoice.png)|**Leere Option:** Für diese Zelle wurde noch keine Nummer gesetzt. Allerdings gibt es keine zulässige Nummer mehr, die noch gesetzt werden könnte. D.h. das Sudoku ist unlösbar. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet der Solver in den Rückwärts-Modus um.|
@@ -111,18 +111,16 @@ Unlösbare Zellen hatten wir oben schon kennengelernt. Es sind dies Zellen mit l
 
 ### Unlösbare Gruppen
 
-![Unlösbare Gruppe](./images/insolvablegroup.png)
+![Gruppenkonflikt](./images/groupconflict.png)|
 
 So wie es unlösbare Zellen geben kann - erkennbar an ihrem roten Hintergrund - so kann es auch unlösbare Gruppen geben. Eine Gruppe ist unlösbar, wenn eine der folgenden Bedingungen vorliegt:
 
-1. **Nummernwiderspruch:** Eine Nummer soll gleichzeitig in verschiedene Zellen der Gruppe gesetzt werden wie die 3 im nachfolgenden Beispiel.
-1. **Pairing-Widerspruch:** Wegen des Paares {1 9} im ersten Beispiel dürfen weder die 1 noch die 9 ein weiteres mal in der Gruppe vorkommen. Im Beispiel kommt im Widerspruch dazu die 9 ein weiteres mal vor.
+1. **Nummernwiderspruch:** Eine Nummer soll gleichzeitig in verschiedene Zellen der Gruppe gesetzt werden wie die 3 im Beispiel.
+1. **Pairing-Widerspruch:** Wegen des Paares {1 9} im nachfolgenden Beispiel dürfen weder die 1 noch die 9 ein weiteres mal in der Gruppe vorkommen. Im Beispiel kommt im Widerspruch dazu die 9 ein weiteres mal vor.
 
 Tritt während der automatischen Ausführung eine solche unlösbare Gruppe auf, schaltet der Solver in den Rückwärts-Modus um.
 
-| |
-|---------|
-|Nummernwiderspruch: mit der Nummer 3:   ![Gruppenkonflikt](./images/groupconflict.png)|
+![Unlösbare Gruppe](./images/insolvablegroup.png)
 
 ### Unlösbare Zeilen und/oder Spalten
 
@@ -146,8 +144,20 @@ Der Solver zeigt die Anzahl der zurückgelegten Schritte an. Jedes Setzen einer 
 
 bilden ein gutes Kriterium für den Schwierigkeitsgrad der Sudoku-Aufgabe. Die in den Zeitungen oder Zeitschriften als leicht oder mittelschwer klassifizierten Sudoku-Aufgaben kommen in der Regel ganz ohne Rückwärtsläufe aus. Meist haben sie um die 30 bereits gesetzte Definitionszellen. Schwere Sudoku-Aufgaben beginnen mit 22 - 25 Definitionszellen. Bei noch geringerer Anzahl von Definitionszellen dürfte die Sicherstellung der eindeutigen Lösung nicht mehr erreichbar sein.
 
-## Erfolgreiche bzw. nicht erfolgreiche Suche
+## Unzulässige Nummern ausblenden oder anzeigen
 
-Der Suchprozess endet erfolgreich oder nicht erfolgreich. Er endet erfolgreich, sobald in allen Zellen eine Nummer gesetzt wurde. Wenn die Sudoku-Aufgabe keine Lösung besitzt, meldet der Solver: "*Keine Lösung gefunden*". Die in Zeitungen und Magazinen gestellten Sudoku-Aufgaben sind in der Regel konsistent und eindeutig. D.h. sie besitzen überhaupt eine Lösung und diese Lösung ist eindeutig. Der Solver findet diese Lösung auf jeden Fall, und dies fast immer mit weniger als 300 Schritten.
+Durch Setzen bzw. Nicht-Setzen der Checkbox "Unzulässige Nummern anzeigen" kann der Anwender deutlich mehr Information über sein Sudoku sichtbar machen. Betrachten wir das folgende Beispiel.
+
+![Unzulässige sichtbar](./images/unzulässigesichtbar.png)
+
+Dies ist die Ansicht nach der Eingabe aller Nummern der Sudoku-Aufgabenstellung. Die roten Nummern in den Zellen sind unzulässige Nummern errechnet nach den oben dargestellten Regeln. Der Anwender würde jetzt den Backtrack-Prozess starten, um eine Lösung dieses Sudokus zu erhalten. Wenn er jedoch zuvor einmal die unzulässigen Nummern ausschalten würde, würde er folgendes sehen:
+
+![Unzulässige unsichtbar](./images/unzulässigenichtsichtbar.png)
+
+In dieser Matrix besitzen alle Zellen nur noch genau eine zulässige Nummer. Mit anderen Worten: wir sehen hier die Lösung des Sudokus bevor der Backtrack-Algorithmus gestartet wurde. Oder anders ausgedrückt: Der Solver präsentiert hier eine Lösung ohne Backtracking. Ohne Nutzung des Solvers, also per Hand kann der Nutzer dieses Sudoku nur durch Setzung notwendiger Nummern (grün markiert) vollständig lösen. Mit zunehmender Setzung der Nummern werden aus den zulässigen notwendige Nummern. Die meisten leichten und mittleren Sudokus in den Zeitschriften besitzen diese Eigenschaft der determinierten Lösungsfindung.
+
+## Erfolgreiche bzw. nicht erfolgreiche Lösungssuche
+
+Der Suchprozess endet erfolgreich oder nicht erfolgreich. Er endet erfolgreich, sobald in allen Zellen eine Nummer gesetzt wurde. Wenn die Sudoku-Aufgabe keine Lösung besitzt, meldet der Solver: "*Keine Lösung gefunden*". Die in Zeitungen und Magazinen gestellten Sudoku-Aufgaben sind in der Regel konsistent und eindeutig. D.h. sie besitzen überhaupt eine Lösung und diese Lösung ist eindeutig. Der Solver findet diese Lösung auf jeden Fall, und dies fast immer mit weniger als 200 Schritten.
 
 Der Solver beherrscht auch Sudokus, die mehrere Lösungen haben. Nach der Erfolgsmeldung mit der ersten Lösung kann der Anwender nach der nächsten Lösung suchen lassen, solange bis der Solver meldet: "*Keine weitere Lösung gefunden*".
