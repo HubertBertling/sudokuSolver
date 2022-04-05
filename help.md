@@ -116,7 +116,7 @@ Unlösbare Zellen hatten wir oben schon kennengelernt. Es sind dies Zellen mit l
 
 So wie es unlösbare Zellen geben kann - erkennbar an ihrem roten Hintergrund - so kann es auch unlösbare Gruppen geben. Eine Gruppe ist unlösbar, wenn eine der folgenden Bedingungen vorliegt:
 
-1. **Nummernwiderspruch:** Eine Nummer soll gleichzeitig in verschiedene Zellen der Gruppe gesetzt werden wie die 3 im Beispiel.
+1. **Single-Widerspruch:** Eine Nummer soll gleichzeitig in verschiedene Zellen der Gruppe gesetzt werden wie die 3 im Beispiel.
 1. **Pairing-Widerspruch:** Wegen des Paares {1 9} im nachfolgenden Beispiel dürfen weder die 1 noch die 9 ein weiteres mal in der Gruppe vorkommen. Im Beispiel kommt im Widerspruch dazu die 9 ein weiteres mal vor.
 
 Tritt während der automatischen Ausführung eine solche unlösbare Gruppe auf, schaltet der Solver in den Rückwärts-Modus um.
@@ -127,7 +127,7 @@ Tritt während der automatischen Ausführung eine solche unlösbare Gruppe auf, 
 
 Es kann auch unlösbare Zeilen oder Spalten geben. Eine Spalte oder Zeile ist unlösbar (ganz analog zu der Definition für Gruppen), wenn eine der folgenden Bedingungen vorliegt:
 
-1. **Nummernwiderspruch**: Eine Nummer soll gleichzeitig in verschiedene Zellen der Zeile und/oder Spalte gesetzt werden wie die 8 im nachfolgenden Beispiel.
+1. **Single-Widerspruch**: Eine Nummer soll gleichzeitig in verschiedene Zellen der Zeile und/oder Spalte gesetzt werden wie die 8 im nachfolgenden Beispiel.
 1. **Pairing-Widerspruch**: Bei Auftreten eines Paares dürfen die Nummern des Paares kein weiteres mal in der Zeile und/oder Spalte vorkommen.
 
 ![Spaltenkonflikt](./images/colconflct.png)
