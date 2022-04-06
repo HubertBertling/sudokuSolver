@@ -700,6 +700,7 @@ class AutomatedRunnerOnGrid {
         this.execSpeed = 250;
         this.execSpeedLevel = 'fast';
         this.goneSteps = 0;
+        this.levelOfDifficulty = 'Keine Angabe'; 
         this.countBackwards = 0;
         this.progressBar = new ProgressBar();
         this.autoDirection = 'forward';
@@ -710,6 +711,7 @@ class AutomatedRunnerOnGrid {
         this.goneSteps = 0;
         this.countBackwards = 0;
         this.autoDirection = 'forward';
+        this.levelOfDifficulty = 'Keine Angabe'; 
         // Der Runner hat immer einen aktuellen Stepper
         this.myStepper = new Stepper();
         this.displayStatus();
@@ -746,10 +748,10 @@ class AutomatedRunnerOnGrid {
 
     displayDepth() {
         let depth = document.getElementById("search-depth");
-        let maxDepth = document.getElementById("search-max-depth");
+        let difficulty = document.getElementById("difficulty");
         this.myStepper.getCurrentSearchDepth();
         depth.innerText = this.countBackwards;
-        maxDepth.innerText = this.myStepper.getMaxSearchDepth();
+        difficulty.innerText = this.levelOfDifficulty;
     }
 
     displayProgress() {
@@ -1060,11 +1062,30 @@ class AutomatedRunnerOnGrid {
         //Bestimmt die nächste Zelle mit notwendiger Nummer unter den zulässigen Nummern
         let tmpNeccessary = this.calculateNeccesarySelectionFrom(optionList);
         if (tmpNeccessary.index !== -1) {
+            switch (this.levelOfDifficulty) { 
+                case 'Keine Angabe': {
+                    this.levelOfDifficulty = 'Leicht';
+                    break; 
+                }
+                default: {
+                    // Schwierigkeitsgrad bleibt unverändert.
+                }
+            } 
             return tmpNeccessary;
         }
-        //Bestimmt die nächste Zelle mit ein-Option-Menge
+        //Bestimmt die nächste Zelle mit ein-Option-Menge (Single)
         let oneOption = this.calculateOneOptionSelectionFrom(optionList);
         if (oneOption.index !== -1) {
+            switch (this.levelOfDifficulty) { 
+                case 'Keine Angabe': 
+                case 'Leicht': {
+                    this.levelOfDifficulty = 'Mittel';
+                    break; 
+                }
+                default: {
+                    // Schwierigkeitsgrad bleibt unverändert.
+                }
+            } 
             return oneOption;
         }
         let tmpMin = this.calculateMinSelectionFrom(optionList);
@@ -1072,6 +1093,22 @@ class AutomatedRunnerOnGrid {
         // Bestimmt eine nächste Zelle mit minimaler Anzahl zulässiger Nummern
         // Diese Zelle ist nicht eindeuitig
         // Diese Zelle kann eine mit der vollen Optionsmenge sein
+        switch (this.levelOfDifficulty) { 
+            case 'Keine Angabe': 
+            case 'Leicht':
+            case 'Mittel': {
+                this.levelOfDifficulty = 'Schwer';
+                break; 
+            }
+            case 'Schwer' : {
+                this.levelOfDifficulty = 'Sehr schwer';
+                break;
+            }
+            default: {
+                    // Schwierigkeitsgrad bleibt unverändert.
+            }
+        } 
+    
         return tmpMin;
     }
     
