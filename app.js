@@ -1,8 +1,36 @@
 let sudoApp;
+
+
 const init = () => {
     sudoApp = new (SudokuApp);
     sudoApp.init();
 }
+
+class ExcelToJSON {
+    constructor() {
+        this.reader = new FileReader();
+        this.reader.onerror = function (ex) {
+            console.log(ex);
+        };
+        this.reader.onload = function (e) {
+            var data = e.target.result;
+            var workbook = XLSX.read(data, {
+                type: 'binary'
+            });
+
+            workbook.SheetNames.forEach(function (sheetName) {
+                // Here is your object
+                var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                var json_object = JSON.stringify(XL_row_object);
+                console.log(json_object);
+            });
+        };
+    }
+    parseExcel(file) {
+        this.reader.readAsBinaryString(file);
+    };
+}
+
 class SudokuSet extends Set {
     constructor(arr) {
         super(arr);
@@ -62,6 +90,8 @@ class SudokuApp {
         this.storageRestoreDialog = new StorageRestoreDialog();
         this.storageDeleteDialog = new StorageDeleteDialog();
         this.successDialog = new SuccessDialog();
+        this.importDialog = new ImportDialog();
+        this.excel = new ExcelToJSON();
 
         // Der Zustandsspeicher
         this.sudokuStorage = new SudokuStateStorage();
@@ -179,6 +209,11 @@ class SudokuApp {
         document.querySelector('#btn-delete').addEventListener('click', () => {
             sudoApp.deleteBtnPressed();
         });
+        // 
+        document.querySelector('#btn-import').addEventListener('click', () => {
+            sudoApp.importBtnPressed();
+        });
+
     }
 
     init() {
@@ -186,6 +221,7 @@ class SudokuApp {
         this.storageRestoreDialog.close();
         this.storageDeleteDialog.close();
         this.successDialog.close();
+        this.importDialog.close();
 
         this.suGrid.init();
         // Die App kann in verschiedenen Ausführungsmodi sein
@@ -308,6 +344,14 @@ class SudokuApp {
         let tmpNameList = this.sudokuStorage.getNameList();
         this.storageRestoreDialog.open(tmpNameList);
     }
+
+    importBtnPressed() {
+        this.runner.stopTimer();
+        this.runner.init();
+        this.successDialog.close();
+        this.setAutoExecOff();
+        this.importDialog.open();
+    }
     deleteBtnPressed() {
         // Zustand soll gelöscht werden
         this.runner.stopTimer();
@@ -404,6 +448,21 @@ class SudokuApp {
     successDlgCancelPressed() {
         this.successDialog.close();
     }
+
+    importDlgOKPressed() {
+        this.importDialog.close();
+        let file = this.importDialog.getFile();
+        this.excel.parseExcel(file);
+    }
+
+    importDlgCancelPressed() {
+        this.importDialog.close()
+    }
+
+
+
+
+
 }
 
 class ProgressBar {
@@ -700,7 +759,7 @@ class AutomatedRunnerOnGrid {
         this.execSpeed = 250;
         this.execSpeedLevel = 'fast';
         this.goneSteps = 0;
-        this.levelOfDifficulty = 'Keine Angabe'; 
+        this.levelOfDifficulty = 'Keine Angabe';
         this.countBackwards = 0;
         this.progressBar = new ProgressBar();
         this.autoDirection = 'forward';
@@ -711,7 +770,7 @@ class AutomatedRunnerOnGrid {
         this.goneSteps = 0;
         this.countBackwards = 0;
         this.autoDirection = 'forward';
-        this.levelOfDifficulty = 'Keine Angabe'; 
+        this.levelOfDifficulty = 'Keine Angabe';
         // Der Runner hat immer einen aktuellen Stepper
         this.myStepper = new Stepper();
         this.displayStatus();
@@ -1062,30 +1121,30 @@ class AutomatedRunnerOnGrid {
         //Bestimmt die nächste Zelle mit notwendiger Nummer unter den zulässigen Nummern
         let tmpNeccessary = this.calculateNeccesarySelectionFrom(optionList);
         if (tmpNeccessary.index !== -1) {
-            switch (this.levelOfDifficulty) { 
+            switch (this.levelOfDifficulty) {
                 case 'Keine Angabe': {
                     this.levelOfDifficulty = 'Leicht';
-                    break; 
+                    break;
                 }
                 default: {
                     // Schwierigkeitsgrad bleibt unverändert.
                 }
-            } 
+            }
             return tmpNeccessary;
         }
         //Bestimmt die nächste Zelle mit ein-Option-Menge (Single)
         let oneOption = this.calculateOneOptionSelectionFrom(optionList);
         if (oneOption.index !== -1) {
-            switch (this.levelOfDifficulty) { 
-                case 'Keine Angabe': 
+            switch (this.levelOfDifficulty) {
+                case 'Keine Angabe':
                 case 'Leicht': {
                     this.levelOfDifficulty = 'Mittel';
-                    break; 
+                    break;
                 }
                 default: {
                     // Schwierigkeitsgrad bleibt unverändert.
                 }
-            } 
+            }
             return oneOption;
         }
         let tmpMin = this.calculateMinSelectionFrom(optionList);
@@ -1093,25 +1152,25 @@ class AutomatedRunnerOnGrid {
         // Bestimmt eine nächste Zelle mit minimaler Anzahl zulässiger Nummern
         // Diese Zelle ist nicht eindeuitig
         // Diese Zelle kann eine mit der vollen Optionsmenge sein
-        switch (this.levelOfDifficulty) { 
-            case 'Keine Angabe': 
+        switch (this.levelOfDifficulty) {
+            case 'Keine Angabe':
             case 'Leicht':
             case 'Mittel': {
                 this.levelOfDifficulty = 'Schwer';
-                break; 
+                break;
             }
-            case 'Schwer' : {
+            case 'Schwer': {
                 this.levelOfDifficulty = 'Sehr schwer';
                 break;
             }
             default: {
-                    // Schwierigkeitsgrad bleibt unverändert.
+                // Schwierigkeitsgrad bleibt unverändert.
             }
-        } 
-    
+        }
+
         return tmpMin;
     }
-    
+
     deadlockReached() {
         // Deadlock ist erreicht, wenn es eine unlösbare Zelle gibt
         for (let i = 0; i < 81; i++) {
@@ -1741,7 +1800,7 @@ class SudokuGrid {
                     // Das weitere Ausrechnen bringt nichts, da die Unlösbarkeit
                     // bereits auf der Collection-Ebene festgestellt werden kann.
                     // Auch ist auf der Collection-Ebene die Unlösbarkeit für den Anwender leichter verständlich.
-                } else {        
+                } else {
                     this.sudoCells[i].myLevel_gt0_inAdmissibles =
                         this.sudoCells[i].myLevel_gt0_inAdmissibles.union(singlesInContext);
                     inAdmissiblesAdded = inAdmissiblesAdded ||
@@ -2180,7 +2239,7 @@ class SudokuCell {
         this.myValue = nr;
         this.myValueType = 'manual';
         this.myGamePhase = gamePhase;
-        this.myAutoStepNumber = this.myGrid.countSolvedSteps() - this.myGrid.countDefSteps();       
+        this.myAutoStepNumber = this.myGrid.countSolvedSteps() - this.myGrid.countDefSteps();
     }
 
     autoSetValue(currentStep) {
@@ -2592,6 +2651,54 @@ class SuccessDialog {
     }
 }
 
+class ImportDialog {
+    constructor() {
+        this.winBox;
+        this.myOpen = false;
+        this.myFileName = '';
+        this.okNode = document.getElementById("btn-importOK");
+        this.cancelNode = document.getElementById("btn-importCancel");
+        // Mit der Erzeugung des Wrappers werden 
+        // auch der Eventhandler OK und Abbrechen gesetzt
+        this.okNode.addEventListener('click', () => {
+            sudoApp.importDlgOKPressed();
+        });
+        this.cancelNode.addEventListener('click', () => {
+            sudoApp.importDlgCancelPressed();
+        });
+    }
+    open() {
+        if (window.screen.availWidth < 421) {
+            this.winBox = new WinBox("CSV-File importieren", {
+                x: "center",
+                y: "center",
+                width: "280px",
+                height: "150üx",
+                mount: document.getElementById("importDlg")
+            });
+        } else {
+            this.winBox = new WinBox("CSV-File importieren", {
+                x: "center",
+                y: "center",
+                width: "370px",
+                height: "180px",
+                mount: document.getElementById("importDlg")
+            });
+        }
+        this.myOpen = true;
+    }
+    getFile() {
+        return  document.getElementById("excel-file");
+    }
+
+    close() {
+        if (this.myOpen) {
+            this.winBox.close();
+            this.myOpen = false;
+        }
+    }
+
+}
 
 
 
@@ -2721,3 +2828,17 @@ class SudokuStateStorage {
 
 }
 init();
+
+function setSudoTable(results) {
+    // Grid initialisieren
+    let data = results.data;
+    for (i = 0; i < data.length; i++) {
+        let row = data[i];
+
+        for (j = 0; j < row.length; j++) {
+            let cellValue = row[j];
+            let cellIndex = i * 9 + j;
+            sudoApp.suGrid.sudoCells[cellIndex].manualSetValue(cellValue, 'define');
+        }
+    }
+}

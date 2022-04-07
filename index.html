@@ -13,7 +13,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Dialog specs -->
     <script src="dist/winbox.bundle.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="papaparse.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
 
     <link rel="stylesheet" media="screen and (max-width: 420px)" href="smallscreen.css">
     <link rel="stylesheet" media="screen and (min-width: 421px)" href="widescreen.css">
@@ -70,25 +74,25 @@
                                     <div class="btn-auto-group">
                                         <div class="btn-automatic tooltip" id="btn-run"><img src="images/play-96.png"
                                                 class="btn-image">
-                                                <span class="tooltiptext">Start</span>
+                                            <span class="tooltiptext">Start</span>
                                         </div>
                                         <div class="btn-automatic tooltip" id="btn-pause"><img src="images/pause-96.png"
                                                 class="btn-image">
-                                                <span class="tooltiptext">Pause</span>
+                                            <span class="tooltiptext">Pause</span>
                                         </div>
                                         <div class="btn-automatic tooltip" id="btn-stop"><img src="images/stop-96.png"
                                                 class="btn-image">
-                                                <span class="tooltiptext">Stop</span>
+                                            <span class="tooltiptext">Stop</span>
                                         </div>
                                     </div>
                                     <div class="btn-automatic tooltip" id="btn-autoStep"><img src="images/step-96.png"
                                             class="btn-image">
-                                            <span class="tooltiptext">Schritt</span>
+                                        <span class="tooltiptext">Schritt</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>          
                 </div>
             </div>
             <div class="progress-box" id="progress-box">
@@ -101,7 +105,7 @@
                         <div>
                             <div>
                                 <div class="name-value">
-                                    Anzahl Rückwärtsläufe: 
+                                    Anzahl Rückwärtsläufe:
                                 </div>
                                 <div class="name-value search-depth" id="search-depth">
                                     0
@@ -120,7 +124,7 @@
                         <div>
                             <div>
                                 Unzulässige Nummern anzeigen: <input type="checkbox" id="inAdmissiblesVisible">
-                            </div>        
+                            </div>
                             <div class="speed-field">
                                 <label for="speed">Wähle Geschwindigkeit:</label>
                                 <select class="speedSetting" name="speed" id="speedSetting">
@@ -173,6 +177,7 @@
                     <div class="main-btn" id="btn-save">Speichern...</div>
                     <div class="main-btn" id="btn-restore">Wiederherstellen</div>
                     <div class="main-btn" id="btn-delete">Löschen</div>
+                    <div class="main-btn" id="btn-import">Import</div>
                 </div>
             </div>
         </div>
@@ -254,6 +259,33 @@
                     </div>
                 </form>
             </div>
+
+
+
+
+            <div id="importDlg">
+                <form class="dlg-form">
+                    <div class="input-row">
+                        
+                        <div>
+                            <label for="file"></label>
+                            <input type="file" id="excel-file" name="file" accept=".xlsx">
+                        </div>
+
+
+                    </div>
+                    <div class="ok-cancel-btns">
+                        <input type="button" class="main-btn okCancelBtn" id="btn-importOK" name="ok"
+                            value="OK" />
+                        <input type="button" class="main-btn okCancelBtn" id="btn-importCancel" name="cancel"
+                            value="Abbrechen" />
+                    </div>
+                </form>
+            </div>
+     
+
+
+
         </div>
     </div>
     <!--Dialogs end-->
