@@ -1246,8 +1246,6 @@ class NineCellCollection {
     calculateNecessarys() {
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
         // die in der Gruppe, Reihe oder Spalte der Zelle genau einmal vorkommen.
-        // Hinweis: in den Influencer-Zellen insgesamt können sie dennoch mehrfach
-        // vorkommen. Deshalb muss diese Prüfung hier stattfinden.
         for (let i = 1; i < 10; i++) {
             let cellIndex = this.occursOnce(i);
             // Wenn die Nummer i genau einmal in der Collection vorkommt
