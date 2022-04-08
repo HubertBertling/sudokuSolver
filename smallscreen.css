@@ -381,7 +381,7 @@ body {
 
 
 .number {
-    height: var(--sudoku-cell-size);
+    height: 25px;
     border-radius: var(--border-radius);
     background-color: var(--standard-btn-bg-color);
     color: var(--standard-btn-color);
@@ -399,7 +399,7 @@ body {
 .delete {
     background-color: var(--delete-btn-bg-color);
     color: var(--delete-btn-color);
-    height: var(--sudoku-cell-size);
+    height: 25px;
     border-radius: var(--border-radius);
     display: grid;
     place-items: center;
@@ -562,14 +562,14 @@ body {
 
 .settings {
     font-size: 1.6rem;
-    margin-top: 10px;
+    margin-top: 5px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
+    grid-template-columns: 0.4fr 0.6fr;
+    gap: 1px;
 }
-
-.search-max-depth, .speed-field {
+.settings-line {
     margin-top: 3px;
+    line-height: 20px;
 }
 
 .search-depth {

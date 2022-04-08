@@ -559,19 +559,23 @@ body {
 
 .progress-group {
     margin-top: 5px;
+    margin-left:15px;
+    margin-right: 5px;;
     line-height: 20px;
     display: grid;
-    grid-template-columns: 0.2fr 0.2fr 1fr;
+    grid-template-columns: 0.3fr 0.2fr 1fr;
     gap: 2px;
 }
 
 .settings {
+    line-height: 20px;
     font-size: var(--font-size-btn);
-    margin-top: 20px;
+    margin-top: 20px;;
 }
 
 .search-max-depth, .speed-field {
-      margin-top: 5px;
+      margin-top: 10px;
+     
 }
 
 .search-depth {
@@ -580,7 +584,7 @@ body {
 }
 
 .speedSetting {
-    margin-top: 5px;
+    margin-top: 15px;
     padding: 1px;
     background-color: var(--screen-bg-color);
     font-size: var(--font-size-btn);
