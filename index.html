@@ -31,8 +31,62 @@
         <div class="screen">
             <!-- game screen -->
             <div class="inputArea" id="inputArea">
-                <div class="main-sudoku-grid" id="main-sudoku-grid">
-                    <!-- group 0 -->
+                <div class="gridArea" id="gridArea">
+                    <div class="main-sudoku-grid" id="main-sudoku-grid">
+                        <!-- group 0 -->
+                    </div>
+                    <div class="evaluations">
+                        <div>
+                            <div class="name-value">
+                                Rückwärtsläufe:
+                            </div>
+                            <div class="name-value search-depth" id="search-depth">
+                                0
+                            </div>
+                        </div>
+                        <div>
+                            <div class="name-value">
+                                Schwierigkeitsgrad:
+                            </div>
+                            <div class="name-value search-depth" id="difficulty">
+                                0
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-box" id="progress-box">
+
+              
+                        <div class="progress-group">
+                            <div class="step-count-box">
+                                <div class="name-value">
+                                    Schritte:
+                                </div>
+                                <div class="name-value search-depth" id="step-count">
+                                    0
+                                </div>
+                            </div>
+        
+                            <div class="autoMode-radio-btns">
+                                <div class="backward" id="radio-backward">
+                                    <img src="images/pfeilrueckwaerts.png" class="forward-backward-image">
+                                </div>
+                                <div class="forward" id="radio-forward">
+                                    <img src="images/pfeilvorwaerts.png" class="forward-backward-image">
+                                </div>
+                            </div>
+                            <div class="progress-bar" id="myProgress">
+                                <div id="myBarDef">20%</div>
+                                <div id="myBarPlay">70%</div>
+                                <div class="total-bar-value">
+                                    81
+                                </div>
+                            </div>
+                        </div>
+        
+        
+        
+                    </div>
+                
                 </div>
                 <div class="game-col2">
 
@@ -92,41 +146,12 @@
                                 </div>
                             </div>
                         </div>
-                    </div>          
-                </div>
-            </div>
-            <div class="progress-box" id="progress-box">
-
-                <div class="track-group">
-                    <div class="depth-group">
-                        <div class="depth-label">
-                            Fortschritt:
-                        </div>
-                        <div>
-                            <div>
-                                <div class="name-value">
-                                    Anzahl Rückwärtsläufe:
-                                </div>
-                                <div class="name-value search-depth" id="search-depth">
-                                    0
-                                </div>
+                        <div class="settings">
+                            <div class="settings-line">
+                                Unzul. N. anzeigen: <input type="checkbox" class="checkbox" id="inAdmissiblesVisible">
                             </div>
-                            <div class="search-max-depth">
-                                <div class="name-value">
-                                    Schwierigkeitsgrad:
-                                </div>
-                                <div class="name-value search-depth" id="difficulty">
-                                    0
-                                </div>
-                            </div>
-
-                        </div>
-                        <div>
-                            <div>
-                                Unzulässige Nummern anzeigen: <input type="checkbox" id="inAdmissiblesVisible">
-                            </div>
-                            <div class="speed-field">
-                                <label for="speed">Wähle Geschwindigkeit:</label>
+                            <div class="speed-field settings-line">
+                                <label for="speed">Geschwindigkeit:</label>
                                 <select class="speedSetting" name="speed" id="speedSetting">
                                     <option value="very-slow">Sehr langsam</option>
                                     <option value="slow">Langsam</option>
@@ -138,36 +163,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="progress-group">
-                    <div class="step-count-box">
-                        <div class="name-value">
-                            Schritte:
-                        </div>
-                        <div class="name-value search-depth" id="step-count">
-                            0
-                        </div>
-                    </div>
-
-                    <div class="autoMode-radio-btns">
-                        <div class="backward" id="radio-backward">
-                            <img src="images/pfeilrueckwaerts.png" class="forward-backward-image">
-                        </div>
-                        <div class="forward" id="radio-forward">
-                            <img src="images/pfeilvorwaerts.png" class="forward-backward-image">
-                        </div>
-                    </div>
-                    <div class="progress-bar" id="myProgress">
-                        <div id="myBarDef">20%</div>
-                        <div id="myBarPlay">70%</div>
-                        <div class="total-bar-value">
-                            81
-                        </div>
-                    </div>
-                </div>
-
-
-
             </div>
+
+
+
             <div class="main-btns">
                 <div class="config-btns">
                     <div class="main-btn" id="btn-init">Initialisieren</div>

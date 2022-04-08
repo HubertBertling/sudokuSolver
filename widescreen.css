@@ -108,7 +108,9 @@ body {
 .main-sudoku-grid {
     display: grid;
     grid-template-columns: repeat(3, auto);
-    padding: var(--space-y);
+    padding-top: var(--space-y);
+    padding-left: var(--space-y);
+    padding-right: var(--space-y);
     border: 5px solid var(--screen-bg-color);
     background-color : var(--screen-bg-color);
 }
@@ -290,6 +292,16 @@ body {
     grid-template-columns: 1fr 290px;
 }
 
+.evaluations {
+    font-size: var(--font-size-btn);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 5px;
+    padding-left: 40px;
+    padding-right: 30px;
+    background-color : var(--screen-bg-color);
+
+}
 .sudoku-header {
     background-color: var(--screen-bg-color);
     color: var(--screen-color);
@@ -519,7 +531,7 @@ body {
     border-bottom: 5px solid var(--screen-bg-color);
     background-color: var(--screen-bg-color);
     color:var(--screen-color);
-    font-size: 1.6rem;
+    font-size: var(--font-size-btn);
 }
 .manual-exec-btns.on, .automatic-exec.on {
     padding-right: 10px;
@@ -547,14 +559,23 @@ body {
 
 .progress-group {
     margin-top: 5px;
+    margin-left:15px;
+    margin-right: 5px;;
     line-height: 20px;
     display: grid;
-    grid-template-columns: 0.2fr 0.2fr 1fr;
+    grid-template-columns: 0.3fr 0.2fr 1fr;
     gap: 2px;
 }
 
+.settings {
+    line-height: 20px;
+    font-size: var(--font-size-btn);
+    margin-top: 20px;;
+}
+
 .search-max-depth, .speed-field {
-    margin-top: 3px;
+      margin-top: 10px;
+     
 }
 
 .search-depth {
@@ -563,11 +584,16 @@ body {
 }
 
 .speedSetting {
+    margin-top: 15px;
     padding: 1px;
     background-color: var(--screen-bg-color);
+    font-size: var(--font-size-btn);
     border: solid 1px;
 }
-
+.checkbox {
+    margin-left: 3px;
+    background-color: var(--screen-bg-color);
+}
 
 .step-count-box {
     line-height: 20px;

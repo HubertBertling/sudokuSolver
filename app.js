@@ -1640,7 +1640,7 @@ class SudokuGrid {
 
     display() {
         // Das bisherige DOM-Modell löschen
-        let domInputAreaNode = document.getElementById("inputArea");
+        let domInputAreaNode = document.getElementById("gridArea");
         let old_domGridNode = document.getElementById("main-sudoku-grid");
         // Das neue DOM-Modell erzeugen
         let new_domGridNode = document.createElement('div');

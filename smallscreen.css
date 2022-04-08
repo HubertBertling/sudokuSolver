@@ -34,7 +34,7 @@
     --space-y: 10px;
     --border-size-standard: 1px;
     --gap: 2px;
-    --font-size-btn: 1.9rem;
+    --font-size-btn: 1.6rem;
     --font-size-sm: 1rem;
     --font-size: 1.2rem;
     --font-size-lg: 1.8rem;
@@ -53,6 +53,33 @@
     /* padding and border are included in the width and height */
     box-sizing: border-box;
 }
+
+.tooltip {
+    position: relative;
+    display:inline-block ;
+    border-bottom: 1px dotted black;
+  }
+  
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 70px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    top: -30px;
+    left: 50%; 
+  
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+  }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
+  
 
 body {
     font-family: 'Open Sans', sans-serif;
@@ -253,6 +280,17 @@ body {
     grid-template-columns: 1fr;
 }
 
+.evaluations {
+    font-size: 1.6rem;
+    display: grid;
+    grid-template-columns: 0.4fr 0.6fr;
+    padding-top: 5px;
+    padding-left:10px;
+    padding-right: 5px;
+    background-color : var(--screen-bg-color);
+
+}
+
 .sudoku-header {
     background-color: var(--screen-bg-color);
     color: var(--screen-color);
@@ -343,7 +381,7 @@ body {
 
 
 .number {
-    height: var(--sudoku-cell-size);
+    height: 25px;
     border-radius: var(--border-radius);
     background-color: var(--standard-btn-bg-color);
     color: var(--standard-btn-color);
@@ -361,7 +399,7 @@ body {
 .delete {
     background-color: var(--delete-btn-bg-color);
     color: var(--delete-btn-color);
-    height: var(--sudoku-cell-size);
+    height: 25px;
     border-radius: var(--border-radius);
     display: grid;
     place-items: center;
@@ -522,8 +560,16 @@ body {
     gap: 2px;
 }
 
-.search-max-depth, .speed-field {
+.settings {
+    font-size: 1.6rem;
+    margin-top: 5px;
+    display: grid;
+    grid-template-columns: 0.4fr 0.6fr;
+    gap: 1px;
+}
+.settings-line {
     margin-top: 3px;
+    line-height: 20px;
 }
 
 .search-depth {
@@ -535,6 +581,11 @@ body {
     padding: 1px;
     background-color: var(--screen-bg-color);
     border: solid 1px;
+    font-size: 1.3rem;
+}
+.checkbox {
+    margin-left: 3px;
+    background-color: var(--screen-bg-color);
 }
 
 .step-count-box {
