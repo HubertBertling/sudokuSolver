@@ -283,7 +283,7 @@ body {
 .evaluations {
     font-size: 1.6rem;
     display: grid;
-    grid-template-columns: 0.3fr 0.7fr;
+    grid-template-columns: 0.4fr 0.6fr;
     padding-top: 5px;
     padding-left:10px;
     padding-right: 5px;
@@ -561,10 +561,10 @@ body {
 }
 
 .settings {
-    font-size: 1.3rem;
+    font-size: 1.6rem;
     margin-top: 10px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 0.4fr 0.6fr;
     gap: 2px;
 }
 
