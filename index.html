@@ -27,8 +27,28 @@
         <div class="screen">
             <!-- game screen -->
             <div class="inputArea" id="inputArea">
-                <div class="main-sudoku-grid" id="main-sudoku-grid">
-                    <!-- group 0 -->
+                <div class="gridArea" id="gridArea">
+                    <div class="main-sudoku-grid" id="main-sudoku-grid">
+                        <!-- group 0 -->
+                    </div>
+                    <div class="evaluations">
+                        <div>
+                            <div class="name-value">
+                                Rückwärtsläufe:
+                            </div>
+                            <div class="name-value search-depth" id="search-depth">
+                                0
+                            </div>
+                        </div>
+                        <div>
+                            <div class="name-value">
+                                Schwierigkeitsgrad:
+                            </div>
+                            <div class="name-value search-depth" id="difficulty">
+                                0
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="game-col2">
 
@@ -70,59 +90,30 @@
                                     <div class="btn-auto-group">
                                         <div class="btn-automatic tooltip" id="btn-run"><img src="images/play-96.png"
                                                 class="btn-image">
-                                                <span class="tooltiptext">Start</span>
+                                            <span class="tooltiptext">Start</span>
                                         </div>
                                         <div class="btn-automatic tooltip" id="btn-pause"><img src="images/pause-96.png"
                                                 class="btn-image">
-                                                <span class="tooltiptext">Pause</span>
+                                            <span class="tooltiptext">Pause</span>
                                         </div>
                                         <div class="btn-automatic tooltip" id="btn-stop"><img src="images/stop-96.png"
                                                 class="btn-image">
-                                                <span class="tooltiptext">Stop</span>
+                                            <span class="tooltiptext">Stop</span>
                                         </div>
                                     </div>
                                     <div class="btn-automatic tooltip" id="btn-autoStep"><img src="images/step-96.png"
                                             class="btn-image">
-                                            <span class="tooltiptext">Schritt</span>
+                                        <span class="tooltiptext">Schritt</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="progress-box" id="progress-box">
-
-                <div class="track-group">
-                    <div class="depth-group">
-                        <div class="depth-label">
-                            Fortschritt:
-                        </div>
-                        <div>
+                        <div class="settings">
                             <div>
-                                <div class="name-value">
-                                    Anzahl Rückwärtsläufe: 
-                                </div>
-                                <div class="name-value search-depth" id="search-depth">
-                                    0
-                                </div>
+                                Unzulässige N. anzeigen: <input type="checkbox" class="checkbox" id="inAdmissiblesVisible">
                             </div>
-                            <div class="search-max-depth">
-                                <div class="name-value">
-                                    Schwierigkeitsgrad:
-                                </div>
-                                <div class="name-value search-depth" id="difficulty">
-                                    0
-                                </div>
-                            </div>
-
-                        </div>
-                        <div>
-                            <div>
-                                Unzulässige Nummern anzeigen: <input type="checkbox" id="inAdmissiblesVisible">
-                            </div>        
                             <div class="speed-field">
-                                <label for="speed">Wähle Geschwindigkeit:</label>
+                                <label for="speed">Geschwindigkeit:</label>
                                 <select class="speedSetting" name="speed" id="speedSetting">
                                     <option value="very-slow">Sehr langsam</option>
                                     <option value="slow">Langsam</option>
@@ -134,6 +125,13 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+
+
+            <div class="progress-box" id="progress-box">
+
+              
                 <div class="progress-group">
                     <div class="step-count-box">
                         <div class="name-value">

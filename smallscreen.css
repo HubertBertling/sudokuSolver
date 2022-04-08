@@ -54,6 +54,33 @@
     box-sizing: border-box;
 }
 
+.tooltip {
+    position: relative;
+    display:inline-block ;
+    border-bottom: 1px dotted black;
+  }
+  
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 70px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    top: -30px;
+    left: 50%; 
+  
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+  }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
+  
+
 body {
     font-family: 'Open Sans', sans-serif;
     /* Text kann nicht selektiert werden */
@@ -251,6 +278,17 @@ body {
 .inputArea {
     display: grid;
     grid-template-columns: 1fr;
+}
+
+.evaluations {
+    font-size: 1.6rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 5px;
+    padding-left:10px;
+    padding-right: 5px;
+    background-color : var(--screen-bg-color);
+
 }
 
 .sudoku-header {
@@ -522,6 +560,14 @@ body {
     gap: 2px;
 }
 
+.settings {
+    font-size: 1.3rem;
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+}
+
 .search-max-depth, .speed-field {
     margin-top: 3px;
 }
@@ -535,6 +581,11 @@ body {
     padding: 1px;
     background-color: var(--screen-bg-color);
     border: solid 1px;
+    font-size: 1.3rem;
+}
+.checkbox {
+    margin-left: 3px;
+    background-color: var(--screen-bg-color);
 }
 
 .step-count-box {
