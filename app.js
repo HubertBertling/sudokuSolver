@@ -10,7 +10,8 @@ class ExcelToJSON {
     constructor() {
         this.reader = new FileReader();
         this.reader.onerror = function (ex) {
-            console.log(ex);
+            // console.log(ex);
+            alert('Sudoku-Import: Datei nicht zugreifbar: ' + ex.currentTarget.error);
         };
         this.reader.onload = function (e) {
             var data = e.target.result;
@@ -21,9 +22,83 @@ class ExcelToJSON {
             workbook.SheetNames.forEach(function (sheetName) {
                 // Here is your object
                 var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-                var json_object = JSON.stringify(XL_row_object);
-                console.log(json_object);
+
+                let state = [];
+                let currentRowNr = 1;
+                // Leere Zeile initialisieren
+
+
+                XL_row_object.forEach(row => {
+                    let readRowNr = row["__rowNum__"];
+                    while (currentRowNr < readRowNr) {
+                        // Die leere Zeile als Vorlage
+                        let tmpSudoRow = [];
+                        for (let j = 0; j < 9; j++) {
+                            let storedCell = {
+                                cellValue: '0',
+                                cellPhase: ''
+                            };
+                            tmpSudoRow.push(storedCell);
+                        }
+                        // Excel enthält leere Zeile mit einer Zeilennummer, die
+                        // kleiner ist die Nummer der ersten besetzten Zeile.
+                        // Leere Zeile wird in den Zustand übernommen
+                        currentRowNr++;
+                        // Übertrage die Zellen der Reihe in den Status
+                        for (let j = 0; j < 9; j++) {
+                            state.push(tmpSudoRow.shift());
+                        }
+                    }
+                    if (currentRowNr == readRowNr) {
+                        // Die leere Zeile als Vorlage
+                        let tmpSudoRow = [];
+                        for (let j = 0; j < 9; j++) {
+                            let storedCell = {
+                                cellValue: '0',
+                                cellPhase: ''
+                            };
+                            tmpSudoRow.push(storedCell);   
+                        } 
+                        for (const [key, value] of Object.entries(row)) {
+                            if (key >= 0 && key < 9) {
+                                let sudoCell = tmpSudoRow[key];
+                                sudoCell.cellValue = value;
+                                sudoCell.cellPhase ='define'
+                            }
+                        }
+                        currentRowNr++;
+                        // Übertrage die Zellen der Reihe in den Status
+                        for (let j = 0; j < 9; j++) {
+                            state.push(tmpSudoRow.shift());
+                        }
+                    }
+                })
+                // Fehlen noch weitere Zeilen?
+                while (currentRowNr < 10) {
+                    let tmpSudoRow = [];
+                    for (let j = 0; j < 9; j++) {
+                        let storedCell = {
+                            cellValue: '0',
+                            cellPhase: ''
+                        };
+                        tmpSudoRow.push(storedCell);
+                    }
+                    currentRowNr++;
+                    // Übertrage die Zellen der Reihe in den Status
+                    for (let j = 0; j < 9; j++) {
+                        state.push(tmpSudoRow.shift());
+                    }
+                }
+                // Das Zustandsobjekt ist vollständig.
+                // Checke die Korrektheit
+                if (sudoApp.suGrid.checkStateOk(state)) {
+                    // Falls OK erzeuge die Sudoku-Matrix
+                    sudoApp.suGrid.setCurrentState(state);
+                } else {
+                    alert('Sudoku-Import: unzulässige Nummer');
+                }
             });
+
         };
     }
     parseExcel(file) {
@@ -222,6 +297,8 @@ class SudokuApp {
         this.storageDeleteDialog.close();
         this.successDialog.close();
         this.importDialog.close();
+        this.excel = new ExcelToJSON();
+
 
         this.suGrid.init();
         // Die App kann in verschiedenen Ausführungsmodi sein
@@ -451,18 +528,18 @@ class SudokuApp {
 
     importDlgOKPressed() {
         this.importDialog.close();
+        this.suGrid.deselect();
+
         let file = this.importDialog.getFile();
+        this.excel = new ExcelToJSON();
+
         this.excel.parseExcel(file);
+        this.runner.displayProgress();
     }
 
     importDlgCancelPressed() {
         this.importDialog.close()
     }
-
-
-
-
-
 }
 
 class ProgressBar {
@@ -1560,6 +1637,17 @@ class SudokuGrid {
         return tmpGrid;
     }
 
+    checkStateOk(state) {
+        let allowedNrs = new SudokuSet(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
+
+        for (let i = 0; i < 81; i++) {
+            if (!allowedNrs.has(state[i].cellValue)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     setCurrentState(previousState) {
         for (let i = 0; i < 81; i++) {
             let storedCell = previousState.shift();
@@ -2655,7 +2743,7 @@ class ImportDialog {
     constructor() {
         this.winBox;
         this.myOpen = false;
-        this.myFileName = '';
+
         this.okNode = document.getElementById("btn-importOK");
         this.cancelNode = document.getElementById("btn-importCancel");
         // Mit der Erzeugung des Wrappers werden 
@@ -2667,9 +2755,10 @@ class ImportDialog {
             sudoApp.importDlgCancelPressed();
         });
     }
+
     open() {
         if (window.screen.availWidth < 421) {
-            this.winBox = new WinBox("CSV-File importieren", {
+            this.winBox = new WinBox("Excel-Tabelle importieren", {
                 x: "center",
                 y: "center",
                 width: "280px",
@@ -2677,7 +2766,7 @@ class ImportDialog {
                 mount: document.getElementById("importDlg")
             });
         } else {
-            this.winBox = new WinBox("CSV-File importieren", {
+            this.winBox = new WinBox("Excel-Tabelle importieren", {
                 x: "center",
                 y: "center",
                 width: "370px",
@@ -2688,7 +2777,7 @@ class ImportDialog {
         this.myOpen = true;
     }
     getFile() {
-        return  document.getElementById("excel-file");
+        return document.getElementById("excel-file").files[0];
     }
 
     close() {

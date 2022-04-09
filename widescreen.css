@@ -664,6 +664,7 @@ body {
 .textInDlgs:last-child { margin-right: 0px; }
 
 .input-row {
+    font-size: 1.6rem;
     margin: 10px;
 }
 
