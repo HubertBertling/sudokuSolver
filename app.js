@@ -520,7 +520,7 @@ class SudokuApp {
         reader.onerror = function (ex) {
             // console.log(ex);
             // NotReadableError
-            alert('Sudoku-Import: Datei nicht zugreifbar: ' + ex.currentTarget.error);
+            alert('Sudoku-Import: Datei nicht zugreifbar: ' + ex.currentTarget.error);            
         };
         reader.onload = function (e) {
             var data = e.target.result;
