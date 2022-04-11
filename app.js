@@ -2920,17 +2920,3 @@ class SudokuStateStorage {
 
 }
 init();
-
-function setSudoTable(results) {
-    // Grid initialisieren
-    let data = results.data;
-    for (i = 0; i < data.length; i++) {
-        let row = data[i];
-
-        for (j = 0; j < row.length; j++) {
-            let cellValue = row[j];
-            let cellIndex = i * 9 + j;
-            sudoApp.suGrid.sudoCells[cellIndex].manualSetValue(cellValue, 'define');
-        }
-    }
-}
