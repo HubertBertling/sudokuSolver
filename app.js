@@ -60,14 +60,16 @@ class SudokuApp {
         // erhält hier einen Javascript Wrapper.
 
         // Die App hat bisher vier  Dialoge
+
         this.storageSaveDialog = new StorageSaveDialog();
         this.storageRestoreDialog = new StorageRestoreDialog();
         this.storageDeleteDialog = new StorageDeleteDialog();
         this.successDialog = new SuccessDialog();
         this.fileDialog = new FileDialog();
 
-        // Der Zustandsspeicher
-        this.sudokuStorage = new SudokuStateStorage();
+        this.sudokuStateStorage = new SudokuStateStorage();
+        this.sudokuTestCaseStorage = new SudokuTestCaseStorage();
+
         // Die Hauptansicht
         this.suGrid = new SudokuGrid();
 
@@ -184,7 +186,9 @@ class SudokuApp {
         });
         // 
         document.querySelector('#btn-import').addEventListener('click', () => {
+
             sudoApp.importBtnPressed();
+
         });
 
     }
@@ -204,7 +208,9 @@ class SudokuApp {
         // Ein neuer Runner wird angelegt und initialisert
         this.runner = new AutomatedRunnerOnGrid(this.suGrid);
         this.runner.init();
-        this.sudokuStorage.init();
+        // Der Zustandsspeicher
+        this.sudokuStateStorage.init();
+        this.sudokuTestCaseStorage.init();
     }
 
     setAutoExecOn() {
@@ -403,9 +409,48 @@ class SudokuApp {
         this.storageDeleteDialog.close()
     }
 
+    loadCurrentPuzzle() {
+        this.runner.stopTimer();
+        this.runner.init();
+        this.setAutoExecOff();
+        this.suGrid.loadPuzzle(this.sudokuTestCaseStorage.getCurrentPuzzle());
+        this.runner.displayProgress();
+        document.getElementById("defaultOpen").click();
+    }
+    nextPuzzle() {
+        this.sudokuTestCaseStorage.nextTC();
+    }
+    previousPuzzle() {
+        this.sudokuTestCaseStorage.previousTC();
+    }
     comboBoxNameSelected(comboBoxNode, e) {
         comboBoxNode.setInputField(e.target.value);
     }
+
+
+    openPage(pageName, elmnt, bg_color, color) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablink");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].style.backgroundColor = "";
+            tablinks[i].style.color = "";
+        }
+        document.getElementById(pageName).style.display = "block";
+        elmnt.style.backgroundColor = bg_color;
+        elmnt.style.color = color;
+        if (pageName == "Puzzle-Datenbank") {
+            if (this.sudokuTestCaseStorage.isNotMounted()) {
+                this.sudokuTestCaseStorage.init();
+            } 
+            this.sudokuTestCaseStorage.displayCurrentTC();
+        }
+    }
+
+
 
     getPhase() {
         return this.currentPhase;
@@ -423,7 +468,53 @@ class SudokuApp {
         this.successDialog.close();
     }
 
-    fileDlgOKPressed() {
+    txtFileDlgOKPressed() {
+        this.fileDialog.close();
+        this.suGrid.deselect();
+        // Hier beginnt der eigentliche Import
+        // Schritt 1: File-Selektionsdialog
+        // Reset input-Element durch Cloning
+        let fileInputElement = document.getElementById("txt-file");
+        fileInputElement.parentNode.replaceChild(
+            fileInputElement.cloneNode(true),
+            fileInputElement
+        );
+        let file = this.fileDialog.getFile();
+        //Schritt 2: Auf das File zugreifen
+        let reader = new FileReader();
+
+        reader.onload = (event) => {
+            let testCases = [];
+            const file = event.target.result;
+            const allLines = file.split(/\r\n|\n/);
+            // Reading line by line
+            let i = 0;
+            allLines.forEach((line) => {
+                if (line == "puzzle,solution") {
+                    // Header-Zeile überlesen
+                } else {
+                    i++;
+                    const myTestCase = line.split(',');
+                    let testCase = {
+                        tcNr: i,
+                        puzzle: myTestCase[0].split(""),
+                        solution: myTestCase[1].split("")
+                    };
+                    testCases.push(testCase);
+                }
+            });
+            let testCasesObj = JSON.stringify(testCases)
+            localStorage.setItem("sudokuTestCases", testCasesObj);
+        };
+
+        reader.onerror = (event) => {
+            alert(event.target.error.name);
+        };
+
+        reader.readAsText(file);
+    }
+
+    excelFileDlgOKPressed() {
         this.fileDialog.close();
         this.suGrid.deselect();
 
@@ -520,7 +611,7 @@ class SudokuApp {
         reader.onerror = function (ex) {
             // console.log(ex);
             // NotReadableError
-            alert('Sudoku-Import: Datei nicht zugreifbar: ' + ex.currentTarget.error);            
+            alert('Sudoku-Import: Datei nicht zugreifbar: ' + ex.currentTarget.error);
         };
         reader.onload = function (e) {
             var data = e.target.result;
@@ -529,6 +620,7 @@ class SudokuApp {
             });
             // Schritt 3: Den Inhalt in die Sudokutabelle übertragen
             importExcelWorkbook(workbook);
+            // XLSX.writeFile(workbook, file.fileName);
         }
         this.runner.displayProgress();
     }
@@ -1652,6 +1744,17 @@ class SudokuGrid {
         this.refresh();
     }
 
+    loadPuzzle(puzzle) {
+        for (let i = 0; i < 81; i++) {
+            if (puzzle[i] == '0') {
+                this.sudoCells[i].manualSetValue(puzzle[i], '');
+            } else {
+                this.sudoCells[i].manualSetValue(puzzle[i], 'define');
+            }
+        }
+        this.refresh();     
+    }
+
     createSudoGrid() {
         // Eine lokale Hilfsfunktion
         function calcIndex(row, col) {
@@ -2744,7 +2847,7 @@ class FileDialog {
         this.cancelNode = document.getElementById("btn-fileCancel");
 
         this.okNode.addEventListener('click', () => {
-            sudoApp.fileDlgOKPressed();
+            sudoApp.txtFileDlgOKPressed();
         });
         this.cancelNode.addEventListener('click', () => {
             sudoApp.fileDlgCancelPressed();
@@ -2772,14 +2875,14 @@ class FileDialog {
         this.myOpen = true;
     }
     reset() {
-        let fileInputElement = document.getElementById("excel-file");
+        let fileInputElement = document.getElementById("txt-file");
         fileInputElement.value = null;
     }
 
     getFile() {
-        let fileInputElement = document.getElementById("excel-file");
+        let fileInputElement = document.getElementById("txt-file");
         if (fileInputElement.value !== null) {
-            return document.getElementById("excel-file").files[0];
+            return document.getElementById("txt-file").files[0];
         }
     }
 
@@ -2794,6 +2897,104 @@ class FileDialog {
 
 
 
+class SudokuTestCaseStorage {
+    constructor() {
+        this.testCases = [];
+        this.currentTCNr = 0;
+    }
+    init() {
+        let testCasesOBj = localStorage.getItem("sudokuTestCases");
+        if (testCasesOBj == null) {
+            alert('Keine Puzzle-Datenbank im Localstorage');
+            sudoApp.fileDialog.reset();
+            sudoApp.fileDialog.open();
+        }
+        this.testCases = JSON.parse(testCasesOBj);
+        this.currentTCNr = 0;
+    }
+    isNotMounted() {
+        return this.testCases == [];
+    }
+    currentTC() {
+        return this.testCases[this.currentTCNr];
+    }
+    nextTC() {
+        if (this.currentTCNr < 1000) {
+            this.currentTCNr++;
+        }
+        this.displayCurrentTC();
+        return this.testCases[this.currentTCNr];
+    }
+    previousTC() {
+        if (this.currentTCNr > 1) {
+            this.currentTCNr--;
+        }
+        this.displayCurrentTC();
+        return this.testCases[this.currentTCNr];
+    }
+    displayClear() {
+        this.displayClearTCNr();
+        this.displayClearTable('puzzle');
+        this.displayClearTable('solution');
+    }
+    displayCurrentTC() {
+        this.displayClear()
+        let currentTC = this.currentTC();
+        this.displayTCNr(currentTC.tcNr);
+        this.displayTable('puzzle', currentTC.puzzle);
+        this.displayTable('solution', currentTC.solution);
+    }
+    displayTCNr() {
+        let nrElem = document.getElementById('tcNr')
+        nrElem.innerHTML = this.currentTCNr;
+    }
+    displayClearTCNr() {
+        let nrElem = document.getElementById('tcNr')
+        nrElem.innerHTML = "";
+    }
+
+    displayTable(nodeId, tableArray) {
+        let table = document.createElement('table');
+        let tbody = document.createElement('tbody');
+        table.appendChild(tbody);
+
+        let k = 0;
+        for (let row = 0; row < 9; row++) {
+            let rowElem = document.createElement('tr');
+            for (let col = 0; col < 9; col++) {
+                let colElem = document.createElement('td');
+                if (tableArray[k] == '0'){
+                    colElem.innerHTML = " ";    
+                } else {
+                    colElem.innerHTML = tableArray[k];
+                }
+                //if (row === 2 || row === 5) colElem.style.marginBottom = '10px';
+                if (row === 2 || row === 5) colElem.style.borderBottom="2px solid white";
+
+                // if (col === 2 || col === 5) colElem.style.marginRight = '10px';
+                if (col === 2 || col === 5) colElem.style.borderRight="2px solid white";
+
+                rowElem.appendChild(colElem);
+                k++;
+            }
+            tbody.appendChild(rowElem);
+        }
+        let node = document.getElementById(nodeId);
+        node.appendChild(table);
+    }
+
+    displayClearTable(nodeId) {
+        let node = document.getElementById(nodeId);
+        while (node.firstChild) {
+            node.removeChild(node.lastChild);
+        }
+    }
+
+    getCurrentPuzzle() {
+        let currentTC = this.currentTC();
+        return currentTC.puzzle;
+    }
+}
 
 class SudokuStateStorage {
     constructor() { }
@@ -2919,4 +3120,8 @@ class SudokuStateStorage {
     }
 
 }
+
+
+// Get the element with id="defaultOpen" and click on it
 init();
+document.getElementById("defaultOpen").click();

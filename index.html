@@ -13,11 +13,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Dialog specs -->
     <script src="dist/winbox.bundle.js"></script>
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> --> 
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
- 
+
     <link rel="stylesheet" media="screen and (max-width: 420px)" href="smallscreen.css">
     <link rel="stylesheet" media="screen and (min-width: 421px)" href="widescreen.css">
 
@@ -25,256 +25,281 @@
 
 <body>
     <!-- main -->
-    <div class="main">
-        <!-- game screen -->
-        <div class="screen">
-            <!-- game screen -->
-            <div class="inputArea" id="inputArea">
-                <div class="gridArea" id="gridArea">
-                    <div class="main-sudoku-grid" id="main-sudoku-grid">
-                        <!-- group 0 -->
-                    </div>
-                    <div class="evaluations">
-                        <div>
-                            <div class="name-value">
-                                Rückwärtsläufe:
-                            </div>
-                            <div class="name-value search-depth" id="search-depth">
-                                0
-                            </div>
-                        </div>
-                        <div>
-                            <div class="name-value">
-                                Schwierigkeitsgrad:
-                            </div>
-                            <div class="name-value search-depth" id="difficulty">
-                                0
-                            </div>
-                        </div>
-                    </div>
-                    <div class="progress-box" id="progress-box">
+    <!--<div class="main"> -->
 
-              
-                        <div class="progress-group">
-                            <div class="step-count-box">
-                                <div class="name-value">
-                                    Schritte:
-                                </div>
-                                <div class="name-value search-depth" id="step-count">
-                                    0
-                                </div>
-                            </div>
-        
-                            <div class="autoMode-radio-btns">
-                                <div class="backward" id="radio-backward">
-                                    <img src="images/pfeilrueckwaerts.png" class="forward-backward-image">
-                                </div>
-                                <div class="forward" id="radio-forward">
-                                    <img src="images/pfeilvorwaerts.png" class="forward-backward-image">
-                                </div>
-                            </div>
-                            <div class="progress-bar" id="myProgress">
-                                <div id="myBarDef">20%</div>
-                                <div id="myBarPlay">70%</div>
-                                <div class="total-bar-value">
-                                    81
-                                </div>
-                            </div>
-                        </div>
-        
-        
-        
-                    </div>
-                
+    <button class="tablink" onclick="sudoApp.openPage('Sudoku-Solver', this, '#F2E2F2', 'black')"
+        id="defaultOpen">Sudoku-Solver</button>
+    <button class="tablink" onclick="sudoApp.openPage('Puzzle-Datenbank', this, 'green', '')">Puzzle-Datenbank</button>
+    <button class="tablink" onclick="sudoApp.openPage('Hilfe', this, 'blue', '')">Hilfe</button>
+
+
+
+    <div id="Sudoku-Solver" class="tabcontent">
+        <div class="inputArea" id="inputArea">
+            <div class="gridArea" id="gridArea">
+                <div class="main-sudoku-grid" id="main-sudoku-grid">
+                    <!-- group 0 -->
                 </div>
-                <div class="game-col2">
 
-                    <div class="sudoku-header">
-                        <div class="sudoku-title">
-                            Sudoku-Solver
-                        </div>
-                        <div>
-                            <a class="helpNode" href="./help.html" target="_blank">Hilfe</a>
-                        </div>
-                    </div>
-
-                    <div class="exec-btn-groups">
-                        <div class="exec-btn-group mode-btns">
-                            <div class="btn-define" id="btn-define">Definieren</div>
-                            <div class="btn-play" id="btn-play">Spielen</div>
-                        </div>
-                        <div class="exec-btn-group manual-exec-container">
-                            <div class="manual-exec-btns on" id="manual-exec-btns">
-                                <p style="font-weight: bold;">Manuelle Ausführung</p>
-                                <div class="numbers">
-                                    <div class="number">1</div>
-                                    <div class="number">2</div>
-                                    <div class="number">3</div>
-                                    <div class="number">4</div>
-                                    <div class="number">5</div>
-                                    <div class="number">6</div>
-                                    <div class="number">7</div>
-                                    <div class="number">8</div>
-                                    <div class="number">9</div>
-                                    <div class="delete" id="btn-delete-cell">X</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="auto-exec-container">
-                            <div class="automatic-exec on" id="automatic-exec">
-                                <p style="font-weight: bold;">Automatische Ausführung</p>
-                                <div class="auto-exec-btns">
-                                    <div class="btn-auto-group">
-                                        <div class="btn-automatic tooltip" id="btn-run"><img src="images/play-96.png"
-                                                class="btn-image">
-                                            <span class="tooltiptext">Start</span>
-                                        </div>
-                                        <div class="btn-automatic tooltip" id="btn-pause"><img src="images/pause-96.png"
-                                                class="btn-image">
-                                            <span class="tooltiptext">Pause</span>
-                                        </div>
-                                        <div class="btn-automatic tooltip" id="btn-stop"><img src="images/stop-96.png"
-                                                class="btn-image">
-                                            <span class="tooltiptext">Stop</span>
-                                        </div>
-                                    </div>
-                                    <div class="btn-automatic tooltip" id="btn-autoStep"><img src="images/step-96.png"
-                                            class="btn-image">
-                                        <span class="tooltiptext">Schritt</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="settings">
-                            <div class="settings-line">
-                                Unzul. N. anzeigen: <input type="checkbox" class="checkbox" id="inAdmissiblesVisible">
-                            </div>
-                            <div class="speed-field settings-line">
-                                <label for="speed">Geschwindigkeit:</label>
-                                <select class="speedSetting" name="speed" id="speedSetting">
-                                    <option value="very-slow">Sehr langsam</option>
-                                    <option value="slow">Langsam</option>
-                                    <option selected value="normal">Normal</option>
-                                    <option value="fast">Schnell</option>
-                                    <option value="very-fast">Sehr schnell</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
+            <div class="game-col2">
 
-
-
-            <div class="main-btns">
-                <div class="config-btns">
-                    <div class="main-btn" id="btn-init">Initialisieren</div>
-                    <div class="main-btn" id="btn-reset">Zurücksetzen</div>
-                </div>
-                <div class="storage-btns">
-                    <div class="main-btn" id="btn-save">Speichern...</div>
-                    <div class="main-btn" id="btn-restore">Wiederherstellen</div>
-                    <div class="main-btn" id="btn-delete">Löschen</div>
-                    <div class="main-btn" id="btn-import">Excel-Import</div>
+                <div class="exec-btn-groups">
+                    <div class="exec-btn-group mode-btns">
+                        <div class="btn-define" id="btn-define">Definieren</div>
+                        <div class="btn-play" id="btn-play">Spielen</div>
+                    </div>
+                    <div class="exec-btn-group manual-exec-container">
+                        <div class="manual-exec-btns on" id="manual-exec-btns">
+                            <p style="font-size: 1.6rem; font-weight: bold;">Manuelle Ausführung</p>
+                            <div class="numbers">
+                                <div class="number">1</div>
+                                <div class="number">2</div>
+                                <div class="number">3</div>
+                                <div class="number">4</div>
+                                <div class="number">5</div>
+                                <div class="number">6</div>
+                                <div class="number">7</div>
+                                <div class="number">8</div>
+                                <div class="number">9</div>
+                                <div class="delete" id="btn-delete-cell">X</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="auto-exec-container">
+                        <div class="automatic-exec on" id="automatic-exec">
+                            <p style="font-size: 1.6rem; font-weight: bold;">Automatische Ausführung</p>
+                            <div class="auto-exec-btns">
+                                <div class="btn-auto-group">
+                                    <div class="btn-automatic tooltip" id="btn-run"><img src="images/play-96.png"
+                                            class="btn-image">
+                                        <span class="tooltiptext">Start</span>
+                                    </div>
+                                    <div class="btn-automatic tooltip" id="btn-pause"><img src="images/pause-96.png"
+                                            class="btn-image">
+                                        <span class="tooltiptext">Pause</span>
+                                    </div>
+                                    <div class="btn-automatic tooltip" id="btn-stop"><img src="images/stop-96.png"
+                                            class="btn-image">
+                                        <span class="tooltiptext">Stop</span>
+                                    </div>
+                                </div>
+                                <div class="btn-automatic tooltip" id="btn-autoStep"><img src="images/step-96.png"
+                                        class="btn-image">
+                                    <span class="tooltiptext">Schritt</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings">
+                        <div class="settings-line">
+                            Unzul. N. anzeigen: <input type="checkbox" class="checkbox" id="inAdmissiblesVisible">
+                        </div>
+                        <div class="speed-field settings-line">
+                            <label for="speed">Geschwindigkeit:</label>
+                            <select class="speedSetting" name="speed" id="speedSetting">
+                                <option value="very-slow">Sehr langsam</option>
+                                <option value="slow">Langsam</option>
+                                <option selected value="normal">Normal</option>
+                                <option value="fast">Schnell</option>
+                                <option value="very-fast">Sehr schnell</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <!--game dialogs -->
-        <div id="backstore" style="display: none">
-            <div id="contentSaveDlg">
-                <form class="dlg-form">
-                    <div class="textInDlgs">Zustandsname: </div>
-                    <div class="input-row">
-                        <div name="comboBox" id="storageSaveComboBox">
-                            <input class="textInDlgs" type="text" id="saveStorageName" name="saveStorageName" />
-                            <select class="textInDlgs" name="saveStorageList" id="saveStorageList">
-                                <option>one</option>
-                                <option>two</option>
-                                <option>three</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="ok-cancel-btns">
-                        <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageOK" name="ok" value="OK" />
-                        <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageCancel" name="cancel"
-                            value="Abbrechen" />
-                    </div>
-                </form>
+        <div class="evaluations">
+            <div>
+                <div class="name-value">
+                    Rückwärtsläufe:
+                </div>
+                <div class="name-value search-depth" id="search-depth">
+                    0
+                </div>
+
             </div>
-            <div id="contentRestoreDlg">
-                <form class="dlg-form">
-                    <div class="textInDlgs">Zustandsname: </div>
-                    <div class="input-row">
-                        <div name="comboBox" id="storageRestoreComboBox">
-                            <input class="textInDlgs" type="text" id="restoreStorageName" name="restoreStorageName" />
-                            <select class="textInDlgs" name="restoreStorageList" id="restoreStorageList">
-                                <option>one</option>
-                                <option>two</option>
-                                <option>three</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="ok-cancel-btns">
-                        <input type="button" class="main-btn okCancelBtn" id="btn-restoreStorageOK" name="ok"
-                            value="OK" />
-                        <input type="button" class="main-btn okCancelBtn" id="btn-restoreStorageCancel" name="cancel"
-                            value="Abbrechen" />
-                    </div>
-                </form>
+            <div>
+                <div class="name-value">
+                    Schwierigkeitsgrad:
+                </div>
+                <div class="name-value search-depth" id="difficulty">
+                    0
+                </div>
             </div>
-            <div id="contentDeleteDlg">
-                <form class="dlg-form">
-                    <div class="textInDlgs">Zustandsname: </div>
-                    <div class="input-row">
-                        <div name="comboBox" id="storageDeleteComboBox">
-                            <input class="textInDlgs" type="text" id="deleteStorageName" name="deleteStorageName" />
-                            <select class="textInDlgs" name="deleteStorageList" id="deleteStorageList">
-                                <option>one</option>
-                                <option>two</option>
-                                <option>three</option>
-                            </select>
-                        </div>
+        </div>
+        <div class="progress-box" id="progress-box">
+
+
+            <div class="progress-group">
+                <div class="step-count-box">
+                    <div class="name-value">
+                        Schritte:
                     </div>
-                    <div class="ok-cancel-btns">
-                        <input type="button" class="main-btn okCancelBtn" id="btn-deleteStorageOK" name="ok"
-                            value="OK" />
-                        <input type="button" class="main-btn okCancelBtn" id="btn-deleteStorageCancel" name="cancel"
-                            value="Abbrechen" />
+                    <div class="name-value search-depth" id="step-count">
+                        0
                     </div>
-                </form>
+                </div>
+
+                <div class="autoMode-radio-btns">
+                    <div class="backward" id="radio-backward">
+                        <img src="images/pfeilrueckwaerts.png" class="forward-backward-image">
+                    </div>
+                    <div class="forward" id="radio-forward">
+                        <img src="images/pfeilvorwaerts.png" class="forward-backward-image">
+                    </div>
+                </div>
+                <div class="progress-bar" id="myProgress">
+                    <div id="myBarDef">20%</div>
+                    <div id="myBarPlay">70%</div>
+                    <div class="total-bar-value">
+                        81
+                    </div>
+                </div>
             </div>
-            <div id="contentSuccessDlg">
-                <form class="successForm">
-                    <img src="images/gueckwunsch.jfif" class="successImg">
-                    <div class="further-row">
-                        <input type="checkbox" id="further" name="further" checked>
-                        <label for="further">Weitere Lösung suchen? </label>
-                    </div>
-                    <div class="ok-cancel-btns">
-                        <input type="button" class="main-btn okCancelBtn" id="btn-successOK" name="ok" value="OK" />
-                        <input type="button" class="main-btn okCancelBtn" id="btn-successCancel" name="cancel"
-                            value="Abbrechen" />
-                    </div>
-                </form>
+
+
+
+        </div>
+
+        <div class="main-btns">
+            <div class="config-btns">
+                <div class="main-btn" id="btn-init">Initialisieren</div>
+                <div class="main-btn" id="btn-reset">Zurücksetzen</div>
             </div>
-            <div id="fileDlg">
-                <form class="dlg-form">
+            <div class="storage-btns">
+                <div class="main-btn" id="btn-save">Speichern</div>      
+                <div class="main-btn" id="btn-restore">Wiederherstellen</div>
+                <div class="main-btn" id="btn-delete">Löschen</div>
+                <div class="main-btn" id="btn-import">Import</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="Puzzle-Datenbank" class="tabcontent">
+        <div class="testcase-line">
+            <div>Testfallnummer: </div>
+            <div>
+                <div class="tc-nr" id="tcNr">0</div>
+            </div>
+            <div>Puzzle: </div>
+            <div class="tc-table" id="puzzle">
+
+            </div>
+            <div>Lösung: </div>
+            <div class="tc-table" id="solution">
+
+            </div>
+        </div>
+
+
+        <div class="testcase-btns">
+            <div class="tc-btn" id="btn-load" onclick="sudoApp.loadCurrentPuzzle()">Laden </div>
+            <div class="tc-btn" id="btn-previous" onclick="sudoApp.previousPuzzle()">Vorheriger</div>
+            <div class="tc-btn" id="btn-next" onclick="sudoApp.nextPuzzle()">Nächster</div>
+        </div>
+
+
+    </div>
+
+    <div id="Hilfe" class="tabcontent">
+        <a class="helpNode" href="./help.html" target="_blank">Hilfe</a>
+    </div>
+
+    <!--game dialogs -->
+    <div id="backstore" style="display: none">
+        <div id="contentSaveDlg">
+            <form class="dlg-form">
+                <div class="textInDlgs">Zustandsname: </div>
+                <div class="input-row">
+                    <div name="comboBox" id="storageSaveComboBox">
+                        <input class="textInDlgs" type="text" id="saveStorageName" name="saveStorageName" />
+                        <select class="textInDlgs" name="saveStorageList" id="saveStorageList">
+                            <option>one</option>
+                            <option>two</option>
+                            <option>three</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="ok-cancel-btns">
+                    <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageOK" name="ok" value="OK" />
+                    <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageCancel" name="cancel"
+                        value="Abbrechen" />
+                </div>
+            </form>
+        </div>
+        <div id="contentRestoreDlg">
+            <form class="dlg-form">
+                <div class="textInDlgs">Zustandsname: </div>
+                <div class="input-row">
+                    <div name="comboBox" id="storageRestoreComboBox">
+                        <input class="textInDlgs" type="text" id="restoreStorageName" name="restoreStorageName" />
+                        <select class="textInDlgs" name="restoreStorageList" id="restoreStorageList">
+                            <option>one</option>
+                            <option>two</option>
+                            <option>three</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="ok-cancel-btns">
+                    <input type="button" class="main-btn okCancelBtn" id="btn-restoreStorageOK" name="ok" value="OK" />
+                    <input type="button" class="main-btn okCancelBtn" id="btn-restoreStorageCancel" name="cancel"
+                        value="Abbrechen" />
+                </div>
+            </form>
+        </div>
+        <div id="contentDeleteDlg">
+            <form class="dlg-form">
+                <div class="textInDlgs">Zustandsname: </div>
+                <div class="input-row">
+                    <div name="comboBox" id="storageDeleteComboBox">
+                        <input class="textInDlgs" type="text" id="deleteStorageName" name="deleteStorageName" />
+                        <select class="textInDlgs" name="deleteStorageList" id="deleteStorageList">
+                            <option>one</option>
+                            <option>two</option>
+                            <option>three</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="ok-cancel-btns">
+                    <input type="button" class="main-btn okCancelBtn" id="btn-deleteStorageOK" name="ok" value="OK" />
+                    <input type="button" class="main-btn okCancelBtn" id="btn-deleteStorageCancel" name="cancel"
+                        value="Abbrechen" />
+                </div>
+            </form>
+        </div>
+        <div id="contentSuccessDlg">
+            <form class="successForm">
+                <img src="images/gueckwunsch.jfif" class="successImg">
+                <div class="further-row">
+                    <input type="checkbox" id="further" name="further" checked>
+                    <label for="further">Weitere Lösung suchen? </label>
+                </div>
+                <div class="ok-cancel-btns">
+                    <input type="button" class="main-btn okCancelBtn" id="btn-successOK" name="ok" value="OK" />
+                    <input type="button" class="main-btn okCancelBtn" id="btn-successCancel" name="cancel"
+                        value="Abbrechen" />
+                </div>
+            </form>
+        </div>
+        <div id="fileDlg">
+            <form class="dlg-form">
+                <div>
                     <div>
-                        <div>
-                            <label for="file"></label>
-                            <input type="file" class="input-row" id="excel-file" name="file" accept=".xlsx">
-                        </div>
+                        <label for="file"></label>
+                        <input type="file" class="input-row" id="txt-file" name="file" accept=".txt">
                     </div>
-                    <div class="ok-cancel-btns">
-                        <input type="button" class="main-btn okCancelBtn" id="btn-fileOK" name="ok"
-                            value="OK" />
-                        <input type="button" class="main-btn okCancelBtn" id="btn-fileCancel" name="cancel"
-                            value="Abbrechen" />
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="ok-cancel-btns">
+                    <input type="button" class="main-btn okCancelBtn" id="btn-fileOK" name="ok" value="OK" />
+                    <input type="button" class="main-btn okCancelBtn" id="btn-fileCancel" name="cancel"
+                        value="Abbrechen" />
+                </div>
+            </form>
         </div>
     </div>
+    <!-- </div> -->
     <!--Dialogs end-->
     <script src="./app.js"></script>
 </body>

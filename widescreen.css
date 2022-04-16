@@ -34,7 +34,7 @@
     --border-radius: 10px;
     --space-y: 20px;
     --gap: 5px;
-    --font-size-btn: 1.9rem;
+    --font-size-btn: 1.8rem;
     --font-size-sm: 1rem;
     --font-size: 1.2rem;
     --font-size-lg: 1.8rem;
@@ -47,11 +47,60 @@
 }
 
 * {
-    padding: 0;
-    margin: 0;
+    /* padding: 0;
+    margin: 0; */
     /* padding and border are included in the width and height */
     box-sizing: border-box;
 }
+
+
+
+/* Set height of body and the document to 100% */
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: Arial;
+}
+
+/* Style tab links */
+.tablink {
+  background-color: #555;
+  color: white;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  /* font-size: 17px; */
+  font-size: 1.8rem;
+  font-weight: bold;
+  width: 25%;
+}
+
+.tablink:hover {
+  background-color: #777;
+}
+
+/* Style the tab content (and add height:100% for full page content) */
+.tabcontent {
+  color: black;
+  padding-top: 80px; 
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+}
+
+#Sudoku-Solver {
+    background-color: var(--screen-bg-color);        ;
+}
+#Puzzle-Datenbank {
+    background-color: green;
+}
+#Hilfe {background-color: blue;}
 
 .tooltip {
     position: relative;
@@ -86,33 +135,28 @@ body {
     user-select: none;
 }
 
-.main {
-    padding: var(--nav-size);
-    display: grid;
-    place-items: center;
-}
-
-/*
-.screen {
-    position: relative;
-    height: 100%;
-    min-width: 400px;
-}
-
-*/
-
 /*======================================*/
 /* Sudoku grid block */
 /*======================================*/
 
+.inputArea {
+    display: flex;
+ 
+/*    justify-content:space-between;*/
+    
+}
+
+.gridArea {
+    display: grid; 
+}
+/*
+.game-col2 {
+   
+}
+*/
 .main-sudoku-grid {
     display: grid;
     grid-template-columns: repeat(3, auto);
-    padding-top: var(--space-y);
-    padding-left: var(--space-y);
-    padding-right: var(--space-y);
-    border: 5px solid var(--screen-bg-color);
-    background-color : var(--screen-bg-color);
 }
 
 .sudoku-group {
@@ -121,6 +165,9 @@ body {
     grid-template-columns: repeat(3, auto);
     border-radius: var(--border-radius);
     place-items: center;
+
+    position: relative;
+    width: 50%;
    }
 
 .sudoku-grid-cell {
@@ -287,25 +334,17 @@ body {
     background-color: black;
 }
 
-.inputArea {
-    display: grid;
-    grid-template-columns: 1fr 290px;
-}
+
 
 .evaluations {
-    font-size: var(--font-size-btn);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    font-size: 1.6rem;
+    display: flex;
     padding-top: 5px;
-    padding-left: 40px;
-    padding-right: 30px;
-    background-color : var(--screen-bg-color);
-
+    
+  
 }
 .sudoku-header {
-    background-color: var(--screen-bg-color);
     color: var(--screen-color);
-    border-bottom: 5px solid var(--screen-bg-color);
     text-align: center;
     font-weight:bold;
 
@@ -316,10 +355,9 @@ body {
 }
 
 .sudoku-title {
-
     padding-top: 20px;
     padding-bottom: 10px;
-    font-size: xx-large;
+    font-size: 2.4rem;
 
 }
 .help {
@@ -329,16 +367,6 @@ body {
 /* Exec button block                  */
 /*======================================*/
 
-.game-col2 {
-    border-top: 5px solid var(--screen-bg-color);
-    border-right: 5px solid var(--screen-bg-color);
-    border-bottom: 5px solid var(--screen-bg-color);
-    background-color: var(--screen-bg-color);
-    color: var(--screen-color);
-    font-size: 1.6rem;
-}
-
-
 .exec-btn-groups {
     padding-left: var(--space-y);
     padding-right: var(--space-y);
@@ -346,7 +374,6 @@ body {
 
 .exec-btn-group, .auto-exec-container {
     margin-top: 20px;
-
 }
 
 .manual-exec-btns, .automatic-exec {
@@ -473,9 +500,6 @@ body {
 
 .main-btns {
     /*  border: 5px solid var(--red);  */
-    border-left: 5px solid var(--screen-bg-color);
-    border-right: 5px solid var(--screen-bg-color);
-    border-bottom: 5px solid var(--screen-bg-color);
     background-color: var(--screen-bg-color);
     padding: 5px;
     margin-bottom: 10px;
@@ -523,15 +547,9 @@ body {
 
 .progress-box {
     padding-top: 5px;
-    padding-left: var(--space-y);
-    padding-right: var(--space-y);
     padding-bottom: 5px;
-    border-left: 5px solid var(--screen-bg-color);
-    border-right: 5px solid var(--screen-bg-color);
-    border-bottom: 5px solid var(--screen-bg-color);
-    background-color: var(--screen-bg-color);
     color:var(--screen-color);
-    font-size: var(--font-size-btn);
+    font-size: 1.6rem;
 }
 .manual-exec-btns.on, .automatic-exec.on {
     padding-right: 10px;
@@ -543,7 +561,9 @@ body {
 }
 
 .name-value {
+    margin-top: 5px;
     display: inline;
+    padding-right: 20px;
 }
 
 .depth-group {
@@ -559,8 +579,6 @@ body {
 
 .progress-group {
     margin-top: 5px;
-    margin-left:15px;
-    margin-right: 5px;;
     line-height: 20px;
     display: grid;
     grid-template-columns: 0.3fr 0.2fr 1fr;
@@ -569,7 +587,7 @@ body {
 
 .settings {
     line-height: 20px;
-    font-size: var(--font-size-btn);
+    font-size: 1.6rem;
     margin-top: 20px;;
 }
 
@@ -587,7 +605,7 @@ body {
     margin-top: 15px;
     padding: 1px;
     background-color: var(--screen-bg-color);
-    font-size: var(--font-size-btn);
+    font-size: 1.6rem;
     border: solid 1px;
 }
 .checkbox {
@@ -654,6 +672,10 @@ body {
     vertical-align:center;
 }
 
+
+
+
+
 .textInDlgs {
     font-size: 1.6rem;
     float: left; 
@@ -703,8 +725,59 @@ body {
 }
 
 
+/*=======================================*/
+/* Puzzle-Datenbank 
+/*=======================================*/
+
+.testcase-btns {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+}
+
+.tc-btn {
+    box-shadow: 3px 3px darkgray;
+    background-color: grey;
+    color: var(--standard-btn-color);
+    border-radius: var(--border-radius);
+    border: hidden;
+    display: grid;
+    place-items: center;
+    margin: 5px;
+    margin-bottom: 10px;
+    padding: 5px;
+    font-size: var(--font-size-btn);
+    cursor: pointer;
+}
 
 
+
+.testcase-line {
+    font-size: 1.6rem;
+    color:white;
+    margin-top: 100px;
+    display: flex;
+    flex-direction: row;
+    line-height: normal;
+}
+.tc-nr {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+.tc-table {
+    margin-left: 20px;
+    margin-right: 20px;
+
+}
+
+td {
+    margin: 1px;
+    padding: 5px;
+    text-align:center;
+    background-color: gray;
+    border: line 1px;
+ }
 
 /*======================================*/
 /* Global block */
