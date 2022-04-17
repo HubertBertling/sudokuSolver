@@ -185,12 +185,12 @@ class SudokuApp {
             sudoApp.deleteBtnPressed();
         });
         // 
-        document.querySelector('#btn-import').addEventListener('click', () => {
-
-            sudoApp.importBtnPressed();
-
-        });
-
+        /*    document.querySelector('#btn-import').addEventListener('click', () => {
+    
+                sudoApp.importBtnPressed();
+    
+            });
+    */
     }
 
     init() {
@@ -445,7 +445,7 @@ class SudokuApp {
         if (pageName == "Puzzle-Datenbank") {
             if (this.sudokuTestCaseStorage.isNotMounted()) {
                 this.sudokuTestCaseStorage.init();
-            } 
+            }
             this.sudokuTestCaseStorage.displayCurrentTC();
         }
     }
@@ -500,9 +500,41 @@ class SudokuApp {
                         puzzle: myTestCase[0].split(""),
                         solution: myTestCase[1].split("")
                     };
-                    testCases.push(testCase);
+                    let defCount = 0;
+                    testCase.puzzle.forEach(nr => {
+                        if (nr !== '0') { defCount++; }
+                    })
+                    if (defCount < 30) {
+                        testCases.push(testCase);
+                    }
                 }
             });
+            if (testCases.length == 0) {
+                let testCase = {
+                    tcNr: 0,
+                    puzzle: ['0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0'],
+                    solution: ['0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                        '0', '0', '0', '0', '0', '0', '0', '0', '0']
+                };
+                testCases.push(testCase);
+                this.currentTCNr = 0;
+            }
+
             let testCasesObj = JSON.stringify(testCases)
             localStorage.setItem("sudokuTestCases", testCasesObj);
         };
@@ -1752,7 +1784,7 @@ class SudokuGrid {
                 this.sudoCells[i].manualSetValue(puzzle[i], 'define');
             }
         }
-        this.refresh();     
+        this.refresh();
     }
 
     createSudoGrid() {
@@ -2913,9 +2945,34 @@ class SudokuTestCaseStorage {
         this.currentTCNr = 0;
     }
     isNotMounted() {
-        return this.testCases == [];
+        return this.testCases.length == 0;
     }
     currentTC() {
+        if (this.testCases.length == 0) {
+            let testCase = {
+                tcNr: 0,
+                puzzle: ['0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0'],
+                solution: ['0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
+                    '0', '0', '0', '0', '0', '0', '0', '0', '0']
+            };
+            this.testCases.push(testCase);
+            this.currentTCNr = 0;
+        }
         return this.testCases[this.currentTCNr];
     }
     nextTC() {
@@ -2943,6 +3000,7 @@ class SudokuTestCaseStorage {
         this.displayTCNr(currentTC.tcNr);
         this.displayTable('puzzle', currentTC.puzzle);
         this.displayTable('solution', currentTC.solution);
+        this.displayDefineCounter();
     }
     displayTCNr() {
         let nrElem = document.getElementById('tcNr')
@@ -2951,6 +3009,18 @@ class SudokuTestCaseStorage {
     displayClearTCNr() {
         let nrElem = document.getElementById('tcNr')
         nrElem.innerHTML = "";
+    }
+
+    displayDefineCounter() {
+        let currentTC = this.currentTC();
+        let defineCounter = 0;
+        currentTC.puzzle.forEach(nr => {
+            if (nr !== '0') {
+                defineCounter++;
+            }
+        })
+        let defCounterNode = document.getElementById('define-counter');
+        defCounterNode.innerHTML = defineCounter;
     }
 
     displayTable(nodeId, tableArray) {
@@ -2963,16 +3033,16 @@ class SudokuTestCaseStorage {
             let rowElem = document.createElement('tr');
             for (let col = 0; col < 9; col++) {
                 let colElem = document.createElement('td');
-                if (tableArray[k] == '0'){
-                    colElem.innerHTML = " ";    
+                if (tableArray[k] == '0') {
+                    colElem.innerHTML = " ";
                 } else {
                     colElem.innerHTML = tableArray[k];
                 }
                 //if (row === 2 || row === 5) colElem.style.marginBottom = '10px';
-                if (row === 2 || row === 5) colElem.style.borderBottom="2px solid white";
+                if (row === 2 || row === 5) colElem.style.borderBottom = "2px solid white";
 
                 // if (col === 2 || col === 5) colElem.style.marginRight = '10px';
-                if (col === 2 || col === 5) colElem.style.borderRight="2px solid white";
+                if (col === 2 || col === 5) colElem.style.borderRight = "2px solid white";
 
                 rowElem.appendChild(colElem);
                 k++;

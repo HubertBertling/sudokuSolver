@@ -168,10 +168,10 @@
                 <div class="main-btn" id="btn-reset">Zurücksetzen</div>
             </div>
             <div class="storage-btns">
-                <div class="main-btn" id="btn-save">Speichern</div>      
+                <div class="main-btn" id="btn-save">Speichern</div>
                 <div class="main-btn" id="btn-restore">Wiederherstellen</div>
                 <div class="main-btn" id="btn-delete">Löschen</div>
-                <div class="main-btn" id="btn-import">Import</div>
+                <!-- <div class="main-btn" id="btn-import">Import</div> -->
             </div>
         </div>
 
@@ -179,7 +179,7 @@
 
     <div id="Puzzle-Datenbank" class="tabcontent">
         <div class="testcase-line">
-            <div>Testfallnummer: </div>
+            <div>Puzzle-Nr.: </div>
             <div>
                 <div class="tc-nr" id="tcNr">0</div>
             </div>
@@ -192,12 +192,20 @@
 
             </div>
         </div>
+        <div class="testcase-line">
+            <div>
+                Anzahl gesetzter Nummern:
+            </div>
+            <div>
+                <div class="define-counter" id="define-counter">0</div>
+            </div>
+        </div>
 
 
         <div class="testcase-btns">
             <div class="tc-btn" id="btn-load" onclick="sudoApp.loadCurrentPuzzle()">Laden </div>
-            <div class="tc-btn" id="btn-previous" onclick="sudoApp.previousPuzzle()">Vorheriger</div>
-            <div class="tc-btn" id="btn-next" onclick="sudoApp.nextPuzzle()">Nächster</div>
+            <div class="tc-btn" id="btn-previous" onclick="sudoApp.previousPuzzle()">Vorheriges Puzzle</div>
+            <div class="tc-btn" id="btn-next" onclick="sudoApp.nextPuzzle()">Nächstes Puuzle</div>
         </div>
 
 
