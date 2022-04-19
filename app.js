@@ -504,7 +504,7 @@ class SudokuApp {
                     testCase.puzzle.forEach(nr => {
                         if (nr !== '0') { defCount++; }
                     })
-                    if (defCount < 30) {
+                    if (defCount < 26) {
                         testCases.push(testCase);
                     }
                 }
@@ -3005,10 +3005,14 @@ class SudokuTestCaseStorage {
     displayTCNr() {
         let nrElem = document.getElementById('tcNr')
         nrElem.innerHTML = this.currentTCNr;
+        let tcAllNode = document.getElementById('tc-all');
+        tcAllNode.innerHTML = this.testCases.length;
     }
     displayClearTCNr() {
         let nrElem = document.getElementById('tcNr')
         nrElem.innerHTML = "";
+        let tcAllNode = document.getElementById('tc-all');
+        tcAllNode.innerHTML = '';
     }
 
     displayDefineCounter() {
