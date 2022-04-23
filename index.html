@@ -29,8 +29,9 @@
 
     <button class="tablink" onclick="sudoApp.openPage('Sudoku-Solver', this, '#F2E2F2', 'black')"
         id="defaultOpen">Sudoku-Solver</button>
-    <button class="tablink" onclick="sudoApp.openPage('Puzzle-Datenbank', this, 'green', '')">Puzzle-Datenbank</button>
-    <button class="tablink" onclick="sudoApp.openPage('Hilfe', this, 'blue', '')">Hilfe</button>
+    <button class="tablink"
+        onclick="sudoApp.openPage('Puzzle-Datenbank', this, '#F2E2F2', 'black')">Puzzle-Datenbank</button>
+    <button class="tablink" onclick="sudoApp.openPage('Hilfe', this, '#F2E2F2', 'black')">Hilfe</button>
 
 
 
@@ -41,7 +42,64 @@
                     <!-- group 0 -->
                 </div>
 
+                <div class="evaluations">
+                    <div>
+                        <div class="name-value">
+                            Rückwärtsläufe:
+                        </div>
+                        <div class="name-value search-depth" id="search-depth">
+                            0
+                        </div>
+        
+                    </div>
+                    <div>
+                        <div class="name-value">
+                            Schwierigkeitsgrad:
+                        </div>
+                        <div class="name-value search-depth" id="difficulty">
+                            0
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-box" id="progress-box">
+        
+        
+                    <div class="progress-group">
+                        <div class="step-count-box">
+                            <div class="name-value">
+                                Schritte:
+                            </div>
+                            <!--
+                            <div class="name-value search-depth" id="step-count">
+                                0
+                            </div>
+                          -->
+                        </div>
+        
+                        <div class="autoMode-radio-btns">
+                            <div class="backward" id="radio-backward">
+                                <img src="images/pfeilrueckwaerts.png" class="forward-backward-image">
+                            </div>
+                            <div class="forward" id="radio-forward">
+                                <img src="images/pfeilvorwaerts.png" class="forward-backward-image">
+                            </div>
+                        </div>
+                        <div class="progress-bar" id="myProgress">
+                            <div id="myBarDef">20%</div>
+                            <div id="myBarPlay">70%</div>
+                            <div class="total-bar-value" id="total-bar-value">
+                                81
+                            </div>
+                        </div>
+                    </div>
+        
+        
+        
+                </div>
+        
+
             </div>
+            
             <div class="game-col2">
 
                 <div class="exec-btn-groups">
@@ -93,7 +151,7 @@
                     </div>
                     <div class="settings">
                         <div class="settings-line">
-                            Unzul. N. anzeigen: <input type="checkbox" class="checkbox" id="inAdmissiblesVisible">
+                            Unzul. Nummern anzeigen: <input type="checkbox" class="checkbox" id="inAdmissiblesVisible">
                         </div>
                         <div class="speed-field settings-line">
                             <label for="speed">Geschwindigkeit:</label>
@@ -107,77 +165,102 @@
                         </div>
                     </div>
                 </div>
+                <div class="main-btns">
+                    <p style="font-size: 1.6rem; font-weight: bold;">Puzzle</p>
+                    <div class="config-btns">
+                        <div class="main-btn" id="btn-init">Initialisieren</div>
+                        <div class="main-btn" id="btn-reset">Zurücksetzen</div>
+                    </div>
+                    <div class="storage-btns">
+                        <div class="main-btn" id="btn-save">Speichern in Puzzle-DB</div>
+                   <!--     <div class="main-btn" id="btn-restore">Wiederherstellen</div>
+                        <div class="main-btn" id="btn-delete">Löschen</div>
+                        <div class="main-btn" id="btn-import">Import</div> -->
+                    </div>
+                </div>
+         
             </div>
         </div>
-        <div class="evaluations">
-            <div>
-                <div class="name-value">
-                    Rückwärtsläufe:
-                </div>
-                <div class="name-value search-depth" id="search-depth">
-                    0
-                </div>
-
+ 
+        <div class="status-line">
+            <div class="status-line-item">Puzzle-Nr.: </div>
+            <div class="status-line-item">
+                <div class="pz-nr" id="pz-nr"> 0; </div>
             </div>
-            <div>
-                <div class="name-value">
-                    Schwierigkeitsgrad:
-                </div>
-                <div class="name-value search-depth" id="difficulty">
-                    0
-                </div>
+            <div class="status-line-item"> Puzzle-Name: </div>
+            <div class="status-line-item">
+                <div class="pz-name" id="pz-name">Kein Name;</div>
             </div>
-        </div>
-        <div class="progress-box" id="progress-box">
-
-
-            <div class="progress-group">
-                <div class="step-count-box">
-                    <div class="name-value">
-                        Schritte:
-                    </div>
-                    <div class="name-value search-depth" id="step-count">
-                        0
-                    </div>
-                </div>
-
-                <div class="autoMode-radio-btns">
-                    <div class="backward" id="radio-backward">
-                        <img src="images/pfeilrueckwaerts.png" class="forward-backward-image">
-                    </div>
-                    <div class="forward" id="radio-forward">
-                        <img src="images/pfeilvorwaerts.png" class="forward-backward-image">
-                    </div>
-                </div>
-                <div class="progress-bar" id="myProgress">
-                    <div id="myBarDef">20%</div>
-                    <div id="myBarPlay">70%</div>
-                    <div class="total-bar-value">
-                        81
-                    </div>
-                </div>
+            <div class="status-line-item"> Erfassungs-Datum: </div>
+            <div class="status-line-item">
+                <div class="pz-date" id="pz-date">20.04.2022</div>
             </div>
-
-
 
         </div>
-
-        <div class="main-btns">
-            <div class="config-btns">
-                <div class="main-btn" id="btn-init">Initialisieren</div>
-                <div class="main-btn" id="btn-reset">Zurücksetzen</div>
-            </div>
-            <div class="storage-btns">
-                <div class="main-btn" id="btn-save">Speichern</div>
-                <div class="main-btn" id="btn-restore">Wiederherstellen</div>
-                <div class="main-btn" id="btn-delete">Löschen</div>
-                <!-- <div class="main-btn" id="btn-import">Import</div> -->
-            </div>
-        </div>
-
     </div>
 
-    <div id="Puzzle-Datenbank" class="tabcontent">
+    <div id="Puzzle-Datenbank" class="tabcontent tabdatabase">
+
+        <table class="sortierbar" id="puzzle-db-table">
+            <caption>Sudoku-Puzzles</caption>
+            <thead>
+                <tr>
+                    <th>Puzzle-Nr.</th>
+                    <th>Puzzle-Name</th>
+                    <th>Initial belegte Zellen</th>
+                    <th>Schwierigkeitsgrad</th>
+                    <th>Anzahl Rückwärtsläufe</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>5</td>
+                    <td>kein Name</td>
+                    <td>24</td>
+                    <td>leicht</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>kein Name</td>
+                    <td>24</td>
+                    <td>leicht</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>kein Name</td>
+                    <td>24</td>
+                    <td>leicht</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>kein Name</td>
+                    <td>24</td>
+                    <td>leicht</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>kein Name</td>
+                    <td>24</td>
+                    <td>leicht</td>
+                    <td>2</td>
+                </tr>
+
+            </tbody>
+
+            <tfoot>
+                <tr>
+                    <td colspan=5>* Die Daten befinden sich im Localstorage des Browsers</td>
+                </tr>
+            </tfoot>
+
+        </table>
+
+
+
         <div class="testcase-line">
             <div>Puzzle-Nr.: </div>
             <div>
@@ -187,6 +270,9 @@
             <div>
                 <div class="tc-all" id="tc-all">0</div>
             </div>
+        </div>
+        <div class="testcase-line">
+
             <div>Puzzle: </div>
             <div class="tc-table" id="puzzle">
 
@@ -216,7 +302,8 @@
     </div>
 
     <div id="Hilfe" class="tabcontent">
-        <a class="helpNode" href="./help.html" target="_blank">Hilfe</a>
+        <iframe src="./help.html" width="100%" height="300" style="border:none;">
+        </iframe>
     </div>
 
     <!--game dialogs -->

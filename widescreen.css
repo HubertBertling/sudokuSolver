@@ -34,7 +34,7 @@
     --border-radius: 10px;
     --space-y: 20px;
     --gap: 5px;
-    --font-size-btn: 1.8rem;
+    --font-size-btn: 1.6rem;
     --font-size-sm: 1rem;
     --font-size: 1.2rem;
     --font-size-lg: 1.8rem;
@@ -47,8 +47,8 @@
 }
 
 * {
-    /* padding: 0;
-    margin: 0; */
+    padding: 0;
+    margin: 0; 
     /* padding and border are included in the width and height */
     box-sizing: border-box;
 }
@@ -57,9 +57,9 @@
 
 /* Set height of body and the document to 100% */
 body, html {
-  height: 100%;
-  margin: 0;
-  font-family: Arial;
+    font-family: 'Open Sans', sans-serif;
+    height: 100%;
+    min-width: fit-content;
 }
 
 /* Style tab links */
@@ -95,12 +95,17 @@ body, html {
 }
 
 #Sudoku-Solver {
-    background-color: var(--screen-bg-color);        ;
+    background-color: var(--screen-bg-color); 
+    color: black;       ;
 }
 #Puzzle-Datenbank {
-    background-color: green;
+    background-color: var(--screen-bg-color);
+    color: black;
 }
-#Hilfe {background-color: blue;}
+#Hilfe {
+    background-color: var(--screen-bg-color);
+    color: black;
+}
 
 .tooltip {
     position: relative;
@@ -129,10 +134,89 @@ body, html {
   }
   
 
-body {
-    font-family: 'Open Sans', sans-serif;
-    /* Text kann nicht selektiert werden */
-    user-select: none;
+
+.tabdatabase {
+    color: white;
+    font-size: 1.2rem;
+
+}
+table {
+	border: 1px solid black;
+	border-spacing: 0px;
+	border-collapse: collapse
+}
+
+table td {
+	border: 1px solid white;
+	border-spacing: 0px;
+	border-collapse: collapse;
+	padding: 3px
+}
+
+table th {
+	border: 1px solid white;
+	border-spacing: 0px;
+	border-collapse: collapse;
+	padding: 3px
+}
+
+table h2 {
+	margin: 0
+}
+
+table caption {
+	padding: 0.5em;
+	text-align: left;
+	font-weight: bold;
+}
+
+table.is_sortable thead th {
+	background-color: lightgray;
+}
+
+
+.sortbutton { 
+	width: 100%; 
+	height: 100%; 
+	border: none; 
+	background-color: transparent; 
+	font: inherit; 
+	color: inherit; 
+	text-align: inherit; 
+	padding: 0; 
+	cursor: pointer; 
+} 
+.sortierbar thead th span.visually-hidden { 
+	position: absolute !important; 
+	clip: rect(1px, 1px, 1px, 1px) !important; 
+	padding: 0 !important; 
+	border: 0 !important; 
+	height: 1px !important; 
+	width: 1px !important; 
+	overflow: hidden !important; 
+	white-space: nowrap !important; 
+} 
+.sortierbar caption span { 
+	font-weight: normal; 
+	font-size: .8em; 
+}
+.sortbutton svg { 
+	margin-left: .2em; height: .7em; 
+} 
+.sortbutton.sortedasc svg path:last-of-type { 
+	fill: currentColor !important; 
+} 
+.sortbutton.sorteddesc svg path:first-of-type { 
+	fill: currentColor!important; 
+}
+.sortbutton.sortedasc > span.visually-hidden:first-of-type { 
+	display: none;
+} 
+.sortbutton.sorteddesc > span.visually-hidden:last-of-type { 
+	display: none;
+} 
+.sortbutton.unsorted > span.visually-hidden:last-of-type { 
+	display: none;
 }
 
 /*======================================*/
@@ -165,10 +249,7 @@ body {
     grid-template-columns: repeat(3, auto);
     border-radius: var(--border-radius);
     place-items: center;
-
-    position: relative;
-    width: 50%;
-   }
+}
 
 .sudoku-grid-cell {
     position: relative;   
@@ -418,7 +499,7 @@ body {
 
 
 .number {
-    height: var(--sudoku-cell-size);
+    height: 40px;
     border-radius: var(--border-radius);
     background-color: var(--standard-btn-bg-color);
     color: var(--standard-btn-color);
@@ -436,7 +517,7 @@ body {
 .delete {
     background-color: var(--delete-btn-bg-color);
     color: var(--delete-btn-color);
-    height: var(--sudoku-cell-size);
+    height: 40px;
     border-radius: var(--border-radius);
     display: grid;
     place-items: center;
@@ -500,27 +581,25 @@ body {
 
 .main-btns {
     /*  border: 5px solid var(--red);  */
+    margin-top: 20px;
     background-color: var(--screen-bg-color);
-    padding: 5px;
-    margin-bottom: 10px;
+    padding-left: 15px;
+    padding-right: 20px;
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 10px;
+    grid-template-columns: 1fr;
 }
 
 .config-btns {
-    margin-right: 10px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
 }
 
-.storage-btns {
-    margin-left: 10px;
+/* .storage-btns {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(1, 1fr);
 
-}
+} */
 
 .main-btn:active {
     box-shadow: 0 0px darkgray;
@@ -536,7 +615,6 @@ body {
     display: grid;
     place-items: center;
     margin: 5px;
-    margin-bottom: 10px;
     padding: 5px;
     font-size: var(--font-size-btn);
     cursor: pointer;
@@ -581,7 +659,7 @@ body {
     margin-top: 5px;
     line-height: 20px;
     display: grid;
-    grid-template-columns: 0.3fr 0.2fr 1fr;
+    grid-template-columns: 0.1fr 0.1fr 1fr;
     gap: 2px;
 }
 
@@ -592,7 +670,7 @@ body {
 }
 
 .search-max-depth, .speed-field {
-      margin-top: 10px;
+      margin-top: 5px;
      
 }
 
@@ -602,7 +680,7 @@ body {
 }
 
 .speedSetting {
-    margin-top: 15px;
+    margin-top: 5px;
     padding: 1px;
     background-color: var(--screen-bg-color);
     font-size: 1.6rem;
@@ -751,12 +829,31 @@ body {
     cursor: pointer;
 }
 
+.status-line {
+    border-top: 3px solid #0d1117;
+    font-size: 1.6rem;
+    color:black;
+    padding-top: 5px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    line-height: normal;
+}
+.status-line-item {
+    padding-left: 5px;
+    padding-right: 5px;
+}
 
+/*
+.pz-nr, .pz-name, .pz-date {
+    margin-left: 5px;
+}
+*/
 
 .testcase-line {
     font-size: 1.6rem;
-    color:white;
-    margin-top: 100px;
+    color:black;
+    margin-top: 50px;
     display: flex;
     flex-direction: row;
     line-height: normal;
@@ -768,19 +865,22 @@ body {
     margin-left: 5px;
     margin-right: 20px;
 }
+
 .tc-table {
     margin-left: 20px;
     margin-right: 20px;
-
+    display: grid;
+    grid-template-columns: repeat(9, auto);
 }
-
-td {
-    margin: 1px;
-    padding: 5px;
-    text-align:center;
-    background-color: gray;
-    border: line 1px;
- }
+.cell-field {
+        position: relative;
+        width: 30px;
+        height: 30px;
+        display: grid;
+        background-color: grey;
+        place-items: center;
+        color: white;
+    }
 
 /*======================================*/
 /* Global block */
