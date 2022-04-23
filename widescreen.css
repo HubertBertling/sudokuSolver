@@ -62,6 +62,8 @@ body, html {
     min-width: fit-content;
 }
 
+
+
 /* Style tab links */
 .tablink {
   background-color: #555;
@@ -851,7 +853,7 @@ table.is_sortable thead th {
 */
 
 .testcase-line {
-    font-size: 1.6rem;
+    font-size: 1.2rem;
     color:black;
     margin-top: 50px;
     display: flex;
@@ -874,12 +876,74 @@ table.is_sortable thead th {
 }
 .cell-field {
         position: relative;
-        width: 30px;
-        height: 30px;
+        width: 20px;
+        height: 20px;
         display: grid;
         background-color: grey;
         place-items: center;
         color: white;
+}
+
+.sortierbar caption {
+    font-size: 1.8rem;
+}
+.sortierbar thead tr {
+   display:block;
+}
+
+.sortierbar tbody {
+    width:100%;
+    display:block; 
+    height:200px;
+    overflow:auto;
+}
+
+.sortierbar th, .sortierbar td {
+    width:160px;
+}
+    
+    .sortbutton { 
+        width: 100%; 
+        height: 100%; 
+        border: none; 
+        background-color: transparent; 
+        font: inherit; 
+        color: inherit; 
+        text-align: inherit; 
+        padding: 0; 
+        cursor: pointer; 
+    } 
+    .sortierbar thead th span.visually-hidden { 
+        position: absolute !important; 
+        clip: rect(1px, 1px, 1px, 1px) !important; 
+        padding: 0 !important; 
+        border: 0 !important; 
+        height: 1px !important; 
+        width: 1px !important; 
+        overflow: hidden !important; 
+        white-space: nowrap !important; 
+    } 
+    .sortierbar caption span { 
+        font-weight: normal; 
+        font-size: .8em; 
+    }
+    .sortbutton svg { 
+        margin-left: .2em; height: .7em; 
+    } 
+    .sortbutton.sortedasc svg path:last-of-type { 
+        fill: currentColor !important; 
+    } 
+    .sortbutton.sorteddesc svg path:first-of-type { 
+        fill: currentColor!important; 
+    }
+    .sortbutton.sortedasc > span.visually-hidden:first-of-type { 
+        display: none;
+    } 
+    .sortbutton.sorteddesc > span.visually-hidden:last-of-type { 
+        display: none;
+    } 
+    .sortbutton.unsorted > span.visually-hidden:last-of-type { 
+        display: none;
     }
 
 /*======================================*/
