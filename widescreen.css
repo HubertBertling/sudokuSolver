@@ -59,7 +59,7 @@
 body, html {
     font-family: 'Open Sans', sans-serif;
     height: 100%;
-    min-width: fit-content;
+    min-width: 960px;
 }
 
 
@@ -809,14 +809,14 @@ table.is_sortable thead th {
 /* Puzzle-Datenbank 
 /*=======================================*/
 
-.testcase-btns {
+.puzzle-btns {
     margin-top: 20px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
 
 }
 
-.tc-btn {
+.pz-btn {
     box-shadow: 3px 3px darkgray;
     background-color: grey;
     color: var(--standard-btn-color);
@@ -843,7 +843,7 @@ table.is_sortable thead th {
 }
 .status-line-item {
     padding-left: 5px;
-    padding-right: 5px;
+    padding-right: 60px;
 }
 
 /*
@@ -852,7 +852,7 @@ table.is_sortable thead th {
 }
 */
 
-.testcase-line {
+.puzzle-line {
     font-size: 1.2rem;
     color:black;
     margin-top: 50px;
@@ -860,15 +860,15 @@ table.is_sortable thead th {
     flex-direction: row;
     line-height: normal;
 }
-.tc-nr {
+.pz-nr {
     margin-left: 20px;
     margin-right: 5px;
-}.tc-all {
+}.pz-all {
     margin-left: 5px;
     margin-right: 20px;
 }
 
-.tc-table {
+.pz-table {
     margin-left: 20px;
     margin-right: 20px;
     display: grid;
@@ -894,12 +894,13 @@ table.is_sortable thead th {
 .sortierbar tbody {
     width:100%;
     display:block; 
-    height:200px;
+    height:fit-content;
+    max-height: 100px;
     overflow:auto;
 }
 
 .sortierbar th, .sortierbar td {
-    width:160px;
+    width:150px;
 }
     
     .sortbutton { 

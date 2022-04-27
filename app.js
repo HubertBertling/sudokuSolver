@@ -59,16 +59,11 @@ class SudokuApp {
         // Die App erhält eine Sudoku-Tabelle. Die als HTML schon existierende Tabelle 
         // erhält hier einen Javascript Wrapper.
 
-        // Die App hat bisher vier  Dialoge
-
-        this.storageSaveDialog = new StorageSaveDialog();
-        this.storageRestoreDialog = new StorageRestoreDialog();
-        this.storageDeleteDialog = new StorageDeleteDialog();
+        this.puzzleSaveDialog = new PuzzleSaveDialog();
         this.successDialog = new SuccessDialog();
         this.fileDialog = new FileDialog();
 
-        this.sudokuStateStorage = new SudokuStateStorage();
-        this.sudokuTestCaseStorage = new SudokuTestCaseStorage();
+        this.sudokuPuzzleDB = new SudokuPuzzleDB();
 
         // Die Hauptansicht
         this.suGrid = new SudokuGrid();
@@ -176,27 +171,25 @@ class SudokuApp {
         document.querySelector('#btn-save').addEventListener('click', () => {
             sudoApp.saveBtnPressed();
         });
- /*       // Der Wiederherstellen--Button: Ein gespeicherter Zustand wird wiederhergestellt.
-        document.querySelector('#btn-restore').addEventListener('click', () => {
-            sudoApp.restoreBtnPressed();
-        });
-        // Der Lösche--Button: Ein gespeicherter Zustand wird gelöscht.
-        document.querySelector('#btn-delete').addEventListener('click', () => {
-            sudoApp.deleteBtnPressed();
-        });
-        // 
-        /*    document.querySelector('#btn-import').addEventListener('click', () => {
-    
-                sudoApp.importBtnPressed();
-    
-            });
-    */
+        /*       // Der Wiederherstellen--Button: Ein gespeicherter Zustand wird wiederhergestellt.
+               document.querySelector('#btn-restore').addEventListener('click', () => {
+                   sudoApp.restoreBtnPressed();
+               });
+               // Der Lösche--Button: Ein gespeicherter Zustand wird gelöscht.
+               document.querySelector('#btn-delete').addEventListener('click', () => {
+                   sudoApp.deleteBtnPressed();
+               });
+               // 
+               /*    document.querySelector('#btn-import').addEventListener('click', () => {
+           
+                       sudoApp.importBtnPressed();
+           
+                   });
+           */
     }
 
     init() {
-        this.storageSaveDialog.close();
-        this.storageRestoreDialog.close();
-        this.storageDeleteDialog.close();
+        this.puzzleSaveDialog.close();
         this.successDialog.close();
         this.fileDialog.close();
 
@@ -209,8 +202,7 @@ class SudokuApp {
         this.runner = new AutomatedRunnerOnGrid(this.suGrid);
         this.runner.init();
         // Der Zustandsspeicher
-        this.sudokuStateStorage.init();
-        this.sudokuTestCaseStorage.init();
+
     }
 
     setAutoExecOn() {
@@ -305,23 +297,10 @@ class SudokuApp {
     }
 
     saveBtnPressed() {
-        // Zustand soll gespeichert werden
+        // Puzzle soll gespeichert werden
         this.runner.stopTimer();
-        this.runner.init();
         this.successDialog.close();
-        this.setAutoExecOff();
-        let tmpNameList = this.sudokuStorage.getNameList();
-        this.storageSaveDialog.open(tmpNameList);
-    }
-
-    restoreBtnPressed() {
-        // Zustand soll wiederhergestellt werden
-        this.runner.stopTimer();
-        this.runner.init();
-        this.successDialog.close();
-        this.setAutoExecOff();
-        let tmpNameList = this.sudokuStorage.getNameList();
-        this.storageRestoreDialog.open(tmpNameList);
+        this.puzzleSaveDialog.open();
     }
 
     importBtnPressed() {
@@ -331,15 +310,6 @@ class SudokuApp {
         this.setAutoExecOff();
         this.fileDialog.reset();
         this.fileDialog.open();
-    }
-    deleteBtnPressed() {
-        // Zustand soll gelöscht werden
-        this.runner.stopTimer();
-        this.runner.init();
-        this.successDialog.close();
-        this.setAutoExecOff();
-        let tmpNameList = this.sudokuStorage.getNameList();
-        this.storageDeleteDialog.open(tmpNameList);
     }
 
     sudokuCellPressed(cellNode, cell, index) {
@@ -353,27 +323,19 @@ class SudokuApp {
         this.suGrid.select(cellNode, cell, index);
     }
 
-    saveStorageDlgOKPressed() {
-        this.storageSaveDialog.close();
+    savePuzzleDlgOKPressed() {
+        this.puzzleSaveDialog.close();
         // Der Name unter dem der aktuelle Zustand gespeichert werden soll
-        let stateName = this.storageSaveDialog.getSelectedName();
+        let puzzleName = this.puzzleSaveDialog.getSelectedName();
 
-        let tmpNamedState = this.sudokuStorage.getNamedState(stateName);
-        if (tmpNamedState == null) {
-            // Alles gut: es existiert noch kein state mit diesem Namen
-            // Speichere den Zustand
-        } else {
-            // Es existiert bereits ein Zustand mit diesem Namen
-            stateName = stateName + 'A';
-        }
-        // Berechne den aktuellen Zustand
-        let currentState = this.suGrid.getCurrentState();
+        let currentPuzzle = this.suGrid.getCurrentPuzzle();
         //Speichere den named Zustand
-        this.sudokuStorage.saveNamedState(stateName, currentState);
+        this.sudokuPuzzleDB.saveNamedPuzzle(puzzleName, currentPuzzle);
+        this.sudokuPuzzleDB.display();
     }
 
-    saveStorageDlgCancelPressed() {
-        this.storageSaveDialog.close()
+    savePuzzleDlgCancelPressed() {
+        this.puzzleSaveDialog.close()
     }
 
     restoreStorageDlgOKPressed() {
@@ -413,15 +375,17 @@ class SudokuApp {
         this.runner.stopTimer();
         this.runner.init();
         this.setAutoExecOff();
-        this.suGrid.loadPuzzle(this.sudokuTestCaseStorage.getCurrentPuzzle());
+        let puzzle = this.sudokuPuzzleDB.getSelectedPuzzle();
+        let uid = this.sudokuPuzzleDB.getSelectedUid();
+        this.suGrid.loadPuzzle(uid, puzzle);
         this.runner.displayProgress();
         document.getElementById("defaultOpen").click();
     }
     nextPuzzle() {
-        this.sudokuTestCaseStorage.nextTC();
+        this.sudokuPuzzleDB.nextPZ();
     }
     previousPuzzle() {
-        this.sudokuTestCaseStorage.previousTC();
+        this.sudokuPuzzleDB.previousPZ();
     }
     comboBoxNameSelected(comboBoxNode, e) {
         comboBoxNode.setInputField(e.target.value);
@@ -443,11 +407,7 @@ class SudokuApp {
         elmnt.style.backgroundColor = bg_color;
         elmnt.style.color = color;
         if (pageName == "Puzzle-Datenbank") {
-            if (this.sudokuTestCaseStorage.isNotMounted()) {
-                this.sudokuTestCaseStorage.init();
-            }
-            this.sudokuTestCaseStorage.displayCurrentTC();
-            this.sortedSudokuPuzzleTable = new SortedSudokuPuzzleTable();
+            this.sudokuPuzzleDB.display();
         }
     }
 
@@ -485,7 +445,7 @@ class SudokuApp {
         let reader = new FileReader();
 
         reader.onload = (event) => {
-            let testCases = [];
+            let puzzles = [];
             const file = event.target.result;
             const allLines = file.split(/\r\n|\n/);
             // Reading line by line
@@ -495,24 +455,24 @@ class SudokuApp {
                     // Header-Zeile überlesen
                 } else {
                     i++;
-                    const myTestCase = line.split(',');
-                    let testCase = {
-                        tcNr: i,
-                        puzzle: myTestCase[0].split(""),
-                        solution: myTestCase[1].split("")
+                    const myPuzzle = line.split(',');
+                    let puzzle = {
+                        pzNr: i,
+                        puzzle: myPuzzle[0].split(""),
+                        solution: myPuzzle[1].split("")
                     };
                     let defCount = 0;
-                    testCase.puzzle.forEach(nr => {
+                    puzzle.puzzle.forEach(nr => {
                         if (nr !== '0') { defCount++; }
                     })
                     if (defCount < 26) {
-                        testCases.push(testCase);
+                        puzzles.push(puzzle);
                     }
                 }
             });
-            if (testCases.length == 0) {
-                let testCase = {
-                    tcNr: 0,
+            if (puzzles.length == 0) {
+                let puzzle = {
+                    pzNr: 0,
                     puzzle: ['0', '0', '0', '0', '0', '0', '0', '0', '0',
                         '0', '0', '0', '0', '0', '0', '0', '0', '0',
                         '0', '0', '0', '0', '0', '0', '0', '0', '0',
@@ -532,12 +492,12 @@ class SudokuApp {
                         '0', '0', '0', '0', '0', '0', '0', '0', '0',
                         '0', '0', '0', '0', '0', '0', '0', '0', '0']
                 };
-                testCases.push(testCase);
-                this.currentTCNr = 0;
+                puzzles.push(puzzle);
+                this.selectedPZNr = 0;
             }
 
-            let testCasesObj = JSON.stringify(testCases)
-            localStorage.setItem("sudokuTestCases", testCasesObj);
+            let puzzlesObj = JSON.stringify(puzzles)
+            localStorage.setItem("localSudokuDB", puzzlesObj);
         };
 
         reader.onerror = (event) => {
@@ -1097,6 +1057,8 @@ class AutomatedRunnerOnGrid {
             if (this.isRunning()) {
                 this.stopTimer();
             }
+            this.suGrid.difficulty = this.levelOfDifficulty;
+            this.suGrid.backTracks = this.countBackwards;
             sudoApp.successDialog.open();
         } else if (result == 'fail') {
             this.stopTimer();
@@ -1677,8 +1639,14 @@ class SudokuCol extends NineCellCollection {
 }
 
 class SudokuGrid {
+    // Speichert die Sudokuzellen in der Wrapper-Version
     constructor() {
-        // Speichert die Sudokuzellen in der Wrapper-Version
+        // Neue Puzzles sind noch nicht geladen, weil sie sich
+        // noch nicht in der DB befinden. 
+        // Sie besitzen daher auch noch keine Id.
+        this.loadedPuzzleId = '';
+        this.difficulty = 'unbestimmt';
+        this.backTracks = 0;
         this.sudoCells = [];
         this.sudoGroups = [];
         this.sudoRows = [];
@@ -1690,6 +1658,9 @@ class SudokuGrid {
         // Speichert die aktuell selektierte Zelle und ihren Index
         this.selectedCell = undefined;
         this.indexSelected = -1;
+        this.loadedPuzzleId = '';
+        this.difficulty = 'unbestimmt';
+        this.backTracks = 0;
         // Erzeuge die interne Tabelle
         this.createSudoGrid();
         this.evaluateGrid();
@@ -1747,17 +1718,44 @@ class SudokuGrid {
         this.refresh();
     }
 
-    getCurrentState() {
-        // Zusammenstellung des Zustandes, um ihn abspeichern zu können
-        let tmpGrid = [];
-        for (let i = 0; i < 81; i++) {
-            let storedCell = {
-                cellValue: this.sudoCells[i].getValue(),
-                cellPhase: this.sudoCells[i].getPhase()
-            };
-            tmpGrid.push(storedCell);
+    getCurrentPuzzle() {
+        // Zusammenstellung des Puzzles, um es abspeichern zu können
+        let tmpPuzzle = null;
+        let puzzelId = ''
+        if (this.loadedPuzzleId == '') {
+            // Fall 1: Das aktuelle Puzzle ist neu. Es befindet sich noch nicht in der DB.
+            tmpPuzzle = new SudokuPuzzle();
+            puzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+
+        } else {
+            // Fall 2: Das aktuelle Puzzle ist aus der DB geladen und wird neu gespielt.
+            tmpPuzzle = sudoApp.sudokuPuzzleDB.getPuzzle(this.loadedPuzzleId);
+            puzzelId = this.loadedPuzzleId;
         }
-        return tmpGrid;
+        // Die Puzzle-Aufgabe setzen
+        tmpPuzzle.defCount = 0;
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].getPhase() == 'define') {
+                tmpPuzzle.defCount++;
+                tmpPuzzle.puzzle[i] = this.sudoCells[i].getValue();
+            } else {
+                tmpPuzzle.puzzle[i] = '0';
+            }
+        }
+        // Status setzen
+        if (this.solved()) {
+            tmpPuzzle.status = 'gelöst';
+            tmpPuzzle.level = this.difficulty;
+            tmpPuzzle.backTracks = this.backTracks;
+            for (let i = 0; i < 81; i++) {
+                tmpPuzzle.solution[i] = this.sudoCells[i].getValue();
+            }
+        }
+        let currentPuzzle = {
+            uid: puzzelId,
+            obj: tmpPuzzle
+        }
+        return currentPuzzle;
     }
 
     checkStateOk(state) {
@@ -1779,7 +1777,9 @@ class SudokuGrid {
         this.refresh();
     }
 
-    loadPuzzle(puzzle) {
+    loadPuzzle(uid, puzzleObj) {
+        this.loadedPuzzleId = uid;
+        let puzzle = puzzleObj.puzzle;
         for (let i = 0; i < 81; i++) {
             if (puzzle[i] == '0') {
                 this.sudoCells[i].manualSetValue(puzzle[i], '');
@@ -1787,6 +1787,7 @@ class SudokuGrid {
                 this.sudoCells[i].manualSetValue(puzzle[i], 'define');
             }
         }
+        this.displayPuzzle(uid, puzzleObj);
         this.refresh();
     }
 
@@ -1858,6 +1859,13 @@ class SudokuGrid {
             }
             this.sudoRows.push(row);
         }
+    }
+    displayPuzzle(uid, puzzleObj) {
+        let pzIdNode = document.getElementById('pz-nr');
+        pzIdNode.innerText = uid;
+        let pzNameNode = document.getElementById('pz-name');
+        pzNameNode.innerText = puzzleObj.name;
+        
     }
 
     display() {
@@ -2613,78 +2621,26 @@ class SudokuCell {
         return this.myIndex;
     }
 }
-class ComboBox {
-    constructor(comboBoxNode) {
-        // Der ComboBox Knoten
-        this.myComboBoxNode = comboBoxNode;
-        // 1. Kind: das Input-Feld der ComboBox
-        this.theInput = comboBoxNode.firstElementChild;
-        // 2. und letztes Kind: das Selektionsfeld der Options-Liste
-        this.optionList = comboBoxNode.lastElementChild;
-
-        // Mit der Erzeugung des Wrappers wird
-        // auch der Eventhandler der ComboBox gesetzt
-        this.optionList.addEventListener('change', (event) => {
-            sudoApp.comboBoxNameSelected(this, event);
-        });
-    }
-    getNode() {
-        return this.myComboBoxNode;
-    }
-    getDialog() {
-        return this.myDialog;
-    }
-    setInputField(name) {
-        // Eine Selektion in der Optionsliste ruft diese Operation au
-        // und überträgt die Auswahl in das Input-Feld (ComboBox)
-        this.theInput.value = name;
-    }
-    init(optionListNew) {
-        // Fülle optionListNew in die comboBoxliste
-        // remove existing list
-
-        while (this.optionList.firstChild) {
-            this.optionList.removeChild(this.optionList.lastChild);
-        }
-        //fill new list
-
-        for (let i = 0; i < optionListNew.length; i++) {
-            let optionElement = document.createElement('option');
-            optionElement.innerHTML = optionListNew[i];
-            this.optionList.appendChild(optionElement);
-        }
-
-        // Setze input initial
-        if (optionListNew.length > 0) {
-            this.theInput.value = optionListNew[0];
-        } else {
-            this.theInput.value = '';
-        }
-    }
-    getSelectedName() {
-        return this.theInput.value;
-    }
-}
-class StorageSaveDialog {
+class PuzzleSaveDialog {
     constructor() {
         this.winBox;
         this.myOpen = false;
-        this.myComboBoxNode = document.getElementById("storageSaveComboBox");
-        this.myComboBox = new ComboBox(this.myComboBoxNode);
+
+        this.myPuzzleNameNode = document.getElementById("puzzle-name");
         this.okNode = document.getElementById("btn-saveStorageOK");
         this.cancelNode = document.getElementById("btn-saveStorageCancel");
         // Mit der Erzeugung des Wrappers werden 
         // auch der Eventhandler OK und Abbrechen gesetzt
         this.okNode.addEventListener('click', () => {
-            sudoApp.saveStorageDlgOKPressed();
+            sudoApp.savePuzzleDlgOKPressed();
         });
         this.cancelNode.addEventListener('click', () => {
-            sudoApp.saveStorageDlgCancelPressed();
+            sudoApp.savePuzzleDlgCancelPressed();
         });
     }
-    open(nameList) {
+    open() {
         if (window.screen.availWidth < 421) {
-            this.winBox = new WinBox("Zustand speichern unter ...", {
+            this.winBox = new WinBox("Puzzle speichern unter ...", {
                 x: "center",
                 y: "center",
                 width: "280px",
@@ -2692,15 +2648,14 @@ class StorageSaveDialog {
                 mount: document.getElementById("contentSaveDlg")
             });
         } else {
-            this.winBox = new WinBox("Zustand speichern unter ...", {
+            this.winBox = new WinBox("Puzzle speichern unter ...", {
                 x: "center",
                 y: "center",
-                width: "370px",
+                width: "300px",
                 height: "180px",
                 mount: document.getElementById("contentSaveDlg")
             });
         }
-        this.myComboBox.init(nameList);
         this.myOpen = true;
     }
 
@@ -2710,117 +2665,10 @@ class StorageSaveDialog {
             this.myOpen = false;
         }
     }
-    init(nameList) {
-        this.myComboBox.init(nameList);
-    }
     getSelectedName() {
-        return this.myComboBox.getSelectedName();
+        return this.myPuzzleNameNode.value
     }
 }
-
-class StorageRestoreDialog {
-    constructor() {
-        //this.storageRestoreDialog = document.getElementById("storageRestoreDialog");
-        this.winBox;
-        this.myOpen = false;
-        this.myComboBox = new ComboBox(document.getElementById("storageRestoreComboBox"));
-        this.okNode = document.getElementById("btn-restoreStorageOK");
-        this.cancelNode = document.getElementById("btn-restoreStorageCancel");
-        // Mit der Erzeugung des Wrappers werden 
-        // auch der Eventhandler OK und Abbrechen gesetzt
-        this.okNode.addEventListener('click', () => {
-            sudoApp.restoreStorageDlgOKPressed();
-        });
-        this.cancelNode.addEventListener('click', () => {
-            sudoApp.restoreStorageDlgCancelPressed();
-        });
-    }
-    open(nameList) {
-        if (window.screen.availWidth < 421) {
-            this.winBox = new WinBox("Zustand wiederherstellen", {
-                x: "center",
-                y: "center",
-                width: "280px",
-                height: "150üx",
-                mount: document.getElementById("contentRestoreDlg")
-            });
-        } else {
-            this.winBox = new WinBox("Zustand wiederherstellen", {
-                x: "center",
-                y: "center",
-                width: "370px",
-                height: "180px",
-                mount: document.getElementById("contentRestoreDlg")
-            });
-        }
-        this.myComboBox.init(nameList);
-        this.myOpen = true;
-    }
-    close() {
-        if (this.myOpen) {
-            this.winBox.close();
-            this.myOpen = false;
-        }
-    }
-    init(nameList) {
-        this.myComboBox.init(nameList);
-    }
-    getSelectedName() {
-        return this.myComboBox.getSelectedName();
-    }
-}
-class StorageDeleteDialog {
-    constructor() {
-        this.winBox;
-        this.myOpen = false;
-        this.myComboBox = new ComboBox(document.getElementById("storageDeleteComboBox"));
-        this.okNode = document.getElementById("btn-deleteStorageOK");
-        this.cancelNode = document.getElementById("btn-deleteStorageCancel");
-        // Mit der Erzeugung des Wrappers werden 
-        // auch der Eventhandler OK und Abbrechen gesetzt
-        this.okNode.addEventListener('click', () => {
-            sudoApp.deleteStorageDlgOKPressed();
-        });
-        this.cancelNode.addEventListener('click', () => {
-            sudoApp.deleteStorageDlgCancelPressed();
-        });
-    }
-    open(nameList) {
-        if (window.screen.availWidth < 421) {
-            this.winBox = new WinBox("Zustand löschen", {
-                x: "center",
-                y: "center",
-                width: "280px",
-                height: "150üx",
-                mount: document.getElementById("contentDeleteDlg")
-            });
-        } else {
-            this.winBox = new WinBox("Zustand löschen", {
-                x: "center",
-                y: "center",
-                width: "370px",
-                height: "180px",
-                mount: document.getElementById("contentDeleteDlg")
-            });
-        }
-        this.myComboBox.init(nameList);
-        this.myOpen = true;
-    }
-
-    close() {
-        if (this.myOpen) {
-            this.winBox.close();
-            this.myOpen = false;
-        }
-    }
-    init(nameList) {
-        this.myComboBox.init(nameList);
-    }
-    getSelectedName() {
-        return this.myComboBox.getSelectedName();
-    }
-}
-
 
 class SuccessDialog {
     constructor() {
@@ -2930,245 +2778,269 @@ class FileDialog {
 
 }
 
-class SortedSudokuPuzzleTable {
+class SudokuPuzzleDB {
     constructor() {
-        this.sort_Table = document.getElementById("puzzle-db-table");
-        this.tableSort(sort_Table);
-    }
-    tableSort(tab) {
-        let thead = tab.tHead;
-        let tr_in_thead, tabletitel;
-        if (thead) tr_in_thead = thead.rows;
-        if (tr_in_thead) tabletitel = tr_in_thead[0].cells;
-        if (!(tabletitel && tabletitel.length > 0)) {
-            console.error("Tabelle hat keinen Kopf und/oder keine Kopfzellen.");
-            return;
+        // Hole den Speicher als ein Objekt
+        let str_puzzleDB = localStorage.getItem("localSudokuDB");
+        if (str_puzzleDB == null) {
+            let tmpPuzzle = new SudokuPuzzle();
+            tmpPuzzle.name = "sudo600";
+            tmpPuzzle.defCount = 23;
+            tmpPuzzle.status = 'ungelöst';
+            tmpPuzzle.level = 'unbestimmt';
+            tmpPuzzle.backTracks = 0;
+            tmpPuzzle.date = new Date().toDateString();
+            tmpPuzzle.puzzle = [
+                "0",
+                "1",
+                "0",
+                "0",
+                "2",
+                "0",
+                "0",
+                "0",
+                "0",
+                "3",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "9",
+                "0",
+                "0",
+                "0",
+                "0",
+                "1",
+                "6",
+                "0",
+                "5",
+                "0",
+                "3",
+                "0",
+                "0",
+                "7",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "9",
+                "0",
+                "5",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "7",
+                "0",
+                "4",
+                "2",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "8",
+                "3",
+                "0",
+                "0",
+                "0",
+                "4",
+                "0",
+                "5",
+                "0",
+                "0",
+                "0",
+                "4",
+                "0",
+                "0",
+                "0",
+                "6",
+                "0",
+                "0",
+                "0",
+                "8",
+                "0",
+                "2",
+                "0",
+                "5",
+                "0"
+            ];
+            let puzzleMap = new Map();
+            let uid = Date.now().toString(36) + Math.random().toString(36).substr(2);
+            puzzleMap.set(uid, tmpPuzzle);
+            // Kreiere die JSON-Version des Speicherobjektes
+            // und speichere sie.
+            let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
+            localStorage.setItem("localSudokuDB", update_str_puzzleMap);
         }
-        let tbdy = tab.tBodies;
-        if (!(tbdy)) {
-            console.error("Tabelle hat keinen tbody.");
-            return;
-        }
-        tbdy = tbdy[0];
-        const tr = tbdy.rows;
-        if (!(tr && tr.length > 0)) {
-            console.error("Tabelle hat keine Zeilen im tbody.");
-            return;
-        }
-        const nrows = tr.length,
-            ncols = tr[0].cells.length;
-        // Einige Variablen
-        let arr = [],
-            sorted = -1,
-            sortbuttons = [],
-            sorttype = [];
-        // Hinweistexte
-        const sort_info = {
-            asc: "Tabelle ist aufsteigend nach dieser Spalte sortiert",
-            desc: "Tabelle ist absteigend nach dieser Spalte sortiert",
-        };
-        const sort_hint = {
-            asc: "Sortiere aufsteigend nach ",
-            desc: "Sortiere absteigend nach ",
-        };
-        // Sortiersymbol
-        const sortsymbol =
-            '<svg role="img" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-5 -5 190 110"><path  d="M0 0 L50 100 L100 0 Z" style="stroke:currentColor;fill:transparent;stroke-width:10;"/><path d="M80 100 L180 100 L130 0 Z" style="stroke:currentColor;fill:transparent;stroke-width:10;"/></svg>';
-        // Stylesheets für Button im TH
-        if (!document.getElementById("Stylesheet_tableSort")) {
-            const sortbuttonStyle = document.createElement('style');
-            const stylestring =
-                '.sortbutton { width: 100%; height: 100%; border: none; background-color: transparent; font: inherit; color: inherit; text-align: inherit; padding: 0; cursor: pointer; } ' +
-                '.sortierbar thead th span.visually-hidden { position: absolute !important; clip: rect(1px, 1px, 1px, 1px) !important; padding: 0 !important; border: 0 !important; height: 1px !important; width: 1px !important; overflow: hidden !important; white-space: nowrap !important; } ' +
-                '.sortierbar caption span { font-weight: normal; font-size: .8em; } ' +
-                '.sortbutton svg { margin-left: .2em; height: .7em; } ' +
-                '.sortbutton.sortedasc svg path:last-of-type { fill: currentColor !important; } ' +
-                '.sortbutton.sorteddesc svg path:first-of-type { fill: currentColor!important; } ' +
-                '.sortbutton.sortedasc > span.visually-hidden:first-of-type { display: none; } ' +
-                '.sortbutton.sorteddesc > span.visually-hidden:last-of-type { display: none; } ' +
-                '.sortbutton.unsorted > span.visually-hidden:last-of-type { display: none; } ';
-            sortbuttonStyle.innerText = stylestring;
-            sortbuttonStyle.id = "Stylesheet_tableSort";
-            document.head.appendChild(sortbuttonStyle);
-        }
-        // Kopfzeile vorbereiten
-        for (let i = 0; i < tabletitel.length; i++) initTableHead(i);
-        // Array mit Info, wie Spalte zu sortieren ist, vorbelegen
-        for (let c = 0; c < ncols; c++) sorttype[c] = "n";
-        // Tabelleninhalt in ein Array kopieren
-        for (let r = 0; r < nrows; r++) {
-            arr[r] = [];
-            for (let c = 0, cc; c < ncols; c++) {
-                cc = getData(tr[r].cells[c], c);
-                arr[r][c] = cc;
-                // tr[r].cells[c].innerHTML += "<br>"+cc+"<br>"+sorttype[c]; // zum Debuggen
-            }
-            arr[r][ncols] = tr[r];
-        }
-        // Tabelle die Klasse "is_sortable" geben
-        tab.classList.add("is_sortable");
-        // An caption Hinweis anhängen
-        const caption = tab.caption;
-        if (caption) caption.innerHTML +=
-            "<br><span>Ein Klick auf die Spaltenüberschrift sortiert die Tabelle.</span>";
-    } // tableSort
-
-    initTableHead(sp) {
-        // Kopfzeile vorbereiten
-        let sortbutton = document.createElement("button");
-        sortbutton.type = "button";
-        sortbutton.className = "sortbutton unsorted";
-        sortbutton.addEventListener("click", function (e) {
-            if (e.detail <= 1) tsort(sp);
-        }, false);
-        sortbutton.innerHTML = "<span class='visually-hidden'>" + sort_hint.asc +
-            "</span>" + "<span class='visually-hidden'>" + sort_hint.desc +
-            "</span>" + tabletitel[sp].innerHTML + sortsymbol;
-        tabletitel[sp].innerHTML = "<span class='visually-hidden'>" + tabletitel[
-            sp].innerHTML + "</span>";
-        tabletitel[sp].appendChild(sortbutton);
-        sortbuttons[sp] = sortbutton;
-        tabletitel[sp].abbr = "";
-    }
-
-    getData(ele, col) {
-        // Tabellenfelder auslesen und auf Zahl oder String prüfen
-        let val = ele.textContent;
-        // Tausendertrenner entfernen, und Komma durch Punkt ersetzen
-        const tval = val.replace(/\s/g, "")
-            .replace(",", ".");
-        if (!isNaN(tval) && tval.search(/[0-9]/) != -1) return tval; // Zahl
-        sorttype[col] = "s"; // String
-        return val;
+        this.currentIndex = 0;
     }
 
-    vglFkt_s(a, b) {
-        return a[sorted].localeCompare(b[sorted], "de");
+    saveNamedPuzzle(name, currentPuzzle) {
+        let puzzleId = currentPuzzle.uid;
+        let puzzleOpj = currentPuzzle.obj;
+        puzzleOpj.name = name;
+        this.savePuzzle(puzzleId, puzzleOpj);
     }
-    vglFkt_n(a, b) {
-        return a[sorted] - b[sorted];
+    savePuzzle(puzzleId, puzzle) {
+        // Hole den Speicher als ein Objekt
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        // Füge das Puzzle in das Speicherobjekt ein
+        puzzleMap.set(puzzleId, puzzle);
+        // Kreiere die JSON-Version des Speicherobjektes
+        // und speichere sie.
+        let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
+        localStorage.setItem("localSudokuDB", update_str_puzzleMap);
     }
-    tsort(sp) {
-        if (sp == sorted) { // Tabelle ist schon nach dieser Spalte sortiert, also nur Reihenfolge umdrehen
-            arr.reverse();
-            sortbuttons[sp].classList.toggle("sortedasc");
-            sortbuttons[sp].classList.toggle("sorteddesc");
-            tabletitel[sp].abbr = (tabletitel[sp].abbr == sort_info.asc) ? sort_info
-                .desc : sort_info.asc;
-        } else { // Sortieren 
-            if (sorted > -1) {
-                sortbuttons[sorted].classList.remove("sortedasc");
-                sortbuttons[sorted].classList.remove("sorteddesc");
-                sortbuttons[sorted].classList.add("unsorted");
-                tabletitel[sorted].abbr = "";
-            }
-            sortbuttons[sp].classList.remove("unsorted");
-            sortbuttons[sp].classList.add("sortedasc");
-            sorted = sp;
-            tabletitel[sp].abbr = sort_info.asc;
-            if (sorttype[sp] == "n") arr.sort(vglFkt_n);
-            else arr.sort(vglFkt_s);
-        }
-        for (let r = 0; r < nrows; r++) tbdy.appendChild(arr[r][ncols]); // Sortierte Daten zurückschreiben
-    }
-}
 
-class SudokuTestCaseStorage {
-    constructor() {
-        this.testCases = [];
-        this.currentTCNr = 0;
+    getPuzzle(uid) {
+        // Hole den Speicher als ein Objekt
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        // Füge das Puzzle in das Speicherobjekt ein
+        return puzzleMap.get(uid);
     }
-    init() {
-        let testCasesOBj = localStorage.getItem("sudokuTestCases");
-        if (testCasesOBj == null) {
-            alert('Keine Puzzle-Datenbank im Localstorage');
-            sudoApp.fileDialog.reset();
-            sudoApp.fileDialog.open();
+
+    deletePuzzle(uid) {
+        // Hole den Speicher als ein Objekt
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        puzzleMap.delete(uid);
+        let update_str_puzzleMap = JSON.stringify(puzzleMap);
+        localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+    }
+
+    selectedPZ() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        let key = Array.from(puzzleMap.keys())[this.currentIndex];
+        let tmpPuzzle = puzzleMap.get(key);
+        return tmpPuzzle;
+    }
+
+    nextPZ() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        if (this.currentIndex < puzzleMap.size) {
+            this.currentIndex++;
         }
-        this.testCases = JSON.parse(testCasesOBj);
-        this.currentTCNr = 0;
+        let key = Array.from(puzzleMap.keys())[this.currentIndex];
+        let tmpPuzzle = puzzleMap.get(key);
+        return tmpPuzzle;
     }
-    isNotMounted() {
-        return this.testCases.length == 0;
-    }
-    currentTC() {
-        if (this.testCases.length == 0) {
-            let testCase = {
-                tcNr: 0,
-                puzzle: ['0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0'],
-                solution: ['0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                    '0', '0', '0', '0', '0', '0', '0', '0', '0']
-            };
-            this.testCases.push(testCase);
-            this.currentTCNr = 0;
+
+    previousPZ() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+
+        if (this.currentIndex > 1) {
+            this.currentIndex--;
         }
-        return this.testCases[this.currentTCNr];
+        let key = Array.from(puzzleMap.keys())[this.currentIndex];
+        let tmpPuzzle = puzzleMap.get(key);
+        return tmpPuzzle;
     }
-    nextTC() {
-        if (this.currentTCNr < 1000) {
-            this.currentTCNr++;
+
+    display() {
+        this.displayPuzzleDB();
+        this.displayCurrentPZ()
+    }
+
+    displayPuzzleDB() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+
+        let tbodyNode = document.getElementById('tBody-db');
+   
+        for (let [key, pz] of puzzleMap) {
+            let tr = document.createElement('tr');
+
+            let td_key = document.createElement('td');
+            td_key.innerText = key;
+            tr.appendChild(td_key);
+
+            let td_name = document.createElement('td');
+            td_name.innerText = pz.name;
+            tr.appendChild(td_name);
+
+            let td_defCount = document.createElement('td');
+            td_defCount.innerText = pz.defCount;
+            tr.appendChild(td_defCount);
+
+            let td_status = document.createElement('td');
+            td_status.innerText = pz.status;
+            tr.appendChild(td_status);
+            
+            let td_level = document.createElement('td');
+            td_level.innerText = pz.level;
+            tr.appendChild(td_level);
+
+            let td_backTracks = document.createElement('td');
+            td_backTracks.innerText = pz.backTracks;
+            tr.appendChild(td_backTracks);
+
+            let td_date = document.createElement('td');
+            td_date.innerText = pz.date;
+            tr.appendChild(td_date); 
+
+            tbodyNode.appendChild(tr);
         }
-        this.displayCurrentTC();
-        return this.testCases[this.currentTCNr];
     }
-    previousTC() {
-        if (this.currentTCNr > 1) {
-            this.currentTCNr--;
-        }
-        this.displayCurrentTC();
-        return this.testCases[this.currentTCNr];
-    }
+
+
     displayClear() {
-        this.displayClearTCNr();
+        this.displayClearDBTable();
+        this.displayClearPZNr();
         this.displayClearTable('puzzle');
         this.displayClearTable('solution');
     }
-    displayCurrentTC() {
+
+    displayClearDBTable() {
+        let tbodyNode = document.getElementById('tBody-db');
+        while (tbodyNode.childElementCount > 2) {
+            // Eine Zeile bleibt erhalten
+            tbodyNode.removeChild(tbodyNode.lastChild);
+        }
+    }
+       
+    displayCurrentPZ() {
         this.displayClear()
-        let currentTC = this.currentTC();
-        this.displayTCNr(currentTC.tcNr);
-        this.displayTable('puzzle', currentTC.puzzle);
-        this.displayTable('solution', currentTC.solution);
-        this.displayDefineCounter();
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        let key = Array.from(puzzleMap.keys())[this.currentIndex];
+        let selectedPZ = puzzleMap.get(key);
+        this.displayPZNr(key);
+        this.displayTable('puzzle', selectedPZ.puzzle);
+        this.displayTable('solution', selectedPZ.solution);
+        this.displayDefineCounter(selectedPZ);
     }
-    displayTCNr() {
-        let nrElem = document.getElementById('tcNr')
-        nrElem.innerHTML = this.currentTCNr;
-        let tcAllNode = document.getElementById('tc-all');
-        tcAllNode.innerHTML = this.testCases.length;
+    displayPZNr(nr) {
+        let nrElem = document.getElementById('pzNr')
+        nrElem.innerHTML = nr;
+        //       let pzAllNode = document.getElementById('pz-all');
+        //       pzAllNode.innerHTML = this.puzzles.length;
     }
-    displayClearTCNr() {
-        let nrElem = document.getElementById('tcNr')
+    displayClearPZNr() {
+        let nrElem = document.getElementById('pzNr')
         nrElem.innerHTML = "";
-        let tcAllNode = document.getElementById('tc-all');
-        tcAllNode.innerHTML = '';
     }
 
-    displayDefineCounter() {
-        let currentTC = this.currentTC();
+    displayDefineCounter(selectedPZ) {
         let defineCounter = 0;
-        currentTC.puzzle.forEach(nr => {
+        selectedPZ.puzzle.forEach(nr => {
             if (nr !== '0') {
                 defineCounter++;
             }
         })
-        let defCounterNode = document.getElementById('define-counter');
-        defCounterNode.innerHTML = defineCounter;
     }
 
     displayTable(nodeId, tableArray) {
@@ -3191,7 +3063,7 @@ class SudokuTestCaseStorage {
                 }
                 if (col === 2 || col === 5) {
                     cellField.style.borderRight = "4px solid white";
-                } 
+                }
                 table.appendChild(cellField);
                 k++;
             }
@@ -3205,303 +3077,214 @@ class SudokuTestCaseStorage {
         }
     }
 
-    getCurrentPuzzle() {
-        let currentTC = this.currentTC();
-        return currentTC.puzzle;
+    getSelectedPuzzle() {
+        let selectedPZ = this.selectedPZ();
+        return selectedPZ;
+    }
+
+    getSelectedUid() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        let key = Array.from(puzzleMap.keys())[this.currentIndex];
+        return key;
     }
 }
 
-class SudokuStateStorage {
-    constructor() { }
+class SudokuPuzzle {
+    constructor() {
+        this.name = '';
+        this.defCount = 0;
+        this.status = 'ungelöst'
+        this.level = 'unbestimmt';
+        this.backTracks = 0;
+        this.date = new Date().toDateString();
+        this.puzzle = ['0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0'];
+        this.solution = ['0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0',
+            '0', '0', '0', '0', '0', '0', '0', '0', '0'];
 
-    getNamedState(name) {
-        // Gibt ein Zustandsobjekt zurück
-        let str_storageOBj = localStorage.getItem("sudokuStorage");
-        let storageObj = JSON.parse(str_storageOBj);
-        if (storageObj == null) {
-            storageObj = [];
-        }
-        let foundIndex = -1;
-        let i = 0;
-        let tmpNamedState = null;
-        while ((foundIndex == -1) && i < storageObj.length) {
-            tmpNamedState = storageObj[i];
-            if (tmpNamedState.name == name) {
-                foundIndex = i;
+    }
+
+}
+
+(function () {
+
+    "use strict";
+
+    const tableSort = function (tab) {
+
+        // Kopfzeile vorbereiten
+        const initTableHead = function (sp) {
+            const sortbutton = document.createElement("button");
+            sortbutton.type = "button";
+            sortbutton.className = "sortbutton unsorted";
+            sortbutton.addEventListener("click", function (e) { if (e.detail <= 1) tsort(sp); }, false);
+            sortbutton.innerHTML = "<span class='visually-hidden'>" + sort_hint.asc + "</span>"
+                + "<span class='visually-hidden'>" + sort_hint.desc + "</span>"
+                + tabletitel[sp].innerHTML + sortsymbol;
+            tabletitel[sp].innerHTML = "<span class='visually-hidden'>" + tabletitel[sp].innerHTML + "</span>";
+            tabletitel[sp].appendChild(sortbutton);
+            sortbuttons[sp] = sortbutton;
+            tabletitel[sp].abbr = "";
+        } // initTableHead
+
+        // Tabellenfelder auslesen und auf Zahl oder String prüfen
+        const getData = function (ele, col) {
+            const val = ele.textContent;
+            // Tausendertrenner entfernen, und Komma durch Punkt ersetzen
+            const tval = val.replace(/\s/g, "").replace(",", ".");
+            if (!isNaN(tval) && tval.search(/[0-9]/) != -1) return tval; // Zahl
+            sorttype[col] = "s"; // String
+            return val;
+        } // getData	
+
+        // Vergleichsfunktion für Strings
+        const vglFkt_s = function (a, b) {
+            return a[sorted].localeCompare(b[sorted], "de");
+        } // vglFkt_s
+
+        // Vergleichsfunktion für Zahlen
+        const vglFkt_n = function (a, b) {
+            return a[sorted] - b[sorted];
+        } // vglFkt_n
+
+        // Der Sortierer
+        const tsort = function (sp) {
+            if (sp == sorted) { // Tabelle ist schon nach dieser Spalte sortiert, also nur Reihenfolge umdrehen
+                arr.reverse();
+                sortbuttons[sp].classList.toggle("sortedasc");
+                sortbuttons[sp].classList.toggle("sorteddesc");
+                tabletitel[sp].abbr = (tabletitel[sp].abbr == sort_info.asc) ? sort_info.desc : sort_info.asc;
             }
-            i++;
-        }
-        if (foundIndex !== -1) {
-            return tmpNamedState.state;
-        } else {
-            // Es gibt keinen Zustand mit diesem Namen
-            // Auch nicht den leeren Zustand []
-            return null;
-        }
-    }
-    saveNamedState(name, state) {
-        // Hole den Speicher als ein Objekt
-        let str_storageOBj = localStorage.getItem("sudokuStorage");
-        let storageObj = JSON.parse(str_storageOBj);
-        if (storageObj == null) {
-            storageObj = [];
-        }
-        // Definiere neues NamedState
-        let newNamedState = {
-            name: name,
-            state: state
-        }
-        // Füge den namedState in das Speicherobjekt ein
-        storageObj.push(newNamedState);
-        // Kreiere die JSON-Version des Speicherobjektes
-        // und speichere sie.
-        let updateStorageObj = JSON.stringify(storageObj);
-        localStorage.setItem("sudokuStorage", updateStorageObj);
-    }
-    deleteNamedState(name) {
-        // Hole den Speicher als ein Objekt
-        let str_storageOBj = localStorage.getItem("sudokuStorage");
-        let storageObj = JSON.parse(str_storageOBj);
-        if (storageObj == null) {
-            storageObj = [];
-        }
-        if (storageObj.length > 1) {
-            let foundIndex = -1;
-            let i = 0;
-            let tmpNamedState = null;
-            while ((foundIndex == -1) && i < storageObj.length) {
-                tmpNamedState = storageObj[i];
-                if (tmpNamedState.name == name) {
-                    foundIndex = i;
+            else { // Sortieren 
+                if (sorted > -1) {
+                    sortbuttons[sorted].classList.remove("sortedasc");
+                    sortbuttons[sorted].classList.remove("sorteddesc");
+                    sortbuttons[sorted].classList.add("unsorted");
+                    tabletitel[sorted].abbr = "";
                 }
-                i++;
+                sortbuttons[sp].classList.remove("unsorted");
+                sortbuttons[sp].classList.add("sortedasc");
+                sorted = sp;
+                tabletitel[sp].abbr = sort_info.asc;
+                if (sorttype[sp] == "n") arr.sort(vglFkt_n);
+                else arr.sort(vglFkt_s);
             }
-            if (foundIndex !== -1) {
-                storageObj.splice(foundIndex, 1);
-                let updateStorageObj = JSON.stringify(storageObj);
-                localStorage.setItem("sudokuStorage", updateStorageObj);
+            for (let r = 0; r < nrows; r++) tbdy.appendChild(arr[r][ncols]); // Sortierte Daten zurückschreiben
+        } // tsort
+
+        // Tabellenelemente ermitteln
+        const thead = tab.tHead;
+        let tr_in_thead, tabletitel;
+        if (thead) tr_in_thead = thead.rows;
+        if (tr_in_thead) tabletitel = tr_in_thead[0].cells;
+        if (!(tabletitel && tabletitel.length > 0)) {
+            console.error("Tabelle hat keinen Kopf und/oder keine Kopfzellen.");
+            return;
+        }
+        let tbdy = tab.tBodies;
+        if (!(tbdy)) {
+            console.error("Tabelle hat keinen tbody.");
+            return;
+        }
+        tbdy = tbdy[0];
+        const tr = tbdy.rows;
+        if (!(tr && tr.length > 0)) {
+            console.error("Tabelle hat keine Zeilen im tbody.");
+            return;
+        }
+        const nrows = tr.length,
+            ncols = tr[0].cells.length;
+
+        // Einige Variablen
+        let arr = [],
+            sorted = -1,
+            sortbuttons = [],
+            sorttype = [];
+
+        // Hinweistexte
+        const sort_info = {
+            asc: "Tabelle ist aufsteigend nach dieser Spalte sortiert",
+            desc: "Tabelle ist absteigend nach dieser Spalte sortiert",
+        };
+        const sort_hint = {
+            asc: "Sortiere aufsteigend nach ",
+            desc: "Sortiere absteigend nach ",
+        };
+
+        // Sortiersymbol
+        const sortsymbol = '<svg role="img" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-5 -5 190 110"><path  d="M0 0 L50 100 L100 0 Z" style="stroke:currentColor;fill:transparent;stroke-width:10;"/><path d="M80 100 L180 100 L130 0 Z" style="stroke:currentColor;fill:transparent;stroke-width:10;"/></svg>';
+
+        // Stylesheets für Button im TH
+        if (!document.getElementById("Stylesheet_tableSort")) {
+            const sortbuttonStyle = document.createElement('style');
+            const stylestring = '.sortbutton { width: 100%; height: 100%; border: none; background-color: transparent; font: inherit; color: inherit; text-align: inherit; padding: 0; cursor: pointer; } '
+                + '.sortierbar thead th span.visually-hidden { position: absolute !important; clip: rect(1px, 1px, 1px, 1px) !important; padding: 0 !important; border: 0 !important; height: 1px !important; width: 1px !important; overflow: hidden !important; white-space: nowrap !important; } '
+                + '.sortierbar caption span { font-weight: normal; font-size: .8em; } '
+                + '.sortbutton svg { margin-left: .2em; height: .7em; } '
+                + '.sortbutton.sortedasc svg path:last-of-type { fill: currentColor !important; } '
+                + '.sortbutton.sorteddesc svg path:first-of-type { fill: currentColor!important; } '
+                + '.sortbutton.sortedasc > span.visually-hidden:first-of-type { display: none; } '
+                + '.sortbutton.sorteddesc > span.visually-hidden:last-of-type { display: none; } '
+                + '.sortbutton.unsorted > span.visually-hidden:last-of-type { display: none; } ';
+            sortbuttonStyle.innerText = stylestring;
+            sortbuttonStyle.id = "Stylesheet_tableSort";
+            document.head.appendChild(sortbuttonStyle);
+        }
+
+        // Kopfzeile vorbereiten
+        for (let i = 0; i < tabletitel.length; i++) initTableHead(i);
+
+        // Array mit Info, wie Spalte zu sortieren ist, vorbelegen
+        for (let c = 0; c < ncols; c++) sorttype[c] = "n";
+
+        // Tabelleninhalt in ein Array kopieren
+        for (let r = 0; r < nrows; r++) {
+            arr[r] = [];
+            for (let c = 0, cc; c < ncols; c++) {
+                cc = getData(tr[r].cells[c], c);
+                arr[r][c] = cc;
+                // tr[r].cells[c].innerHTML += "<br>"+cc+"<br>"+sorttype[c]; // zum Debuggen
             }
-
+            arr[r][ncols] = tr[r];
         }
-    }
-    getNameList() {
-        // Hole den Speicher als ein Objekt
-        let str_storageObj = localStorage.getItem("sudokuStorage");
-        let storageObj = JSON.parse(str_storageObj);
 
-        let nameList = [];
-        for (let i = 0; i < storageObj.length; i++) {
-            nameList.push(storageObj[i].name);
-        }
-        return nameList;
-    }
-    init() {
+        // Tabelle die Klasse "is_sortable" geben
+        tab.classList.add("is_sortable");
 
-        // Hole den Speicher als ein Objekt
+        // An caption Hinweis anhängen
+        const caption = tab.caption;
+        if (caption) caption.innerHTML += "<br><span>Ein Klick auf die Spaltenüberschrift sortiert die Tabelle.</span>";
 
-        if (localStorage.length == 0) {
-            // Definiere neues NamedState
-            let newNamedState = {
-                name: 'example',
-                state:
-                    [{ "cellValue": "0", "cellPhase": "" },
-                    { "cellValue": "0", "cellPhase": "" },
-                    { "cellValue": "7", "cellPhase": "define" },
-                    { "cellValue": "6", "cellPhase": "define" },
-                    { "cellValue": "4", "cellPhase": "define" },
-                    { "cellValue": "0", "cellPhase": "" },
-                    { "cellValue": "0", "cellPhase": "" },
-                    { "cellValue": "0", "cellPhase": "" },
-                    { "cellValue": "2", "cellPhase": "define" },
-                    { "cellValue": "1", "cellPhase": "define" },
-                    { "cellValue": "0", "cellPhase": "" },
-                    { "cellValue": "0", "cellPhase": "" },
-                    { "cellValue": "0", "cellPhase": "" },
-                    { "cellValue": "0", "cellPhase": "" },
-                    { "cellValue": "2", "cellPhase": "define" },
-                    { "cellValue": "0", "cellPhase": "" }, { "cellValue": "9", "cellPhase": "define" }, { "cellValue": "4", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "2", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "3", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "6", "cellPhase": "define" }, { "cellValue": "8", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "9", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "4", "cellPhase": "define" }, { "cellValue": "5", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "1", "cellPhase": "define" }, { "cellValue": "6", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "6", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "5", "cellPhase": "define" }, { "cellValue": "3", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "8", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "9", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "5", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "7", "cellPhase": "define" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "0", "cellPhase": "" }, { "cellValue": "9", "cellPhase": "define" },
-                    { "cellValue": "0", "cellPhase": "" },
-                    { "cellValue": "0", "cellPhase": "" }]
-            }
+    } // tableSort
 
-            let storageObj = [];
-            // Füge den namedState in  das Speicherobjekt ein
-            storageObj.push(newNamedState);
-            // Kreiere die JSON-Version des Speicherobjektes
-            // und speichere sie.
-            let updateStorageObj = JSON.stringify(storageObj);
-            localStorage.setItem("sudokuStorage", updateStorageObj);
-        }
-    }
+    // Alle Tabellen suchen, die sortiert werden sollen, und den Tabellensortierer starten.
+    const initTableSort = function () {
+        const sort_Table = document.querySelectorAll("table.sortierbar");
+        for (let i = 0; i < sort_Table.length; i++) new tableSort(sort_Table[i]);
+    } // initTable
 
-}
-
-
-( function() {
-
-	"use strict";
-
-	const tableSort = function(tab) {
-	
-		// Kopfzeile vorbereiten
-		const initTableHead = function(sp) { 
-			const sortbutton = document.createElement("button");
-			sortbutton.type = "button";
-			sortbutton.className = "sortbutton unsorted";
-			sortbutton.addEventListener("click", function(e) { if(e.detail <= 1) tsort(sp); }, false);
-			sortbutton.innerHTML = "<span class='visually-hidden'>" + sort_hint.asc + "</span>" 
-													 + "<span class='visually-hidden'>" + sort_hint.desc + "</span>" 
-													 + tabletitel[sp].innerHTML + sortsymbol;
-			tabletitel[sp].innerHTML = "<span class='visually-hidden'>" + tabletitel[sp].innerHTML + "</span>";
-			tabletitel[sp].appendChild(sortbutton);
-			sortbuttons[sp] = sortbutton;
-			tabletitel[sp].abbr = "";
-		} // initTableHead
-		
-		// Tabellenfelder auslesen und auf Zahl oder String prüfen
-		const getData = function (ele, col) { 
-			const val = ele.textContent;
-			// Tausendertrenner entfernen, und Komma durch Punkt ersetzen
-			const tval = val.replace(/\s/g,"").replace(",", ".");
-			if (!isNaN(tval) && tval.search(/[0-9]/) != -1) return tval; // Zahl
-			sorttype[col] = "s"; // String
-			return val;
-		} // getData	
-
-		// Vergleichsfunktion für Strings
-		const vglFkt_s = function(a, b) { 
-			return a[sorted].localeCompare(b[sorted],"de");
-		} // vglFkt_s
-
-		// Vergleichsfunktion für Zahlen
-		const vglFkt_n = function(a, b) { 
-			return a[sorted] - b[sorted];
-		} // vglFkt_n
-
-		// Der Sortierer
-		const tsort = function(sp) { 
-			if (sp == sorted) { // Tabelle ist schon nach dieser Spalte sortiert, also nur Reihenfolge umdrehen
-				arr.reverse();
-				sortbuttons[sp].classList.toggle("sortedasc"); 
-				sortbuttons[sp].classList.toggle("sorteddesc"); 
-				tabletitel[sp].abbr = (tabletitel[sp].abbr==sort_info.asc)?sort_info.desc:sort_info.asc;
-			}
-			else { // Sortieren 
-				if (sorted > -1) {
-					sortbuttons[sorted].classList.remove("sortedasc");
-					sortbuttons[sorted].classList.remove("sorteddesc");
-					sortbuttons[sorted].classList.add("unsorted");
-					tabletitel[sorted].abbr = "";
-				}
-				sortbuttons[sp].classList.remove("unsorted");
-				sortbuttons[sp].classList.add("sortedasc");
-				sorted = sp;
-				tabletitel[sp].abbr = sort_info.asc;
-				if(sorttype[sp] == "n") arr.sort(vglFkt_n);
-				else arr.sort(vglFkt_s);
-			}	
-			for (let r = 0; r < nrows; r++) tbdy.appendChild(arr[r][ncols]); // Sortierte Daten zurückschreiben
-		} // tsort
-
-		// Tabellenelemente ermitteln
-		const thead = tab.tHead;
-		let tr_in_thead, tabletitel;
-		if (thead) tr_in_thead = thead.rows;
-		if (tr_in_thead) tabletitel = tr_in_thead[0].cells;
-		if ( !(tabletitel && tabletitel.length > 0) ) { 
-			console.error("Tabelle hat keinen Kopf und/oder keine Kopfzellen."); 
-			return; 
-		}
-		let tbdy = tab.tBodies;
-		if ( !(tbdy) ) { 
-			console.error("Tabelle hat keinen tbody.");
-			return; 
-		}
-		tbdy = tbdy[0];
-		const tr = tbdy.rows;
-		if ( !(tr && tr.length > 0) ) { 
-			console.error("Tabelle hat keine Zeilen im tbody."); 
-			return; 
-		}
-		const nrows = tr.length,
-				ncols = tr[0].cells.length;
-
-		// Einige Variablen
-		let arr = [],
-				sorted = -1,
-				sortbuttons = [],
-				sorttype = [];
-
-		// Hinweistexte
-		const sort_info = {
-			asc: "Tabelle ist aufsteigend nach dieser Spalte sortiert",
-			desc: "Tabelle ist absteigend nach dieser Spalte sortiert",
-		};
-		const sort_hint = {
-			asc: "Sortiere aufsteigend nach ",
-			desc: "Sortiere absteigend nach ",
-		};
-		
-		// Sortiersymbol
-		const sortsymbol = '<svg role="img" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-5 -5 190 110"><path  d="M0 0 L50 100 L100 0 Z" style="stroke:currentColor;fill:transparent;stroke-width:10;"/><path d="M80 100 L180 100 L130 0 Z" style="stroke:currentColor;fill:transparent;stroke-width:10;"/></svg>';
-
-		// Stylesheets für Button im TH
-		if(!document.getElementById("Stylesheet_tableSort")) {
-			const sortbuttonStyle = document.createElement('style'); 
-			const stylestring = '.sortbutton { width: 100%; height: 100%; border: none; background-color: transparent; font: inherit; color: inherit; text-align: inherit; padding: 0; cursor: pointer; } '	
-			 + '.sortierbar thead th span.visually-hidden { position: absolute !important; clip: rect(1px, 1px, 1px, 1px) !important; padding: 0 !important; border: 0 !important; height: 1px !important; width: 1px !important; overflow: hidden !important; white-space: nowrap !important; } '
-			 + '.sortierbar caption span { font-weight: normal; font-size: .8em; } '
-			 + '.sortbutton svg { margin-left: .2em; height: .7em; } '
-			 + '.sortbutton.sortedasc svg path:last-of-type { fill: currentColor !important; } '
-			 + '.sortbutton.sorteddesc svg path:first-of-type { fill: currentColor!important; } '
-			 + '.sortbutton.sortedasc > span.visually-hidden:first-of-type { display: none; } '
-			 + '.sortbutton.sorteddesc > span.visually-hidden:last-of-type { display: none; } '
-			 + '.sortbutton.unsorted > span.visually-hidden:last-of-type { display: none; } ';
-			sortbuttonStyle.innerText = stylestring;
-			sortbuttonStyle.id = "Stylesheet_tableSort";
-			document.head.appendChild(sortbuttonStyle);
-		}
-
-		// Kopfzeile vorbereiten
-		for (let i = 0; i < tabletitel.length; i++) initTableHead(i);
-
-		// Array mit Info, wie Spalte zu sortieren ist, vorbelegen
-		for (let c = 0; c < ncols; c++) sorttype[c] = "n";
-
-		// Tabelleninhalt in ein Array kopieren
-		for (let r = 0; r < nrows; r++) {
-			arr[r] = [];
-			for (let c = 0, cc; c < ncols; c++) {
-				cc = getData(tr[r].cells[c],c);
-				arr[r][c] = cc;
-				// tr[r].cells[c].innerHTML += "<br>"+cc+"<br>"+sorttype[c]; // zum Debuggen
-			}
-			arr[r][ncols] = tr[r];
-		}
-
-		// Tabelle die Klasse "is_sortable" geben
-		tab.classList.add("is_sortable");
-
-		// An caption Hinweis anhängen
-		const caption = tab.caption;
-		if(caption) caption.innerHTML += "<br><span>Ein Klick auf die Spaltenüberschrift sortiert die Tabelle.</span>";
-
-	} // tableSort
-
-	// Alle Tabellen suchen, die sortiert werden sollen, und den Tabellensortierer starten.
-	const initTableSort = function() { 
-		const sort_Table = document.querySelectorAll("table.sortierbar");
-		for (let i = 0; i < sort_Table.length; i++) new tableSort(sort_Table[i]);
-	} // initTable
-
-	if (window.addEventListener) window.addEventListener("DOMContentLoaded", initTableSort, false); // nicht im IE8
+    if (window.addEventListener) window.addEventListener("DOMContentLoaded", initTableSort, false); // nicht im IE8
 
 })();
 
-
+init();
 
 // Get the element with id="defaultOpen" and click on it
-init();
 document.getElementById("defaultOpen").click();
 
 
