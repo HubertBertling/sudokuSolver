@@ -11,6 +11,10 @@
     <link rel="shortcut icon" href="./images/icon.png" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
+
+
     <!-- Dialog specs -->
     <script src="dist/winbox.bundle.js"></script>
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> -->
@@ -18,12 +22,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
 
+    <script src="https://www.w3schools.com/lib/w3.js"></script>
+
     <link rel="stylesheet" media="screen and (max-width: 420px)" href="smallscreen.css">
     <link rel="stylesheet" media="screen and (min-width: 421px)" href="widescreen.css">
 
 </head>
 
-<body>
+<body class="w3-container">
     <!-- main -->
     <!--<div class="main"> -->
 
@@ -201,40 +207,53 @@
 
     <div id="Puzzle-Datenbank" class="tabcontent tabdatabase">
 
-
-        <table class="sortierbar" id="puzzle-db-table">
-            <caption>Sudoku-Puzzles</caption>
-            <thead>
+<section class="">
+    <div class="container">
+        <table class="puzzle-db-table" id="puzzle-db-table">
+            <thead class="puzzle-db-thead">
                 <tr>
-                    <th>Puzzle-Id.</th>
-                    <th>Puzzle-Name</th>
-                    <th>Definierte Zellen</th>
-                    <th>Status</th>
-                    <th>Schwierigkeitsgrad</th>
-                    <th>Rückwärtsläufe</th>
-                    <th>Datum</th>
+                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(1)')" 
+                        style="cursor:pointer">Puzzle-Id
+                        <div>Puzzle-Id</div>
+                    </th>
+
+                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(2)')" 
+                        style="cursor:pointer">Puzzle-Name
+                        <div>Puzzle-Name</div>
+                    </th>
+
+                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(3)')" 
+                        style="cursor:pointer">Definierte Zellen
+                        <div>Definierte Zeilen</div>
+                    </th>
+
+                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(4)')" 
+                        style="cursor:pointer">Status
+                        <div>Status</div>
+                    </th>
+
+                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(5)')" 
+                        style="cursor:pointer">Schwierigkeitsgrad
+                        <div>Schwierigkeitsgrad</div>
+                    </th>
+
+                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(6)')" 
+                        style="cursor:pointer">Rückwärtsläufe
+                        <div>Rückwärtsläufe</div>
+                    </th>
+
+                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(7)')" 
+                        style="cursor:pointer">Datum
+                        <div>Datum</div>
+                    </th>
                 </tr>
             </thead>
-            <tbody id="tBody-db">
-                <tr>
-                    <tr></tr>
-                    <tr></tr>
-                    <tr></tr>
-                    <tr></tr>
-                    <tr></tr>
-                    <tr></tr>
-                    <tr></tr>
-                </tr>
+            <tbody class="puzzle-db-tbody" id="puzzle-db-tbody">
+
             </tbody>
-
-            <tfoot>
-                <tr>
-                    <td colspan=5>* Die Daten befinden sich im Localstorage des Browsers</td>
-                </tr>
-            </tfoot>
-
         </table>
-
+    </div>
+    </section>
 
 
         <div class="puzzle-line">

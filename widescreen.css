@@ -60,6 +60,7 @@ body, html {
     font-family: 'Open Sans', sans-serif;
     height: 100%;
     min-width: 960px;
+    background-color: var(--screen-bg-color); 
 }
 
 
@@ -141,84 +142,6 @@ body, html {
     color: white;
     font-size: 1.2rem;
 
-}
-table {
-	border: 1px solid black;
-	border-spacing: 0px;
-	border-collapse: collapse
-}
-
-table td {
-	border: 1px solid white;
-	border-spacing: 0px;
-	border-collapse: collapse;
-	padding: 3px
-}
-
-table th {
-	border: 1px solid white;
-	border-spacing: 0px;
-	border-collapse: collapse;
-	padding: 3px
-}
-
-table h2 {
-	margin: 0
-}
-
-table caption {
-	padding: 0.5em;
-	text-align: left;
-	font-weight: bold;
-}
-
-table.is_sortable thead th {
-	background-color: lightgray;
-}
-
-
-.sortbutton { 
-	width: 100%; 
-	height: 100%; 
-	border: none; 
-	background-color: transparent; 
-	font: inherit; 
-	color: inherit; 
-	text-align: inherit; 
-	padding: 0; 
-	cursor: pointer; 
-} 
-.sortierbar thead th span.visually-hidden { 
-	position: absolute !important; 
-	clip: rect(1px, 1px, 1px, 1px) !important; 
-	padding: 0 !important; 
-	border: 0 !important; 
-	height: 1px !important; 
-	width: 1px !important; 
-	overflow: hidden !important; 
-	white-space: nowrap !important; 
-} 
-.sortierbar caption span { 
-	font-weight: normal; 
-	font-size: .8em; 
-}
-.sortbutton svg { 
-	margin-left: .2em; height: .7em; 
-} 
-.sortbutton.sortedasc svg path:last-of-type { 
-	fill: currentColor !important; 
-} 
-.sortbutton.sorteddesc svg path:first-of-type { 
-	fill: currentColor!important; 
-}
-.sortbutton.sortedasc > span.visually-hidden:first-of-type { 
-	display: none;
-} 
-.sortbutton.sorteddesc > span.visually-hidden:last-of-type { 
-	display: none;
-} 
-.sortbutton.unsorted > span.visually-hidden:last-of-type { 
-	display: none;
 }
 
 /*======================================*/
@@ -328,7 +251,7 @@ table.is_sortable thead th {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     place-items: center;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-color);
     border: 1px solid #0050ff
@@ -884,68 +807,72 @@ table.is_sortable thead th {
         color: white;
 }
 
-.sortierbar caption {
-    font-size: 1.8rem;
-}
-.sortierbar thead tr {
-   display:block;
-}
 
-.sortierbar tbody {
+
+/*
+
+html, body{
+    margin:0;
+    padding:0;
+    height:100%;
+  }
+
+  */
+  
+  section {
+    position: relative;
+    border: 1px solid #000;
+    padding-top: 37px;
+    background: #500;
+  }
+  section.positioned {
+    position: absolute;
+    top:100px;
+    left:100px;
+    width:800px;
+    box-shadow: 0 0 15px #333;
+  }
+  .container {
+    overflow-y: auto;
+    height: 200px;
+  }
+
+  table {
+    border-spacing: 0;
     width:100%;
-    display:block; 
-    height:fit-content;
-    max-height: 100px;
-    overflow:auto;
-}
+  }
+  td + td {
+    border-left:1px solid #eee;
+  }
+  td, th {
+    border-bottom:1px solid #eee;
+    background: #ddd;
+    color: #000;
+    padding: 10px 20px;
+  }
+  th {
+    height: 0;
+    line-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    color: transparent;
+    border: none;
+    white-space: nowrap;
+  }
+  th div{
+    position: absolute;
+    background: transparent;
+    color: #fff;
+    padding: 9px 20px;
+    top: 0;
+    margin-left: -20px;
+    line-height: normal;
+    border-left: 1px solid #800;
+  }
+  th:first-child div{
+    border: none;
+  }
 
-.sortierbar th, .sortierbar td {
-    width:150px;
-}
-    
-    .sortbutton { 
-        width: 100%; 
-        height: 100%; 
-        border: none; 
-        background-color: transparent; 
-        font: inherit; 
-        color: inherit; 
-        text-align: inherit; 
-        padding: 0; 
-        cursor: pointer; 
-    } 
-    .sortierbar thead th span.visually-hidden { 
-        position: absolute !important; 
-        clip: rect(1px, 1px, 1px, 1px) !important; 
-        padding: 0 !important; 
-        border: 0 !important; 
-        height: 1px !important; 
-        width: 1px !important; 
-        overflow: hidden !important; 
-        white-space: nowrap !important; 
-    } 
-    .sortierbar caption span { 
-        font-weight: normal; 
-        font-size: .8em; 
-    }
-    .sortbutton svg { 
-        margin-left: .2em; height: .7em; 
-    } 
-    .sortbutton.sortedasc svg path:last-of-type { 
-        fill: currentColor !important; 
-    } 
-    .sortbutton.sorteddesc svg path:first-of-type { 
-        fill: currentColor!important; 
-    }
-    .sortbutton.sortedasc > span.visually-hidden:first-of-type { 
-        display: none;
-    } 
-    .sortbutton.sorteddesc > span.visually-hidden:last-of-type { 
-        display: none;
-    } 
-    .sortbutton.unsorted > span.visually-hidden:last-of-type { 
-        display: none;
-    }
 
 /*======================================*/
 /* Global block */
