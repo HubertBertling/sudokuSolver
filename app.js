@@ -1666,6 +1666,7 @@ class SudokuGrid {
         this.evaluateGrid();
         // Erzeuge den dazugehörigen DOM-Tree
         this.display();
+        this.displayPuzzle('', '');
     }
 
     removeAutoExecCellInfos() {
@@ -1787,7 +1788,7 @@ class SudokuGrid {
                 this.sudoCells[i].manualSetValue(puzzle[i], 'define');
             }
         }
-        this.displayPuzzle(uid, puzzleObj);
+        this.displayPuzzle(uid, puzzleObj.name);
         this.refresh();
     }
 
@@ -1860,12 +1861,12 @@ class SudokuGrid {
             this.sudoRows.push(row);
         }
     }
-    displayPuzzle(uid, puzzleObj) {
+    displayPuzzle(uid, name) {
         let pzIdNode = document.getElementById('pz-nr');
         pzIdNode.innerText = uid;
         let pzNameNode = document.getElementById('pz-name');
-        pzNameNode.innerText = puzzleObj.name;
-        
+        pzNameNode.innerText = name;
+
     }
 
     display() {
@@ -2789,7 +2790,7 @@ class SudokuPuzzleDB {
             tmpPuzzle.status = 'ungelöst';
             tmpPuzzle.level = 'unbestimmt';
             tmpPuzzle.backTracks = 0;
-            tmpPuzzle.date = new Date().toDateString();
+            tmpPuzzle.date = new Date().toLocaleDateString();
             tmpPuzzle.puzzle = [
                 "0",
                 "1",
@@ -2958,9 +2959,12 @@ class SudokuPuzzleDB {
     displayPuzzleDB() {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-
         let tbodyNode = document.getElementById('tBody-db');
-   
+        while (tbodyNode.childElementCount > 1) {
+            // Eine Zeile bleibt erhalten
+            tbodyNode.removeChild(tbodyNode.lastChild);
+        }
+
         for (let [key, pz] of puzzleMap) {
             let tr = document.createElement('tr');
 
@@ -2979,7 +2983,7 @@ class SudokuPuzzleDB {
             let td_status = document.createElement('td');
             td_status.innerText = pz.status;
             tr.appendChild(td_status);
-            
+
             let td_level = document.createElement('td');
             td_level.innerText = pz.level;
             tr.appendChild(td_level);
@@ -2990,7 +2994,7 @@ class SudokuPuzzleDB {
 
             let td_date = document.createElement('td');
             td_date.innerText = pz.date;
-            tr.appendChild(td_date); 
+            tr.appendChild(td_date);
 
             tbodyNode.appendChild(tr);
         }
@@ -2998,20 +3002,12 @@ class SudokuPuzzleDB {
 
 
     displayClear() {
-        this.displayClearDBTable();
         this.displayClearPZNr();
         this.displayClearTable('puzzle');
         this.displayClearTable('solution');
     }
 
-    displayClearDBTable() {
-        let tbodyNode = document.getElementById('tBody-db');
-        while (tbodyNode.childElementCount > 2) {
-            // Eine Zeile bleibt erhalten
-            tbodyNode.removeChild(tbodyNode.lastChild);
-        }
-    }
-       
+
     displayCurrentPZ() {
         this.displayClear()
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
@@ -3097,7 +3093,7 @@ class SudokuPuzzle {
         this.status = 'ungelöst'
         this.level = 'unbestimmt';
         this.backTracks = 0;
-        this.date = new Date().toDateString();
+        this.date = new Date().toLocaleDateString();
         this.puzzle = ['0', '0', '0', '0', '0', '0', '0', '0', '0',
             '0', '0', '0', '0', '0', '0', '0', '0', '0',
             '0', '0', '0', '0', '0', '0', '0', '0', '0',
@@ -3286,5 +3282,3 @@ init();
 
 // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
-
-
