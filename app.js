@@ -1553,7 +1553,6 @@ class NineCellCollection {
         // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
 
         this.calculateEqualPairs();
-        let inAdmissiblesAdded = false;
         let found = false;
         for (let i = 0; i < this.myPairInfos.length; i++) {
             if (this.myPairInfos[i].pairIndices.length > 2) {
@@ -1972,7 +1971,6 @@ class SudokuGrid {
             inAdmissiblesAdded = c1 || c2;
             durchlauf++;
         }
-        // console.log('durchlauf: ' + durchlauf);
     }
 
     clearEvaluations() {
