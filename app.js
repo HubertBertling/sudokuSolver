@@ -1471,6 +1471,22 @@ class NineCellCollection {
         return inAdmissiblesAdded;
     }
 
+    calculateNecessaryForNextStep() {
+        // Notwendige Nummern sind zulässige Nummern einer Zelle,
+        // die in der Gruppe, Reihe oder Spalte der Zelle genau einmal vorkommen.
+        let added = false;
+        for (let i = 1; i < 10; i++) {
+            let cellIndex = this.occursOnce(i);
+            // Wenn die Nummer i genau einmal in der Collection vorkommt
+            // trage sie ein in der Necessary-liste der Zelle
+            if (cellIndex !== -1) {
+                this.myCells[cellIndex].addNecessary(i.toString());
+                added =  true;
+            }
+        }
+        return added;
+    }
+
     calculateNecessarys() {
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
         // die in der Gruppe, Reihe oder Spalte der Zelle genau einmal vorkommen.
@@ -1669,7 +1685,8 @@ class SudokuGrid {
         this.backTracks = 0;
         // Erzeuge die interne Tabelle
         this.createSudoGrid();
-        this.evaluateGrid();
+        this.evaluateGridForNextStep();
+        // this.evaluateGrid();
         // Erzeuge den dazugehörigen DOM-Tree
         this.display();
         this.displayPuzzle('', '');
@@ -1956,6 +1973,29 @@ class SudokuGrid {
         }
     }
 
+    evaluateGridForNextStep() {
+        // Berechne das Grid nur soweit, 
+        // dass der nächste eindeutige Schritt getan werden kann
+        this.clearEvaluations();
+        this.calculate_level_0_inAdmissibles();
+   
+        let inAdmissiblesAdded = true;
+        while (inAdmissiblesAdded) {
+            if (this.calculateNecessaryForNextStep()) return true;
+            if (this.calculateSinglesForNextStep()) return true;
+            
+            inAdmissiblesAdded = false;
+            
+            if (this.derive_inAdmissiblesFromNecessarys()){
+                inAdmissiblesAdded = true;
+            } else if (this.derive_inAdmissiblesFromSingles()) {
+                inAdmissiblesAdded = true;
+            } else if (this.derive_inAdmissiblesFromEqualPairs()) {
+                inAdmissiblesAdded = true;
+            }
+        }
+    }
+
     evaluateGrid() {
         this.clearEvaluations();
         this.calculate_level_0_inAdmissibles();
@@ -2014,6 +2054,17 @@ class SudokuGrid {
         }
         return inAdmissiblesAdded;
     }
+
+    calculateSinglesForNextStep() {
+        let added = false;
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].getValue() == '0') {
+                if (this.sudoCells[i].getTotalAdmissibles().size == 1) added = true;
+            }
+        }
+        return added;
+    }
+
     derive_inAdmissiblesFromSingles() {
         // Das das zweite Auftreten einer einzig verbliebenen Nummer ist indirekt unzulässig
         // Iteriere über alle Zellen
@@ -2071,7 +2122,8 @@ class SudokuGrid {
     }
 
     refresh() {
-        this.evaluateGrid();
+        this.evaluateGridForNextStep();
+      //  this.evaluateGrid();
         this.display();
     }
 
@@ -2092,6 +2144,29 @@ class SudokuGrid {
             let tmpCell = this.sudoCells[i];
             tmpCell.calculate_level_0_inAdmissibles();
         }
+    }
+
+    calculateNecessaryForNextStep() {
+        // Berechne und setze für jede nicht gesetzte Zelle
+        // in der Menge ihrer möglichen Nummern die
+        // notwendigen Nummern
+        // Iteriere über die Gruppen
+        let added = false;
+        for (let i = 0; i < 9; i++) {
+            let tmpGroup = this.sudoGroups[i];
+            if (tmpGroup.calculateNecessaryForNextStep()) added = true;
+        }
+        // Iteriere über die Reihen
+        for (let i = 0; i < 9; i++) {
+            let tmpRow = this.sudoRows[i];
+            if (tmpRow.calculateNecessaryForNextStep()) added = true;
+        }
+        // Iteriere über die Spalten
+        for (let i = 0; i < 9; i++) {
+            let tmpCol = this.sudoCols[i];
+            if (tmpCol.calculateNecessaryForNextStep()) added = true;
+        }
+        return added;
     }
 
     calculateNecessarys() {
@@ -2896,7 +2971,7 @@ class SudokuPuzzleDB {
         let puzzleId = playedPuzzle.uid;
         let puzzleObj = playedPuzzle.obj;
         if (name !== '') {
-            puzzleObj.name = name;         
+            puzzleObj.name = name;
         }
         this.savePuzzle(puzzleId, puzzleObj);
     }
@@ -2948,7 +3023,7 @@ class SudokuPuzzleDB {
             puzzleMap.delete(key);
             let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
             localStorage.setItem("localSudokuDB", update_str_puzzleMap);
-            this.display();         
+            this.display();
         }
     }
 
@@ -2966,7 +3041,7 @@ class SudokuPuzzleDB {
             if (displayRows[i].classList.contains('selected')) {
                 displayRows[i].classList.remove('selected');
                 displayRows[i + 1].classList.add('selected');
-                this.selectedIndex = this.getIndex(displayRows[i+1].cells[0].innerText);
+                this.selectedIndex = this.getIndex(displayRows[i + 1].cells[0].innerText);
                 this.displayCurrentPZ();
                 return;
             }
@@ -2979,7 +3054,7 @@ class SudokuPuzzleDB {
             if (displayRows[i].classList.contains('selected')) {
                 displayRows[i].classList.remove('selected');
                 displayRows[i - 1].classList.add('selected');
-                this.selectedIndex = this.getIndex(displayRows[i-1].cells[0].innerText);
+                this.selectedIndex = this.getIndex(displayRows[i - 1].cells[0].innerText);
                 this.displayCurrentPZ();
                 return;
             }
