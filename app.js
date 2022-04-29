@@ -328,10 +328,10 @@ class SudokuApp {
         // Der Name unter dem der aktuelle Zustand gespeichert werden soll
         let puzzleName = this.puzzleSaveDialog.getSelectedName();
 
-        let currentPuzzle = this.suGrid.getCurrentPuzzle();
+        let playedPuzzle = this.suGrid.getPlayedPuzzle();
         //Speichere den named Zustand
-        this.sudokuPuzzleDB.saveNamedPuzzle(puzzleName, currentPuzzle);
-        this.sudokuPuzzleDB.display();
+        this.sudokuPuzzleDB.saveNamedPuzzle(puzzleName, playedPuzzle);
+        document.getElementById("puzzle-db-tab").click();
     }
 
     savePuzzleDlgCancelPressed() {
@@ -385,8 +385,15 @@ class SudokuApp {
         this.sudokuPuzzleDB.nextPZ();
     }
     previousPuzzle() {
+        // Select previous Puzzle
         this.sudokuPuzzleDB.previousPZ();
     }
+
+    deleteCurrentPuzzle() {
+        this.sudokuPuzzleDB.deleteSelected();
+    }
+
+
     comboBoxNameSelected(comboBoxNode, e) {
         comboBoxNode.setInputField(e.target.value);
     }
@@ -1719,7 +1726,7 @@ class SudokuGrid {
         this.refresh();
     }
 
-    getCurrentPuzzle() {
+    getPlayedPuzzle() {
         // Zusammenstellung des Puzzles, um es abspeichern zu können
         let tmpPuzzle = null;
         let puzzelId = ''
@@ -1752,11 +1759,11 @@ class SudokuGrid {
                 tmpPuzzle.solution[i] = this.sudoCells[i].getValue();
             }
         }
-        let currentPuzzle = {
+        let playedPuzzle = {
             uid: puzzelId,
             obj: tmpPuzzle
         }
-        return currentPuzzle;
+        return playedPuzzle;
     }
 
     checkStateOk(state) {
@@ -2784,6 +2791,7 @@ class SudokuPuzzleDB {
         // Hole den Speicher als ein Objekt
         let str_puzzleDB = localStorage.getItem("localSudokuDB");
         if (str_puzzleDB == null) {
+            // Falls der Local-Storage leer ist, wird ein erstes Puzzle angelegt.
             let tmpPuzzle = new SudokuPuzzle();
             tmpPuzzle.name = "sudo600";
             tmpPuzzle.defCount = 23;
@@ -2882,14 +2890,17 @@ class SudokuPuzzleDB {
             let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
             localStorage.setItem("localSudokuDB", update_str_puzzleMap);
         }
-        this.currentIndex = 0;
+        // Der Index wird auf jeden Fall auf das erste Puzzle gesetzt
+        this.selectedIndex = 0;
     }
 
-    saveNamedPuzzle(name, currentPuzzle) {
-        let puzzleId = currentPuzzle.uid;
-        let puzzleOpj = currentPuzzle.obj;
-        puzzleOpj.name = name;
-        this.savePuzzle(puzzleId, puzzleOpj);
+    saveNamedPuzzle(name, playedPuzzle) {
+        let puzzleId = playedPuzzle.uid;
+        let puzzleObj = playedPuzzle.obj;
+        if (name !== '') {
+            puzzleObj.name = name;         
+        }
+        this.savePuzzle(puzzleId, puzzleObj);
     }
     savePuzzle(puzzleId, puzzle) {
         // Hole den Speicher als ein Objekt
@@ -2901,54 +2912,87 @@ class SudokuPuzzleDB {
         // und speichere sie.
         let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+        this.selectedIndex = this.getIndex(puzzleId);
     }
 
     getPuzzle(uid) {
+        // Vielleicht ändern in getSelectedPuzzle();
         // Hole den Speicher als ein Objekt
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         // Füge das Puzzle in das Speicherobjekt ein
         return puzzleMap.get(uid);
     }
+    getIndex(uid) {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        let i = 0;
+        for (const [key, value] of puzzleMap) {
+            if (key == uid) {
+                return i;
+            } else {
+                i++;
+            }
+        }
+        // Uid existiert nicht
+        return -1;
+    }
 
-    deletePuzzle(uid) {
+    deleteSelected() {
         // Hole den Speicher als ein Objekt
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-        puzzleMap.delete(uid);
-        let update_str_puzzleMap = JSON.stringify(puzzleMap);
-        localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+        let key = Array.from(puzzleMap.keys())[this.selectedIndex];
+        if (this.selectedIndex > 0) {
+            this.selectedIndex--;
+        }
+        if (puzzleMap.size > 1) {
+            puzzleMap.delete(key);
+            let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
+            localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+            this.display();         
+        }
     }
 
     selectedPZ() {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-        let key = Array.from(puzzleMap.keys())[this.currentIndex];
+        let key = Array.from(puzzleMap.keys())[this.selectedIndex];
         let tmpPuzzle = puzzleMap.get(key);
         return tmpPuzzle;
     }
 
     nextPZ() {
-        let str_puzzleMap = localStorage.getItem("localSudokuDB");
-        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-        if (this.currentIndex < puzzleMap.size) {
-            this.currentIndex++;
+        let displayRows = document.getElementById('puzzle-db-tbody').rows;
+        for (let i = 0; i < displayRows.length - 1; i++) {
+            if (displayRows[i].classList.contains('selected')) {
+                displayRows[i].classList.remove('selected');
+                displayRows[i + 1].classList.add('selected');
+                this.selectedIndex = this.getIndex(displayRows[i+1].cells[0].innerText);
+                this.displayCurrentPZ();
+                return;
+            }
         }
-        let key = Array.from(puzzleMap.keys())[this.currentIndex];
-        let tmpPuzzle = puzzleMap.get(key);
-        return tmpPuzzle;
     }
 
     previousPZ() {
+        let displayRows = document.getElementById('puzzle-db-tbody').rows;
+        for (let i = 1; i < displayRows.length; i++) {
+            if (displayRows[i].classList.contains('selected')) {
+                displayRows[i].classList.remove('selected');
+                displayRows[i - 1].classList.add('selected');
+                this.selectedIndex = this.getIndex(displayRows[i-1].cells[0].innerText);
+                this.displayCurrentPZ();
+                return;
+            }
+        }
+
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-
-        if (this.currentIndex > 1) {
-            this.currentIndex--;
+        if (this.selectedIndex > 0) {
+            this.selectedIndex--;
         }
-        let key = Array.from(puzzleMap.keys())[this.currentIndex];
-        let tmpPuzzle = puzzleMap.get(key);
-        return tmpPuzzle;
+        this.display();
     }
 
     display() {
@@ -2959,14 +3003,21 @@ class SudokuPuzzleDB {
     displayPuzzleDB() {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+
         let tbNode = document.getElementById('puzzle-db-tbody');
-        while (tbNode.childElementCount > 1) {
+        while (tbNode.childElementCount > 0) {
             // Eine Zeile bleibt erhalten
             tbNode.removeChild(tbNode.lastChild);
         }
+
+        let i = 0;
         for (let [key, pz] of puzzleMap) {
             let tr = document.createElement('tr');
             tr.classList.add('item')
+            if (i == this.selectedIndex) {
+                tr.classList.add('selected');
+            }
+            i++;
 
             let td_key = document.createElement('td');
             td_key.innerText = key;
@@ -3012,7 +3063,7 @@ class SudokuPuzzleDB {
         this.displayClear()
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-        let key = Array.from(puzzleMap.keys())[this.currentIndex];
+        let key = Array.from(puzzleMap.keys())[this.selectedIndex];
         let selectedPZ = puzzleMap.get(key);
         this.displayPZNr(key);
         this.displayTable('puzzle', selectedPZ.puzzle);
@@ -3081,7 +3132,7 @@ class SudokuPuzzleDB {
     getSelectedUid() {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-        let key = Array.from(puzzleMap.keys())[this.currentIndex];
+        let key = Array.from(puzzleMap.keys())[this.selectedIndex];
         return key;
     }
 }

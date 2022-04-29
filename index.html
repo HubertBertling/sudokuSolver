@@ -36,8 +36,10 @@
     <button class="tablink" onclick="sudoApp.openPage('Sudoku-Solver', this, '#F2E2F2', 'black')"
         id="defaultOpen">Sudoku-Solver</button>
     <button class="tablink"
-        onclick="sudoApp.openPage('Puzzle-Datenbank', this, '#F2E2F2', 'black')">Puzzle-Datenbank</button>
-    <button class="tablink" onclick="sudoApp.openPage('Hilfe', this, '#F2E2F2', 'black')">Hilfe</button>
+        onclick="sudoApp.openPage('Puzzle-Datenbank', this, '#F2E2F2', 'black')"
+        id="puzzle-db-tab">Puzzle-Datenbank</button>
+    <button class="tablink" onclick="sudoApp.openPage('Hilfe', this, '#F2E2F2', 'black')"
+        id="puzzle-help-tab">Hilfe</button>
 
 
 
@@ -178,7 +180,7 @@
                         <div class="main-btn" id="btn-reset">Zurücksetzen</div>
                     </div>
                     <div class="storage-btns">
-                        <div class="main-btn" id="btn-save">Speichern in Puzzle-DB</div>
+                        <div class="main-btn" id="btn-save">Speichern</div>
                    <!--     <div class="main-btn" id="btn-restore">Wiederherstellen</div>
                         <div class="main-btn" id="btn-delete">Löschen</div>
                         <div class="main-btn" id="btn-import">Import</div> -->
@@ -256,14 +258,18 @@
     </section>
 
 
-        <div class="puzzle-line">
-            <div>Puzzle-Id: </div>
-            <div>
-                <div class="pz-nr" id="pzNr">0</div>
-            </div>
-        </div>
-        <div class="puzzle-line">
+    <div class="puzzle-btns">
+        <div class="pz-btn" id="pz-btn-load" onclick="sudoApp.loadCurrentPuzzle()">Laden </div>
+        <div class="pz-btn" id="pz-btn-previous" onclick="sudoApp.previousPuzzle()"><img src="images/pfeilrueckwaerts.png" class="forward-backward-image"></div>
+        <div class="pz-btn" id="pz-btn-next" onclick="sudoApp.nextPuzzle()"><img src="images/pfeilvorwaerts.png" class="forward-backward-image"></div>
+        <div class="pz-btn" id="pz-btn-delete" onclick="sudoApp.deleteCurrentPuzzle()">Löschen</div>
+    </div>
 
+    <p style="font-size: 1.6rem; font-weight: bold; margin-top: 40px;">Selektiertes Puzzle:</p>
+    <div class="pz-nr" id="pzNr">0</div>
+
+    <div class="puzzle-line">
+       
             <div>Puzzle: </div>
             <div class="pz-table" id="puzzle">
 
@@ -274,12 +280,6 @@
             </div>
         </div>
    
-        <div class="puzzle-btns">
-            <div class="pz-btn" id="btn-load" onclick="sudoApp.loadCurrentPuzzle()">Laden </div>
-            <div class="pz-btn" id="btn-previous" onclick="sudoApp.previousPuzzle()">Vorheriges Puzzle</div>
-            <div class="pz-btn" id="btn-next" onclick="sudoApp.nextPuzzle()">Nächstes Puuzle</div>
-        </div>
-
 
     </div>
 
