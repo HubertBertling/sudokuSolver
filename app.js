@@ -88,9 +88,12 @@ class SudokuApp {
 
         });
 
+        /*
         document.getElementById("inAdmissiblesVisible").addEventListener('input', () => {
             sudoApp.suGrid.display();
         })
+        */
+
         document.querySelector('#speedSetting').addEventListener('input', (e) => {
             sudoApp.runner.setSpeed(e.target.value);
         });
@@ -947,7 +950,7 @@ class AutomatedRunnerOnGrid {
         this.displayDepth();
         this.displayAutoDirection();
         this.displayProgress();
-        //      this.displayGoneSteps();
+        this.displayGoneSteps();
         this.displaySpeedSetting();
     }
     displaySpeedSetting() {
@@ -955,11 +958,11 @@ class AutomatedRunnerOnGrid {
         element.value = this.execSpeedLevel;
     }
 
-    /*    displayGoneSteps() {
-            let goneStepsNode = document.getElementById("step-count");
-            goneStepsNode.textContent = this.goneSteps;
-        }
-    */
+    displayGoneSteps() {
+        let goneStepsNode = document.getElementById("step-count");
+        goneStepsNode.textContent = this.goneSteps;
+    }
+
     displayAutoDirection() {
         let forwardNode = document.getElementById("radio-forward");
         let backwardNode = document.getElementById("radio-backward");
@@ -1481,7 +1484,7 @@ class NineCellCollection {
             // trage sie ein in der Necessary-liste der Zelle
             if (cellIndex !== -1) {
                 this.myCells[cellIndex].addNecessary(i.toString());
-                added =  true;
+                added = true;
             }
         }
         return added;
@@ -1978,15 +1981,15 @@ class SudokuGrid {
         // dass der nächste eindeutige Schritt getan werden kann
         this.clearEvaluations();
         this.calculate_level_0_inAdmissibles();
-   
+
         let inAdmissiblesAdded = true;
         while (inAdmissiblesAdded) {
             if (this.calculateNecessaryForNextStep()) return true;
             if (this.calculateSinglesForNextStep()) return true;
-            
+
             inAdmissiblesAdded = false;
-            
-            if (this.derive_inAdmissiblesFromNecessarys()){
+
+            if (this.derive_inAdmissiblesFromNecessarys()) {
                 inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromSingles()) {
                 inAdmissiblesAdded = true;
@@ -2123,7 +2126,7 @@ class SudokuGrid {
 
     refresh() {
         this.evaluateGridForNextStep();
-      //  this.evaluateGrid();
+        //  this.evaluateGrid();
         this.display();
     }
 
@@ -2369,7 +2372,8 @@ class SudokuCell {
     }
 
     displayAdmissibles() {
-        let inAdmissiblesVisible = document.getElementById("inAdmissiblesVisible").checked;
+        // let inAdmissiblesVisible = document.getElementById("inAdmissiblesVisible").checked;
+        let inAdmissiblesVisible = true;
         if (inAdmissiblesVisible) {
             this.myCellNode.classList.add('nested');
             // Übertrage die berechneten Möglchen in das DOM
