@@ -2746,6 +2746,7 @@ class PuzzleSaveDialog {
             });
         }
         this.myOpen = true;
+        this.myPuzzleNameNode.value = '';
     }
 
     close() {

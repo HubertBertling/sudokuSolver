@@ -511,6 +511,7 @@ body, html {
     padding-right: 20px;
     display: grid;
     grid-template-columns: 1fr;
+    font-size: var(--font-size-btn);
 }
 
 .storage-btns {
@@ -520,8 +521,7 @@ body, html {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
-    font-size: var(--font-size-btn);
-  
+   
 }
 
 /* .storage-btns {
