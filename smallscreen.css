@@ -1,6 +1,7 @@
 :root {
     /* app colors */
-    --screen-bg-color: #F2E2F2;
+/*    --screen-bg-color: white; */
+    --screen-bg-color: #F2E2F2; 
     --screen-color: #0d1117;
  
     --standard-btn-bg-color: rgba(0,0,0,.25);
@@ -28,30 +29,85 @@
     --error-cell-color: white;
 
      /* Other definitions */
-
-    --sudoku-cell-size: 35px;
-    --border-radius: 5px;
-    --space-y: 10px;
-    --border-size-standard: 1px;
-    --gap: 2px;
+    --nav-size: 50px;
+    --sudoku-cell-size: 40px;
+    --border-radius: 10px;
+    --space-y: 20px;
+    --gap: 5px;
     --font-size-btn: 1.6rem;
-    --font-size-sm: 1rem;
-    --font-size: 1.2rem;
+    --font-size-sm: 0.7rem;
+    --font-size: 1.0rem;
     --font-size-lg: 1.8rem;
     --font-size-xl: 2.4rem;
 
     /* Setting the global font size */
     /* Prozent von der Browser Font-Einstellung */
-   /* font-size: 62.5%; */
-    font-size: 45%;
+    font-size: 62.5%;
     /* Effekt: 1rem = 10px; */
 }
 
 * {
     padding: 0;
-    margin: 0;
+    margin: 0; 
     /* padding and border are included in the width and height */
     box-sizing: border-box;
+}
+
+
+
+/* Set height of body and the document to 100% */
+body, html {
+    font-family: 'Open Sans', sans-serif;
+    height: 100%;
+    /* --min-width: 960px; */
+    background-color: var(--screen-bg-color); 
+}
+
+
+
+/* Style tab links */
+.tablink {
+    display: none;
+  background-color: #555;
+  color: white;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  /* font-size: 17px; */
+  font-size: 1.8rem;
+  font-weight: bold;
+  width: 25%;
+}
+
+.tablink:hover {
+  background-color: #777;
+}
+
+/* Style the tab content (and add height:100% for full page content) */
+.tabcontent {
+  color: black;
+   padding: 5px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+}
+
+#Sudoku-Solver {
+    background-color: var(--screen-bg-color); 
+    color: black;       ;
+}
+#Puzzle-Datenbank {
+    display: none;
+    background-color: var(--screen-bg-color);
+    color: black;
+}
+#Hilfe {
+    display:none;
+    background-color: var(--screen-bg-color);
+    color: black;
 }
 
 .tooltip {
@@ -81,60 +137,56 @@
   }
   
 
-body {
-    font-family: 'Open Sans', sans-serif;
-    /* Text kann nicht selektiert werden */
-    user-select: none;
-}
 
-.main {
-  
-    padding: 10px;
-    display: grid;
-    place-items: center;
-}
+.tabdatabase {
+    color: white;
+    font-size: 1.0rem;
 
-/*
-.screen {
-  
-    position: relative;
-    height: 100%;
-    min-width: 400px;
 }
-*/
 
 /*======================================*/
 /* Sudoku grid block */
 /*======================================*/
 
+.inputArea {
+    max-width: 410px;
+    display: flex;
+    flex-direction:column;
+/*    justify-content:space-between;*/
+    
+}
+
+.gridArea {
+    display: grid; 
+}
+/*
+.game-col2 {
+   
+}
+*/
 .main-sudoku-grid {
-    padding:5px;
     display: grid;
-    /*gap: var(--gap);*/
     grid-template-columns: repeat(3, auto);
-    border: var(--border-size-standard) solid var(--screen-bg-color);
-    background-color : var(--screen-bg-color);
 }
 
 .sudoku-group {
-    margin: 3px;
     display: grid;
-    /*gap: 3px; */
     grid-template-columns: repeat(3, auto);
     border-radius: var(--border-radius);
     place-items: center;
+    margin: 3px;
 }
 
 .sudoku-grid-cell {
-    height: var(--sudoku-cell-size);
-    width: var(--sudoku-cell-size); 
-    border-radius: var(--border-radius);
+    height: 35px;
+    width: 35px; 
+    border-radius: 5px;
     display: grid; 
-    font-size: var(--font-size-btn);
+    font-size: 1.0rem;
     place-items: center;
     cursor: pointer;
     margin: 1px;
-}
+  }
 
 .sudoku-grid-cell.define {
     background-color: var(--defined-cell-bg-color);
@@ -147,29 +199,31 @@ body {
 
 .sudoku-grid-cell.auto-value {
     display: grid;
+   /* grid-template-columns: 0.1fr 0.9fr; */
     grid-template-columns: 0.1fr 1.2fr;
     place-items: center;
-    font-size: 1.2rem;
+    font-size: 1.0rem;
     background-color: var(--played-cell-bg-color);
     color: var(--played-cell-color);
  }
 .auto-step-number {
     padding-left:1px;
     padding-right: 1px;
-    font-size: 1.0rem;
+    font-size: 0.8rem;
 }
 .autoValuePair {
     display: grid;
     grid-template-columns: 1fr;
     place-items: center;
-    font-size: 1.2rem;
-    border-left: 2px solid var(--nested-cell-bg-color);
-    padding-left: 2px;
+    font-size: 1.0rem;
+    border-left: 2px solid var(--nested-cell-bg-color); 
+    padding-left: 1px;
 }
 
 .auto-value {
-    padding: 2px;;
-    font-size: 1.6rem;
+    padding-left: 2px;
+    padding-right: 1px;
+    font-size: 1.0rem;
     font-weight: bold;
 }
 
@@ -178,21 +232,25 @@ body {
     grid-template-columns: repeat(3, 1fr);
     gap: 1px;
     place-items: center;
-    border-top: 2px solid var(--nested-cell-bg-color); 
-    font-size: 1.2rem;
-    padding-top: 2px;
+    border-top: 2px solid var(--nested-cell-bg-color);
+    font-size: 0.8rem;
+    padding-top: 1px;
     padding-left: 1px;
 }
 .open {
+  /*  background-color: var(--nested-cell-bg-color); */
     color: var(--nested-cell-bg-color); 
+    padding-left:1px;
+    padding-right: 1px;
 }
+
 
 
 .sudoku-grid-cell.nested {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     place-items: center;
-    font-size: 1.2rem;
+    font-size: 0.8rem;
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-color);
     border: 1px solid #0050ff
@@ -201,35 +259,45 @@ body {
 .sudoku-grid-cell.selected {
     background-color: var(--selected-cell-bg-color);
     color: var(--selected-cell-color);
-    border: 2px solid var(--selected-cell-border-color);
+    border: 2px solid var(--selected-cell-bg-color);
 }
 
 .nested>div.neccessary {
-    padding: 2px;
+    padding: 1px;
     border-radius: 3px;
     background-color: #56c7aa;
-    font-size: 1.5rem;
     color: #0d1117;
     border: 1px solid white;
 }
 
-.nested>div.inAdmissible {
-    font-size: 1.5rem;
-    background-color: Crimson;
-    color: white;
+.nested>div.inAdmissible  {
+    padding: 1px;
+    border-radius: 3px;
+    font-size: 1.0rem;
+    background-color: Crimson ;
+    color: white ;
     border: 1px solid white;
 }
 
-
+/*
 .nested>div.inAdmissible2Level  {
-    padding: 2px;
+    padding: 1px;
     border-radius: 3px;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     background-color: darkred;
     color: white;
     border: 1px solid white;
 }
+*/
 
+/*
+.nested>div.neccessary.inAdmissible {
+  background:blueviolet; 
+    background-color: #56c7aa;
+    color: #0d1117;
+  
+}
+*/
 
 .nested>div.neccessary.inAdmissible {
     background:blueviolet;
@@ -246,7 +314,6 @@ body {
 }
 
 
-
 .sudoku-grid-cell.row-err, .sudoku-grid-cell.col-err  {
     border: 3px solid var(--error-cell-bg-color);
 }
@@ -260,8 +327,6 @@ body {
 }
 
 
-
-
 .sudoku-grid-cell.err {
     background-color: var(--error-cell-bg-color);
     color: var(--error-cell-color);
@@ -269,66 +334,42 @@ body {
 }
 
 
-
-
 .sudoku-grid-cell.err.selected {
     background-color: black;
 }
 
-.inputArea {
-    display: grid;
-    grid-template-columns: 1fr;
-}
+
 
 .evaluations {
-    font-size: 1.6rem;
-    display: grid;
-    grid-template-columns: 0.4fr 0.6fr;
+    font-size: 1.0rem;
+    display: flex;
     padding-top: 5px;
-    padding-left:10px;
-    padding-right: 5px;
-    background-color : var(--screen-bg-color);
-
+    
+  
 }
-
 .sudoku-header {
-    background-color: var(--screen-bg-color);
     color: var(--screen-color);
-    border-bottom: 1px solid var(--screen-bg-color);
     text-align: center;
     font-weight:bold;
 
 }
 .helpNode {
-   
     color: var(--help-color);
     font-size: 1.6rem;
 }
 
 .sudoku-title {
-    display:none;
     padding-top: 20px;
     padding-bottom: 10px;
-    font-size: xx-large;
+    font-size: 2.4rem;
 
 }
 .help {
-    display: none;
     margin-bottom:10px;
 }
 /*======================================*/
 /* Exec button block                  */
 /*======================================*/
-
-.game-col2 {
-    border-top: 1px solid var(--screen-bg-color);
-    border-right: 1px solid var(--screen-bg-color);
-    border-bottom: 1px solid var(--screen-bg-color);
-    background-color: var(--screen-bg-color);
-    color: var(--screen-color);
-    font-size: 1.6rem;
-}
-
 
 .exec-btn-groups {
     padding-left: var(--space-y);
@@ -337,13 +378,11 @@ body {
 
 .exec-btn-group, .auto-exec-container {
     margin-top: 5px;
-
 }
 
 .manual-exec-btns, .automatic-exec {
-    margin-top: 1px;
-    padding-top: 1px;
-    padding-bottom: 1px;
+    margin-top: 5px;
+    padding-bottom: 5px;
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     gap: 2px;
@@ -353,6 +392,7 @@ body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
+    padding-right: 10px;
 }
 
 .btn-define, .btn-play {
@@ -373,7 +413,7 @@ body {
 
 
 .numbers {
-    margin-top: 2px;
+    margin-top: 5px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 5px;
@@ -381,7 +421,7 @@ body {
 
 
 .number {
-    height: 25px;
+    height: 40px;
     border-radius: var(--border-radius);
     background-color: var(--standard-btn-bg-color);
     color: var(--standard-btn-color);
@@ -399,7 +439,7 @@ body {
 .delete {
     background-color: var(--delete-btn-bg-color);
     color: var(--delete-btn-color);
-    height: 25px;
+    height: 40px;
     border-radius: var(--border-radius);
     display: grid;
     place-items: center;
@@ -422,12 +462,12 @@ body {
     margin-top: 5px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
+    gap: 10px;
 }
 
 .btn-image {
-    width: 16px;
-    height: 16px;
+    width: 25px;
+    height: 20px;
 }
 
 
@@ -448,45 +488,46 @@ body {
 }
 
 .btn-play {
-    margin:5x;
     background-color: var(--played-cell-bg-color);
     color: var(--standard-btn-color);
 }
 
 .btn-automatic {
-    margin:5x;
     background-color: var(--standard-btn-bg-color);
     color: var(--standard-btn-color);
 }
 
+.settings {
+    display: none;
+}
 /*======================================*/
 /* Main button block */
 /*======================================*/
 
 .main-btns {
     /*  border: 5px solid var(--red);  */
-    border-left: var(--border-size-standard) solid var(--screen-bg-color);
-    border-right: var(--border-size-standard) solid var(--screen-bg-color);
-    border-bottom: var(--border-size-standard) solid var(--screen-bg-color);
+    margin-top: 20px;
     background-color: var(--screen-bg-color);
-    padding: 5px;
-    /* margin-bottom: 10px; */
-    /* display: grid;
+    padding-left: 15px;
+    padding-right: 20px;
+    display: grid;
     grid-template-columns: 1fr;
-    gap: 5px; */
 }
 
+.storage-btns {
+    display: none;
+}
 .config-btns {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
 }
 
-.storage-btns {
+/* .storage-btns {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-}
+    grid-template-columns: repeat(1, 1fr);
+
+} */
 
 .main-btn:active {
     box-shadow: 0 0px darkgray;
@@ -503,46 +544,29 @@ body {
     place-items: center;
     margin: 5px;
     padding: 5px;
-    font-size: var(--font-size-btn);
+    font-size: 1.2rem;
     cursor: pointer;
 }
 /*======================================*/
 /* Progress block */
 /*======================================*/
 
-.progress-box {
-    padding-top: 2px;
-    padding-left: var(--space-y);
-    padding-right: var(--space-y);
-    padding-bottom: 2px;
-    border-left: var(--border-size-standard) solid var(--screen-bg-color);
-    border-right: var(--border-size-standard) solid var(--screen-bg-color);
-    border-bottom: var(--border-size-standard) solid var(--screen-bg-color);
-    background-color: var(--screen-bg-color);
-    color:var(--screen-color);
-    font-size: 1.6rem;
-}
-.track-group {
-    display:none;
-}
-
-/*
 .manual-exec-btns.on, .automatic-exec.on {
     padding-right: 10px;
     border-right: 5px solid var(--standard-btn-bg-color);
 }
-*/
 
 .manual-exec-btns, .automatic-exec {
-    padding-right: 1px;
+    padding-right: 10px;
 }
 
 .name-value {
     display: inline;
+    padding-left: 5px; 
 }
 
 .depth-group {
-    margin-top: 2px;
+    margin-top: 5px;
     display: grid;
     grid-template-columns: 0.35fr 0.5fr 0.5fr;
 
@@ -554,34 +578,36 @@ body {
 
 .progress-group {
     margin-top: 5px;
-    margin-right: 1px;
+    margin-right: 5px;
+    line-height: 20px;
     display: grid;
-    grid-template-columns: 0.4fr 0.2fr 1fr;
+    grid-template-columns: 0.1fr 0.1fr 1fr;
     gap: 2px;
 }
 
 .settings {
-    font-size: 1.6rem;
-    margin-top: 5px;
-    display: grid;
-    grid-template-columns: 0.4fr 0.6fr;
-    gap: 1px;
-}
-.settings-line {
-    margin-top: 3px;
     line-height: 20px;
+    font-size: 1.2rem;
+    margin-top: 20px;;
+}
+
+.search-max-depth, .speed-field {
+      margin-top: 5px;
+     
 }
 
 .search-depth {
     color: var(--screen-color);
     font-weight: bold;
+    padding-left: 5px;
 }
 
 .speedSetting {
+    margin-top: 5px;
     padding: 1px;
     background-color: var(--screen-bg-color);
+    font-size: 1.6rem;
     border: solid 1px;
-    font-size: 1.3rem;
 }
 .checkbox {
     margin-left: 3px;
@@ -589,23 +615,26 @@ body {
 }
 
 .step-count-box {
-    height: 20px;
     line-height: 20px;
+    height: 20px;  
+    display:flex;
+    margin-right: 5px;
 }
 .forward-backward-image {
-    width: 12px;
+    width: 18px;
     height: 18px;
 }
 .forward, .backward {
     height: 20px;
-    padding-left: 7px;
-    padding-right: 7px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 .autoMode-radio-btns {
     place-items: center;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    background-color: var(--screen-bg-color);   
+    background-color: var(--screen-bg-color); 
+    font-size: 1.0rem;  
 }
 .forward.checked, .backward.checked {
     background-color: var(--played-cell-bg-color);
@@ -615,14 +644,16 @@ body {
     position: relative;
     width: 100%;
     height: 20px;
-    font-size: 1.6rem;
+    font-size: 1.0rem;
     text-align:right;
-    padding-right: 5px;
+  
     background-color: var(--nested-cell-bg-color);
 }
 
 #myBarDef, #myBarPlay {
     position: absolute;
+    width: 20%;
+    height: 20px;
     line-height: 20px;
 }
 
@@ -638,11 +669,15 @@ body {
     background-color: var(--played-cell-bg-color);
     color: black;
     text-align:right;
+    padding-right: 5px;
 }
 .total-bar-value {
     line-height: 20px;
     vertical-align:center;
 }
+
+
+
 
 
 .textInDlgs {
@@ -654,32 +689,32 @@ body {
 }
 .textInDlgs:last-child { margin-right: 0px; }
 
-
 .input-row {
+    font-size: 1.6rem;
     margin: 10px;
 }
 
-
 .ok-cancel-btns {
-    margin-left: 5px;
-    margin-right: 5px;
+    margin-top: 5px;
+    margin-left: 25px;
+    margin-right: 25px;
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
 
-
 .successForm, .dlg-form {
     margin-left: 5px;
-    margin-top: 5px; 
+    margin-top: 10px; 
     font-size: 1.6rem;
     display: grid;
     grid-template-columns: 1fr;
 }
 
+
 .successImg {
-    margin-left: 15px;
-    width: 120px;
-    height: 180px;
+    margin-left: 30px;
+    height: 270px;
+    width: 180px;
 }
 
 
@@ -692,6 +727,150 @@ body {
     /* the width of window frame border: */
     margin: 4px;
 }
+
+
+/*=======================================*/
+/* Puzzle-Datenbank 
+/*=======================================*/
+
+.puzzle-btns {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+
+}
+
+.pz-btn {
+    box-shadow: 3px 3px darkgray;
+    background-color: grey;
+    color: var(--standard-btn-color);
+    border-radius: var(--border-radius);
+    border: hidden;
+    display: grid;
+    place-items: center;
+    margin: 5px;
+    margin-bottom: 10px;
+    padding: 5px;
+    font-size: var(--font-size-btn);
+    cursor: pointer;
+}
+
+.status-line {
+    display: none;
+ }
+.status-line-item {
+    display: none;
+ 
+}
+
+/*
+.pz-nr, .pz-name, .pz-date {
+    margin-left: 5px;
+}
+*/
+
+.puzzle-line {
+    font-size: 1.4rem;
+    color:black;
+    margin-top: 50px;
+    display: flex;
+    flex-direction: row;
+    line-height: normal;
+}
+.pz-nr {
+    margin-left: 20px;
+    margin-right: 5px;
+}.pz-all {
+    margin-left: 5px;
+    margin-right: 20px;
+}
+
+.pz-table {
+    margin-left: 25px;
+    margin-right: 25px;
+    display: grid;
+    grid-template-columns: repeat(9, auto);
+}
+.cell-field {
+        position: relative;
+        width: 30px;
+        height: 30px;
+        display: grid;
+        background-color: grey;
+        place-items: center;
+        color: white;
+}
+
+/*
+
+html, body{
+    margin:0;
+    padding:0;
+    height:100%;
+  }
+
+  */
+  
+  section {
+    font-size: 1.4rem;
+    position: relative;
+    border: 1px solid #000;
+    padding-top: 37px;
+    background: #500;
+  }
+  section.positioned {
+    position: absolute;
+    top:100px;
+    left:100px;
+    width:600px;
+    box-shadow: 0 0 15px #333;
+  }
+  .container {
+    overflow-y: auto;
+    height: 200px;
+  }
+
+  table {
+    border-spacing: 0;
+    width:100%;
+  }
+
+  .puzzle-db-table td + td {
+    border-left:1px solid #eee;
+  }
+  .puzzle-db-table td, th {
+    border-bottom:1px solid #eee;
+    background: #ddd;
+    color: #000;
+    padding: 10px 20px;
+  }
+  .puzzle-db-table th {
+    height: 0;
+    line-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    color: transparent;
+    border: none;
+    white-space: nowrap;
+  }
+  .puzzle-db-table th div{
+    position: absolute;
+    background: transparent;
+    color: #fff;
+    padding: 9px 20px;
+    top: 0;
+    margin-left: -20px;
+    line-height: normal;
+    border-left: 1px solid #800;
+  }
+  .puzzle-db-table th:first-child div{
+    border: none;
+  }
+
+  .puzzle-db-tbody tr.selected td{
+      background-color: lightcyan;
+  }
+
 
 /*======================================*/
 /* Global block */

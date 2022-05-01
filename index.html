@@ -35,8 +35,7 @@
 
     <button class="tablink" onclick="sudoApp.openPage('Sudoku-Solver', this, '#F2E2F2', 'black')"
         id="defaultOpen">Sudoku-Solver</button>
-    <button class="tablink"
-        onclick="sudoApp.openPage('Puzzle-Datenbank', this, '#F2E2F2', 'black')"
+    <button class="tablink" onclick="sudoApp.openPage('Puzzle-Datenbank', this, '#F2E2F2', 'black')"
         id="puzzle-db-tab">Puzzle-Datenbank</button>
     <button class="tablink" onclick="sudoApp.openPage('Hilfe', this, '#F2E2F2', 'black')"
         id="puzzle-help-tab">Hilfe</button>
@@ -58,7 +57,7 @@
                         <div class="name-value search-depth" id="search-depth">
                             0
                         </div>
-        
+
                     </div>
                     <div>
                         <div class="name-value">
@@ -70,8 +69,8 @@
                     </div>
                 </div>
                 <div class="progress-box" id="progress-box">
-        
-        
+
+
                     <div class="progress-group">
                         <div class="step-count-box">
                             <div class="name-value">
@@ -81,7 +80,7 @@
                                 0
                             </div>
                         </div>
-        
+
                         <div class="autoMode-radio-btns">
                             <div class="backward" id="radio-backward">
                                 <img src="images/pfeilrueckwaerts.png" class="forward-backward-image">
@@ -98,14 +97,14 @@
                             </div>
                         </div>
                     </div>
-        
-        
-        
+
+
+
                 </div>
-        
+
 
             </div>
-            
+
             <div class="game-col2">
 
                 <div class="exec-btn-groups">
@@ -156,7 +155,7 @@
                         </div>
                     </div>
                     <div class="settings">
-                <!--        <div class="settings-line">
+                        <!--        <div class="settings-line">
                             Unzul. Nummern anzeigen: <input type="checkbox" class="checkbox" id="inAdmissiblesVisible">
                         </div>  -->
                         <div class="speed-field settings-line">
@@ -179,15 +178,15 @@
                     </div>
                     <div class="storage-btns">
                         <div class="main-btn" id="btn-save">Speichern</div>
-                   <!--     <div class="main-btn" id="btn-restore">Wiederherstellen</div>
+                        <!--     <div class="main-btn" id="btn-restore">Wiederherstellen</div>
                         <div class="main-btn" id="btn-delete">Löschen</div>
                         <div class="main-btn" id="btn-import">Import</div> -->
                     </div>
                 </div>
-         
+
             </div>
         </div>
- 
+
         <div class="status-line">
             <div class="status-line-item">Puzzle-Id.: </div>
             <div class="status-line-item">
@@ -197,73 +196,80 @@
             <div class="status-line-item">
                 <div class="pz-name" id="pz-name"></div>
             </div>
-    
+
         </div>
     </div>
 
     <div id="Puzzle-Datenbank" class="tabcontent tabdatabase">
 
-<section class="">
-    <div class="container">
-        <table class="puzzle-db-table" id="puzzle-db-table">
-            <thead class="puzzle-db-thead">
-                <tr>
-                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(1)')" 
-                        style="cursor:pointer">Puzzle-Id
-                        <div>Puzzle-Id</div>
-                    </th>
+        <section class="">
+            <div class="container">
+                <table class="puzzle-db-table" id="puzzle-db-table">
+                    <thead class="puzzle-db-thead">
+                        <tr>
+                            <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(1)')"
+                                style="cursor:pointer">Puzzle-Id
+                                <div>Puzzle-Id</div>
+                            </th>
 
-                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(2)')" 
-                        style="cursor:pointer">Puzzle-Name
-                        <div>Puzzle-Name</div>
-                    </th>
+                            <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(2)')"
+                                style="cursor:pointer">Puzzle-Name
+                                <div>Puzzle-Name</div>
+                            </th>
 
-                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(3)')" 
-                        style="cursor:pointer">Def. Zellen
-                        <div>Def. Zellen</div>
-                    </th>
+                            <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(3)')"
+                                style="cursor:pointer">Def. Zellen
+                                <div>Def. Zellen</div>
+                            </th>
 
-                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(4)')" 
-                        style="cursor:pointer">Status
-                        <div>Status</div>
-                    </th>
+                            <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(4)')"
+                                style="cursor:pointer">Status
+                                <div>Status</div>
+                            </th>
 
-                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(5)')" 
-                        style="cursor:pointer">Level
-                        <div>Level</div>
-                    </th>
+                            <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(5)')"
+                                style="cursor:pointer">Schritte
+                                <div>Schritte</div>
+                            </th>
 
-                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(6)')" 
-                        style="cursor:pointer">#Rückwärts
-                        <div>#Rückwärts</div>
-                    </th>
+                            <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(6)')"
+                                style="cursor:pointer">Level
+                                <div>Level</div>
+                            </th>
 
-                    <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(7)')" 
-                        style="cursor:pointer">Datum
-                        <div>Datum</div>
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="puzzle-db-tbody" id="puzzle-db-tbody">
+                            <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(7)')"
+                                style="cursor:pointer">#Rückwärts
+                                <div>#Rückwärts</div>
+                            </th>
 
-            </tbody>
-        </table>
-    </div>
-    </section>
+                            <th onclick="w3.sortHTML('#puzzle-db-table', '.item', 'td:nth-child(8)')"
+                                style="cursor:pointer">Datum
+                                <div>Datum</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="puzzle-db-tbody" id="puzzle-db-tbody">
+
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
 
-    <div class="puzzle-btns">
-        <div class="pz-btn" id="pz-btn-load" onclick="sudoApp.loadCurrentPuzzle()">Laden </div>
-        <div class="pz-btn" id="pz-btn-previous" onclick="sudoApp.previousPuzzle()"><img src="images/pfeilrueckwaerts.png" class="forward-backward-image"></div>
-        <div class="pz-btn" id="pz-btn-next" onclick="sudoApp.nextPuzzle()"><img src="images/pfeilvorwaerts.png" class="forward-backward-image"></div>
-        <div class="pz-btn" id="pz-btn-delete" onclick="sudoApp.deleteCurrentPuzzle()">Löschen</div>
-    </div>
+        <div class="puzzle-btns">
+            <div class="pz-btn" id="pz-btn-load" onclick="sudoApp.loadCurrentPuzzle()">Laden </div>
+            <div class="pz-btn" id="pz-btn-previous" onclick="sudoApp.previousPuzzle()"><img
+                    src="images/pfeilrueckwaerts.png" class="forward-backward-image"></div>
+            <div class="pz-btn" id="pz-btn-next" onclick="sudoApp.nextPuzzle()"><img src="images/pfeilvorwaerts.png"
+                    class="forward-backward-image"></div>
+            <div class="pz-btn" id="pz-btn-delete" onclick="sudoApp.deleteCurrentPuzzle()">Löschen</div>
+        </div>
 
-    <p style="font-size: 1.6rem; font-weight: bold; margin-top: 40px;">Selektiertes Puzzle:</p>
-    <div class="pz-nr" id="pzNr">0</div>
+        <p style="font-size: 1.6rem; font-weight: bold; margin-top: 40px;">Selektiertes Puzzle:</p>
+        <div class="pz-nr" id="pzNr">0</div>
 
-    <div class="puzzle-line">
-       
+        <div class="puzzle-line">
+
             <div>Puzzle: </div>
             <div class="pz-table" id="puzzle">
 
@@ -273,7 +279,7 @@
 
             </div>
         </div>
-   
+
 
     </div>
 

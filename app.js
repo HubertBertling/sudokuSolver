@@ -1069,6 +1069,7 @@ class AutomatedRunnerOnGrid {
             }
             this.suGrid.difficulty = this.levelOfDifficulty;
             this.suGrid.backTracks = this.countBackwards;
+            this.suGrid.steps = this.goneSteps;
             sudoApp.successDialog.open();
         } else if (result == 'fail') {
             this.stopTimer();
@@ -1671,6 +1672,7 @@ class SudokuGrid {
         // Sie besitzen daher auch noch keine Id.
         this.loadedPuzzleId = '';
         this.difficulty = 'unbestimmt';
+        this.steps = 0;
         this.backTracks = 0;
         this.sudoCells = [];
         this.sudoGroups = [];
@@ -1684,6 +1686,7 @@ class SudokuGrid {
         this.selectedCell = undefined;
         this.indexSelected = -1;
         this.loadedPuzzleId = '';
+        this.steps = 0;
         this.difficulty = 'unbestimmt';
         this.backTracks = 0;
         // Erzeuge die interne Tabelle
@@ -1772,6 +1775,7 @@ class SudokuGrid {
         // Status setzen
         if (this.solved()) {
             tmpPuzzle.status = 'gelöst';
+            tmpPuzzle.steps = this.steps;
             tmpPuzzle.level = this.difficulty;
             tmpPuzzle.backTracks = this.backTracks;
             for (let i = 0; i < 81; i++) {
@@ -2873,6 +2877,7 @@ class SudokuPuzzleDB {
             tmpPuzzle.name = "sudo600";
             tmpPuzzle.defCount = 23;
             tmpPuzzle.status = 'ungelöst';
+            tmpPuzzle.steps = 0;
             tmpPuzzle.level = 'unbestimmt';
             tmpPuzzle.backTracks = 0;
             tmpPuzzle.date = new Date().toLocaleDateString();
@@ -3112,6 +3117,10 @@ class SudokuPuzzleDB {
             td_status.innerText = pz.status;
             tr.appendChild(td_status);
 
+            let td_steps = document.createElement('td');
+            td_steps.innerText = pz.steps;
+            tr.appendChild(td_steps);
+
             let td_level = document.createElement('td');
             td_level.innerText = pz.level;
             tr.appendChild(td_level);
@@ -3218,7 +3227,8 @@ class SudokuPuzzle {
     constructor() {
         this.name = '';
         this.defCount = 0;
-        this.status = 'ungelöst'
+        this.status = 'ungelöst';
+        this.steps = 0;
         this.level = 'unbestimmt';
         this.backTracks = 0;
         this.date = new Date().toLocaleDateString();
