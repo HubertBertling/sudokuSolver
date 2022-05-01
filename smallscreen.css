@@ -178,11 +178,11 @@ body, html {
 }
 
 .sudoku-grid-cell {
-    height: 50px;
-    width: 50px; 
+    height: 40px;
+    width: 40px; 
     border-radius: 5px;
     display: grid; 
-    font-size: 1.2rem;
+    font-size: 1.0rem;
     place-items: center;
     cursor: pointer;
     margin: 1px;
