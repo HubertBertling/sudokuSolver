@@ -927,7 +927,7 @@ class AutomatedRunnerOnGrid {
         this.myStepper;
         this.timer = false;
         this.execSpeed = 250;
-        this.execSpeedLevel = 'fast';
+        this.execSpeedLevel = 'very-fast';
         this.goneSteps = 0;
         this.levelOfDifficulty = 'Keine Angabe';
         this.countBackwards = 0;
