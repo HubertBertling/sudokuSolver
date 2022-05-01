@@ -926,7 +926,7 @@ class AutomatedRunnerOnGrid {
         this.suGrid = suGrid;
         this.myStepper;
         this.timer = false;
-        this.execSpeed = 250;
+        this.execSpeed = 75;
         this.execSpeedLevel = 'very-fast';
         this.goneSteps = 0;
         this.levelOfDifficulty = 'Keine Angabe';
