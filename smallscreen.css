@@ -505,7 +505,7 @@ body, html {
 
 .main-btns {
     /*  border: 5px solid var(--red);  */
-    margin-top: 20px;
+    margin-top: 5px;
     background-color: var(--screen-bg-color);
     padding-left: 15px;
     padding-right: 20px;
