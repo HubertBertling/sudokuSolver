@@ -34,7 +34,7 @@
     --border-radius: 10px;
     --space-y: 20px;
     --gap: 5px;
-    --font-size-btn: 1.6rem;
+    --font-size-btn: 1.4rem;
     --font-size-sm: 0.7rem;
     --font-size: 1.0rem;
     --font-size-lg: 1.8rem;
@@ -182,7 +182,7 @@ body, html {
     width: 40px; 
     border-radius: 5px;
     display: grid; 
-    font-size: 1.0rem;
+    font-size: 1.4rem;
     place-items: center;
     cursor: pointer;
     margin: 1px;
@@ -209,13 +209,12 @@ body, html {
 .auto-step-number {
     padding-left:1px;
     padding-right: 1px;
-    font-size: 0.8rem;
+    font-size: 1.0rem;
 }
 .autoValuePair {
     display: grid;
     grid-template-columns: 1fr;
     place-items: center;
-    font-size: 1.0rem;
     border-left: 2px solid var(--nested-cell-bg-color); 
     padding-left: 1px;
 }
@@ -223,7 +222,7 @@ body, html {
 .auto-value {
     padding-left: 2px;
     padding-right: 1px;
-    font-size: 1.0rem;
+    font-size: 1.2rem;
     font-weight: bold;
 }
 
@@ -233,7 +232,7 @@ body, html {
     gap: 1px;
     place-items: center;
     border-top: 2px solid var(--nested-cell-bg-color);
-    font-size: 0.8rem;
+    font-size: 1.0rem;
     padding-top: 1px;
     padding-left: 1px;
 }
@@ -250,7 +249,7 @@ body, html {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     place-items: center;
-    font-size: 0.8rem;
+    font-size: 1.0rem;
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-color);
     border: 1px solid #0050ff
@@ -521,6 +520,8 @@ body, html {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
+    font-size: var(--font-size-btn);
+  
 }
 
 /* .storage-btns {
