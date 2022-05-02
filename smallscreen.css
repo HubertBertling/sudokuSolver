@@ -712,6 +712,7 @@ body, html {
     font-size: 1.6rem;
     display: grid;
     grid-template-columns: 1fr;
+    width: 200px;
 }
 
 
