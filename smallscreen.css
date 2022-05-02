@@ -513,6 +513,9 @@ body, html {
     grid-template-columns: 1fr;
     font-size: var(--font-size-btn);
 }
+.main-btns p {
+    display: none;
+}
 
 .storage-btns {
     display: none;
@@ -714,8 +717,8 @@ body, html {
 
 .successImg {
     margin-left: 30px;
-    height: 270px;
-    width: 180px;
+    height: 180px;
+    width: 120px;
 }
 
 

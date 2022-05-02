@@ -2778,7 +2778,7 @@ class PuzzleSaveDialog {
                 x: "center",
                 y: "center",
                 width: "280px",
-                height: "150üx",
+                height: "150px",
                 mount: document.getElementById("contentSaveDlg")
             });
         } else {
