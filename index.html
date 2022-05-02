@@ -154,21 +154,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="settings">
-                        <!--        <div class="settings-line">
-                            Unzul. Nummern anzeigen: <input type="checkbox" class="checkbox" id="inAdmissiblesVisible">
-                        </div>  -->
-                        <div class="speed-field settings-line">
-                            <label for="speed">Geschwindigkeit:</label>
-                            <select class="speedSetting" name="speed" id="speedSetting">
-                                <option value="very-slow">Sehr langsam</option>
-                                <option value="slow">Langsam</option>
-                                <option selected value="normal">Normal</option>
-                                <option value="fast">Schnell</option>
-                                <option value="very-fast">Sehr schnell</option>
-                            </select>
-                        </div>
-                    </div>
+
                 </div>
                 <div class="main-btns">
                     <p style="font-weight: bold;">Puzzle</p>
@@ -183,10 +169,42 @@
                         <div class="main-btn" id="btn-import">Import</div> -->
                     </div>
                 </div>
+                <div class="settings">
+                    <p style="font-weight: bold;">Auswertung</p>
+                    <div class="speed-field settings-line">
+                        <label for="speed">Geschwindigkeit:</label>
+                        <select class="speedSetting" name="speed" id="speedSetting">
+                            <option value="very-slow">Sehr langsam</option>
+                            <option value="slow">Langsam</option>
+                            <option selected value="normal">Normal</option>
+                            <option value="fast">Schnell</option>
+                            <option value="very-fast">Sehr schnell</option>
+                        </select>
+                    </div>
 
+                    <div class="evaluation">
+                        <p>Auswertungsmethode:</p>
+                        <div>
+                            <input type="radio" id="lazy" name="auswertung" value="lazy" checked
+                                onclick="sudoApp.suGrid.setEvalType(this);">
+                            <label for="lazy">Lazy</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="strict-plus" name="auswertung" value="strict-plus"
+                                onclick="sudoApp.suGrid.setEvalType(this);">
+                            <label for="strict-plus">Strikt +</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="strict-minus" name="auswertung" value="strict-minus"
+                                onclick="sudoApp.suGrid.setEvalType(this);">
+                            <label for="strict-minus">Strikt -</label>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
+
+        </div>
         <div class="status-line">
             <div class="status-line-item">Puzzle-Id.: </div>
             <div class="status-line-item">

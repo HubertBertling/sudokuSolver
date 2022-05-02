@@ -1333,7 +1333,7 @@ class AutomatedRunnerOnGrid {
         let tmpLevel_0_single = this.calculateLevel_0_SinglesSelectionFrom(optionList);
         if (tmpLevel_0_single.index !== -1) {
             switch (this.levelOfDifficulty) {
-                case 'Keine Angabe': 
+                case 'Keine Angabe':
                 case 'Leicht': {
                     this.levelOfDifficulty = 'Mittel';
                     break;
@@ -1369,7 +1369,7 @@ class AutomatedRunnerOnGrid {
         switch (this.levelOfDifficulty) {
             case 'Keine Angabe':
             case 'Leicht':
-            case 'Mittel': 
+            case 'Mittel':
             case 'Schwer': {
                 this.levelOfDifficulty = 'Sehr schwer';
                 break;
@@ -1716,6 +1716,7 @@ class SudokuGrid {
         this.sudoGroups = [];
         this.sudoRows = [];
         this.sudoCols = [];
+        this.evalType = 'lazy';
         this.init();
     }
 
@@ -1729,11 +1730,22 @@ class SudokuGrid {
         this.backTracks = 0;
         // Erzeuge die interne Tabelle
         this.createSudoGrid();
-        this.evaluateGridForNextStep();
-        // this.evaluateGrid();
+        this.evaluateMatrix();
         // Erzeuge den dazugehörigen DOM-Tree
         this.display();
         this.displayPuzzle('', '');
+    }
+
+    setEvalType(myRadio) {
+        this.evalType = myRadio.value;
+        this.evaluateMatrix();
+        // Erzeuge den dazugehörigen DOM-Tree
+        this.display();
+    }
+
+    evaluateMatrix() {
+        if (this.evalType == 'lazy')  this.evaluateGridForNextStep(); 
+        if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus')  this.evaluateGrid(); 
     }
 
     removeAutoExecCellInfos() {
@@ -2167,8 +2179,7 @@ class SudokuGrid {
     }
 
     refresh() {
-        this.evaluateGridForNextStep();
-        //  this.evaluateGrid();
+        this.evaluateMatrix();
         this.display();
     }
 
@@ -2421,8 +2432,7 @@ class SudokuCell {
         }
     }
     displayAdmissibles() {
-        // let inAdmissiblesVisible = document.getElementById("inAdmissiblesVisible").checked;
-        let inAdmissiblesVisible = true;
+        let inAdmissiblesVisible = (this.myGrid.evalType == 'lazy' || this.myGrid.evalType == 'strict-plus');
         if (inAdmissiblesVisible) {
             this.myCellNode.classList.add('nested');
             // Übertrage die berechneten Möglchen in das DOM
