@@ -92,6 +92,7 @@ body, html {
   padding-right: 20px;
   padding-bottom: 20px;;
   height: 800px;
+  width: 925 px;
   display: flex;
   flex-direction: column;
 
