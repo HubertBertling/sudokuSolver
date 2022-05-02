@@ -700,8 +700,8 @@ body, html {
 
 .ok-cancel-btns {
     margin-top: 5px;
-    margin-left: 25px;
-    margin-right: 25px;
+    margin-left: 15px;
+    margin-right: 15px;
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
@@ -709,17 +709,17 @@ body, html {
 .successForm, .dlg-form {
     margin-left: 5px;
     margin-top: 10px; 
-    font-size: 1.6rem;
+    font-size: 1.2rem;
     display: grid;
     grid-template-columns: 1fr;
-    width: 200px;
+    width: 150x;
 }
 
 
 .successImg {
     margin-left: 30px;
-    height: 180px;
-    width: 120px;
+    height: 150px;
+    width: 100px;
 }
 
 
