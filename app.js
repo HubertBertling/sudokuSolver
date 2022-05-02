@@ -2777,8 +2777,8 @@ class PuzzleSaveDialog {
             this.winBox = new WinBox("Puzzle speichern unter ...", {
                 x: "center",
                 y: "center",
-                width: "300px",
-                height: "180px",
+                width: "320px",
+                height: "200px",
                 mount: document.getElementById("contentSaveDlg")
             });
         } else {
