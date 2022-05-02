@@ -59,7 +59,7 @@
 body, html {
     font-family: 'Open Sans', sans-serif;
     height: 800px;
-    width: 925px;
+    width: 950px;
     background-color: var(--screen-bg-color); 
 }
 
@@ -92,7 +92,7 @@ body, html {
   padding-right: 20px;
   padding-bottom: 20px;;
   height: 800px;
-  width: 925 px;
+  width: 950 px;
   display: flex;
   flex-direction: column;
 
