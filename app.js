@@ -1243,10 +1243,31 @@ class AutomatedRunnerOnGrid {
         let emptySelection = {
             index: -1,
             options: [],
-            necessaryOnes: []
+            necessaryOnes: [],
+            level_0_singles: []
         }
         return emptySelection;
     }
+
+    calculateLevel_0_SinglesSelectionFrom(selectionList) {
+        // Berechnet Selektion von Zellen, die eine notwendige Nummer enthalten.
+        for (let i = 0; i < selectionList.length; i++) {
+            if (selectionList[i].level_0_singles.length > 0) {
+                return selectionList[i];
+            }
+        }
+        // Falls es keine Zellen mit notwendigen Nummern gibt
+        let emptySelection = {
+            index: -1,
+            options: [],
+            necessaryOnes: [],
+            level_0_singles: []
+        }
+        return emptySelection;
+    }
+
+
+
 
     calculateOneOptionSelectionFrom(selectionList) {
         // Berechnet Selektion von Zellen, die genau eine zulässige Nummer enthalten.
@@ -1260,7 +1281,8 @@ class AutomatedRunnerOnGrid {
         let emptySelection = {
             index: -1,
             options: [],
-            necessaryOnes: []
+            necessaryOnes: [],
+            level_0_singles: []
         }
         return emptySelection;
     }
@@ -1272,7 +1294,8 @@ class AutomatedRunnerOnGrid {
                 let selection = {
                     index: i,
                     options: Array.from(this.suGrid.sudoCells[i].getTotalAdmissibles()),
-                    necessaryOnes: Array.from(this.suGrid.sudoCells[i].getNecessarys())
+                    necessaryOnes: Array.from(this.suGrid.sudoCells[i].getNecessarys()),
+                    level_0_singles: Array.from(this.suGrid.sudoCells[i].getSingles())
                 }
                 selectionList.push(selection);
             }
@@ -1287,7 +1310,8 @@ class AutomatedRunnerOnGrid {
             let emptySelection = {
                 index: -1,
                 options: [],
-                necessaryOnes: []
+                necessaryOnes: [],
+                level_0_singles: []
             }
             return emptySelection;
         }
@@ -1305,13 +1329,30 @@ class AutomatedRunnerOnGrid {
             }
             return tmpNeccessary;
         }
-        //Bestimmt die nächste Zelle mit ein-Option-Menge (Single)
+        // Bestimmt die nächste Zelle mit level-0 single
+        let tmpLevel_0_single = this.calculateLevel_0_SinglesSelectionFrom(optionList);
+        if (tmpLevel_0_single.index !== -1) {
+            switch (this.levelOfDifficulty) {
+                case 'Keine Angabe': 
+                case 'Leicht': {
+                    this.levelOfDifficulty = 'Mittel';
+                    break;
+                }
+                default: {
+                    // Schwierigkeitsgrad bleibt unverändert.
+                }
+            }
+            return tmpLevel_0_single;
+        }
+        // Bestimmt die nächste Zelle mit level > 0 single, d.h.
+        // unter Verwendung von indirekt unzulässigen Nummern
         let oneOption = this.calculateOneOptionSelectionFrom(optionList);
         if (oneOption.index !== -1) {
             switch (this.levelOfDifficulty) {
                 case 'Keine Angabe':
-                case 'Leicht': {
-                    this.levelOfDifficulty = 'Mittel';
+                case 'Leicht':
+                case 'Mittel': {
+                    this.levelOfDifficulty = 'Schwer';
                     break;
                 }
                 default: {
@@ -1328,10 +1369,7 @@ class AutomatedRunnerOnGrid {
         switch (this.levelOfDifficulty) {
             case 'Keine Angabe':
             case 'Leicht':
-            case 'Mittel': {
-                this.levelOfDifficulty = 'Schwer';
-                break;
-            }
+            case 'Mittel': 
             case 'Schwer': {
                 this.levelOfDifficulty = 'Sehr schwer';
                 break;
@@ -2083,11 +2121,11 @@ class SudokuGrid {
                 let singlesInContext = new SudokuSet();
                 this.sudoCells[i].myInfluencers.forEach(cell => {
                     if (cell.getValue() == '0') {
-                        singlesInContext = singlesInContext.union(cell.getSingles());
+                        singlesInContext = singlesInContext.union(cell.getTotalSingles());
                     }
                 })
                 let oldInAdmissibles = new SudokuSet(this.sudoCells[i].myLevel_gt0_inAdmissibles);
-                let mySingle = this.sudoCells[i].getSingles();
+                let mySingle = this.sudoCells[i].getTotalSingles();
                 if (mySingle.size == 1 && singlesInContext.isSuperset(mySingle)) {
                     // Das ist die Situation: Dieselbe Single zweimal in einer Gruppe, Spalte oder Reihe.
                     // Also eine unlösbares Sudoku.
@@ -2366,7 +2404,7 @@ class SudokuCell {
     getNecessarys() {
         return new SudokuSet(this.myNecessarys);
     }
-    getSingles() {
+    getTotalSingles() {
         let singles = this.getTotalAdmissibles();
         if (singles.size == 1) {
             return singles;
@@ -2374,7 +2412,14 @@ class SudokuCell {
             return new SudokuSet();
         }
     }
-
+    getSingles() {
+        let singles = this.getAdmissibles();
+        if (singles.size == 1) {
+            return singles;
+        } else {
+            return new SudokuSet();
+        }
+    }
     displayAdmissibles() {
         // let inAdmissiblesVisible = document.getElementById("inAdmissiblesVisible").checked;
         let inAdmissiblesVisible = true;
