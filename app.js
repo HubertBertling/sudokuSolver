@@ -1835,6 +1835,7 @@ class SudokuGrid {
             for (let i = 0; i < 81; i++) {
                 tmpPuzzle.solution[i] = this.sudoCells[i].getValue();
             }
+            tmpPuzzle.date = (new Date()).toJSON();
         }
         let playedPuzzle = {
             uid: puzzelId,
@@ -2941,7 +2942,7 @@ class SudokuPuzzleDB {
             tmpPuzzle.stepsStrict = 0;
             tmpPuzzle.level = 'unbestimmt';
             tmpPuzzle.backTracks = 0;
-            tmpPuzzle.date = new Date().toLocaleDateString();
+            tmpPuzzle.date = (new Date()).toJSON();
             tmpPuzzle.puzzle = [
                 "0",
                 "1",
@@ -3137,10 +3138,10 @@ class SudokuPuzzleDB {
                 let dateSorted = this.sorted.get('date');
                 if (dateSorted == '' || dateSorted == 'desc') {
                     this.sorted.set('date', 'asc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].date - b[1].date));
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (new Date(a[1].date) > new Date(b[1].date) ? 1 : -1 )));
                 } else {
                     this.sorted.set('date', 'desc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].date - a[1].date));
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (new Date(b[1].date) > new Date(a[1].date) ? -1 : 1)));
                 }
                 break;
             }
@@ -3313,7 +3314,7 @@ class SudokuPuzzleDB {
             tr.appendChild(td_backTracks);
 
             let td_date = document.createElement('td');
-            td_date.innerText = pz.date;
+            td_date.innerText = (new Date(pz.date)).toLocaleDateString();
             tr.appendChild(td_date);
 
             tbNode.appendChild(tr);
@@ -3415,7 +3416,7 @@ class SudokuPuzzle {
         this.stepsStrict = 0;
         this.level = 'unbestimmt';
         this.backTracks = 0;
-        this.date = new Date().toLocaleDateString();
+        this.date = (new Date()).toJSON();
         this.puzzle = ['0', '0', '0', '0', '0', '0', '0', '0', '0',
             '0', '0', '0', '0', '0', '0', '0', '0', '0',
             '0', '0', '0', '0', '0', '0', '0', '0', '0',
