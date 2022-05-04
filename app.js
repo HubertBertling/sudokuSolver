@@ -1744,8 +1744,8 @@ class SudokuGrid {
     }
 
     evaluateMatrix() {
-        if (this.evalType == 'lazy')  this.evaluateGridForNextStep(); 
-        if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus')  this.evaluateGrid(); 
+        if (this.evalType == 'lazy') this.evaluateGridForNextStep();
+        if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') this.evaluateGrid();
     }
 
     removeAutoExecCellInfos() {
@@ -3030,6 +3030,112 @@ class SudokuPuzzleDB {
         }
         // Der Index wird auf jeden Fall auf das erste Puzzle gesetzt
         this.selectedIndex = 0;
+        // 
+        this.sorted = new Map([
+            ['name', ''],
+            ['defCount', ''],
+            ['status', ''],
+            ['steps', ''],
+            ['level', ''],
+            ['backTracks', ''],
+            ['date', '']
+        ]);
+
+    }
+
+    sort(col) {
+
+        // Hole den Speicher als ein Objekt
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+
+        switch (col) {
+            case 'name': {
+                let nameSorted = this.sorted.get('name');
+                if (nameSorted == '' || nameSorted == 'desc') {
+                    this.sorted.set('name', 'asc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (a[1].name > b[1].name ? 1 : -1)));
+                } else {
+                    this.sorted.set('name', 'desc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (a[1].name > b[1].name ? -1 : 1)));
+                }
+                break;
+            }
+            case 'defCount': {
+                let defCountSorted = this.sorted.get('defCount');
+                if (defCountSorted == '' || defCountSorted == 'desc') {
+                    this.sorted.set('defCount', 'asc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].defCount - b[1].defCount));
+                } else {
+                    this.sorted.set('defCount', 'desc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].defCount - a[1].defCount));
+                }
+                break;
+            }
+            case 'status': {
+                let statusSorted = this.sorted.get('status');
+                if (statusSorted == '' || statusSorted == 'desc') {
+                    this.sorted.set('status', 'asc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (a[1].status > b[1].status ? 1 : -1)));
+                } else {
+                    this.sorted.set('status', 'desc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (a[1].status > b[1].status ? -1 : 1)));
+                }
+                break;
+            }
+            case 'steps': {
+                let stepsSorted = this.sorted.get('steps');
+                if (stepsSorted == '' || stepsSorted == 'desc') {
+                    this.sorted.set('steps', 'asc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].steps - b[1].steps));
+                } else {
+                    this.sorted.set('steps', 'desc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].steps - a[1].steps));
+                }
+                break;
+            }
+            case 'level': {
+                let levelSorted = this.sorted.get('level');
+                if (levelSorted == '' || levelSorted == 'desc') {
+                    this.sorted.set('level', 'asc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (a[1].level > b[1].level ? 1 : -1)));
+                } else {
+                    this.sorted.set('level', 'desc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (a[1].level > b[1].level ? -1 : 1)));
+                }
+                break;
+            }
+            case 'backTracks': {
+                let backtracksSorted = this.sorted.get('backtracks');
+                if (backtracksSorted == '' || backtracksSorted == 'desc') {
+                    this.sorted.set('backtracks', 'asc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].backtracks - b[1].backtracks));
+                } else {
+                    this.sorted.set('backtracks', 'desc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].backtracks - a[1].backtracks));
+                }
+                break;
+            }
+            case 'date': {
+                let dateSorted = this.sorted.get('date');
+                if (dateSorted == '' || dateSorted == 'desc') {
+                    this.sorted.set('date', 'asc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].date - b[1].date));
+                } else {
+                    this.sorted.set('date', 'desc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].date - a[1].date));
+                }
+                break;
+            }
+            default: {
+                // Kann nicht vorkommen
+            }
+        }
+          // Kreiere die JSON-Version des Speicherobjektes
+        // und speichere sie.
+        let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
+        localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+        this.display();
     }
 
     saveNamedPuzzle(name, playedPuzzle) {
