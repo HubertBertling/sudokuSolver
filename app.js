@@ -1825,7 +1825,11 @@ class SudokuGrid {
         // Status setzen
         if (this.solved()) {
             tmpPuzzle.status = 'gelöst';
-            tmpPuzzle.steps = this.steps;
+            if (this.evalType == 'lazy') {
+                tmpPuzzle.stepsLazy = this.steps;            
+            } else {
+                tmpPuzzle.stepsStrict = this.steps;            
+            }
             tmpPuzzle.level = this.difficulty;
             tmpPuzzle.backTracks = this.backTracks;
             for (let i = 0; i < 81; i++) {
@@ -2933,7 +2937,8 @@ class SudokuPuzzleDB {
             tmpPuzzle.name = "sudo600";
             tmpPuzzle.defCount = 23;
             tmpPuzzle.status = 'ungelöst';
-            tmpPuzzle.steps = 0;
+            tmpPuzzle.stepsLazy = 0;
+            tmpPuzzle.stepsStrict = 0;
             tmpPuzzle.level = 'unbestimmt';
             tmpPuzzle.backTracks = 0;
             tmpPuzzle.date = new Date().toLocaleDateString();
@@ -3032,13 +3037,14 @@ class SudokuPuzzleDB {
         this.selectedIndex = 0;
         // 
         this.sorted = new Map([
-            ['name', ''],
-            ['defCount', ''],
-            ['status', ''],
-            ['steps', ''],
-            ['level', ''],
-            ['backTracks', ''],
-            ['date', '']
+            ['name', 'desc'],
+            ['defCount', 'desc'],
+            ['status', 'desc'],
+            ['steps-lazy', 'desc'],
+            ['steps-strict', 'desc'],
+            ['level', 'desc'],
+            ['backTracks', 'desc'],
+            ['date', 'desc']
         ]);
 
     }
@@ -3083,14 +3089,25 @@ class SudokuPuzzleDB {
                 }
                 break;
             }
-            case 'steps': {
-                let stepsSorted = this.sorted.get('steps');
+            case 'steps-lazy': {
+                let stepsSorted = this.sorted.get('steps-lazy');
                 if (stepsSorted == '' || stepsSorted == 'desc') {
-                    this.sorted.set('steps', 'asc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].steps - b[1].steps));
+                    this.sorted.set('steps-lazy', 'asc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].stepsLazy - b[1].stepsLazy));
                 } else {
-                    this.sorted.set('steps', 'desc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].steps - a[1].steps));
+                    this.sorted.set('steps-lazy', 'desc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].stepsLazy - a[1].stepsLazy));
+                }
+                break;
+            }
+            case 'steps-strict': {
+                let stepsSorted = this.sorted.get('steps-strict');
+                if (stepsSorted == '' || stepsSorted == 'desc') {
+                    this.sorted.set('steps-strict', 'asc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].stepsStrict - b[1].stepsStrict));
+                } else {
+                    this.sorted.set('steps-strict', 'desc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].stepsStrict - a[1].stepsStrict));
                 }
                 break;
             }
@@ -3279,9 +3296,13 @@ class SudokuPuzzleDB {
             td_status.innerText = pz.status;
             tr.appendChild(td_status);
 
-            let td_steps = document.createElement('td');
-            td_steps.innerText = pz.steps;
-            tr.appendChild(td_steps);
+            let td_steps_lazy = document.createElement('td');
+            td_steps_lazy.innerText = pz.stepsLazy;
+            tr.appendChild(td_steps_lazy);
+
+            let td_steps_strict = document.createElement('td');
+            td_steps_strict.innerText = pz.stepsStrict;
+            tr.appendChild(td_steps_strict);
 
             let td_level = document.createElement('td');
             td_level.innerText = pz.level;
@@ -3390,7 +3411,8 @@ class SudokuPuzzle {
         this.name = '';
         this.defCount = 0;
         this.status = 'ungelöst';
-        this.steps = 0;
+        this.stepsLazy = 0;
+        this.stepsStrict = 0;
         this.level = 'unbestimmt';
         this.backTracks = 0;
         this.date = new Date().toLocaleDateString();
