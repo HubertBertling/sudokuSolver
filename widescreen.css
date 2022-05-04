@@ -869,9 +869,9 @@ html, body{
     position: absolute;
     background: transparent;
     color: #fff;
-    padding: 9px 5px;
+    padding: 8px 5px;
     top: 0;
-    margin-left: -5px;
+    margin-left: -2px;
     line-height: normal;
     border-left: 1px solid #800;
   }
