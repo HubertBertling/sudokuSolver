@@ -3106,13 +3106,13 @@ class SudokuPuzzleDB {
                 break;
             }
             case 'backTracks': {
-                let backtracksSorted = this.sorted.get('backtracks');
-                if (backtracksSorted == '' || backtracksSorted == 'desc') {
-                    this.sorted.set('backtracks', 'asc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].backtracks - b[1].backtracks));
+                let backTracksSorted = this.sorted.get('backTracks');
+                if (backTracksSorted == '' || backTracksSorted == 'desc') {
+                    this.sorted.set('backTracks', 'asc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].backTracks - b[1].backTracks));
                 } else {
-                    this.sorted.set('backtracks', 'desc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].backtracks - a[1].backtracks));
+                    this.sorted.set('backTracks', 'desc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].backTracks - a[1].backTracks));
                 }
                 break;
             }
