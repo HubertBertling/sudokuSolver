@@ -869,11 +869,11 @@ html, body{
     position: absolute;
     background: transparent;
     color: #fff;
-    padding: 9px 20px;
+    padding: 9px 5px;
     top: 0;
-    margin-left: -20px;
+    margin-left: -5px;
     line-height: normal;
-    /* border-left: 1px solid #800; */
+    border-left: 1px solid #800;
   }
   .puzzle-db-table th:first-child div{
     border: none;
