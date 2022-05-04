@@ -3141,7 +3141,7 @@ class SudokuPuzzleDB {
                     puzzleMap = new Map([...puzzleMap].sort((a, b) => (new Date(a[1].date) > new Date(b[1].date) ? 1 : -1 )));
                 } else {
                     this.sorted.set('date', 'desc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (new Date(b[1].date) > new Date(a[1].date) ? -1 : 1)));
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (new Date(a[1].date) > new Date(b[1].date) ? -1 : 1)));
                 }
                 break;
             }
