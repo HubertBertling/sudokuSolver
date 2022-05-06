@@ -3271,6 +3271,18 @@ class SudokuPuzzleDB {
         this.displayCurrentPZ()
     }
 
+    setSelected(trNode) {
+        let displayRows = document.getElementById('puzzle-db-tbody').rows;
+        for (let i = 0; i < displayRows.length; i++) {
+            if (displayRows[i].classList.contains('selected')) {
+                displayRows[i].classList.remove('selected');
+            }
+        }
+        trNode.classList.add('selected');
+        this.selectedIndex = this.getIndex(trNode.cells[0].innerText);
+        this.displayCurrentPZ();
+    }
+
     displayPuzzleDB() {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
@@ -3284,6 +3296,8 @@ class SudokuPuzzleDB {
         let i = 0;
         for (let [key, pz] of puzzleMap) {
             let tr = document.createElement('tr');
+            tr.setAttribute("onClick","sudoApp.sudokuPuzzleDB.setSelected(this)");
+            tr.setAttribute("style","cursor:pointer");
             tr.classList.add('item')
             if (i == this.selectedIndex) {
                 tr.classList.add('selected');
