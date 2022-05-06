@@ -404,21 +404,29 @@ class SudokuApp {
 
     openPage(pageName, elmnt, bg_color, color) {
         var i, tabcontent, tablinks;
+
+        // Alle tabs inhaltlich initialisieren
         tabcontent = document.getElementsByClassName("tabcontent");
         for (i = 0; i < tabcontent.length; i++) {
             tabcontent[i].style.display = "none";
         }
+        // Alle Reiter initialsieren
         tablinks = document.getElementsByClassName("tablink");
         for (i = 0; i < tablinks.length; i++) {
             tablinks[i].style.backgroundColor = "";
             tablinks[i].style.color = "";
         }
+        // Den selektierten Reiter öffnen
         document.getElementById(pageName).style.display = "block";
         elmnt.style.backgroundColor = bg_color;
         elmnt.style.color = color;
         if (pageName == "Puzzle-Datenbank") {
             this.sudokuPuzzleDB.display();
         }
+        if (pageName == "Hilfe") {
+            document.getElementById('help-link').click();
+        }
+
     }
 
 
@@ -1826,9 +1834,9 @@ class SudokuGrid {
         if (this.solved()) {
             tmpPuzzle.status = 'gelöst';
             if (this.evalType == 'lazy') {
-                tmpPuzzle.stepsLazy = this.steps;            
+                tmpPuzzle.stepsLazy = this.steps;
             } else {
-                tmpPuzzle.stepsStrict = this.steps;            
+                tmpPuzzle.stepsStrict = this.steps;
             }
             tmpPuzzle.level = this.difficulty;
             tmpPuzzle.backTracks = this.backTracks;
@@ -3138,7 +3146,7 @@ class SudokuPuzzleDB {
                 let dateSorted = this.sorted.get('date');
                 if (dateSorted == '' || dateSorted == 'desc') {
                     this.sorted.set('date', 'asc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (new Date(a[1].date) > new Date(b[1].date) ? 1 : -1 )));
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (new Date(a[1].date) > new Date(b[1].date) ? 1 : -1)));
                 } else {
                     this.sorted.set('date', 'desc');
                     puzzleMap = new Map([...puzzleMap].sort((a, b) => (new Date(a[1].date) > new Date(b[1].date) ? -1 : 1)));
@@ -3149,7 +3157,7 @@ class SudokuPuzzleDB {
                 // Kann nicht vorkommen
             }
         }
-          // Kreiere die JSON-Version des Speicherobjektes
+        // Kreiere die JSON-Version des Speicherobjektes
         // und speichere sie.
         let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
@@ -3296,8 +3304,8 @@ class SudokuPuzzleDB {
         let i = 0;
         for (let [key, pz] of puzzleMap) {
             let tr = document.createElement('tr');
-            tr.setAttribute("onClick","sudoApp.sudokuPuzzleDB.setSelected(this)");
-            tr.setAttribute("style","cursor:pointer");
+            tr.setAttribute("onClick", "sudoApp.sudokuPuzzleDB.setSelected(this)");
+            tr.setAttribute("style", "cursor:pointer");
             tr.classList.add('item')
             if (i == this.selectedIndex) {
                 tr.classList.add('selected');
