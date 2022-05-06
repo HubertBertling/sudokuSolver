@@ -3055,7 +3055,7 @@ class SudokuPuzzleDB {
         // Hole den Speicher als ein Objekt
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-
+        let selectedKey = this.selectedKey();
         switch (col) {
             case 'name': {
                 let nameSorted = this.sorted.get('name');
@@ -3151,6 +3151,7 @@ class SudokuPuzzleDB {
         }
           // Kreiere die JSON-Version des Speicherobjektes
         // und speichere sie.
+        this.selectedIndex = this.getIndex(selectedKey);
         let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
         this.display();
@@ -3223,6 +3224,14 @@ class SudokuPuzzleDB {
         let tmpPuzzle = puzzleMap.get(key);
         return tmpPuzzle;
     }
+
+    selectedKey() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        let key = Array.from(puzzleMap.keys())[this.selectedIndex];
+        return key;
+    }
+
 
     nextPZ() {
         let displayRows = document.getElementById('puzzle-db-tbody').rows;
