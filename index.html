@@ -23,6 +23,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
 
     <script src="https://www.w3schools.com/lib/w3.js"></script>
+    <script src="http://www.w3schools.com/lib/w3data.js"></script>
 
     <link rel="stylesheet" media="screen and (max-width: 420px)" href="smallscreen.css">
     <link rel="stylesheet" media="screen and (min-width: 421px)" href="widescreen.css">
@@ -300,7 +301,9 @@
     </div>
 
     <div id="Hilfe" class="tabcontent">
-        <iframe src="./help.html"  width= 100% height="100%" style="border:none;">  </iframe>
+        <!-- <iframe src="./help.html"  width= 100% height="100%" style="border:none;">  </iframe> -->
+  
+        <div w3-include-html="./help.html"></div>
     </div>
 
     <!--game dialogs -->
