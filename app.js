@@ -3151,9 +3151,9 @@ class SudokuPuzzleDB {
         }
           // Kreiere die JSON-Version des Speicherobjektes
         // und speichere sie.
-        this.selectedIndex = this.getIndex(selectedKey);
         let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+        this.selectedIndex = this.getIndex(selectedKey);
         this.display();
     }
 
