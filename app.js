@@ -2129,7 +2129,7 @@ class SudokuGrid {
         let added = false;
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() == '0') {
-                if (this.sudoCells[i].getTotalAdmissibles().size == 1) added = true;
+                if (this.sudoCells[i].getTotalAdmissibles().size == 1) return true;
             }
         }
         return added;
@@ -2223,19 +2223,19 @@ class SudokuGrid {
         let added = false;
         for (let i = 0; i < 9; i++) {
             let tmpGroup = this.sudoGroups[i];
-            if (tmpGroup.calculateNecessaryForNextStep()) added = true;
+            if (tmpGroup.calculateNecessaryForNextStep()) return true;
         }
         // Iteriere über die Reihen
         for (let i = 0; i < 9; i++) {
             let tmpRow = this.sudoRows[i];
-            if (tmpRow.calculateNecessaryForNextStep()) added = true;
+            if (tmpRow.calculateNecessaryForNextStep()) return true;
         }
         // Iteriere über die Spalten
         for (let i = 0; i < 9; i++) {
             let tmpCol = this.sudoCols[i];
-            if (tmpCol.calculateNecessaryForNextStep()) added = true;
+            if (tmpCol.calculateNecessaryForNextStep()) return true;
         }
-        return added;
+        return false;
     }
 
     calculateNecessarys() {

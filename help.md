@@ -4,9 +4,9 @@ layout: default
 
 # Sudoku-Solver
 
-Wer kennt das nicht? Beim Kaffee-Trinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Sudoku, manchmal auch nur als mittelschwer klassifiziert, und man findet einfach keine Lösung. Anstatt den Kaffee-Tisch frustriert zu verlassen, benutze diesen Sudoku-Solver. Er löst jedes Sudoku in wenigen Minuten und man kann ihm dabei zuschauen. Schritt für Schritt kann man verstehen, wie der Solver zur Lösung des Sudokus gelangt.
+Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Sudoku, manchmal auch nur als mittelschwer klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man diesen Sudoku-Solver nutzen. Er löst jedes Sudoku in wenigen Minuten und man kann ihm dabei zuschauen. Schritt für Schritt kann man verstehen, wie der Solver zur Lösung des Sudokus gelangt.
 
-Zusammen mit der Lösung bestimmt der Solver den tatsächlichen Schwierigkeitsgrad des Sudokus. Schwere und sehr schwere Sudokus, Definition siehe unten, sind manuell kaum zu lösen. Sie sollten daher kein Grund für Frust sein. Bei leichten und mittleren Sudokus lässt der Solver den eigenen Denkfehler oder die mangelnde Idee für den nächsten Schritt erkennen. Konsequenz: Sudokulösen macht in jedem Fall Spaß.
+Zusammen mit der Lösung bestimmt der Solver den tatsächlichen Schwierigkeitsgrad des Sudokus. Sehr schwere Sudokus, Definition siehe unten, sind manuell kaum zu lösen. Sie sollten daher kein Grund für Frust sein. Bei leichten und mittleren Sudokus lässt der Solver den eigenen Denkfehler erkennen oder er zeigt bei mangelnder Idee für den nächsten Schritt mögliche nächste Schritte. Konsequenz: Sudokulösen macht Spaß.
 
 ## Überblick
 
