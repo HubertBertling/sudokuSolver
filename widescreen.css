@@ -78,6 +78,9 @@ body, html {
   font-weight: bold;
   width: 25%;
 }
+.tablinkdatabase, .tablinksolver {
+    background-color: #666;
+}
 
 .tablink:hover {
   background-color: #777;
