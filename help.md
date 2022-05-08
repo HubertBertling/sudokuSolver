@@ -193,8 +193,8 @@ Beim Abspeichern kann dem Puzzle ein Name gegeben werden. Automatisch erhält es
 
 |Attribut  |Bedeutung  |
 |---------|---------|
-|Puzzle-ID|Die eindeutige ID des gespeicherten Puzzles|
-|Definierte Zeilen|Die Zahl der der definierten Zeilen des Puzzles.|
+|Puzzle-ID|Die eindeutige ID des gespeicherten Puzzles.|
+|Definierte Zellen|Die Zahl der der definierten Zellen des Puzzles.|
 |Status|Der Spielstatus des gespeicherten Puzzles.|
 |Schritte (lazy)|Die Anzahl der Schritte, die der Solver brauchte, um das Puzzle im Auswertungsmodus Lazy zu lösen.|
 |Schritte (strikt)|Die Anzahl der Schritte, die der Solver brauchte, um das Puzzle im Auswertungsmodus Strikt + bzw. Strikt - zu lösen.|
