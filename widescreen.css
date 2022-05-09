@@ -598,7 +598,10 @@ body, html {
     margin-right: 10px;
 }
 
-.search-max-depth, .speed-field {
+.speed-field {
+    display:none;  
+}
+.search-max-depth {
       margin-top: 5px;
      
 }
