@@ -382,6 +382,7 @@ class SudokuApp {
         let uid = this.sudokuPuzzleDB.getSelectedUid();
         this.suGrid.loadPuzzle(uid, puzzle);
         this.runner.displayProgress();
+        this.setGamePhase('play');
         document.getElementById("defaultOpen").click();
     }
     nextPuzzle() {
