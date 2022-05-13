@@ -1,7 +1,6 @@
 let sudoApp;
 
-
-const init = () => {
+const start = () => {
     sudoApp = new (SudokuApp);
     sudoApp.init();
 }
@@ -52,50 +51,151 @@ class SudokuSet extends Set {
     }
 }
 
+class SudokuTabView {
+    constructor() {
+        this.myPages = [];
+        // 1. Der Reiter "Sudoku-Solver"
+        this.myPages.push(new SudokuGridPage("sudoku-grid-tab", "sudoku-solver"));
+        // 2. Der Reiter "Puzzle-Datenbank"
+        this.myPages.push(new SudokuDatabasePage("puzzle-db-tab", "puzzle-db"));
+        // 3. Der Reiter "Hilfe"
+        this.myPages.push(new SudokuHelpPage("puzzle-help-tab", "help"));
+    }
+    open(pageToOpen) {
+        // Alle Seiten schließen.
+        this.myPages.forEach(page => {
+            page.close();
+        })
+       pageToOpen.open();
+    }
+    init() {
+        // Alle Seiten schließen.
+        this.myPages.forEach(page => {
+            page.close();
+        })
+        // Die Grid öffnen
+        this.myPages[0].open();
+    }
+}
+class SudokuPage {
+    constructor(linkNodeId, contentNodeId) {
+        this.myLinkNode = document.getElementById(linkNodeId);
+        this.myContentNode = document.getElementById(contentNodeId);
+        this.myLinkNode.addEventListener('click', () => {
+            sudoApp.tabView.open(this);
+        })
+    }
+    close() {
+        this.myContentNode.style.display = "none";
+        this.myLinkNode.style.backgroundColor = "";
+        this.myLinkNode.style.color = "";
+    }
+    open() {
+        this.myContentNode.style.display = "block";
+        this.myLinkNode.style.backgroundColor = '#F2E2F2';
+        this.myLinkNode.style.color = 'black';
+    }
+}
+
+class SudokuGridPage extends SudokuPage {
+    constructor(tabId, contentId) {
+        super(tabId, contentId);
+    }
+    open() {
+        super.open();
+        // Der angezeigte Inhalt der Seite 
+        // braucht bei der Selektion des Reiters
+        // nicht aktualisiert zu werden. Es wird der Inhalt angezeigt,
+        // der bei Verlassen der Seite vorlag.
+    }
+}
+
+class SudokuDatabasePage extends SudokuPage {
+    constructor(tabId, contentId) {
+        super(tabId, contentId);
+    }
+    open() {
+        super.open();
+        sudoApp.sudokuPuzzleDB.display();
+    }
+}
+
+class SudokuHelpPage extends SudokuPage {
+    constructor(tabId, contentId) {
+        super(tabId, contentId);
+    }
+    open() {
+        super.open();
+        document.getElementById('help-link').click();
+    }
+}
 class SudokuApp {
     constructor() {
-        //Die App kennt zwei Betriebs-Phasen 'play' or 'define'
-        this.currentPhase = 'play';
-        // Die App erhält eine Sudoku-Tabelle. Die als HTML schon existierende Tabelle 
-        // erhält hier einen Javascript Wrapper.
-
-        this.puzzleSaveDialog = new PuzzleSaveDialog();
-        this.successDialog = new SuccessDialog();
-        this.fileDialog = new FileDialog();
-
+        // ==============================================================
+        // Komponenten der App
+        // ==============================================================
+        // Die Matrix des Sudoku-Solver
+        this.suGrid = new SudokuGrid();
+        // Die Puzzle-Datenbank
         this.sudokuPuzzleDB = new SudokuPuzzleDB();
 
-        // Die Hauptansicht
-        this.suGrid = new SudokuGrid();
-
-        // Die App kennt zwei Ausführungsmodi.
+        //Die App kennt zwei Betriebs-Phasen 'play' or 'define'
+        this.currentPhase = 'play';
+        // Die App kennt zwei Ausführungsmodi: 
+        // manuelle oder automatische Ausführung
         this.autoExecOn = false;
+
+        // Für eine automatische Lösungssuche legt die App
+        // einen Runner an. Für jede Ausführung einen neuen.
         this.runner;
 
-        //Die Buttons der App werden Event-Handler zugeordnet
-        // Nummer-Buttons
+        // ==============================================================
+        // Die Ansichtselemente der App
+        // ==============================================================
+        // Die Reiteransicht
+        this.tabView = new SudokuTabView();
+        // Der Save-Dialog
+        this.puzzleSaveDialog = new PuzzleSaveDialog();
+        // Der Erfolgsdialog
+        this.successDialog = new SuccessDialog();
+
+        // ==============================================================
+        // Event-Handler der App setzen
+        // ==============================================================
+
+        // Click-Event für die Nummern-Buttons setzen
         this.number_inputs = document.querySelectorAll('.number');
-        // Hinweis: index + 1 = number on button
         this.number_inputs.forEach((e, index) => {
-
             e.addEventListener('click', () => {
-                sudoApp.numberButtonPressed((index + 1).toString())
+                // Hinweis: index + 1 = number on button
+                let btnNumber = (index + 1).toString();
+                if (this.autoExecOn) {
+                    // Während der automatischen Ausführung Nummer gedrückt
+                    // Der Runner wird angehalten und beendet
+                    this.runner.stopTimer();
+                    this.runner.init();
+                    this.setAutoExecOff();
+                } else {
+                    this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentPhase, false);
+                    this.runner.displayProgress();
+                }
             })
-            //Der Delete-Button: Löscht aktuelle selektierte Zelle
-            document.querySelector('#btn-delete-cell').addEventListener('click', () => {
-                sudoApp.deleteCellButtonPressed();
-            });
-
         });
 
-        /*
-        document.getElementById("inAdmissiblesVisible").addEventListener('input', () => {
-            sudoApp.suGrid.display();
-        })
-        */
-
-        document.querySelector('#speedSetting').addEventListener('input', (e) => {
-            sudoApp.runner.setSpeed(e.target.value);
+        //Click-Event für den Delete-Button setzen
+        document.querySelector('#btn-delete-cell').addEventListener('click', () => {
+            if (this.autoExecOn) {
+                // Während der automatischen Ausführung Delete-Taste gedrückt
+                // Der Runner wird angehalten und beendet
+                this.runner.stopTimer();
+                this.runner.init();
+                this.successDialog.close();
+                this.setAutoExecOff();
+                this.suGrid.deselect();
+            } else {
+                this.suGrid.deleteSelected(this.currentPhase, false);
+                this.runner.displayProgress();
+            }
         });
 
         // Die beiden Phase-button 
@@ -163,39 +263,38 @@ class SudokuApp {
 
         // Der Initialisieren-Button: Initialisiert die Tabelle
         document.querySelector('#btn-init').addEventListener('click', () => {
-            sudoApp.initButtonPressed();
+            this.runner.stopTimer()
+            this.runner.init();
+            this.successDialog.close();
+            this.setAutoExecOff();
+            this.suGrid.deselect();
+            this.suGrid.init();
+            this.runner.displayProgress();
+            this.setGamePhase('define');
         });
         // Der Zurücksetzen-Button: Setzt die Tabelle zurück auf die Definition.
         // Alle Zellen bis auf die, die zur Definition gehören, werden gelöscht
         document.querySelector('#btn-reset').addEventListener('click', () => {
-            sudoApp.resetBtnPressed();
+            this.runner.stopTimer();
+            this.runner.init();
+            this.successDialog.close();
+            this.setAutoExecOff();
+            this.suGrid.deselect();
+            this.suGrid.reset();
+            this.runner.displayProgress();
         });
-        // Der Speichern-Button: Der aktuelle Zustand wird unter einem Namen gespeichert.
+        // Der Speichern-Button: Das aktuelle Puzzle wird unter einem Namen 
+        // in der Puzzle-DB gespeichert.
         document.querySelector('#btn-save').addEventListener('click', () => {
-            sudoApp.saveBtnPressed();
+            this.runner.stopTimer();
+            this.successDialog.close();
+            this.puzzleSaveDialog.open();
         });
-        /*       // Der Wiederherstellen--Button: Ein gespeicherter Zustand wird wiederhergestellt.
-               document.querySelector('#btn-restore').addEventListener('click', () => {
-                   sudoApp.restoreBtnPressed();
-               });
-               // Der Lösche--Button: Ein gespeicherter Zustand wird gelöscht.
-               document.querySelector('#btn-delete').addEventListener('click', () => {
-                   sudoApp.deleteBtnPressed();
-               });
-               // 
-               /*    document.querySelector('#btn-import').addEventListener('click', () => {
-           
-                       sudoApp.importBtnPressed();
-           
-                   });
-           */
     }
 
     init() {
         this.puzzleSaveDialog.close();
         this.successDialog.close();
-        this.fileDialog.close();
-
         this.suGrid.init();
         // Die App kann in verschiedenen Ausführungsmodi sein
         // 'automatic' 'manual'
@@ -204,8 +303,7 @@ class SudokuApp {
         // Ein neuer Runner wird angelegt und initialisert
         this.runner = new AutomatedRunnerOnGrid(this.suGrid);
         this.runner.init();
-        // Der Zustandsspeicher
-
+        this.tabView.init();
     }
 
     setAutoExecOn() {
@@ -252,68 +350,6 @@ class SudokuApp {
         }
     }
 
-    numberButtonPressed(btnNumber) {
-        // Ist manuelle Operation
-        if (this.autoExecOn) {
-            this.runner.stopTimer();
-            this.runner.init();
-            this.successDialog.close();
-            this.setAutoExecOff();
-        } else {
-            this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentPhase, false);
-            this.runner.displayProgress();
-        }
-    }
-    deleteCellButtonPressed() {
-        // Ist manuelle Operation
-        if (this.autoExecOn) {
-            this.runner.stopTimer();
-            this.runner.init();
-            this.successDialog.close();
-            this.setAutoExecOff();
-            this.suGrid.deselect();
-        } else {
-            this.suGrid.deleteSelected(this.currentPhase, false);
-            this.runner.displayProgress();
-        }
-    }
-
-    initButtonPressed() {
-        this.runner.stopTimer()
-        this.runner.init();
-        this.successDialog.close();
-        this.setAutoExecOff();
-        this.suGrid.deselect();
-        this.suGrid.init();
-        this.runner.displayProgress();
-        this.setGamePhase('define');
-    }
-
-    resetBtnPressed() {
-        this.runner.stopTimer();
-        this.runner.init();
-        this.successDialog.close();
-        this.setAutoExecOff();
-        this.suGrid.deselect();
-        this.suGrid.reset();
-        this.runner.displayProgress();
-    }
-
-    saveBtnPressed() {
-        // Puzzle soll gespeichert werden
-        this.runner.stopTimer();
-        this.successDialog.close();
-        this.puzzleSaveDialog.open();
-    }
-
-    importBtnPressed() {
-        this.runner.stopTimer();
-        this.runner.init();
-        this.successDialog.close();
-        this.setAutoExecOff();
-        this.fileDialog.reset();
-        this.fileDialog.open();
-    }
 
     sudokuCellPressed(cellNode, cell, index) {
         if (this.autoExecOn) {
@@ -383,7 +419,7 @@ class SudokuApp {
         this.suGrid.loadPuzzle(uid, puzzle);
         this.runner.displayProgress();
         this.setGamePhase('play');
-        document.getElementById("defaultOpen").click();
+        document.getElementById("sudoku-grid-tab").click();
     }
     nextPuzzle() {
         this.sudokuPuzzleDB.nextPZ();
@@ -403,19 +439,19 @@ class SudokuApp {
     }
 
 
-    openPage(pageName, elmnt, bg_color, color) {
-        var i, tabcontent, tablinks;
+    openOldPage(pageName, elmnt, bg_color, color) {
+        var i, tabContent, tabLinks;
 
-        // Alle tabs inhaltlich initialisieren
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
+        // Alle Reiterinhalte ausblenden
+        tabContent = document.getElementsByClassName("tabContent");
+        for (i = 0; i < tabContent.length; i++) {
+            tabContent[i].style.display = "none";
         }
-        // Alle Reiter initialsieren
-        tablinks = document.getElementsByClassName("tablink");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].style.backgroundColor = "";
-            tablinks[i].style.color = "";
+        // Alle Reiterköpfe initialisieren
+        tabLinks = document.getElementsByClassName("tablink");
+        for (i = 0; i < tabLinks.length; i++) {
+            tabLinks[i].style.backgroundColor = "";
+            tabLinks[i].style.color = "";
         }
         // Den selektierten Reiter öffnen
         document.getElementById(pageName).style.display = "block";
@@ -931,6 +967,10 @@ class OptionPath {
 
 //=================================================
 class AutomatedRunnerOnGrid {
+    // Für die Sudoku-Matrix kann ein temporärer
+    // Runner für die automatische Ausführung angelegt werde.
+    // Jede neue automatische Ausführung erfolgt mit einem neuen Runner
+
     constructor(suGrid) {
         this.suGrid = suGrid;
         this.myStepper;
@@ -960,11 +1000,6 @@ class AutomatedRunnerOnGrid {
         this.displayAutoDirection();
         this.displayProgress();
         this.displayGoneSteps();
-        this.displaySpeedSetting();
-    }
-    displaySpeedSetting() {
-        let element = document.getElementById('speedSetting');
-        element.value = this.execSpeedLevel;
     }
 
     displayGoneSteps() {
@@ -2880,63 +2915,6 @@ class SuccessDialog {
     }
 }
 
-class FileDialog {
-    constructor() {
-        this.winBox;
-        this.myOpen = false;
-
-        this.okNode = document.getElementById("btn-fileOK");
-        this.cancelNode = document.getElementById("btn-fileCancel");
-
-        this.okNode.addEventListener('click', () => {
-            sudoApp.txtFileDlgOKPressed();
-        });
-        this.cancelNode.addEventListener('click', () => {
-            sudoApp.fileDlgCancelPressed();
-        });
-    }
-
-    open() {
-        if (window.screen.availWidth < 421) {
-            this.winBox = new WinBox("Excel-Tabelle importieren", {
-                x: "center",
-                y: "center",
-                width: "280px",
-                height: "150üx",
-                mount: document.getElementById("fileDlg")
-            });
-        } else {
-            this.winBox = new WinBox("Excel-Tabelle importieren", {
-                x: "center",
-                y: "center",
-                width: "370px",
-                height: "180px",
-                mount: document.getElementById("fileDlg")
-            });
-        }
-        this.myOpen = true;
-    }
-    reset() {
-        let fileInputElement = document.getElementById("txt-file");
-        fileInputElement.value = null;
-    }
-
-    getFile() {
-        let fileInputElement = document.getElementById("txt-file");
-        if (fileInputElement.value !== null) {
-            return document.getElementById("txt-file").files[0];
-        }
-    }
-
-    close() {
-        if (this.myOpen) {
-            this.winBox.close();
-            this.myOpen = false;
-        }
-    }
-
-}
-
 class SudokuPuzzleDB {
     constructor() {
         // Hole den Speicher als ein Objekt
@@ -2953,15 +2931,15 @@ class SudokuPuzzleDB {
             tmpPuzzle.backTracks = 0;
             tmpPuzzle.date = (new Date()).toJSON();
             tmpPuzzle.puzzle = [
-                    "0","0","0","3","0","0","0","0","5",
-                    "0","2","0","0","8","9","0","0","0",
-                    "0","0","8","0","0","6","0","0","3",
-                    "8","0","9","0","0","1","0","3","6",
-                    "0","0","0","9","0","3","0","5","0",
-                    "0","0","1","7","0","0","0","0","0",
-                    "0","0","0","0","0","0","0","7","1",
-                    "0","8","2","0","1","0","0","0","0",
-                    "0","1","0","0","3","4","0","0","0"
+                "0", "0", "0", "3", "0", "0", "0", "0", "5",
+                "0", "2", "0", "0", "8", "9", "0", "0", "0",
+                "0", "0", "8", "0", "0", "6", "0", "0", "3",
+                "8", "0", "9", "0", "0", "1", "0", "3", "6",
+                "0", "0", "0", "9", "0", "3", "0", "5", "0",
+                "0", "0", "1", "7", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "7", "1",
+                "0", "8", "2", "0", "1", "0", "0", "0", "0",
+                "0", "1", "0", "0", "3", "4", "0", "0", "0"
             ];
             let puzzleMap = new Map();
             let uid = Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -3400,9 +3378,5 @@ class SudokuPuzzle {
 
 }
 
-
-
-init();
-
-// Get the element with id="defaultOpen" and click on it
-document.getElementById("defaultOpen").click();
+// Starte und initialisiere die App
+start();

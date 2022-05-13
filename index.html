@@ -5,39 +5,27 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- mobile status bar color -->
     <meta name="theme-color" content="#fff">
     <title>Sudoku</title>
     <link rel="shortcut icon" href="./images/icon.png" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- Dialog specs -->
     <script src="dist/winbox.bundle.js"></script>
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> -->
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
 
     <link rel="stylesheet" media="screen and (max-width: 420px)" href="smallscreen.css">
     <link rel="stylesheet" media="screen and (min-width: 421px)" href="widescreen.css">
 
 </head>
 
-<body class="w3-container">
-    <!-- main -->
-    <!--<div class="main"> -->
+<body>
+    <!--Die drei Reiter der App-->
+    <button class="tablink tablinksolver" id="sudoku-grid-tab">Sudoku-Solver</button>
+    <button class="tablink tablinkdatabase" id="puzzle-db-tab">Puzzle-Datenbank</button>
+    <button class="tablink tablinkhelp" id="puzzle-help-tab">Hilfe</button>
 
-    <button class="tablink tablinksolver" onclick="sudoApp.openPage('Sudoku-Solver', this, '#F2E2F2', 'black')"
-        id="defaultOpen">Sudoku-Solver</button>
-    <button class="tablink tablinkdatabase" onclick="sudoApp.openPage('Puzzle-Datenbank', this, '#F2E2F2', 'black')"
-        id="puzzle-db-tab">Puzzle-Datenbank</button>
-    <button class="tablink tablinkhelp" onclick="sudoApp.openPage('Hilfe', this, '#F2E2F2', 'black')"
-        id="puzzle-help-tab">Hilfe</button>
-
-
-
-    <div id="Sudoku-Solver" class="tabcontent">
+    <!--Der Inhalt des Reiters Sudoku-Solver-->
+    <div id="sudoku-solver" class="tabcontent">
         <div class="inputArea" id="inputArea">
             <div class="gridArea" id="gridArea">
                 <div class="main-sudoku-grid" id="main-sudoku-grid">
@@ -159,26 +147,11 @@
                     </div>
                     <div class="storage-btns">
                         <div class="main-btn" id="btn-save">Speichern</div>
-                        <!--     <div class="main-btn" id="btn-restore">Wiederherstellen</div>
-                        <div class="main-btn" id="btn-delete">Löschen</div>
-                        <div class="main-btn" id="btn-import">Import</div> -->
                     </div>
                 </div>
                 <div class="settings">
                     <p style="font-weight: bold;">Auswertung</p>
-                    <div class="speed-field settings-line">
-                        <label for="speed">Geschwindigkeit:</label>
-                        <select class="speedSetting" name="speed" id="speedSetting">
-                            <option value="very-slow">Sehr langsam</option>
-                            <option value="slow">Langsam</option>
-                            <option selected value="normal">Normal</option>
-                            <option value="fast">Schnell</option>
-                            <option value="very-fast">Sehr schnell</option>
-                        </select>
-                    </div>
-
                     <div class="evaluation">
-                       <!-- <p>Auswertungsmethode:</p> -->
                         <div>
                             <input type="radio" id="lazy" name="auswertung" value="lazy" checked
                                 onclick="sudoApp.suGrid.setEvalType(this);">
@@ -212,10 +185,9 @@
 
         </div>
     </div>
-
-    <div id="Puzzle-Datenbank" class="tabcontent tabdatabase">
-
-        <section class="">
+    <!--Der Inhalt des Reiters Puzzle-Datenbank-->
+    <div id="puzzle-db" class="tabcontent tabdatabase">
+        <section>
             <div class="container">
                 <table class="puzzle-db-table" id="puzzle-db-table">
                     <thead class="puzzle-db-thead">
@@ -293,13 +265,13 @@
 
 
     </div>
-
-    <div id="Hilfe" class="tabcontent">
+    <!--Der Inhalt des Reiters Hilfe-->
+    <div id="help" class="tabcontent">
         <!-- <iframe src="./help.html"  width= 100% height="100%" style="border:none;">  </iframe> -->
-        <a id="help-link" href="./help.html">Hilfe</a> 
+        <a id="help-link" href="./help.html">Hilfe</a>
     </div>
 
-    <!--game dialogs -->
+    <!--Dialoge -->
     <div id="backstore" style="display: none">
         <div id="contentSaveDlg">
             <form class="dlg-form">
@@ -308,46 +280,6 @@
                 <div class="ok-cancel-btns">
                     <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageOK" name="ok" value="OK" />
                     <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageCancel" name="cancel"
-                        value="Abbrechen" />
-                </div>
-            </form>
-        </div>
-        <div id="contentRestoreDlg">
-            <form class="dlg-form">
-                <div class="textInDlgs">Zustandsname: </div>
-                <div class="input-row">
-                    <div name="comboBox" id="storageRestoreComboBox">
-                        <input class="textInDlgs" type="text" id="restoreStorageName" name="restoreStorageName" />
-                        <select class="textInDlgs" name="restoreStorageList" id="restoreStorageList">
-                            <option>one</option>
-                            <option>two</option>
-                            <option>three</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="ok-cancel-btns">
-                    <input type="button" class="main-btn okCancelBtn" id="btn-restoreStorageOK" name="ok" value="OK" />
-                    <input type="button" class="main-btn okCancelBtn" id="btn-restoreStorageCancel" name="cancel"
-                        value="Abbrechen" />
-                </div>
-            </form>
-        </div>
-        <div id="contentDeleteDlg">
-            <form class="dlg-form">
-                <div class="textInDlgs">Zustandsname: </div>
-                <div class="input-row">
-                    <div name="comboBox" id="storageDeleteComboBox">
-                        <input class="textInDlgs" type="text" id="deleteStorageName" name="deleteStorageName" />
-                        <select class="textInDlgs" name="deleteStorageList" id="deleteStorageList">
-                            <option>one</option>
-                            <option>two</option>
-                            <option>three</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="ok-cancel-btns">
-                    <input type="button" class="main-btn okCancelBtn" id="btn-deleteStorageOK" name="ok" value="OK" />
-                    <input type="button" class="main-btn okCancelBtn" id="btn-deleteStorageCancel" name="cancel"
                         value="Abbrechen" />
                 </div>
             </form>
@@ -366,24 +298,7 @@
                 </div>
             </form>
         </div>
-        <div id="fileDlg">
-            <form class="dlg-form">
-                <div>
-                    <div>
-                        <label for="file"></label>
-                        <input type="file" class="input-row" id="txt-file" name="file" accept=".txt">
-                    </div>
-                </div>
-                <div class="ok-cancel-btns">
-                    <input type="button" class="main-btn okCancelBtn" id="btn-fileOK" name="ok" value="OK" />
-                    <input type="button" class="main-btn okCancelBtn" id="btn-fileCancel" name="cancel"
-                        value="Abbrechen" />
-                </div>
-            </form>
-        </div>
     </div>
-    <!-- </div> -->
-    <!--Dialogs end-->
     <script src="./app.js"></script>
 </body>
 

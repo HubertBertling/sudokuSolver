@@ -99,15 +99,15 @@ body, html {
 
 }
 
-#Sudoku-Solver {
+#sudoku-solver {
     background-color: var(--screen-bg-color); 
     color: black;       ;
 }
-#Puzzle-Datenbank {
+#puzzle-db {
     background-color: var(--screen-bg-color);
     color: black;
 }
-#Hilfe {
+#help {
     background-color: var(--screen-bg-color);
     color: black;
 }
