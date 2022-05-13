@@ -10,12 +10,9 @@
     <link rel="shortcut icon" href="./images/icon.png" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <script src="dist/winbox.bundle.js"></script>
-
     <link rel="stylesheet" media="screen and (max-width: 420px)" href="smallscreen.css">
     <link rel="stylesheet" media="screen and (min-width: 421px)" href="widescreen.css">
-
 </head>
 
 <body>
@@ -23,7 +20,6 @@
     <button class="tablink tablinksolver" id="sudoku-grid-tab">Sudoku-Solver</button>
     <button class="tablink tablinkdatabase" id="puzzle-db-tab">Puzzle-Datenbank</button>
     <button class="tablink tablinkhelp" id="puzzle-help-tab">Hilfe</button>
-
     <!--Der Inhalt des Reiters Sudoku-Solver-->
     <div id="sudoku-solver" class="tabcontent">
         <div class="inputArea" id="inputArea">
@@ -31,7 +27,6 @@
                 <div class="main-sudoku-grid" id="main-sudoku-grid">
                     <!-- group 0 -->
                 </div>
-
                 <div class="evaluations">
                     <div>
                         <div class="name-value">
@@ -40,7 +35,6 @@
                         <div class="name-value search-depth" id="search-depth">
                             0
                         </div>
-
                     </div>
                     <div>
                         <div class="name-value">
@@ -52,8 +46,6 @@
                     </div>
                 </div>
                 <div class="progress-box" id="progress-box">
-
-
                     <div class="progress-group">
                         <div class="step-count-box">
                             <div class="name-value">
@@ -63,7 +55,6 @@
                                 0
                             </div>
                         </div>
-
                         <div class="autoMode-radio-btns">
                             <div class="backward" id="radio-backward">
                                 <img src="images/pfeilrueckwaerts.png" class="forward-backward-image">
@@ -80,16 +71,9 @@
                             </div>
                         </div>
                     </div>
-
-
-
                 </div>
-
-
             </div>
-
             <div class="game-col2">
-
                 <div class="exec-btn-groups">
                     <div class="exec-btn-group mode-btns">
                         <div class="btn-define" id="btn-define">Definieren</div>
@@ -137,7 +121,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div class="main-btns">
                     <p style="font-weight: bold;">Puzzle</p>
@@ -157,18 +140,18 @@
                             <label for="lazy">Lazy</label>
                         </div>
                         <div>
-                            <input type="radio" class="eval-type" id="strict-plus" name="auswertung" value="strict-plus">
+                            <input type="radio" class="eval-type" id="strict-plus" name="auswertung"
+                                value="strict-plus">
                             <label for="strict-plus">Strikt +</label>
                         </div>
                         <div>
-                            <input type="radio" class="eval-type" id="strict-minus" name="auswertung" value="strict-minus">
+                            <input type="radio" class="eval-type" id="strict-minus" name="auswertung"
+                                value="strict-minus">
                             <label for="strict-minus">Strikt -</label>
                         </div>
                     </div>
                 </div>
             </div>
-
-
         </div>
         <div class="status-line">
             <div class="status-line-item">Puzzle-Id.: </div>
@@ -179,7 +162,6 @@
             <div class="status-line-item">
                 <div class="pz-name" id="pz-name"></div>
             </div>
-
         </div>
     </div>
     <!--Der Inhalt des Reiters Puzzle-Datenbank-->
@@ -189,42 +171,24 @@
                 <table class="puzzle-db-table" id="puzzle-db-table">
                     <thead class="puzzle-db-thead">
                         <tr>
-                            <th style="cursor:pointer">Puzzle-Id
-                                <div>Puzzle-Id</div>
+                            <th style="cursor:pointer">Puzzle-Id <div>Puzzle-Id</div>
                             </th>
-
-                            <th onclick="sudoApp.sudokuPuzzleDB.sort('name')" style="cursor:pointer">Puzzle-Name
-                                <div>Puzzle-Name</div>
+                            <th id="col-name" style="cursor:pointer">Puzzle-Name <div>Puzzle-Name</div>
                             </th>
-
-                            <th onclick="sudoApp.sudokuPuzzleDB.sort('defCount')" style="cursor:pointer">Def. Zellen
-                                <div>Def. Zellen</div>
+                            <th id="col-defCount" style="cursor:pointer">Def. Zellen<div>Def. Zellen</div>
                             </th>
-
-                            <th onclick="sudoApp.sudokuPuzzleDB.sort('status')" style="cursor:pointer">Status
-                                <div>Status</div>
+                            <th id="col-status" style="cursor:pointer">Status<div>Status</div>
                             </th>
-
-                            <th onclick="sudoApp.sudokuPuzzleDB.sort('steps-lazy')" style="cursor:pointer">Schritte
-                                (lazy)
-                                <div>Schritte (lazy)</div>
+                            <th id="col-steps-lazy" style="cursor:pointer">Schritte (lazy)<div>Schritte (lazy)</div>
                             </th>
-
-                            <th onclick="sudoApp.sudokuPuzzleDB.sort('steps-strict')" style="cursor:pointer">Schritte
-                                (strikt)
-                                <div>Schritte (strikt)</div>
+                            <th id="col-steps-strict" style="cursor:pointer">Schritte (strikt)<div>Schritte (strikt)
+                                </div>
                             </th>
-
-                            <th onclick="sudoApp.sudokuPuzzleDB.sort('level')" style="cursor:pointer">Level
-                                <div>Level</div>
+                            <th id="col-level" style="cursor:pointer">Level<div>Level</div>
                             </th>
-
-                            <th onclick="sudoApp.sudokuPuzzleDB.sort('backTracks')" style="cursor:pointer">#Rückwärts
-                                <div>#Rückwärts</div>
+                            <th id="col-backTracks" style="cursor:pointer">#Rückwärts<div>#Rückwärts</div>
                             </th>
-
-                            <th onclick="sudoApp.sudokuPuzzleDB.sort('date')" style="cursor:pointer">Datum
-                                <div>Datum</div>
+                            <th id="col-date" style="cursor:pointer">Datum<div>Datum</div>
                             </th>
                         </tr>
                     </thead>
@@ -234,8 +198,6 @@
                 </table>
             </div>
         </section>
-
-
         <div class="puzzle-btns">
             <div class="pz-btn" id="pz-btn-load" onclick="sudoApp.loadCurrentPuzzle()">Laden </div>
             <div class="pz-btn" id="pz-btn-previous" onclick="sudoApp.previousPuzzle()"><img
@@ -244,30 +206,22 @@
                     class="forward-backward-image"></div>
             <div class="pz-btn" id="pz-btn-delete" onclick="sudoApp.deleteCurrentPuzzle()">Löschen</div>
         </div>
-
         <p style="font-size: 1.6rem; font-weight: bold; margin-top: 40px;">Selektiertes Puzzle:</p>
         <div class="pz-nr" id="pzNr">0</div>
-
         <div class="puzzle-line">
-
             <div>Puzzle: </div>
             <div class="pz-table" id="puzzle">
-
             </div>
             <div>Lösung: </div>
             <div class="pz-table" id="solution">
-
             </div>
         </div>
-
-
     </div>
     <!--Der Inhalt des Reiters Hilfe-->
     <div id="help" class="tabcontent">
         <!-- <iframe src="./help.html"  width= 100% height="100%" style="border:none;">  </iframe> -->
         <a id="help-link" href="./help.html">Hilfe</a>
     </div>
-
     <!--Dialoge -->
     <div id="backstore" style="display: none">
         <div id="contentSaveDlg">
@@ -298,5 +252,4 @@
     </div>
     <script src="./app.js"></script>
 </body>
-
 </html>

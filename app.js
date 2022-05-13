@@ -5,6 +5,9 @@ const start = () => {
     sudoApp.init();
 }
 class SudokuSet extends Set {
+    // Die mathematische Menge ohne Wiederholungen
+    // Intensiv genutzt für die Berechnung indirekt unzulässiger
+    // Nummern in der Sudoku-Matrix.
     constructor(arr) {
         super(arr);
     }
@@ -52,6 +55,7 @@ class SudokuSet extends Set {
 }
 
 class SudokuTabView {
+    // Die Software der Reiteransicht
     constructor() {
         this.myPages = [];
         // 1. Der Reiter "Sudoku-Solver"
@@ -66,18 +70,22 @@ class SudokuTabView {
         this.myPages.forEach(page => {
             page.close();
         })
-       pageToOpen.open();
+        pageToOpen.open();
     }
-    init() {
+    openGrid() {
         // Alle Seiten schließen.
         this.myPages.forEach(page => {
             page.close();
         })
-        // Die Grid öffnen
+        // Die Grid-Seite öffnen
         this.myPages[0].open();
+    }
+    init() {
+        this.openGrid();
     }
 }
 class SudokuPage {
+    // Abstrakte Klasse für den Reiter
     constructor(linkNodeId, contentNodeId) {
         this.myLinkNode = document.getElementById(linkNodeId);
         this.myContentNode = document.getElementById(contentNodeId);
@@ -96,8 +104,8 @@ class SudokuPage {
         this.myLinkNode.style.color = 'black';
     }
 }
-
 class SudokuGridPage extends SudokuPage {
+    // Reiter der Matrix
     constructor(tabId, contentId) {
         super(tabId, contentId);
     }
@@ -108,9 +116,8 @@ class SudokuGridPage extends SudokuPage {
         // nicht aktualisiert zu werden. Es wird der Inhalt angezeigt,
         // der bei Verlassen der Seite vorlag.
     }
-}
-
-class SudokuDatabasePage extends SudokuPage {
+} class SudokuDatabasePage extends SudokuPage {
+    // Reiter der Datenbank
     constructor(tabId, contentId) {
         super(tabId, contentId);
     }
@@ -119,8 +126,8 @@ class SudokuDatabasePage extends SudokuPage {
         sudoApp.sudokuPuzzleDB.display();
     }
 }
-
 class SudokuHelpPage extends SudokuPage {
+    // Reiter der Hilfeseite
     constructor(tabId, contentId) {
         super(tabId, contentId);
     }
@@ -130,6 +137,7 @@ class SudokuHelpPage extends SudokuPage {
     }
 }
 class SudokuApp {
+    // Die Darstellung der ganzen App
     constructor() {
         // ==============================================================
         // Komponenten der App
@@ -198,7 +206,7 @@ class SudokuApp {
             }
         });
 
-        // Die beiden Phase-button 
+        // Die beiden Phase-Button 
         document.querySelector('#btn-define').addEventListener('click', () => {
             sudoApp.setGamePhase('define');
             this.runner.stopTimer();
@@ -290,14 +298,14 @@ class SudokuApp {
             this.successDialog.close();
             this.puzzleSaveDialog.open();
         });
-        // Radio-Button Auswertung
+        // Radio-Button Auswertungstyp: Lazy, Strikt+ oder Strikt-
         let radioEvalNodes = document.querySelectorAll('.eval-type');
         radioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
                 this.suGrid.setEvalType(radioNode.value);
             })
         });
-     }
+    }
 
     init() {
         this.puzzleSaveDialog.close();
@@ -355,8 +363,6 @@ class SudokuApp {
             document.querySelector('#btn-play').classList.remove('pressed');
         }
     }
-
-
     sudokuCellPressed(cellNode, cell, index) {
         if (this.autoExecOn) {
             this.runner.stopTimer();
@@ -383,38 +389,6 @@ class SudokuApp {
         this.puzzleSaveDialog.close()
     }
 
-    restoreStorageDlgOKPressed() {
-        this.storageRestoreDialog.close();
-        // DerZustand mit diesem Namen soll geholt werden
-        let stateName = this.storageRestoreDialog.getSelectedName();
-        // Hole den State mit diesem Namen
-        let tmpState = this.sudokuStorage.getNamedState(stateName);
-        if (tmpState !== null) {
-            //Lösche aktuelle Selektion
-            this.suGrid.deselect();
-            // Setze den aus dem Speicher geholten Zustand
-            this.suGrid.setCurrentState(tmpState);
-            this.runner.displayProgress();
-        } else {
-            alert("Zustand mit diesem Namen existiert nicht");
-        }
-    }
-
-    restoreStorageDlgCancelPressed() {
-        this.storageRestoreDialog.close()
-    }
-
-    deleteStorageDlgOKPressed() {
-        this.storageDeleteDialog.close();
-        // DerZustand mit diesem Namen soll geholt werden
-        let stateName = this.storageDeleteDialog.getSelectedName();
-        // Lösche den named State mit diesem Namen
-        this.sudokuStorage.deleteNamedState(stateName);
-    }
-
-    deleteStorageDlgCancelPressed() {
-        this.storageDeleteDialog.close()
-    }
 
     loadCurrentPuzzle() {
         this.runner.stopTimer();
@@ -425,7 +399,7 @@ class SudokuApp {
         this.suGrid.loadPuzzle(uid, puzzle);
         this.runner.displayProgress();
         this.setGamePhase('play');
-        document.getElementById("sudoku-grid-tab").click();
+        this.tabView.openGrid();
     }
     nextPuzzle() {
         this.sudokuPuzzleDB.nextPZ();
@@ -438,46 +412,13 @@ class SudokuApp {
     deleteCurrentPuzzle() {
         this.sudokuPuzzleDB.deleteSelected();
     }
-
-
     comboBoxNameSelected(comboBoxNode, e) {
         comboBoxNode.setInputField(e.target.value);
     }
 
-
-    openOldPage(pageName, elmnt, bg_color, color) {
-        var i, tabContent, tabLinks;
-
-        // Alle Reiterinhalte ausblenden
-        tabContent = document.getElementsByClassName("tabContent");
-        for (i = 0; i < tabContent.length; i++) {
-            tabContent[i].style.display = "none";
-        }
-        // Alle Reiterköpfe initialisieren
-        tabLinks = document.getElementsByClassName("tablink");
-        for (i = 0; i < tabLinks.length; i++) {
-            tabLinks[i].style.backgroundColor = "";
-            tabLinks[i].style.color = "";
-        }
-        // Den selektierten Reiter öffnen
-        document.getElementById(pageName).style.display = "block";
-        elmnt.style.backgroundColor = bg_color;
-        elmnt.style.color = color;
-        if (pageName == "Puzzle-Datenbank") {
-            this.sudokuPuzzleDB.display();
-        }
-        if (pageName == "Hilfe") {
-            document.getElementById('help-link').click();
-        }
-
-    }
-
-
-
     getPhase() {
         return this.currentPhase;
     }
-
     successDlgOKPressed() {
         this.successDialog.close();
         if (sudoApp.successDialog.further()) {
@@ -489,201 +430,7 @@ class SudokuApp {
     successDlgCancelPressed() {
         this.successDialog.close();
     }
-
-    txtFileDlgOKPressed() {
-        this.fileDialog.close();
-        this.suGrid.deselect();
-        // Hier beginnt der eigentliche Import
-        // Schritt 1: File-Selektionsdialog
-        // Reset input-Element durch Cloning
-        let fileInputElement = document.getElementById("txt-file");
-        fileInputElement.parentNode.replaceChild(
-            fileInputElement.cloneNode(true),
-            fileInputElement
-        );
-        let file = this.fileDialog.getFile();
-        //Schritt 2: Auf das File zugreifen
-        let reader = new FileReader();
-
-        reader.onload = (event) => {
-            let puzzles = [];
-            const file = event.target.result;
-            const allLines = file.split(/\r\n|\n/);
-            // Reading line by line
-            let i = 0;
-            allLines.forEach((line) => {
-                if (line == "puzzle,solution") {
-                    // Header-Zeile überlesen
-                } else {
-                    i++;
-                    const myPuzzle = line.split(',');
-                    let puzzle = {
-                        pzNr: i,
-                        puzzle: myPuzzle[0].split(""),
-                        solution: myPuzzle[1].split("")
-                    };
-                    let defCount = 0;
-                    puzzle.puzzle.forEach(nr => {
-                        if (nr !== '0') { defCount++; }
-                    })
-                    if (defCount < 26) {
-                        puzzles.push(puzzle);
-                    }
-                }
-            });
-            if (puzzles.length == 0) {
-                let puzzle = {
-                    pzNr: 0,
-                    puzzle: ['0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0'],
-                    solution: ['0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0',
-                        '0', '0', '0', '0', '0', '0', '0', '0', '0']
-                };
-                puzzles.push(puzzle);
-                this.selectedPZNr = 0;
-            }
-
-            let puzzlesObj = JSON.stringify(puzzles)
-            localStorage.setItem("localSudokuDB", puzzlesObj);
-        };
-
-        reader.onerror = (event) => {
-            alert(event.target.error.name);
-        };
-
-        reader.readAsText(file);
-    }
-
-    excelFileDlgOKPressed() {
-        this.fileDialog.close();
-        this.suGrid.deselect();
-
-        // Local functions
-        function emptyRow() {
-            let tmpSudoRow = [];
-            for (let j = 0; j < 9; j++) {
-                let storedCell = {
-                    cellValue: '0',
-                    cellPhase: ''
-                };
-                tmpSudoRow.push(storedCell);
-            }
-            return tmpSudoRow;
-        }
-
-        function importExcelWorkbook(workbook) {
-            // Der Excel-Inhalt wird in einen Sudoku-State
-            // transformiert. Das Format ist dasselbe, wie es 
-            // beim Speichern von Sudoku-Zuständen verwendet wird.
-
-            workbook.SheetNames.forEach(function (sheetName) {
-                // Here is your object
-                var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-
-                let state = [];
-                let currentRowNr = 1;
-                // Leere Zeile initialisieren
-
-                XL_row_object.forEach(row => {
-                    let readRowNr = row["__rowNum__"];
-                    while (currentRowNr < readRowNr) {
-                        // Excel enthält leere Zeile mit einer Zeilennummer, die
-                        // kleiner ist die Nummer der ersten besetzten Zeile.
-                        // Leere Zeile wird in den Zustand übernommen
-
-                        // Die leere Zeile als Vorlage
-                        let tmpSudoRow = emptyRow();
-                        currentRowNr++;
-                        // Übertrage die Zellen der Reihe in den Status
-                        for (let j = 0; j < 9; j++) {
-                            state.push(tmpSudoRow.shift());
-                        }
-                    }
-                    if (currentRowNr == readRowNr) {
-                        // Die leere Zeile als Vorlage
-                        let tmpSudoRow = emptyRow();
-                        for (const [key, value] of Object.entries(row)) {
-                            if (key >= 0 && key < 9) {
-                                let sudoCell = tmpSudoRow[key];
-                                sudoCell.cellValue = value;
-                                sudoCell.cellPhase = 'define'
-                            }
-                        }
-                        currentRowNr++;
-                        // Übertrage die Zellen der Reihe in den Status
-                        for (let j = 0; j < 9; j++) {
-                            state.push(tmpSudoRow.shift());
-                        }
-                    }
-                })
-                // Fehlen noch weitere Zeilen?
-                while (currentRowNr < 10) {
-                    let tmpSudoRow = emptyRow();
-                    currentRowNr++;
-                    // Übertrage die Zellen der Reihe in den Status
-                    for (let j = 0; j < 9; j++) {
-                        state.push(tmpSudoRow.shift());
-                    }
-                }
-                // Das Zustandsobjekt ist vollständig.
-                // Checke die Korrektheit
-                if (sudoApp.suGrid.checkStateOk(state)) {
-                    // Falls OK erzeuge die Sudoku-Matrix
-                    sudoApp.suGrid.setCurrentState(state);
-                } else {
-                    alert('Sudoku-Import: unzulässige Nummer');
-                }
-            });
-        }
-
-        // Hier beginnt der eigentliche Import
-        // Schritt 1: File-Selektionsdialog
-        // Reset input-Element durch Cloning
-        let fileInputElement = document.getElementById("excel-file");
-        fileInputElement.parentNode.replaceChild(
-            fileInputElement.cloneNode(true),
-            fileInputElement
-        );
-        let file = this.fileDialog.getFile();
-        //Schritt 2: Auf das File zugreifen
-        let reader = new FileReader();
-        reader.readAsBinaryString(file);
-        reader.onerror = function (ex) {
-            // console.log(ex);
-            // NotReadableError
-            alert('Sudoku-Import: Datei nicht zugreifbar: ' + ex.currentTarget.error);
-        };
-        reader.onload = function (e) {
-            var data = e.target.result;
-            var workbook = XLSX.read(data, {
-                type: 'binary'
-            });
-            // Schritt 3: Den Inhalt in die Sudokutabelle übertragen
-            importExcelWorkbook(workbook);
-            // XLSX.writeFile(workbook, file.fileName);
-        }
-        this.runner.displayProgress();
-    }
-
-    fileDlgCancelPressed() {
-        this.fileDialog.close()
-    }
 }
-
 class ProgressBar {
     constructor() {
         this.elemPlay = document.getElementById("myBarPlay");
@@ -719,14 +466,11 @@ class ProgressBar {
 }
 
 //========================================================================
-class Stepper {
+class BackTracker {
     constructor() {
-        this.currentStep = new OptionStep(null, -1, ['0']);
+        this.currentStep = new BackTrackOptionStep(null, -1, ['0']);
         this.maxDepth = 0;
-        // console.log("Tiefe 0");
     }
-
-
     getCurrentStep() {
         return this.currentStep;
     }
@@ -741,19 +485,19 @@ class Stepper {
     getMaxSearchDepth() {
         return this.maxDepth;
     }
-    isOnOptionStep() {
-        this.currentStep instanceof OptionStep;
+    isOnBackTrackOptionStep() {
+        this.currentStep instanceof BackTrackOptionStep;
     }
-    addOptionStep(cellIndex, optionList) {
-        this.currentStep = this.currentStep.addOptionStep(cellIndex, optionList);
+    addBackTrackOptionStep(cellIndex, optionList) {
+        this.currentStep = this.currentStep.addBackTrackOptionStep(cellIndex, optionList);
         return this.currentStep;
     }
-    addRealStep(cellIndex, cellValue) {
-        this.currentStep = this.currentStep.addRealStep(cellIndex, cellValue);
+    addBackTrackRealStep(cellIndex, cellValue) {
+        this.currentStep = this.currentStep.addBackTrackRealStep(cellIndex, cellValue);
         return this.currentStep;
     }
-    getNextRealStep() {
-        this.currentStep = this.currentStep.getNextRealStep();
+    getNextBackTrackRealStep() {
+        this.currentStep = this.currentStep.getNextBackTrackRealStep();
         return this.currentStep;
     }
     previousStep() {
@@ -762,23 +506,23 @@ class Stepper {
     }
 }
 
-class OptionStep {
+class BackTrackOptionStep {
     constructor(ownerPath, cellIndex, optionList) {
         // Der Optinlstep befindet sich in einem Optionpath
         this.myOwnerPath = ownerPath;
         // Der Step zeigt auf Sudokuzelle
-        // Der OptionStep zeigt auf eine Grid-Zelle
+        // Der BackTrackOptionStep zeigt auf eine Grid-Zelle
         this.myCellIndex = cellIndex;
         this.myOptionList = optionList.slice();
         this.myNextOptions = optionList.slice();
 
-        // Der OptonStep hat für jede Option einen eigenen OptionPath
+        // Der OptonStep hat für jede Option einen eigenen BackTrackOptionPath
         if (optionList.length == 1) {
             // Dann kann es nur einen Pfad geben, und dieser wird sofort angelegt.
             // Das ist die Startsituation
             // Später gibt es keine einelementigen Optionlists.
             // Sie sind durch die Realsteps abgebildet
-            this.myOwnerPath = new OptionPath(optionList[0], this)
+            this.myOwnerPath = new BackTrackOptionPath(optionList[0], this)
         }
     }
     isOpen(nr) {
@@ -801,19 +545,19 @@ class OptionStep {
         return tmpOptionList;
     }
 
-    addRealStep(cellIndex, cellValue) {
-        return this.myOwnerPath.addRealStep(cellIndex, cellValue);
+    addBackTrackRealStep(cellIndex, cellValue) {
+        return this.myOwnerPath.addBackTrackRealStep(cellIndex, cellValue);
     }
-    addOptionStep(cellIndex, optionList) {
-        return this.myOwnerPath.addOptionStep(cellIndex, optionList);
+    addBackTrackOptionStep(cellIndex, optionList) {
+        return this.myOwnerPath.addBackTrackOptionStep(cellIndex, optionList);
     }
-    getNextRealStep() {
+    getNextBackTrackRealStep() {
         let nextOption = this.myNextOptions.pop();
-        let nextPath = new OptionPath(nextOption, this);
-        return nextPath.addRealStep(this.myCellIndex, nextOption);
+        let nextPath = new BackTrackOptionPath(nextOption, this);
+        return nextPath.addBackTrackRealStep(this.myCellIndex, nextOption);
     }
     previousStep() {
-        return this.myOwnerPath.previousFromOptionStep();
+        return this.myOwnerPath.previousFromBackTrackOptionStep();
     }
     isCompleted() {
         return this.myNextOptions.length == 0;
@@ -826,9 +570,9 @@ class OptionStep {
         }
     }
     isFinished() {
-        // Der OptionStep ist beendet, wenn alle seine Pfade beendet sind
-        for (let i = 0; i < this.myOptionPaths.length; i++) {
-            if (!this.myOptionPaths[i].isFinished()) {
+        // Der BackTrackOptionStep ist beendet, wenn alle seine Pfade beendet sind
+        for (let i = 0; i < this.myBackTrackOptionPaths.length; i++) {
+            if (!this.myBackTrackOptionPaths[i].isFinished()) {
                 return false;
             }
         }
@@ -841,7 +585,7 @@ class OptionStep {
         return this.myOwnerPath;
     }
 }
-class RealStep {
+class BackTrackRealStep {
     constructor(ownerPath, stepIndex, cellIndex, cellValue) {
         // Der Realstep befindet sich in einem Optionpath
         this.myOwnerPath = ownerPath;
@@ -851,14 +595,14 @@ class RealStep {
         // Der Step kennt den Inhalt der Sudoku-Zelle
         this.myCellValue = cellValue;
     }
-    addRealStep(cellIndex, cellValue) {
-        return this.myOwnerPath.addRealStep(cellIndex, cellValue);
+    addBackTrackRealStep(cellIndex, cellValue) {
+        return this.myOwnerPath.addBackTrackRealStep(cellIndex, cellValue);
     }
-    addOptionStep(cellIndex, optionList) {
-        return this.myOwnerPath.addOptionStep(cellIndex, optionList);
+    addBackTrackOptionStep(cellIndex, optionList) {
+        return this.myOwnerPath.addBackTrackOptionStep(cellIndex, optionList);
     }
     previousStep() {
-        return this.myOwnerPath.previousFromRealStep(this.myStepsIndex);
+        return this.myOwnerPath.previousFromBackTrackRealStep(this.myStepsIndex);
     }
     getValue() {
         return this.myCellValue;
@@ -880,19 +624,19 @@ class RealStep {
     }
 }
 
-class OptionPath {
-    // Ein OptionPath besteht im Kern aus zwei Elmenten:
+class BackTrackOptionPath {
+    // Ein BackTrackOptionPath besteht im Kern aus zwei Elmenten:
     // 1. Die Nummer (Option), für die der Pfad gemacht wird.
-    // 2. aus einer Sequenz von RealSteps
+    // 2. aus einer Sequenz von BackTrackRealSteps
     // 3. Der letzte Schritt ist ein OptonStep, wenn nicht vorher
     // ein Erfolg oder Unlösbarkeit eingetreten ist.
     constructor(value, ownerStep) {
         // Nie nummeer, für die dieser path entsteht
         this.myValue = value;
         //Die Schrittsequenz bestehend ausschließlich aus realsteps
-        this.myRealSteps = [];
+        this.myBackTrackRealSteps = [];
         //Weitere Hilfsattribute
-        this.myLastOptionStep; // Der Abschluss dies Pfades
+        this.myLastBackTrackOptionStep; // Der Abschluss dies Pfades
         this.myOwnerStep = ownerStep; // Der Optionstep, der diesen Pfad besitzt
     }
     options(currentIndex) {
@@ -900,7 +644,7 @@ class OptionPath {
         if (currentIndex > 0) {
             // Nur eine Option mitten im Pfad
             let tmpOption = {
-                value: this.myRealSteps[currentIndex].getValue(),
+                value: this.myBackTrackRealSteps[currentIndex].getValue(),
                 open: false
             }
             tmpOptions.push(tmpOption);
@@ -909,7 +653,7 @@ class OptionPath {
             if (this.myValue == '0') {
                 // Der Wurzelpfad
                 let tmpOption = {
-                    value: this.myRealSteps[currentIndex].getValue(),
+                    value: this.myBackTrackRealSteps[currentIndex].getValue(),
                     open: false
                 }
                 tmpOptions.push(tmpOption);
@@ -928,44 +672,44 @@ class OptionPath {
         }
     }
     isFinished() {
-        return (!(this.myLastOptionStep == null));
+        return (!(this.myLastBackTrackOptionStep == null));
     }
 
-    addRealStep(cellIndex, cellValue) {
+    addBackTrackRealStep(cellIndex, cellValue) {
         // Der neue Realstep wird in diesem Path angelegt
-        let realStep = new RealStep(this, this.myRealSteps.length, cellIndex, cellValue);
-        this.myRealSteps.push(realStep);
+        let realStep = new BackTrackRealStep(this, this.myBackTrackRealSteps.length, cellIndex, cellValue);
+        this.myBackTrackRealSteps.push(realStep);
         return realStep;
     }
 
-    addOptionStep(cellIndex, optionList) {
+    addBackTrackOptionStep(cellIndex, optionList) {
         // Der neue Optionstep wird in diesem Path angelegt
-        this.myLastOptionStep = new OptionStep(this, cellIndex, optionList);
-        // console.log("Tiefe " + this.myLastOptionStep.getDepth());
+        this.myLastBackTrackOptionStep = new BackTrackOptionStep(this, cellIndex, optionList);
+        // console.log("Tiefe " + this.myLastBackTrackOptionStep.getDepth());
         // Damit ist dieser Pfad beendet. Es kann nur in seinen Subpfaden weitergehen
-        return this.myLastOptionStep;
+        return this.myLastBackTrackOptionStep;
     }
 
     getValue() {
         return this.myValue;
     }
 
-    previousFromRealStep(currentIndex) {
-        // Rückwärts vom RealStep
+    previousFromBackTrackRealStep(currentIndex) {
+        // Rückwärts vom BackTrackRealStep
         if (currentIndex == 0) {
             return this.myOwnerStep;
         } else {
             // der vorige step liegt in diesem Path
-            return this.myRealSteps[currentIndex - 1];
+            return this.myBackTrackRealSteps[currentIndex - 1];
         }
     }
-    previousFromOptionStep() {
-        // Rückwärts vom OptionStep
+    previousFromBackTrackOptionStep() {
+        // Rückwärts vom BackTrackOptionStep
         // Es kann vorkommen, dass die realStep Sequenz leer ist
-        if (this.myRealSteps.length == 0) {
+        if (this.myBackTrackRealSteps.length == 0) {
             return this.myOwnerStep;
         } else
-            return this.myRealSteps[this.myRealSteps.length - 1];
+            return this.myBackTrackRealSteps[this.myBackTrackRealSteps.length - 1];
     }
 }
 
@@ -979,7 +723,7 @@ class AutomatedRunnerOnGrid {
 
     constructor(suGrid) {
         this.suGrid = suGrid;
-        this.myStepper;
+        this.myBackTracker;
         this.timer = false;
         this.execSpeed = 75;
         this.execSpeedLevel = 'very-fast';
@@ -996,8 +740,8 @@ class AutomatedRunnerOnGrid {
         this.countBackwards = 0;
         this.autoDirection = 'forward';
         this.levelOfDifficulty = 'Keine Angabe';
-        // Der Runner hat immer einen aktuellen Stepper
-        this.myStepper = new Stepper();
+        // Der Runner hat immer einen aktuellen BackTracker
+        this.myBackTracker = new BackTracker();
         this.displayStatus();
     }
 
@@ -1028,7 +772,7 @@ class AutomatedRunnerOnGrid {
     displayDepth() {
         let depth = document.getElementById("search-depth");
         let difficulty = document.getElementById("difficulty");
-        this.myStepper.getCurrentSearchDepth();
+        this.myBackTracker.getCurrentSearchDepth();
         depth.innerText = this.countBackwards;
         difficulty.innerText = this.levelOfDifficulty;
     }
@@ -1047,50 +791,6 @@ class AutomatedRunnerOnGrid {
 
     getAutoDirection() {
         return this.autoDirection;
-    }
-
-    setSpeed(value) {
-        switch (value) {
-            case 'very-slow': {
-                //Schritt pro 2 Sekunden
-                this.execSpeedLevel = value;
-                this.execSpeed = 2000;
-                break;
-            }
-            case 'slow': {
-                //Schritt pro 1 Sekunde
-                this.execSpeedLevel = value;
-                this.execSpeed = 1000;
-                break;
-            }
-            case 'normal': {
-                //Schritt pro 0,5 Sekunden
-                this.execSpeedLevel = value;
-                this.execSpeed = 500;
-                break;
-            }
-            case 'fast': {
-                //Schritt pro 0,25  Sekunden
-                this.execSpeedLevel = value;
-                this.execSpeed = 125;
-                break;
-            }
-            case 'very-fast': {
-                //Schritt pro 0,125  Sekunden
-                this.execSpeedLevel = value;
-                this.execSpeed = 75;
-                break;
-            }
-            default: {
-                alert('Softwarefehler: unbekannte Geschwindigkeitseingabe');
-            }
-        }
-        // Nur, wenn der Timer läuft
-        // Also nur im laufenden Betrieb.Denn sonst schaltet diese Operation den runner ein.
-        if (this.isRunning()) {
-            window.clearInterval(this.timer);
-            this.timer = window.setInterval(() => { sudoApp.runner.triggerAutoStep(); }, this.execSpeed);
-        }
     }
 
     isRunning() {
@@ -1141,7 +841,7 @@ class AutomatedRunnerOnGrid {
     }
 
     stepForward() {
-        let currentStep = this.myStepper.getCurrentStep();
+        let currentStep = this.myBackTracker.getCurrentStep();
         if (this.suGrid.indexSelected == -1) {
             // Annahmen:
             // a) Noch keine nächste Zelle für eine Nummernsetzung selektiert.
@@ -1153,12 +853,12 @@ class AutomatedRunnerOnGrid {
             // ====================================================================================
             // Aktion: Die nächste Zelle selektieren
             // ====================================================================================
-            // Aktion Fall 1: Der Stepper steht auf einem echten Optionstep (nicht die Wurzel), 
+            // Aktion Fall 1: Der BackTracker steht auf einem echten Optionstep (nicht die Wurzel), 
             // d.h.die nächste Selektion ist die nächste Option dieses Schrittes
-            if (currentStep instanceof OptionStep &&
+            if (currentStep instanceof BackTrackOptionStep &&
                 currentStep.getCellIndex() !== -1) {
                 // Lege einen neuen Step an mit der Nummer der nächsten Option
-                let realStep = this.myStepper.getNextRealStep();
+                let realStep = this.myBackTracker.getNextBackTrackRealStep();
                 // Selektiere die Zelle des Optionsteps, deren Index auch im neuen Realstep gespeichert ist
                 this.suGrid.indexSelect(realStep.getCellIndex());
                 return 'inProgress';
@@ -1183,15 +883,15 @@ class AutomatedRunnerOnGrid {
                 if (!(tmpValue == '0')) {
                     // Die Selektion hat eine eindeutige Nummer. D.h. es geht eindeutig weiter.
                     // Lege neuen Realstep mit der eindeutigen Nummer an
-                    this.myStepper.addRealStep(tmpSelection.index, tmpValue);
+                    this.myBackTracker.addBackTrackRealStep(tmpSelection.index, tmpValue);
                     return 'inProgress';
                 } else {
                     // =============================================================================
                     // Die Selektion hat keine eindeutige Nummer. D.h. es geht mit mehreren Optionen weiter.
-                    this.myStepper.addOptionStep(tmpSelection.index, tmpSelection.options.slice());
+                    this.myBackTracker.addBackTrackOptionStep(tmpSelection.index, tmpSelection.options.slice());
                     // Die erste Option des Optionsschrittes, wird gleich gewählt
                     // Neuer realstep mit der ersten Optionsnummer
-                    let realStep = this.myStepper.getNextRealStep();
+                    let realStep = this.myBackTracker.getNextBackTrackRealStep();
                     return 'inProgress';
                 }
             }
@@ -1216,8 +916,8 @@ class AutomatedRunnerOnGrid {
     stepBackward() {
         // Wenn die letzte gesetzte Nummer zur Unlösbarkeit des Sudokus führt, 
         // muss der Solver rückwärts gehen.
-        let currentStep = this.myStepper.getCurrentStep();
-        if (currentStep instanceof OptionStep) {
+        let currentStep = this.myBackTracker.getCurrentStep();
+        if (currentStep instanceof BackTrackOptionStep) {
             if (currentStep.getCellIndex() == -1) {
                 // Im Wurzel-Optionsschritt gibt es keine Option mehr
                 // Spielende, keine Lösung
@@ -1226,7 +926,7 @@ class AutomatedRunnerOnGrid {
             if (currentStep.isCompleted()) {
                 // Der Optionstep ist vollständig abgearbeitet
                 // Deshalb wird der Vorgänger dieses Optionsteps neuer aktueller Step
-                this.myStepper.previousStep();
+                this.myBackTracker.previousStep();
                 return this.stepBackward();
             } else {
                 // Es gibt noch nicht probierte Optionen
@@ -1234,7 +934,7 @@ class AutomatedRunnerOnGrid {
                 this.setAutoDirection('forward');
                 return this.stepForward();
             }
-        } else if (currentStep instanceof RealStep) {
+        } else if (currentStep instanceof BackTrackRealStep) {
             if (this.suGrid.indexSelected !== currentStep.getCellIndex()) {
                 // Fall 1: Keine oder eine falsch selektierte Zelle
                 this.suGrid.indexSelect(currentStep.getCellIndex());
@@ -1249,7 +949,7 @@ class AutomatedRunnerOnGrid {
                 this.goneSteps++;
                 this.suGrid.deleteSelected('play', false);
                 // Nach Löschen der Zelle den neuen aktuellen Schritt bestimmen
-                let prevStep = this.myStepper.previousStep();
+                let prevStep = this.myBackTracker.previousStep();
                 return 'inProgress'
             }
         }
@@ -1315,9 +1015,6 @@ class AutomatedRunnerOnGrid {
         }
         return emptySelection;
     }
-
-
-
 
     calculateOneOptionSelectionFrom(selectionList) {
         // Berechnet Selektion von Zellen, die genau eine zulässige Nummer enthalten.
@@ -1463,6 +1160,8 @@ class AutomatedRunnerOnGrid {
 }
 
 class NineCellCollection {
+    // Abstrakte Klasse, deren konkrete Instanzen
+    // eine Gruppe, Spalte oder Zeile der Matrix sind
     constructor(suTable) {
         // Die Collection kennt ihre Tabelle
         this.myGrid = suTable;
@@ -1482,7 +1181,6 @@ class NineCellCollection {
     }
 
     isInsolvable() {
-        // Wenn  eine Collection mit Conflicting Necessarys gibt, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
         return (
@@ -1894,25 +1592,6 @@ class SudokuGrid {
         return playedPuzzle;
     }
 
-    checkStateOk(state) {
-        let allowedNrs = new SudokuSet(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
-
-        for (let i = 0; i < 81; i++) {
-            if (!allowedNrs.has(state[i].cellValue)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    setCurrentState(previousState) {
-        for (let i = 0; i < 81; i++) {
-            let storedCell = previousState.shift();
-            this.sudoCells[i].manualSetValue(storedCell.cellValue, storedCell.cellPhase);
-        }
-        this.refresh();
-    }
-
     loadPuzzle(uid, puzzleObj) {
         this.loadedPuzzleId = uid;
         let puzzle = puzzleObj.puzzle;
@@ -2116,12 +1795,10 @@ class SudokuGrid {
         let c2 = this.derive_inAdmissiblesFromSingles();
         let c3 = this.derive_inAdmissiblesFromEqualPairs();
         let inAdmissiblesAdded = c1 || c2 || c3;
-        let durchlauf = 1;
         while (inAdmissiblesAdded) {
             let c1 = this.derive_inAdmissiblesFromSingles();
             let c2 = this.derive_inAdmissiblesFromEqualPairs();
             inAdmissiblesAdded = c1 || c2;
-            durchlauf++;
         }
     }
 
@@ -2372,8 +2049,6 @@ class SudokuGrid {
         return tmpInfluencers;
     }
 }
-
-
 
 class SudokuCell {
     constructor(suTable, index) {
@@ -2969,10 +2644,34 @@ class SudokuPuzzleDB {
             ['date', 'desc']
         ]);
 
+        //Click-Event für die Spaltenköpfe
+        document.getElementById('col-name').addEventListener('click', () => {
+            this.sort('name');
+        });
+        document.getElementById('col-defCount').addEventListener('click', () => {
+            this.sort('defCount');
+        });
+        document.getElementById('col-status').addEventListener('click', () => {
+            this.sort('status');
+        });
+        document.getElementById('col-steps-lazy').addEventListener('click', () => {
+            this.sort('steps-lazy');
+        });
+        document.getElementById('col-steps-strict').addEventListener('click', () => {
+            this.sort('steps-strict');
+        });
+        document.getElementById('col-level').addEventListener('click', () => {
+            this.sort('level');
+        });
+        document.getElementById('col-backTracks').addEventListener('click', () => {
+            this.sort('backTracks');
+        });
+        document.getElementById('col-date').addEventListener('click', () => {
+            this.sort('date');
+        });
     }
 
     sort(col) {
-
         // Hole den Speicher als ein Objekt
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
