@@ -770,10 +770,10 @@ class RunnerOnGrid {
     }
 
     displayDepth() {
-        let depth = document.getElementById("search-depth");
+        let bcNode = document.getElementById("backwards-count");
         let difficulty = document.getElementById("difficulty");
-        this.myBackTracker.getCurrentSearchDepth();
-        depth.innerText = this.countBackwards;
+       // this.myBackTracker.getCurrentSearchDepth();
+        bcNode.innerText = this.countBackwards;
         difficulty.innerText = this.levelOfDifficulty;
     }
 

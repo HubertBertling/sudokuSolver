@@ -32,7 +32,7 @@
                         <div class="name-value">
                             Rückwärtsläufe:
                         </div>
-                        <div class="name-value search-depth" id="search-depth">
+                        <div class="name-value eval-value" id="backwards-count">
                             0
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                         <div class="name-value">
                             Schwierigkeitsgrad:
                         </div>
-                        <div class="name-value search-depth" id="difficulty">
+                        <div class="name-value eval-value" id="difficulty">
                             0
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                             <div class="name-value">
                                 Schritte:
                             </div>
-                            <div class="name-value search-depth" id="step-count">
+                            <div class="name-value eval-value" id="step-count">
                                 0
                             </div>
                         </div>
@@ -151,6 +151,9 @@
                         </div>
                     </div>
                 </div>
+                <div class="mobile-help">
+                    <a id="help-link" href="./help.html">Hilfe</a>
+                </div>
             </div>
         </div>
         <div class="status-line">
@@ -206,8 +209,10 @@
                     class="forward-backward-image"></div>
             <div class="pz-btn" id="pz-btn-delete" onclick="sudoApp.deleteCurrentPuzzle()">Löschen</div>
         </div>
-        <p style="font-size: 1.6rem; font-weight: bold; margin-top: 40px;">Selektiertes Puzzle:</p>
-        <div class="pz-nr" id="pzNr">0</div>
+        <div class="puzzle-header">
+            <h1>Selektiertes Puzzle:</h1>
+            <div class="pz-nr" id="pzNr">0</div>               
+        </div>
         <div class="puzzle-line">
             <div>Puzzle: </div>
             <div class="pz-table" id="puzzle">
