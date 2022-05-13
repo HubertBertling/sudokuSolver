@@ -290,7 +290,14 @@ class SudokuApp {
             this.successDialog.close();
             this.puzzleSaveDialog.open();
         });
-    }
+        // Radio-Button Auswertung
+        let radioEvalNodes = document.querySelectorAll('.eval-type');
+        radioEvalNodes.forEach(radioNode => {
+            radioNode.addEventListener('click', () => {
+                this.suGrid.setEvalType(radioNode.value);
+            })
+        });
+     }
 
     init() {
         this.puzzleSaveDialog.close();
@@ -336,7 +343,6 @@ class SudokuApp {
             manualGroup.classList.add('on');
         }
     }
-
 
     setGamePhase(gamePhase) {
         if (gamePhase == 'play') {
@@ -1780,8 +1786,8 @@ class SudokuGrid {
         this.displayPuzzle('', '');
     }
 
-    setEvalType(myRadio) {
-        this.evalType = myRadio.value;
+    setEvalType(et) {
+        this.evalType = et;
         this.evaluateMatrix();
         // Erzeuge den dazugehörigen DOM-Tree
         this.display();
