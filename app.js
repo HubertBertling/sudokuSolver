@@ -316,7 +316,7 @@ class SudokuApp {
         this.setGamePhase('define');
         this.setAutoExecOff();
         // Ein neuer Runner wird angelegt und initialisert
-        this.runner = new AutomatedRunnerOnGrid(this.suGrid);
+        this.runner = new RunnerOnGrid(this.suGrid);
         this.runner.init();
         this.tabView.init();
     }
@@ -716,7 +716,7 @@ class BackTrackOptionPath {
 
 
 //=================================================
-class AutomatedRunnerOnGrid {
+class RunnerOnGrid {
     // Für die Sudoku-Matrix kann ein temporärer
     // Runner für die automatische Ausführung angelegt werde.
     // Jede neue automatische Ausführung erfolgt mit einem neuen Runner
