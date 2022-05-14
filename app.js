@@ -1270,7 +1270,7 @@ class NineCellCollection {
             // Wenn die Nummer i genau einmal in der Collection vorkommt
             // trage sie ein in der Necessary-liste der Zelle
             if (cellIndex !== -1) {
-                this.myCells[cellIndex].addNecessary(i.toString());
+                this.myCells[cellIndex].addNecessary(i.toString(), this);
                 added = true;
             }
         }
@@ -1285,7 +1285,7 @@ class NineCellCollection {
             // Wenn die Nummer i genau einmal in der Collection vorkommt
             // trage sie ein in der Necessary-liste der Zelle
             if (cellIndex !== -1) {
-                this.myCells[cellIndex].addNecessary(i.toString());
+                this.myCells[cellIndex].addNecessary(i.toString(), this);
             }
         }
     }
@@ -1939,7 +1939,6 @@ class SudokuGrid {
         // in der Menge ihrer möglichen Nummern die
         // notwendigen Nummern
         // Iteriere über die Gruppen
-        let added = false;
         for (let i = 0; i < 9; i++) {
             let tmpGroup = this.sudoGroups[i];
             if (tmpGroup.calculateNecessaryForNextStep()) return true;
@@ -2079,6 +2078,7 @@ class SudokuCell {
         this.myLevel_gt0_inAdmissibles = new SudokuSet();
         // Außer bei widerspruchsvollen Sudokus einelementig
         this.myNecessarys = new SudokuSet();
+        this.myNecessaryCollections = new Map();
     }
 
     setInfluencers(influencers) {
@@ -2193,6 +2193,7 @@ class SudokuCell {
         for (let i = 0; i < admissibleNodes.length; i++) {
             if (this.myNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
                 admissibleNodes[i].classList.add('neccessary');
+                
             }
 
         }
@@ -2412,7 +2413,11 @@ class SudokuCell {
 
     select() {
         this.myCellNode.classList.add('selected');
-        this.myInfluencers.forEach(e => e.setSelected());
+        // this.myInfluencers.forEach(e => e.setSelected());
+        if (this.myNecessarys.size > 0) {
+            let collection = this.myNecessaryCollections.get(Array.from(this.myNecessarys)[0]);
+            collection.myCells.forEach(e => e.setSelected());
+        }
     }
 
     setSelected() {
@@ -2475,8 +2480,9 @@ class SudokuCell {
     }
 
 
-    addNecessary(nr) {
+    addNecessary(nr, nineCellCollection) {
         this.myNecessarys.add(nr);
+        this.myNecessaryCollections.set(nr,nineCellCollection);
     }
 
     isInsolvable() {
