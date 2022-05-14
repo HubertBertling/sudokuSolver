@@ -266,6 +266,9 @@ body, html {
 .sudoku-grid-cell.hover {
     border: 3px solid var(--selected-cell-border-color);
 }
+.sudoku-grid-cell.hover-red {
+    border: 3px solid Crimson;
+}
 
 .sudoku-group.err {
     background-color: var(--error-cell-bg-color);

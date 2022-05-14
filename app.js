@@ -302,6 +302,7 @@ class SudokuApp {
         let radioEvalNodes = document.querySelectorAll('.eval-type');
         radioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
+                this.suGrid.deselect();
                 this.suGrid.setEvalType(radioNode.value);
             })
         });
@@ -1251,8 +1252,21 @@ class NineCellCollection {
                             let oldInAdmissibles = new SudokuSet(this.myCells[j].myLevel_gt0_inAdmissibles);
                             this.myCells[j].myLevel_gt0_inAdmissibles =
                                 this.myCells[j].myLevel_gt0_inAdmissibles.union(tmpIntersection);
-                            inAdmissiblesAdded = inAdmissiblesAdded ||
-                                !oldInAdmissibles.equals(this.myCells[j].myLevel_gt0_inAdmissibles);
+
+                            let localAdded = !oldInAdmissibles.equals(this.myCells[j].myLevel_gt0_inAdmissibles);
+                            inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
+                            if (localAdded) {
+                                let newInAdmissibles = 
+                                    this.myCells[j].myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
+                                newInAdmissibles.forEach(inAdNr => {
+                                    let inAdmissiblePairInfo = {
+                                        collection: this,
+                                        pairCell1: sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[0]],
+                                        pairCell2: sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[1]]
+                                    }
+                                    this.myCells[j].myLevel_gt0_inAdmissiblesPairs.set(inAdNr, inAdmissiblePairInfo);
+                                })
+                            }
                         }
                     }
                 }
@@ -2076,6 +2090,7 @@ class SudokuCell {
         // Speichert die aktuell unzulässigen Zahlen für diese Zelle
         this.myLevel_0_inAdmissibles = new SudokuSet();
         this.myLevel_gt0_inAdmissibles = new SudokuSet();
+        this.myLevel_gt0_inAdmissiblesPairs = new Map();
         // Außer bei widerspruchsvollen Sudokus einelementig
         this.myNecessarys = new SudokuSet();
         this.myNecessaryCollections = new Map();
@@ -2107,6 +2122,7 @@ class SudokuCell {
         this.myLevel_0_inAdmissibles = new SudokuSet();
         this.myLevel_gt0_inAdmissibles = new SudokuSet();
         this.myNecessarys = new SudokuSet();
+        this.myLevel_gt0_inAdmissiblesPairs = new Map();
     }
 
     calculate_level_0_inAdmissibles() {
@@ -2414,14 +2430,27 @@ class SudokuCell {
     select() {
         this.myCellNode.classList.add('selected');
         // this.myInfluencers.forEach(e => e.setSelected());
+        // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
+        // wird die verursachende collection angezeigt.
         if (this.myNecessarys.size > 0) {
             let collection = this.myNecessaryCollections.get(Array.from(this.myNecessarys)[0]);
             collection.myCells.forEach(e => e.setSelected());
+        } else if (this.myLevel_gt0_inAdmissibles.size == 1) {
+            // Nur anzeigen, wenn nur eine Nummer indirekt unzulässig ist
+            let pairInfo = this.myLevel_gt0_inAdmissiblesPairs.get(Array.from(this.myLevel_gt0_inAdmissibles)[0]);
+            pairInfo.collection.myCells.forEach(cell => {
+                cell.setSelected();
+            });
+            pairInfo.pairCell1.setRedSelected();  
+            pairInfo.pairCell2.setRedSelected();  
         }
     }
 
     setSelected() {
         this.myCellNode.classList.add('hover');
+    }
+    setRedSelected() {
+        this.myCellNode.classList.add('hover-red');
     }
 
     deselect() {
@@ -2430,6 +2459,7 @@ class SudokuCell {
     }
     unsetSelected() {
         this.myCellNode.classList.remove('hover');
+        this.myCellNode.classList.remove('hover-red');
     }
     getValue() {
         return this.myValue;
