@@ -268,7 +268,11 @@ body, html {
 }
 
 .sudoku-grid-cell.hover-red {
-    border: 3px solid Crimson;
+    border: 4px dashed Crimson;
+}
+
+.sudoku-grid-cell.hover-green {
+    border: 4px dashed darkgreen;
 }
 
 .sudoku-group.err {

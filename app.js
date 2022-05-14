@@ -773,7 +773,7 @@ class RunnerOnGrid {
     displayDepth() {
         let bcNode = document.getElementById("backwards-count");
         let difficulty = document.getElementById("difficulty");
-       // this.myBackTracker.getCurrentSearchDepth();
+        // this.myBackTracker.getCurrentSearchDepth();
         bcNode.innerText = this.countBackwards;
         difficulty.innerText = this.levelOfDifficulty;
     }
@@ -1256,7 +1256,7 @@ class NineCellCollection {
                             let localAdded = !oldInAdmissibles.equals(this.myCells[j].myLevel_gt0_inAdmissibles);
                             inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
                             if (localAdded) {
-                                let newInAdmissibles = 
+                                let newInAdmissibles =
                                     this.myCells[j].myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
                                 newInAdmissibles.forEach(inAdNr => {
                                     let inAdmissiblePairInfo = {
@@ -1264,7 +1264,7 @@ class NineCellCollection {
                                         pairCell1: sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[0]],
                                         pairCell2: sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[1]]
                                     }
-                                    this.myCells[j].myLevel_gt0_inAdmissiblesPairs.set(inAdNr, inAdmissiblePairInfo);
+                                    this.myCells[j].myLevel_gt0_inAdmissiblesFromPairs.set(inAdNr, inAdmissiblePairInfo);
                                 })
                             }
                         }
@@ -1851,8 +1851,14 @@ class SudokuGrid {
                 let oldInAdmissibles = new SudokuSet(this.sudoCells[i].myLevel_gt0_inAdmissibles);
                 this.sudoCells[i].myLevel_gt0_inAdmissibles =
                     this.sudoCells[i].myLevel_gt0_inAdmissibles.union(necessarysInContext);
-                inAdmissiblesAdded = inAdmissiblesAdded ||
-                    !oldInAdmissibles.equals(this.sudoCells[i].myLevel_gt0_inAdmissibles);
+
+                let localAdded = !oldInAdmissibles.equals(this.sudoCells[i].myLevel_gt0_inAdmissibles);
+                inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
+                if (localAdded) {
+                    let newInAdmissibles =
+                        this.sudoCells[i].myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
+                    this.sudoCells[i].myLevel_gt0_inAdmissiblesFromNecessarys = newInAdmissibles;
+                }
             }
         }
         return inAdmissiblesAdded;
@@ -1893,8 +1899,14 @@ class SudokuGrid {
                 } else {
                     this.sudoCells[i].myLevel_gt0_inAdmissibles =
                         this.sudoCells[i].myLevel_gt0_inAdmissibles.union(singlesInContext);
-                    inAdmissiblesAdded = inAdmissiblesAdded ||
-                        !oldInAdmissibles.equals(this.sudoCells[i].myLevel_gt0_inAdmissibles);
+                    
+                    let localAdded = !oldInAdmissibles.equals(this.sudoCells[i].myLevel_gt0_inAdmissibles);
+                    inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
+                    if (localAdded){
+                        let newInAdmissibles = 
+                            this.sudoCells[i].myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
+                        this.sudoCells[i].myLevel_gt0_inAdmissiblesFromSingles = newInAdmissibles;
+                    }
                 }
             }
         }
@@ -2090,7 +2102,10 @@ class SudokuCell {
         // Speichert die aktuell unzulässigen Zahlen für diese Zelle
         this.myLevel_0_inAdmissibles = new SudokuSet();
         this.myLevel_gt0_inAdmissibles = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesPairs = new Map();
+        this.myLevel_gt0_inAdmissiblesFromPairs = new Map();
+        this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
+        this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
+
         // Außer bei widerspruchsvollen Sudokus einelementig
         this.myNecessarys = new SudokuSet();
         this.myNecessaryCollections = new Map();
@@ -2122,7 +2137,10 @@ class SudokuCell {
         this.myLevel_0_inAdmissibles = new SudokuSet();
         this.myLevel_gt0_inAdmissibles = new SudokuSet();
         this.myNecessarys = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesPairs = new Map();
+        this.myLevel_gt0_inAdmissiblesFromPairs = new Map();
+        this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
+        this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
+
     }
 
     calculate_level_0_inAdmissibles() {
@@ -2209,7 +2227,7 @@ class SudokuCell {
         for (let i = 0; i < admissibleNodes.length; i++) {
             if (this.myNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
                 admissibleNodes[i].classList.add('neccessary');
-                
+
             }
 
         }
@@ -2429,20 +2447,51 @@ class SudokuCell {
 
     select() {
         this.myCellNode.classList.add('selected');
-        // this.myInfluencers.forEach(e => e.setSelected());
-        // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
-        // wird die verursachende collection angezeigt.
-        if (this.myNecessarys.size > 0) {
-            let collection = this.myNecessaryCollections.get(Array.from(this.myNecessarys)[0]);
-            collection.myCells.forEach(e => e.setSelected());
-        } else if (this.myLevel_gt0_inAdmissibles.size == 1) {
-            // Nur anzeigen, wenn nur eine Nummer indirekt unzulässig ist
-            let pairInfo = this.myLevel_gt0_inAdmissiblesPairs.get(Array.from(this.myLevel_gt0_inAdmissibles)[0]);
-            pairInfo.collection.myCells.forEach(cell => {
-                cell.setSelected();
-            });
-            pairInfo.pairCell1.setRedSelected();  
-            pairInfo.pairCell2.setRedSelected();  
+        if (sudoApp.suGrid.evalType == 'lazy') {
+            // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
+            // wird die verursachende collection angezeigt.
+            if (this.myNecessarys.size > 0) {
+                let collection = this.myNecessaryCollections.get(Array.from(this.myNecessarys)[0]);
+                collection.myCells.forEach(e => {
+                    if (e !== this) {
+                        e.setGreenSelected()
+                    }
+                });
+            } else if (this.myLevel_gt0_inAdmissiblesFromNecessarys.size > 0) {
+                //
+                this.myLevel_gt0_inAdmissiblesFromNecessarys.forEach(nr => {
+                    this.myInfluencers.forEach(cell => {
+                        cell.setSelected();
+                        if (cell.getNecessarys().has(nr)) {
+                            cell.setRedSelected();
+                        }
+                    })
+                })
+            } else if (this.myLevel_gt0_inAdmissiblesFromSingles.size > 0) {
+                //
+                this.myLevel_gt0_inAdmissiblesFromSingles.forEach(nr => {
+                    this.myInfluencers.forEach(cell => {
+                        cell.setSelected();
+                        if (cell.getSingles().has(nr)) {
+                            cell.setRedSelected();
+                        }
+                    })
+                })
+            } else if (this.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
+                // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
+                // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
+                // verursacht werden.
+                // Die Gruppe, Spalte oder Zeile des Paares wird markiert.
+                this.myLevel_gt0_inAdmissiblesFromPairs.forEach(pairInfo => {
+                    pairInfo.collection.myCells.forEach(cell => {
+                        if (cell !== this) {
+                            cell.setSelected();
+                        }
+                    });
+                    pairInfo.pairCell1.setRedSelected();
+                    pairInfo.pairCell2.setRedSelected();
+                })
+            }
         }
     }
 
@@ -2453,6 +2502,10 @@ class SudokuCell {
         this.myCellNode.classList.add('hover-red');
     }
 
+    setGreenSelected() {
+        this.myCellNode.classList.add('hover-green');
+    }
+
     deselect() {
         this.myCellNode.classList.remove('selected');
         this.myInfluencers.forEach(e => e.unsetSelected());
@@ -2460,6 +2513,7 @@ class SudokuCell {
     unsetSelected() {
         this.myCellNode.classList.remove('hover');
         this.myCellNode.classList.remove('hover-red');
+        this.myCellNode.classList.remove('hover-green');
     }
     getValue() {
         return this.myValue;
@@ -2512,7 +2566,7 @@ class SudokuCell {
 
     addNecessary(nr, nineCellCollection) {
         this.myNecessarys.add(nr);
-        this.myNecessaryCollections.set(nr,nineCellCollection);
+        this.myNecessaryCollections.set(nr, nineCellCollection);
     }
 
     isInsolvable() {
