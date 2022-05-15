@@ -2447,7 +2447,8 @@ class SudokuCell {
 
     select() {
         this.myCellNode.classList.add('selected');
-        if (sudoApp.suGrid.evalType == 'lazy') {
+    //      if (sudoApp.suGrid.evalType == 'lazy') {
+            if (true) {
             // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
             // wird die verursachende collection angezeigt.
             if (this.myNecessarys.size > 0) {
