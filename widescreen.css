@@ -464,6 +464,10 @@ body, html {
     color: var(--standard-btn-color);
 }
 
+#btn-autoStep {
+    height: 80px;
+}
+
 /*======================================*/
 /* Main button block */
 /*======================================*/

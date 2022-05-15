@@ -1849,14 +1849,19 @@ class SudokuGrid {
                     }
                 })
                 let oldInAdmissibles = new SudokuSet(this.sudoCells[i].myLevel_gt0_inAdmissibles);
+                // Nur zulässige können neu unzulässig werden.
+                let tmpAdmissibles = this.sudoCells[i].getAdmissibles();
+                let inAdmissiblesFromNecessarys = tmpAdmissibles.intersection(necessarysInContext);
+                // Die indirekt unzulässigen werden neu gesetzt
                 this.sudoCells[i].myLevel_gt0_inAdmissibles =
-                    this.sudoCells[i].myLevel_gt0_inAdmissibles.union(necessarysInContext);
+                    this.sudoCells[i].myLevel_gt0_inAdmissibles.union(inAdmissiblesFromNecessarys);
 
                 let localAdded = !oldInAdmissibles.equals(this.sudoCells[i].myLevel_gt0_inAdmissibles);
                 inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
                 if (localAdded) {
                     let newInAdmissibles =
                         this.sudoCells[i].myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
+                    // Die Liste der indirekt unzulässigen verursacht von necessarys wird gesetzt
                     this.sudoCells[i].myLevel_gt0_inAdmissiblesFromNecessarys = newInAdmissibles;
                 }
             }
@@ -1897,13 +1902,17 @@ class SudokuGrid {
                     // bereits auf der Collection-Ebene festgestellt werden kann.
                     // Auch ist auf der Collection-Ebene die Unlösbarkeit für den Anwender leichter verständlich.
                 } else {
+                    // Nur zulässige können neu unzulässig werden.
+                    let tmpAdmissibles = this.sudoCells[i].getAdmissibles();
+                    let inAdmissiblesFromSingles = tmpAdmissibles.intersection(singlesInContext);
+                    // Die indirekt unzulässigen werden neu gesetzt
                     this.sudoCells[i].myLevel_gt0_inAdmissibles =
-                        this.sudoCells[i].myLevel_gt0_inAdmissibles.union(singlesInContext);
-                    
+                        this.sudoCells[i].myLevel_gt0_inAdmissibles.union(inAdmissiblesFromSingles);
+
                     let localAdded = !oldInAdmissibles.equals(this.sudoCells[i].myLevel_gt0_inAdmissibles);
                     inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
-                    if (localAdded){
-                        let newInAdmissibles = 
+                    if (localAdded) {
+                        let newInAdmissibles =
                             this.sudoCells[i].myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
                         this.sudoCells[i].myLevel_gt0_inAdmissiblesFromSingles = newInAdmissibles;
                     }
@@ -2447,8 +2456,7 @@ class SudokuCell {
 
     select() {
         this.myCellNode.classList.add('selected');
-    //      if (sudoApp.suGrid.evalType == 'lazy') {
-            if (true) {
+        if (sudoApp.suGrid.evalType == 'lazy') {
             // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
             // wird die verursachende collection angezeigt.
             if (this.myNecessarys.size > 0) {
@@ -2458,8 +2466,12 @@ class SudokuCell {
                         e.setGreenSelected()
                     }
                 });
-            } else if (this.myLevel_gt0_inAdmissiblesFromNecessarys.size > 0) {
-                //
+                return;
+            } 
+            if (this.myLevel_gt0_inAdmissibles.size > 0 &&
+                this.myLevel_gt0_inAdmissiblesFromNecessarys.size > 0) {
+                // Wenn die selektierte Zelle eine rote Nummer enthält, die durch eine notwendige
+                // Nummer verursacht ist, wird dies angezeigt.
                 this.myLevel_gt0_inAdmissiblesFromNecessarys.forEach(nr => {
                     this.myInfluencers.forEach(cell => {
                         cell.setSelected();
@@ -2468,17 +2480,24 @@ class SudokuCell {
                         }
                     })
                 })
-            } else if (this.myLevel_gt0_inAdmissiblesFromSingles.size > 0) {
-                //
+            }
+            
+            if (this.myLevel_gt0_inAdmissibles.size > 0 &&
+                this.myLevel_gt0_inAdmissiblesFromSingles.size > 0) {
+                // Wenn die selektierte Zelle eine rote Nummer enthält, die durch eine Single
+                // verursacht ist, wird dies angezeigt.
                 this.myLevel_gt0_inAdmissiblesFromSingles.forEach(nr => {
                     this.myInfluencers.forEach(cell => {
                         cell.setSelected();
-                        if (cell.getSingles().has(nr)) {
+                        if (cell.getTotalSingles().has(nr)) {
                             cell.setRedSelected();
                         }
                     })
                 })
-            } else if (this.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
+            }
+            
+            if (this.myLevel_gt0_inAdmissibles.size > 0 &&
+                this.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
                 // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
                 // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
                 // verursacht werden.

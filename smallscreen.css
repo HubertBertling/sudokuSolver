@@ -464,6 +464,11 @@ body, html {
     color: var(--standard-btn-color);
 }
 
+
+#btn-autoStep {
+    height: 50px;
+}
+
 .settings {
     display: grid;
     grid-template-columns: 0.3fr 0.7fr;
