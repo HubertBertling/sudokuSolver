@@ -479,6 +479,13 @@ body, html {
     font-size: var(--font-size-btn);
 }
 
+.manual-exec-btns p {
+    font-size: 1.6rem;
+}
+.automatic-exec p {
+    font-size: 1.6rem;
+}
+
 .config-btns {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
