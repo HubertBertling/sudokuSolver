@@ -767,7 +767,9 @@ body, html {
         color: white;
 }
 
-
+.tabdatabase {
+    padding-bottom: 100px;
+}
   section {
     font-size: 1.4rem;
     position: relative;
