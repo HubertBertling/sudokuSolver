@@ -390,14 +390,14 @@ class SudokuApp {
 
         let playedPuzzle = this.suGrid.getPlayedPuzzle();
         //Speichere den named Zustand
-        this.sudokuPuzzleDB.saveNamedPuzzle(puzzleName, playedPuzzle);
+        this.sudokuPuzzleDB.saveNamedPuzzle(puzzleName, playedPuzzle); 
         document.getElementById("puzzle-db-tab").click();
     }
 
     savePuzzleMobile() {
         let playedPuzzle = this.suGrid.getPlayedPuzzle();
         //Speichere den named Zustand
-        this.sudokuPuzzleDB.saveNamedPuzzle('Mobile', playedPuzzle);
+        this.sudokuPuzzleDB.saveMobilePuzzle(playedPuzzle);
     }
 
     savePuzzleDlgCancelPressed() {
@@ -2912,6 +2912,13 @@ class SudokuPuzzleDB {
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
         this.selectedIndex = this.getIndex(selectedKey);
         this.display();
+    }
+
+    saveMobilePuzzle(playedPuzzle) {
+        let puzzleId = 'l2rcvi2mobile8h05azkg';
+        let puzzleObj = playedPuzzle.obj;
+            puzzleObj.name = 'mobile';
+        this.savePuzzle(puzzleId, puzzleObj);
     }
 
     saveNamedPuzzle(name, playedPuzzle) {
