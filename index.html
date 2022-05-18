@@ -22,149 +22,155 @@
     <button class="tablink tablinkhelp" id="puzzle-help-tab">Hilfe</button>
     <!--Der Inhalt des Reiters Sudoku-Solver-->
     <div id="sudoku-solver" class="tabcontent">
-        <div class="inputArea" id="inputArea">
-            <div class="gridArea" id="gridArea">
-                <div class="main-sudoku-grid" id="main-sudoku-grid">
-                    <!-- group 0 -->
-                </div>
-                <div class="evaluations">
-                    <div>
-                        <div class="name-value">
-                            Rückwärtsläufe:
-                        </div>
-                        <div class="name-value eval-value" id="backwards-count">
-                            0
-                        </div>
+        <div class="sudoku-solver-in-tab">
+            <div class="inputArea" id="inputArea">
+                <div class="gridArea" id="gridArea">
+                    <div class="main-sudoku-grid" id="main-sudoku-grid">
+                        <!-- group 0 -->
                     </div>
-                    <div>
-                        <div class="name-value">
-                            Schwierigkeitsgrad:
-                        </div>
-                        <div class="name-value eval-value" id="difficulty">
-                            0
-                        </div>
-                    </div>
-                </div>
-                <div class="progress-box" id="progress-box">
-                    <div class="progress-group">
-                        <div class="step-count-box">
+                    <div class="evaluations">
+                        <div>
                             <div class="name-value">
-                                Schritte:
+                                Rückwärtsläufe:
                             </div>
-                            <div class="name-value eval-value" id="step-count">
+                            <div class="name-value eval-value" id="backwards-count">
                                 0
                             </div>
                         </div>
-                        <div class="autoMode-radio-btns">
-                            <div class="backward" id="radio-backward">
-                                <img src="images/pfeilrueckwaerts.png" class="forward-backward-image">
+                        <div>
+                            <div class="name-value">
+                                Schwierigkeitsgrad:
                             </div>
-                            <div class="forward" id="radio-forward">
-                                <img src="images/pfeilvorwaerts.png" class="forward-backward-image">
+                            <div class="name-value eval-value" id="difficulty">
+                                0
                             </div>
                         </div>
-                        <div class="progress-bar" id="myProgress">
-                            <div id="myBarDef">20%</div>
-                            <div id="myBarPlay">70%</div>
-                            <div class="total-bar-value" id="total-bar-value">
-                                81
+                    </div>
+                    <div class="progress-box" id="progress-box">
+                        <div class="progress-group">
+                            <div class="step-count-box">
+                                <div class="name-value">
+                                    Schritte:
+                                </div>
+                                <div class="name-value eval-value" id="step-count">
+                                    0
+                                </div>
+                            </div>
+                            <div class="autoMode-radio-btns">
+                                <div class="backward" id="radio-backward">
+                                    <img src="images/pfeilrueckwaerts.png" class="forward-backward-image">
+                                </div>
+                                <div class="forward" id="radio-forward">
+                                    <img src="images/pfeilvorwaerts.png" class="forward-backward-image">
+                                </div>
+                            </div>
+                            <div class="progress-bar" id="myProgress">
+                                <div id="myBarDef">20%</div>
+                                <div id="myBarPlay">70%</div>
+                                <div class="total-bar-value" id="total-bar-value">
+                                    81
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="game-col2">
-                <div class="exec-btn-groups">
-                    <div class="exec-btn-group mode-btns">
-                        <div class="btn-define" id="btn-define">Definieren</div>
-                        <div class="btn-play" id="btn-play">Spielen</div>
-                    </div>
-                    <div class="exec-btn-group manual-exec-container">
-                        <div class="manual-exec-btns on" id="manual-exec-btns">
-                            <p style="font-weight: bold;">Manuelle Ausführung</p>
-                            <div class="numbers">
-                                <div class="number">1</div>
-                                <div class="number">2</div>
-                                <div class="number">3</div>
-                                <div class="number">4</div>
-                                <div class="number">5</div>
-                                <div class="number">6</div>
-                                <div class="number">7</div>
-                                <div class="number">8</div>
-                                <div class="number">9</div>
-                                <div class="delete" id="btn-delete-cell">X</div>
+                <div class="game-col2">
+                    <div class="exec-btn-groups">
+                        <div class="exec-btn-group mode-btns">
+                            <div class="btn-define" id="btn-define">Definieren</div>
+                            <div class="btn-play" id="btn-play">Spielen</div>
+                        </div>
+                        <div class="exec-btn-group manual-exec-container">
+                            <div class="manual-exec-btns on" id="manual-exec-btns">
+                                <p style="font-weight: bold;">Manuelle Ausführung</p>
+                                <div class="numbers">
+                                    <div class="number">1</div>
+                                    <div class="number">2</div>
+                                    <div class="number">3</div>
+                                    <div class="number">4</div>
+                                    <div class="number">5</div>
+                                    <div class="number">6</div>
+                                    <div class="number">7</div>
+                                    <div class="number">8</div>
+                                    <div class="number">9</div>
+                                    <div class="delete" id="btn-delete-cell">X</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="auto-exec-container">
-                        <div class="automatic-exec on" id="automatic-exec">
-                            <p style="font-weight: bold;">Automatische Ausführung</p>
-                            <div class="auto-exec-btns">
-                                <div class="btn-auto-group">
-                                    <div class="btn-automatic tooltip" id="btn-run"><img src="images/play-96.png"
-                                            class="btn-image">
-                                        <span class="tooltiptext">Start</span>
+                        <div class="auto-exec-container">
+                            <div class="automatic-exec on" id="automatic-exec">
+                                <p style="font-weight: bold;">Automatische Ausführung</p>
+                                <div class="auto-exec-btns">
+                                    <div class="btn-auto-group">
+                                        <div class="btn-automatic tooltip" id="btn-run"><img src="images/play-96.png"
+                                                class="btn-image">
+                                            <span class="tooltiptext">Start</span>
+                                        </div>
+                                        <div class="btn-automatic tooltip" id="btn-pause"><img src="images/pause-96.png"
+                                                class="btn-image">
+                                            <span class="tooltiptext">Pause</span>
+                                        </div>
+                                        <div class="btn-automatic tooltip" id="btn-stop"><img src="images/stop-96.png"
+                                                class="btn-image">
+                                            <span class="tooltiptext">Stop</span>
+                                        </div>
                                     </div>
-                                    <div class="btn-automatic tooltip" id="btn-pause"><img src="images/pause-96.png"
-                                            class="btn-image">
-                                        <span class="tooltiptext">Pause</span>
-                                    </div>
-                                    <div class="btn-automatic tooltip" id="btn-stop"><img src="images/stop-96.png"
-                                            class="btn-image">
-                                        <span class="tooltiptext">Stop</span>
-                                    </div>
-                                </div>
-                                <div class="btn-automatic tooltip" id="btn-autoStep">
+                                    <div class="btn-automatic tooltip" id="btn-autoStep">
                                         <img src="images/step-96.png" class="btn-image">
                                         <a>Schritt für Schritt</a>
                                         <a>das Puzzle lösen</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="main-btns">
-                    <p style="font-weight: bold;">Puzzle</p>
-                    <div class="config-btns">
-                        <div class="main-btn" id="btn-init">Initialisieren</div>
-                        <div class="main-btn" id="btn-reset">Zurücksetzen</div>
-                    </div>
-                    <div class="storage-btns">
-                        <div class="main-btn" id="btn-save">Speichern</div>
-                    </div>
-                </div>
-                <div class="settings">
-                    <p style="font-weight: bold;">Auswertung</p>
-                    <div class="evaluation">
-                        <div>
-                            <input type="radio" class="eval-type" id="lazy" name="auswertung" value="lazy" checked>
-                            <label for="lazy">Lazy</label>
+                    <div class="main-btns">
+                        <p style="font-weight: bold;">Puzzle</p>
+                        <div class="config-btns">
+                            <div class="main-btn" id="btn-init">Initialisieren</div>
+                            <div class="main-btn" id="btn-reset">Zurücksetzen</div>
                         </div>
-                        <div>
-                            <input type="radio" class="eval-type" id="strict-plus" name="auswertung"
-                                value="strict-plus">
-                            <label for="strict-plus">Strikt +</label>
+                        <div class="storage-btns">
+                            <div class="main-btn" id="btn-save">Speichern</div>
                         </div>
-                        <div>
-                            <input type="radio" class="eval-type" id="strict-minus" name="auswertung"
-                                value="strict-minus">
-                            <label for="strict-minus">Strikt -</label>
+                        <div class="storage-btns-mobile">
+                            <div class="main-btn" id="btn-save-mobile">Speichern</div>
+                            <div class="main-btn" id="btn-restore-mobile">Wiederherstellen</div>
                         </div>
                     </div>
-                </div>
-                <div class="mobile-help">
-                    <a id="help-link" href="./help.html">Hilfe</a>
+                    <div class="settings">
+                        <p style="font-weight: bold;">Auswertung</p>
+                        <div class="evaluation">
+                            <div>
+                                <input type="radio" class="eval-type" id="lazy" name="auswertung" value="lazy" checked>
+                                <label for="lazy">Lazy</label>
+                            </div>
+                            <div>
+                                <input type="radio" class="eval-type" id="strict-plus" name="auswertung"
+                                    value="strict-plus">
+                                <label for="strict-plus">Strikt +</label>
+                            </div>
+                            <div>
+                                <input type="radio" class="eval-type" id="strict-minus" name="auswertung"
+                                    value="strict-minus">
+                                <label for="strict-minus">Strikt -</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mobile-help">
+                        <a id="help-link" href="./help.html">Hilfe</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="status-line">
-            <div class="status-line-item">Puzzle-Id.: </div>
-            <div class="status-line-item">
-                <div class="pz-nr" id="pz-nr"></div>
-            </div>
-            <div class="status-line-item"> Puzzle-Name: </div>
-            <div class="status-line-item">
-                <div class="pz-name" id="pz-name"></div>
+            <div class="status-line">
+                <div class="name-value status-line-item">Puzzle-Id.: </div>
+                <div class="name-value status-line-item">
+                    <div class="pz-nr" id="pz-nr"></div>
+                </div>
+                <div class="name-value status-line-item"> Puzzle-Name: </div>
+                <div class="name-value status-line-item">
+                    <div class="pz-name" id="pz-name"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -212,7 +218,7 @@
         </div>
         <div class="puzzle-header">
             <h1>Selektiertes Puzzle:</h1>
-            <div class="pz-nr" id="pzNr">0</div>               
+            <div class="pz-nr" id="pzNr">0</div>
         </div>
         <div class="puzzle-line">
             <div>Puzzle: </div>
@@ -258,4 +264,5 @@
     </div>
     <script src="./app.js"></script>
 </body>
+
 </html>

@@ -298,7 +298,15 @@ class SudokuApp {
             this.successDialog.close();
             this.puzzleSaveDialog.open();
         });
-        // Radio-Button Auswertungstyp: Lazy, Strikt+ oder Strikt-
+        document.querySelector('#btn-save-mobile').addEventListener('click', () => {
+            this.runner.stopTimer();
+            this.successDialog.close();
+            this.savePuzzleMobile();
+        });
+        document.querySelector('#btn-restore-mobile').addEventListener('click', () => {
+            this.loadCurrentMobilePuzzle();
+        });
+          // Radio-Button Auswertungstyp: Lazy, Strikt+ oder Strikt-
         let radioEvalNodes = document.querySelectorAll('.eval-type');
         radioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
@@ -386,6 +394,12 @@ class SudokuApp {
         document.getElementById("puzzle-db-tab").click();
     }
 
+    savePuzzleMobile() {
+        let playedPuzzle = this.suGrid.getPlayedPuzzle();
+        //Speichere den named Zustand
+        this.sudokuPuzzleDB.saveNamedPuzzle('Mobile', playedPuzzle);
+    }
+
     savePuzzleDlgCancelPressed() {
         this.puzzleSaveDialog.close()
     }
@@ -402,6 +416,19 @@ class SudokuApp {
         this.setGamePhase('play');
         this.tabView.openGrid();
     }
+
+    loadCurrentMobilePuzzle() {
+        this.runner.stopTimer();
+        this.runner.init();
+        this.setAutoExecOff();
+        let puzzle = this.sudokuPuzzleDB.getSelectedPuzzle();
+        let uid = this.sudokuPuzzleDB.getSelectedUid();
+        this.suGrid.loadPuzzle(uid, puzzle);
+        this.runner.displayProgress();
+        this.setGamePhase('play');
+    }
+
+
     nextPuzzle() {
         this.sudokuPuzzleDB.nextPZ();
     }
