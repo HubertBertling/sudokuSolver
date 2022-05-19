@@ -422,7 +422,10 @@ class SudokuApp {
         this.runner.init();
         this.setAutoExecOff();
         let uid = 'l2rcvi2mobile8h05azkg';
-        let puzzle = this.sudokuPuzzleDB.getPuzzle(uid);
+        if (!this.sudokuPuzzleDB.has(uid)){
+            uid = this.sudokuPuzzleDB.getSelectedUid();
+        }
+        let puzzle = this.sudokuPuzzleDB.getPuzzle(uid);      
         this.suGrid.loadPuzzle(uid, puzzle);
         this.runner.displayProgress();
         this.setGamePhase('play');
