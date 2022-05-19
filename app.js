@@ -3195,6 +3195,12 @@ class SudokuPuzzleDB {
         let key = Array.from(puzzleMap.keys())[this.selectedIndex];
         return key;
     }
+    
+    has (uid) {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        return puzzleMap.has(uid);
+    }
 }
 
 class SudokuPuzzle {
