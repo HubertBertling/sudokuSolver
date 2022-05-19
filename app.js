@@ -421,8 +421,8 @@ class SudokuApp {
         this.runner.stopTimer();
         this.runner.init();
         this.setAutoExecOff();
-        let puzzle = this.sudokuPuzzleDB.getSelectedPuzzle();
-        let uid = this.sudokuPuzzleDB.getSelectedUid();
+        let uid = 'l2rcvi2mobile8h05azkg';
+        let puzzle = this.sudokuPuzzleDB.getPuzzle(uid);
         this.suGrid.loadPuzzle(uid, puzzle);
         this.runner.displayProgress();
         this.setGamePhase('play');
