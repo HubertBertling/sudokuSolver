@@ -154,7 +154,7 @@ class SudokuApp {
         this.autoExecOn = false;
 
         // Für eine automatische Lösungssuche legt die App
-        // einen Runner an. Für jede Ausführung einen neuen.
+        // einen Stepper an. Für jede Ausführung einen neuen.
         this.runner;
 
         // ==============================================================
@@ -179,7 +179,7 @@ class SudokuApp {
                 let btnNumber = (index + 1).toString();
                 if (this.autoExecOn) {
                     // Während der automatischen Ausführung Nummer gedrückt
-                    // Der Runner wird angehalten und beendet
+                    // Der Stepper wird angehalten und beendet
                     this.runner.stopTimer();
                     this.runner.init();
                     this.setAutoExecOff();
@@ -194,7 +194,7 @@ class SudokuApp {
         document.querySelector('#btn-delete-cell').addEventListener('click', () => {
             if (this.autoExecOn) {
                 // Während der automatischen Ausführung Delete-Taste gedrückt
-                // Der Runner wird angehalten und beendet
+                // Der Stepper wird angehalten und beendet
                 this.runner.stopTimer();
                 this.runner.init();
                 this.successDialog.close();
@@ -324,8 +324,8 @@ class SudokuApp {
         // 'automatic' 'manual'
         this.setGamePhase('define');
         this.setAutoExecOff();
-        // Ein neuer Runner wird angelegt und initialisert
-        this.runner = new RunnerOnGrid(this.suGrid);
+        // Ein neuer Stepper wird angelegt und initialisert
+        this.runner = new StepperOnGrid(this.suGrid);
         this.runner.init();
         this.tabView.init();
     }
@@ -498,6 +498,16 @@ class ProgressBar {
 
 //========================================================================
 class BackTracker {
+    // Der Backtracker realisiert eine Back-Tracking-Buchführung. Er wird vom
+    // Stepper genutzt, damit dieser in der Sequenz seiner Schritte einen
+    // Backtracking-Prozess realisieren kann. 
+    // Der Backtracker dokumentiert die vom Stepper durchgeführten Schritte, so dass
+    // sie bei Bedarf wieder rückgängig gemacht werden können.
+    // Schritte müssen rückgängig gemacht werden, wenn der letzte vollzogene Schritt des
+    // Steppers für das Puzzle eine Widerspruch aufgedeckt hat. Dann muss der Stepper
+    // mit Hilfe des Backtrackers solange rückwärts gehen, bis er einen Optionsschritt erreicht,
+    // an dem er beim ersten Besuch eine Option hatte. Nun startet er einen weiteren Versuch mit einer
+    // anderen Option des Optionsschrittes.
     constructor() {
         this.currentStep = new BackTrackOptionStep(null, -1, ['0']);
         this.maxDepth = 0;
@@ -747,10 +757,13 @@ class BackTrackOptionPath {
 
 
 //=================================================
-class RunnerOnGrid {
+class StepperOnGrid {
     // Für die Sudoku-Matrix kann ein temporärer
-    // Runner für die automatische Ausführung angelegt werde.
-    // Jede neue automatische Ausführung erfolgt mit einem neuen Runner
+    // Stepper für die automatische Ausführung angelegt werde.
+    // Jede neue automatische Ausführung erfolgt mit einem neuen Stepper.
+    // Der Stepper führt elementare Vorwärts- oder Rückwärtsschritte durch.
+    // Ein Vorwärtsschritt ist ein Aktionspaar (Zelle selektieren, Nummer setzen),
+    // ein Rückwärtsschritt ist ein Paar (Zelle selektieren, gesetzte Nummer zurücknehmen)
 
     constructor(suGrid) {
         this.suGrid = suGrid;
@@ -771,7 +784,7 @@ class RunnerOnGrid {
         this.countBackwards = 0;
         this.autoDirection = 'forward';
         this.levelOfDifficulty = 'Keine Angabe';
-        // Der Runner hat immer einen aktuellen BackTracker
+        // Der Stepper hat immer einen aktuellen BackTracker
         this.myBackTracker = new BackTracker();
         this.displayStatus();
     }
@@ -1214,9 +1227,23 @@ class NineCellCollection {
     isInsolvable() {
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
+        // Wenn es eine Collection gibt, in der nicht mehr alle Nummern vorkommen.
         return (
             this.withConflictingSingles() ||
-            this.withConflictingPairs());
+            this.withConflictingPairs() ||
+            this.withMissingNumber());
+    }
+
+    withMissingNumber() {
+        let myNumbers = new SudokuSet();
+        this.myCells.forEach(cell => {
+            if (cell.getValue() == '0') {
+                myNumbers = myNumbers.union(cell.getTotalAdmissibles());
+            } else {
+                myNumbers.add(cell.getValue());
+            }
+        })
+        return (myNumbers.size !== 9);
     }
 
     calculateEqualPairs() {
