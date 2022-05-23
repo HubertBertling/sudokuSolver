@@ -306,7 +306,7 @@ class SudokuApp {
         document.querySelector('#btn-restore-mobile').addEventListener('click', () => {
             this.loadCurrentMobilePuzzle();
         });
-          // Radio-Button Auswertungstyp: Lazy, Strikt+ oder Strikt-
+        // Radio-Button Auswertungstyp: Lazy, Strikt+ oder Strikt-
         let radioEvalNodes = document.querySelectorAll('.eval-type');
         radioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
@@ -390,7 +390,7 @@ class SudokuApp {
 
         let playedPuzzle = this.suGrid.getPlayedPuzzle();
         //Speichere den named Zustand
-        this.sudokuPuzzleDB.saveNamedPuzzle(puzzleName, playedPuzzle); 
+        this.sudokuPuzzleDB.saveNamedPuzzle(puzzleName, playedPuzzle);
         document.getElementById("puzzle-db-tab").click();
     }
 
@@ -422,10 +422,10 @@ class SudokuApp {
         this.runner.init();
         this.setAutoExecOff();
         let uid = 'l2rcvi2mobile8h05azkg';
-        if (!this.sudokuPuzzleDB.has(uid)){
+        if (!this.sudokuPuzzleDB.has(uid)) {
             uid = this.sudokuPuzzleDB.getSelectedUid();
         }
-        let puzzle = this.sudokuPuzzleDB.getPuzzle(uid);      
+        let puzzle = this.sudokuPuzzleDB.getPuzzle(uid);
         this.suGrid.loadPuzzle(uid, puzzle);
         this.runner.displayProgress();
         this.setGamePhase('play');
@@ -1231,7 +1231,32 @@ class NineCellCollection {
         return (
             this.withConflictingSingles() ||
             this.withConflictingPairs() ||
+            this.withConflictingNecessaryNumbers() ||
             this.withMissingNumber());
+    }
+
+    withConflictingNecessaryNumbers() {
+        let numberCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let found = false;
+        for (let i = 0; i < 9; i++) {
+            if (this.myCells[i].getValue() == '0') {
+                // Wir betrachten nur offene Zellen
+                let necessarys = this.myCells[i].getNecessarys();
+                if (necessarys.size == 1) {
+                    necessarys.forEach(nr => {
+                        let iNr = parseInt(nr);
+                        numberCounts[iNr - 1]++;
+                        if (numberCounts[iNr - 1] > 1) {
+                            found = true;
+                        };
+                    });
+                }
+            }
+            // Wenn wir den ersten Konflikt gefunden haben, können wir die Suche
+            // abbrechen. 
+            if (found) return true;
+        }
+        return false;
     }
 
     withMissingNumber() {
@@ -2524,7 +2549,7 @@ class SudokuCell {
                     }
                 });
                 return;
-            } 
+            }
             if (this.myLevel_gt0_inAdmissibles.size > 0 &&
                 this.myLevel_gt0_inAdmissiblesFromNecessarys.size > 0) {
                 // Wenn die selektierte Zelle eine rote Nummer enthält, die durch eine notwendige
@@ -2538,7 +2563,7 @@ class SudokuCell {
                     })
                 })
             }
-            
+
             if (this.myLevel_gt0_inAdmissibles.size > 0 &&
                 this.myLevel_gt0_inAdmissiblesFromSingles.size > 0) {
                 // Wenn die selektierte Zelle eine rote Nummer enthält, die durch eine Single
@@ -2552,7 +2577,7 @@ class SudokuCell {
                     })
                 })
             }
-            
+
             if (this.myLevel_gt0_inAdmissibles.size > 0 &&
                 this.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
                 // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
@@ -2651,7 +2676,7 @@ class SudokuCell {
             // Für die nicht gesetzte Zelle ist die Anzahl notwendiger Nummern größer 1
             (this.getValue() == '0' && this.myNecessarys.size > 1) ||
             // Eine notwendige Nummer ist gleichzeitig unzulässig      
-            this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0 ||
+            // this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0 ||
             // Für die Zelle gibt es keine total zulässige Nummer mehr.
             this.getTotalAdmissibles().size == 0 ||
             // Die Nummer der gesetzten Zelle ist nicht zulässig.
@@ -2947,7 +2972,7 @@ class SudokuPuzzleDB {
     saveMobilePuzzle(playedPuzzle) {
         let puzzleId = 'l2rcvi2mobile8h05azkg';
         let puzzleObj = playedPuzzle.obj;
-            puzzleObj.name = 'mobile';
+        puzzleObj.name = 'mobile';
         this.savePuzzle(puzzleId, puzzleObj);
     }
 
@@ -3222,8 +3247,8 @@ class SudokuPuzzleDB {
         let key = Array.from(puzzleMap.keys())[this.selectedIndex];
         return key;
     }
-    
-    has (uid) {
+
+    has(uid) {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         return puzzleMap.has(uid);

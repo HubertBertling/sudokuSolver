@@ -268,8 +268,11 @@ body, html {
 
 
 .nested>div.neccessary.inAdmissible {
-    background:blueviolet;
+    /* background:blueviolet; */
+    color: #0d1117;
+    background-color: #56c7aa;
 }
+
 
 
 .sudoku-grid-cell.hover {
