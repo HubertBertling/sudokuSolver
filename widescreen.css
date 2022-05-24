@@ -28,7 +28,7 @@
     --error-cell-color: white;
 
      /* Other definitions */
-    --sudoku-cell-size: 60px;
+    --sudoku-cell-size: 68px;
     --border-radius: 10px;
     --space-y: 20px;
     --font-size-btn: 1.6rem;
@@ -182,54 +182,65 @@ body, html {
     color: var(--played-cell-color);
 }
 
-.sudoku-grid-cell.auto-value {
+
+.auto-step-number { grid-area: step; }
+.auto-value-number { grid-area: value; }
+.auto-value-option1 { grid-area: option1; }
+.auto-value-option2 { grid-area: option2; }
+.auto-value-option3 { grid-area: option3; }
+
+.auto-value-cell {
     display: grid;
    /* grid-template-columns: 0.1fr 0.9fr; */
-    grid-template-columns: 0.1fr 1.2fr;
-    place-items: center;
-    font-size: 1.2rem;
-    background-color: var(--played-cell-bg-color);
+    grid-template-areas:
+    'step value value value'
+    'step option1 option2 option3';
+    gap: 2px;
+    padding: 2px;
+    border-radius: 3px;
+    height: 58px;
+    width: 58px;
+    background-color: black ;
     color: var(--played-cell-color);
  }
-.auto-step-number {
-    padding-left:1px;
-    padding-right: 1px;
-    font-size: 1.0rem;
-}
-.autoValuePair {
-    display: grid;
-    grid-template-columns: 1fr;
-    place-items: center;
-    font-size: 1.2rem;
-    border-left: 2px solid var(--nested-cell-bg-color); 
-    padding-left: 2px;
+
+ .auto-value-cell > div {
+     text-align: center; 
+     padding: 2px;
+     background-color:var(--played-cell-bg-color);
 }
 
-.auto-value {
-    padding: 2px;
-    padding-left: 5px;
-    padding-right: 5px;
-    font-size: 1.8rem;
-    font-weight: bold;
+.auto-value-cell > div.auto-step-number {
+    background-color: grey; 
+    color: white;
+    font-size: 0.9rem;
 }
 
-.value-options{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    place-items: center;
-    border-top: 2px solid var(--nested-cell-bg-color);
+.auto-value-cell > div.auto-value-number {
+    font-size: 1.6rem;
+ }
+
+ .auto-value-cell > div.auto-value-option1 {
     font-size: 1.2rem;
-    padding-top: 2px;
-    padding-left: 1px;
-}
+ }
+ .auto-value-cell > div.auto-value-option2 {
+    font-size: 1.2rem;
+ }
+ .auto-value-cell > div.auto-value-option3 {
+    font-size: 1.2rem;
+ }
+
+ .auto-value-cell > div.open {
+    background-color: var(--nested-cell-bg-color); 
+ }
+
+
+/*
 .open {
-  /*  background-color: var(--nested-cell-bg-color); */
+    background-color: var(--nested-cell-bg-color); 
     color: var(--nested-cell-bg-color); 
-    padding-left:1px;
-    padding-right: 1px;
-}
-
+  }
+*/
 
 
 .sudoku-grid-cell.nested {

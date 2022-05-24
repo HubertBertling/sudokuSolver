@@ -29,8 +29,7 @@
     --error-cell-color: white;
 
      /* Other definitions */
-    --nav-size: 50px;
-    --sudoku-cell-size: 40px;
+    --sudoku-cell-size: 48px;
     --border-radius: 5px;
     --space-y: 20px;
     --gap: 5px;
@@ -177,51 +176,84 @@ body, html {
     color: var(--played-cell-color);
 }
 
-.sudoku-grid-cell.auto-value {
+
+
+
+.auto-step-number { grid-area: step; }
+.auto-value-number { grid-area: value; }
+.auto-value-option1 { grid-area: option1; }
+.auto-value-option2 { grid-area: option2; }
+.auto-value-option3 { grid-area: option3; }
+
+.auto-value-cell {
     display: grid;
    /* grid-template-columns: 0.1fr 0.9fr; */
-    grid-template-columns: 0.1fr 1.2fr;
-    place-items: center;
-    font-size: 1.0rem;
-    background-color: var(--played-cell-bg-color);
+    grid-template-areas:
+    'step value value value'
+    'step option1 option2 option3';
+    gap: 1px;
+    padding: 1px;
+    border-radius: 2px;
+    height: 38px;
+    width: 38px;
+    background-color: black ;
     color: var(--played-cell-color);
  }
-.auto-step-number {
-    padding-left:1px;
-    padding-right: 1px;
-    font-size: 1.0rem;
-}
-.autoValuePair {
-    display: grid;
-    grid-template-columns: 1fr;
-    place-items: center;
-    border-left: 2px solid var(--nested-cell-bg-color); 
-    padding-left: 1px;
+
+ .auto-value-cell > div {
+     text-align: center; 
+     padding: 1px;
+     background-color:var(--played-cell-bg-color);
 }
 
-.auto-value {
-    padding-left: 2px;
-    padding-right: 1px;
+.auto-value-cell > div.auto-step-number {
+    background-color: grey; 
+    color: white;
+    font-size: 0.9rem;
+}
+
+.auto-value-cell > div.auto-value-number {
     font-size: 1.2rem;
-    font-weight: bold;
-}
+ }
 
-.value-options{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    place-items: center;
-    border-top: 2px solid var(--nested-cell-bg-color);
-    font-size: 1.0rem;
-    padding-top: 1px;
-    padding-left: 1px;
-}
-.open {
-  /*  background-color: var(--nested-cell-bg-color); */
-    color: var(--nested-cell-bg-color); 
-    padding-left:1px;
-    padding-right: 1px;
-}
+ .auto-value-cell > div.auto-value-option1 {
+    font-size: 0.9rem;
+ }
+ .auto-value-cell > div.auto-value-option2 {
+    font-size: 0.9rem;
+ }
+ .auto-value-cell > div.auto-value-option3 {
+    font-size: 0.9rem;
+ }
+
+ .auto-value-cell > div.open {
+    background-color: var(--nested-cell-bg-color); 
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

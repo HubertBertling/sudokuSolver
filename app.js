@@ -2348,72 +2348,114 @@ class SudokuCell {
         this.myCellNode.innerHTML = this.myValue;
     }
 
-    displayAutoStepNumber() {
+    displayAutoStepNumber(autoValueCellNode) {
         // Die step-Nummer, also die wievielte Nummer wird gesetzt
         let autoStepNumberElement = document.createElement('div');
         autoStepNumberElement.setAttribute('class', 'auto-step-number');
         autoStepNumberElement.innerHTML = this.myAutoStepNumber;
-        this.myCellNode.appendChild(autoStepNumberElement);
+        autoValueCellNode.appendChild(autoStepNumberElement);
     }
 
-    displaySubValueNode() {
+    displaySubValueNode(autoValueCellNode) {
         // Die gesetzte Nummer im Tripel
         let cellNumberElement = document.createElement('div');
-        cellNumberElement.setAttribute('data-value', this.myValue);
-        cellNumberElement.setAttribute('class', 'auto-value');
+        cellNumberElement.setAttribute('class', 'auto-value-number');
         cellNumberElement.innerHTML = this.myValue;
-        return cellNumberElement;
+        autoValueCellNode.appendChild(cellNumberElement);
     }
 
-    displayOptions() {
+    displayOptions(autoValueCellNode) {
         // Die optionalen Elemente dieser Zelle
-        let optionNode = document.createElement('div');
-        optionNode.setAttribute('class', 'value-options');
-        let optionLength = this.myOptions.length;
-        if (optionLength > 2) {
-            let startIndex = optionLength - 2;
-            // Lange Liste beginnt mit Sternchen
-            let optionNumberElement = document.createElement('div');
-            optionNumberElement.setAttribute('data-value', '*');
-            optionNumberElement.innerHTML = '*';
-            optionNumberElement.setAttribute('class', 'open');
-            optionNode.appendChild(optionNumberElement);
-            //Die zwei weiteren der Liste
-            for (let i = startIndex; i < this.myOptions.length; i++) {
-                let option = this.myOptions[i];
-                let optionNumberElement = document.createElement('div');
-                optionNumberElement.setAttribute('data-value', option.value);
-                if (option.open) {
-                    optionNumberElement.setAttribute('class', 'open');
-                }
-                optionNumberElement.innerHTML = option.value;
-                optionNode.appendChild(optionNumberElement);
-            }
-        } else {
-            // <= 2 Optionen
-            for (let i = 0; i < this.myOptions.length; i++) {
-                let option = this.myOptions[i];
-                let optionNumberElement = document.createElement('div');
-                optionNumberElement.setAttribute('data-value', option.value);
-                if (option.open) {
-                    optionNumberElement.setAttribute('class', 'open');
-                }
-                optionNumberElement.innerHTML = option.value;
-                optionNode.appendChild(optionNumberElement);
-            }
-        }
-        return optionNode;
-    }
 
-    displayAutoValuePair(subValueNode, optionsNode) {
-        // Das Paar aus der Nummer und den möglchen Nummern
-        let autoValuePair = document.createElement('div');
-        autoValuePair.setAttribute('class', 'autoValuePair');
-        autoValuePair.appendChild(subValueNode);
-        if (this.myOptions.length > 1) {
-            autoValuePair.appendChild(optionsNode);
+        //    let optionNode = document.createElement('div');
+        //    optionNode.setAttribute('class', 'value-options');
+
+        let optionLength = this.myOptions.length;
+
+        if (optionLength > 2) {
+            // 3 Optionen werden optisch dargestellt
+            // Die erste Option
+            let option = this.myOptions[this.myOptions.length-1];
+            let optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option1');
+            if (option.open) {
+                optionNumberElement.classList.add('open');
+            }
+            optionNumberElement.innerHTML = option.value;
+            autoValueCellNode.appendChild(optionNumberElement);
+
+            // Die zweite Option
+            option = this.myOptions[this.myOptions.length-2];
+            optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option2');
+            if (option.open) {
+                optionNumberElement.classList.add('open');
+            }
+            optionNumberElement.innerHTML = option.value;
+            autoValueCellNode.appendChild(optionNumberElement);
+
+            // Die dritte Option
+            // option = this.myOptions[1];
+            optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option3');
+            optionNumberElement.classList.add('open');
+            optionNumberElement.innerHTML = '*';
+            autoValueCellNode.appendChild(optionNumberElement);
+        } else if (optionLength == 2) {
+            // 2 Optionen werden optisch dargestellt
+            // Die erste Option
+            let option = this.myOptions[this.myOptions.length-1];
+            let optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option1');
+            if (option.open) {
+                optionNumberElement.classList.add('open');
+            }
+            optionNumberElement.innerHTML = option.value;
+            autoValueCellNode.appendChild(optionNumberElement);
+
+            // Die zweite Option
+            option = this.myOptions[this.myOptions.length-2];
+            optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option2');
+            if (option.open) {
+                optionNumberElement.classList.add('open');
+            }
+            optionNumberElement.innerHTML = option.value;
+            autoValueCellNode.appendChild(optionNumberElement);
+
+            // Die dritte Option
+            // option = this.myOptions[1];
+            optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option3');
+            optionNumberElement.innerHTML = '-';
+            autoValueCellNode.appendChild(optionNumberElement);
+
+        } else {
+            // Es gibt nur eine Option
+            // Die erste Option
+            let option = this.myOptions[0];
+            let optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option1');
+            if (option.open) {
+                optionNumberElement.classList.add('open');
+            }
+            optionNumberElement.innerHTML = option.value;
+            autoValueCellNode.appendChild(optionNumberElement);
+
+            // Die zweite Option
+            optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option2');
+            optionNumberElement.innerHTML = '-';
+            autoValueCellNode.appendChild(optionNumberElement);
+
+            // Die dritte Option
+            // option = this.myOptions[1];
+            optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option3');
+            optionNumberElement.innerHTML = '-';
+            autoValueCellNode.appendChild(optionNumberElement);
         }
-        return autoValuePair;
+
     }
 
     displayAutoValue() {
@@ -2421,11 +2463,17 @@ class SudokuCell {
         this.myCellNode.setAttribute('data-value', this.myValue);
         // Automatisch gesetzte Nummer
         this.myCellNode.classList.add('auto-value');
-        this.displayAutoStepNumber();
-        let subValueNode = this.displaySubValueNode();
-        let optionsNode = this.displayOptions();
-        let autoValuePair = this.displayAutoValuePair(subValueNode, optionsNode);
-        this.myCellNode.appendChild(autoValuePair);
+
+        // Neuer Knotentyp für aut.values
+        let autoValueCellNode = document.createElement("div");
+        autoValueCellNode.setAttribute("class", "auto-value-cell");
+        this.myCellNode.appendChild(autoValueCellNode);
+        // Die Schrittnummer setzen
+        this.displayAutoStepNumber(autoValueCellNode);
+        // Die automatische Nummer setzen
+        this.displaySubValueNode(autoValueCellNode);
+        // Die Optionen
+        this.displayOptions(autoValueCellNode);
     }
 
     displayManualValue() {
