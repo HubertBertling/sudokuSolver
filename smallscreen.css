@@ -196,7 +196,7 @@ body, html {
     border-radius: 2px;
     height: 36px;
     width: 36px;
-    background-color: black ;
+    background-color: grey ;
     color: var(--played-cell-color);
  }
 
@@ -207,8 +207,8 @@ body, html {
 }
 
 .auto-value-cell > div.auto-step-number {
-    background-color: grey; 
-    color: white;
+    background-color: darkgrey; 
+    color: black;
     font-size: 0.9rem;
 }
 
