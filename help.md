@@ -172,7 +172,7 @@ Der Solver prüft nach der Setzung einer neuen Nummer, ob das Sudoku mit dieser 
 
 ### Vergleich der Ausführungsmodi Lazy und Strikt
 
-**Plus der Lazy-Auswertung: Nachvollziehbarkeit des Lösungsweges.** Die Lazy-Auswertung ist vorteilhaft, wenn man den Lösungsweg im Einzelnen nachvollziehen will. Es werden nur indirekt unzulässige Nummern berechnet und angezeigt, die für den nächsten Schritt relevant sind. Für diese wenigen indirekt unzulässigen Nummern ist ihre Verursachung leicht darstellbar und damit verstehbar, beispielsweise ein Pairing. 
+**Plus der Lazy-Auswertung: Nachvollziehbarkeit des Lösungsweges.** Die Lazy-Auswertung ist vorteilhaft, wenn man den Lösungsweg im Einzelnen nachvollziehen will. Es werden nur indirekt unzulässige Nummern berechnet und angezeigt, die für den nächsten Schritt relevant sind. Für diese wenigen indirekt unzulässigen Nummern ist ihre Verursachung leicht darstellbar und damit verstehbar, beispielsweise ein Pairing.
 
 |   |   |
 |-------|--------|
