@@ -194,8 +194,8 @@ body, html {
     gap: 1px;
     padding: 1px;
     border-radius: 2px;
-    height: 38px;
-    width: 38px;
+    height: 36px;
+    width: 36px;
     background-color: black ;
     color: var(--played-cell-color);
  }
@@ -213,17 +213,17 @@ body, html {
 }
 
 .auto-value-cell > div.auto-value-number {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
  }
 
  .auto-value-cell > div.auto-value-option1 {
-    font-size: 0.9rem;
+    font-size: 1rem;
  }
  .auto-value-cell > div.auto-value-option2 {
-    font-size: 0.9rem;
+    font-size: 1rem;
  }
  .auto-value-cell > div.auto-value-option3 {
-    font-size: 0.9rem;
+    font-size: 1rem;
  }
 
  .auto-value-cell > div.open {
