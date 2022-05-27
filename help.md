@@ -134,7 +134,7 @@ Widerspruch - Single mehrfach:
 So wie es widerspruchsvolle Zellen geben kann - erkennbar an ihrem roten Hintergrund - so kann es auch widerspruchsvolle Gruppen geben. Eine Gruppe ist widerspruchsvoll, wenn eine der folgenden Bedingungen vorliegt:
 
 1. **Widerspruch - Single mehrfach:** Eine Nummer soll gleichzeitig in verschiedene Zellen der Gruppe gesetzt werden wie die 3 im Beispiel.
-1. **Widerspruch - Pairing:** Wegen des Paares {2 9} im nachfolgenden Beispiel ist die einzelne 2 in der Gruppe widersprüchlich. Die 2 mußß in einer der beiden Paarzellen gesetzt werden. Wenn sie zusätzlich noch einmal einzeln gesetzt würde, würde sie mehrfach erscheinen, ein Widerspruch. Im zweiten Beispiel kommt kommt das Paar {1 9} dreimal vor. Ebenfalls ein Widerspruch.
+1. **Widerspruch - Pairing:** Wegen des Paares {2 9} im nachfolgenden Beispiel ist die einzelne 2 in der Gruppe widersprüchlich. Die 2 muss in einer der beiden Paarzellen gesetzt werden. Wenn sie zusätzlich noch einmal einzeln gesetzt würde, würde sie mehrfach erscheinen, ein Widerspruch. Im zweiten Beispiel kommt kommt das Paar {1 9} dreimal vor. Ebenfalls ein Widerspruch.
 1. **Widerspruch - Dieselbe notwendige Nummer zweimal:** In der Gruppe tritt dieselbe Nummer in verschiedenen Zellen als notwendig auf.
 1. **Widerspruch - Fehlende Nummer:** In der Gruppe kommt eine Nummer überhaupt nicht vor. Im ersten Beispiel eines Pairing-Widerspruchs fehlt die 4 und im zweiten Beispiel die 3.
 
