@@ -1496,7 +1496,20 @@ class SudokuGroup extends NineCellCollection {
         //Neue Gruppe in den Baum einhängen
         domGridNode.appendChild(groupNode);
         this.myGroupNode = groupNode;
-        if (this.isInsolvable()) {
+
+        // Die Zellen der Gruppe werden angezeigt
+        this.myCells.forEach(sudoCell => {
+            sudoCell.display(groupNode);
+        })
+        let cellError = false;
+        this.myCells.every(sudoCell => {
+            if (sudoCell.isInsolvable()) {
+                cellError = true;
+                return false;
+            }
+            return true;
+        });
+        if (this.isInsolvable() && !cellError) {
             this.myGroupNode.classList.add('err');
             this.myGroupNode.classList.add('cell-err');
             setTimeout(() => {
@@ -1505,10 +1518,6 @@ class SudokuGroup extends NineCellCollection {
         } else {
             this.myGroupNode.classList.remove('err');
         }
-        // Die Zellen der Gruppe werden angezeigt
-        this.myCells.forEach(sudoCell => {
-            sudoCell.display(groupNode);
-        })
     }
 
     clearEvaluations() {
@@ -1541,9 +1550,20 @@ class SudokuRow extends NineCellCollection {
     }
 
     display() {
-        // Der Error Status wid in den Zellen angezeigt
+        // Der Error Status der Reihe wird in den Zellen angezeigt
+        // Aber nur, wenn die Zellen selbst keinen Fehler aufweisen.
+        let cellError = false;
+        this.myCells.every(sudoCell => {
+            if (sudoCell.isInsolvable()) {
+                cellError = true;
+                return false;
+            }
+            return true;
+        });
         this.myCells.forEach(sudoCell => {
-            sudoCell.displayRowError(this.isInsolvable());
+            if (!cellError) {
+                sudoCell.displayRowError(this.isInsolvable());
+            }
         })
     }
 }
@@ -1555,8 +1575,19 @@ class SudokuCol extends NineCellCollection {
     }
     display() {
         // Der Error Status wid in den Zellen angezeigt
+        // Aber nur, wenn die Zellen selbst keinen Fehler aufweisen.
+        let cellError = false;
+        this.myCells.every(sudoCell => {
+            if (sudoCell.isInsolvable()) {
+                cellError = true;
+                return false;
+            }
+            return true;
+        });
         this.myCells.forEach(sudoCell => {
-            sudoCell.displayColError(this.isInsolvable());
+            if (!cellError) {
+                sudoCell.displayColError(this.isInsolvable());
+            }
         })
     }
 }
@@ -2505,7 +2536,7 @@ class SudokuCell {
         this.myCellNode.addEventListener('click', () => {
             sudoApp.sudokuCellPressed(this, this.myIndex);
         });
-        this.displayCellContent();
+        return this.displayCellContent();
     }
 
     displayCellContent() {
@@ -2524,7 +2555,7 @@ class SudokuCell {
                 this.displayManualValue();
             }
         }
-        this.displayError();
+        return this.displayError();
     }
 
 
@@ -2558,8 +2589,10 @@ class SudokuCell {
             setTimeout(() => {
                 this.myCellNode.classList.remove('cell-err');
             }, 500);
+            return true;
         } else {
             this.myCellNode.classList.remove('err');
+            return false;
         }
     }
 
