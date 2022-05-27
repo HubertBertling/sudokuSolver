@@ -1228,9 +1228,10 @@ class NineCellCollection {
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
         // Wenn es eine Collection gibt, in der nicht mehr alle Nummern vorkommen.
+        // Wenn es eine Collection gibt, in der dieselbe Nummer mehrmals notwendig ist.
         return (
             this.withConflictingSingles() ||
-            this.withConflictingPairs() ||
+            this.withPairConflict() ||
             this.withConflictingNecessaryNumbers() ||
             this.withMissingNumber());
     }
@@ -1447,20 +1448,34 @@ class NineCellCollection {
         return false;
     }
 
-    withConflictingPairs() {
+    withPairConflict() {
         // Pairs sind Zellen, die nur noch exakt zwei zulässige Nummern haben.
-        // Conflicting pairs sind drei oder mehr gleiche Paare in einer Collection.
-        // Denn sie fordern ja, dass drei Zellen mit nur zwei verschiedenen Nummern
-        // gefüllt werden sollen. Mit anderen Worten: 
-        // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
-
+        // Ein Pair-Konflikt liegt vor, wenn eine Nummer aus einem Paar 
+        // außerhalb des Paares einzeln oder als Paar ein weiteres mal vorkommt.
         this.calculateEqualPairs();
         let found = false;
         for (let i = 0; i < this.myPairInfos.length; i++) {
             if (this.myPairInfos[i].pairIndices.length > 2) {
                 // Ein Paar, das dreimal oder mehr in der Collection vorkommt
                 return true;
+            } else if (this.myPairInfos[i].pairIndices.length == 2) {
+                let pairSet = this.myPairInfos[i].pairSet;
+                this.myCells.forEach(cell => {
+                    if (cell.getValue() == '0'
+                        && cell.getIndex() !== this.myPairInfos[i].pairIndices[0]
+                        && cell.getIndex() !== this.myPairInfos[i].pairIndices[1]) {
+                        let numbers = cell.getTotalAdmissibles();
+                        if (numbers.size == 1) {
+                            if (pairSet.isSuperset(numbers)) {
+                                // Eine Single-Nummer, die Paar-Nummer ist
+                                // Widerspruch
+                                return true;
+                            }
+                        }
+                    }
+                })
             }
+
         }
         return false;
     }
@@ -2375,7 +2390,7 @@ class SudokuCell {
         if (optionLength > 2) {
             // 3 Optionen werden optisch dargestellt
             // Die erste Option
-            let option = this.myOptions[this.myOptions.length-1];
+            let option = this.myOptions[this.myOptions.length - 1];
             let optionNumberElement = document.createElement('div');
             optionNumberElement.classList.add('auto-value-option1');
             if (option.open) {
@@ -2385,7 +2400,7 @@ class SudokuCell {
             autoValueCellNode.appendChild(optionNumberElement);
 
             // Die zweite Option
-            option = this.myOptions[this.myOptions.length-2];
+            option = this.myOptions[this.myOptions.length - 2];
             optionNumberElement = document.createElement('div');
             optionNumberElement.classList.add('auto-value-option2');
             if (option.open) {
@@ -2404,7 +2419,7 @@ class SudokuCell {
         } else if (optionLength == 2) {
             // 2 Optionen werden optisch dargestellt
             // Die erste Option
-            let option = this.myOptions[this.myOptions.length-1];
+            let option = this.myOptions[this.myOptions.length - 1];
             let optionNumberElement = document.createElement('div');
             optionNumberElement.classList.add('auto-value-option1');
             if (option.open) {
@@ -2414,7 +2429,7 @@ class SudokuCell {
             autoValueCellNode.appendChild(optionNumberElement);
 
             // Die zweite Option
-            option = this.myOptions[this.myOptions.length-2];
+            option = this.myOptions[this.myOptions.length - 2];
             optionNumberElement = document.createElement('div');
             optionNumberElement.classList.add('auto-value-option2');
             if (option.open) {
