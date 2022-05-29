@@ -234,15 +234,6 @@ body, html {
     background-color: var(--nested-cell-bg-color); 
  }
 
-
-/*
-.open {
-    background-color: var(--nested-cell-bg-color); 
-    color: var(--nested-cell-bg-color); 
-  }
-*/
-
-
 .sudoku-grid-cell.nested {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -581,7 +572,7 @@ body, html {
     margin-top: 5px;
     line-height: 20px;
     display: grid;
-    grid-template-columns: 0.1fr 0.1fr 1fr;
+    grid-template-columns: 0.25fr 0.1fr 1fr;
     gap: 2px;
 }
 
@@ -595,7 +586,6 @@ body, html {
 
 .eval-value {
     color: var(--screen-color);
-    font-weight: bold;
     padding-left: 5px;
 }
 

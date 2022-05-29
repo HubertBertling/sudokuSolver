@@ -790,7 +790,7 @@ class StepperOnGrid {
     }
 
     displayStatus() {
-        this.displayDepth();
+        this.displayBenchmark();
         this.displayAutoDirection();
         this.displayProgress();
         this.displayGoneSteps();
@@ -798,7 +798,7 @@ class StepperOnGrid {
 
     displayGoneSteps() {
         let goneStepsNode = document.getElementById("step-count");
-        goneStepsNode.textContent = this.goneSteps;
+        goneStepsNode.innerHTML = '<b>Schritte:</b> &nbsp' + this.goneSteps;
     }
 
     displayAutoDirection() {
@@ -813,12 +813,11 @@ class StepperOnGrid {
         }
     }
 
-    displayDepth() {
-        let bcNode = document.getElementById("backwards-count");
-        let difficulty = document.getElementById("difficulty");
-        // this.myBackTracker.getCurrentSearchDepth();
-        bcNode.innerText = this.countBackwards;
-        difficulty.innerText = this.levelOfDifficulty;
+    displayBenchmark() {
+        let evalNode = document.getElementById("evaluations");
+        evalNode.innerHTML =
+            '<b>Rückwärtsläufe:</b> &nbsp' + this.countBackwards + '; &nbsp'
+            + '<b>Schwierigkeitsgrad:</b> &nbsp' + this.levelOfDifficulty;
     }
 
     displayProgress() {
@@ -1820,11 +1819,12 @@ class SudokuGrid {
         }
     }
     displayPuzzle(uid, name) {
-        let pzIdNode = document.getElementById('pz-nr');
-        pzIdNode.innerText = uid;
-        let pzNameNode = document.getElementById('pz-name');
-        pzNameNode.innerText = name;
-
+        if (uid == '') uid = ' - ';
+        if (name == '') name = ' - ';
+        let statusLineNode = document.getElementById('status-line');
+        statusLineNode.innerHTML =
+            '<b>Puzzle-Id:</b> &nbsp' + uid + '; &nbsp'
+            + '<b>Puzzle-Name:</b> &nbsp' + name;
     }
 
     display() {
@@ -2857,7 +2857,7 @@ class SuccessDialog {
                 x: "center",
                 y: "center",
                 width: "170px",
-                height: "290px",
+                height: "270px",
                 mount: document.getElementById("contentSuccessDlg")
             });
         } else {

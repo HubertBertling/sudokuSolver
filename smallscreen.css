@@ -621,7 +621,7 @@ body, html {
     margin-right: 5px;
     line-height: 20px;
     display: grid;
-    grid-template-columns: 0.1fr 0.1fr 1fr;
+    grid-template-columns: 0.3fr 0.1fr 1fr;
     gap: 2px;
 }
 
@@ -733,7 +733,7 @@ body, html {
 .successForm, .dlg-form {
     margin-left: 5px;
     margin-top: 10px; 
-    font-size: 1.2rem;
+    font-size: 1rem;
     display: grid;
     grid-template-columns: 1fr;
     width: 130px;
