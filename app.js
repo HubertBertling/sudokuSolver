@@ -1509,6 +1509,8 @@ class SudokuGroup extends NineCellCollection {
             }
             return true;
         });
+        // Der Gruppen-Error wird angezeigt
+        // Aber nur, wenn die Zellen selbst keinen Fehler aufweisen.      
         if (this.isInsolvable() && !cellError) {
             this.myGroupNode.classList.add('err');
             this.myGroupNode.classList.add('cell-err');
@@ -1550,7 +1552,7 @@ class SudokuRow extends NineCellCollection {
     }
 
     display() {
-        // Der Error Status der Reihe wird in den Zellen angezeigt
+        // Der Zeilen-Error wird in den Zellen angezeigt
         // Aber nur, wenn die Zellen selbst keinen Fehler aufweisen.
         let cellError = false;
         this.myCells.every(sudoCell => {
@@ -1574,7 +1576,7 @@ class SudokuCol extends NineCellCollection {
         sudoCell.setCol(this);
     }
     display() {
-        // Der Error Status wid in den Zellen angezeigt
+        // Der Spalten-Error wid in den Zellen angezeigt
         // Aber nur, wenn die Zellen selbst keinen Fehler aufweisen.
         let cellError = false;
         this.myCells.every(sudoCell => {
