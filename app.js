@@ -555,7 +555,8 @@ class BackTrackOptionStep {
         // Der BackTrackOptionStep zeigt auf eine Grid-Zelle
         this.myCellIndex = cellIndex;
         this.myOptionList = optionList.slice();
-        this.myNextOptions = optionList.slice();
+        // Reverse: Versuch, die normale Reihenfolge abzuarbeiten
+        this.myNextOptions = optionList.slice().reverse();
 
         // Der OptonStep hat für jede Option einen eigenen BackTrackOptionPath
         if (optionList.length == 1) {
@@ -2423,7 +2424,7 @@ class SudokuCell {
         if (optionLength > 2) {
             // 3 Optionen werden optisch dargestellt
             // Die erste Option
-            let option = this.myOptions[this.myOptions.length - 1];
+            let option = this.myOptions[0];
             let optionNumberElement = document.createElement('div');
             optionNumberElement.classList.add('auto-value-option1');
             if (option.open) {
@@ -2433,7 +2434,7 @@ class SudokuCell {
             autoValueCellNode.appendChild(optionNumberElement);
 
             // Die zweite Option
-            option = this.myOptions[this.myOptions.length - 2];
+            option = this.myOptions[1];
             optionNumberElement = document.createElement('div');
             optionNumberElement.classList.add('auto-value-option2');
             if (option.open) {
@@ -2452,7 +2453,7 @@ class SudokuCell {
         } else if (optionLength == 2) {
             // 2 Optionen werden optisch dargestellt
             // Die erste Option
-            let option = this.myOptions[this.myOptions.length - 1];
+            let option = this.myOptions[0];
             let optionNumberElement = document.createElement('div');
             optionNumberElement.classList.add('auto-value-option1');
             if (option.open) {
@@ -2462,7 +2463,7 @@ class SudokuCell {
             autoValueCellNode.appendChild(optionNumberElement);
 
             // Die zweite Option
-            option = this.myOptions[this.myOptions.length - 2];
+            option = this.myOptions[1];
             optionNumberElement = document.createElement('div');
             optionNumberElement.classList.add('auto-value-option2');
             if (option.open) {
@@ -2745,8 +2746,8 @@ class SudokuCell {
         let summand = 0;
         this.myInfluencers.forEach(influencer => {
             if (influencer.getValue() == '0') {
-                // Influencer mit geringer Größe werden bevorzugt
-                summand = 9 - influencer.getTotalAdmissibles().size;
+                // Influencer mit großer Anzahl zulässiger Nummern werden bevorzugt
+                summand = influencer.getTotalAdmissibles().size;
             }
             tmpWeight = tmpWeight + summand;
         });
