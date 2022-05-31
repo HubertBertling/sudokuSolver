@@ -350,8 +350,8 @@ class SudokuApp {
     }
 
     displayOnOffStatus() {
-        let manualGroup = document.getElementById("manual-exec-btns");
-        let autoGroup = document.getElementById("automatic-exec");
+        let manualGroup = document.getElementById("numbers");
+        let autoGroup = document.getElementById("auto-exec-btns");
         if (this.autoExecOn) {
             manualGroup.classList.remove('on');
             autoGroup.classList.add('on');

@@ -59,8 +59,6 @@ body, html {
     background-color: var(--screen-bg-color); 
 }
 
-
-
 /* Style tab links */
 .tablink {
   background-color: #555;
@@ -91,8 +89,6 @@ body, html {
   padding-right: 20px;
   padding-bottom: 20px;
   /* height: 100%; */
-
-
   }
 
 .puzzle-header {
@@ -131,8 +127,6 @@ body, html {
 /*======================================*/
 /* Sudoku grid block */
 /*======================================*/
-
-
 .sudoku-solver-in-tab {
     display: grid;
     place-items: center;
@@ -268,14 +262,11 @@ body, html {
     border: 1px solid white;
 }
 
-
 .nested>div.neccessary.inAdmissible {
     /* background:blueviolet; */
     color: #0d1117;
     background-color: #56c7aa;
 }
-
-
 
 .sudoku-grid-cell.hover {
     border: 3px solid var(--selected-cell-border-color);
@@ -293,7 +284,6 @@ body, html {
     color: var(--error-cell-color);
 }
 
-
 .sudoku-grid-cell.row-err, .sudoku-grid-cell.col-err  {
     border: 3px solid var(--error-cell-bg-color);
 }
@@ -306,19 +296,15 @@ body, html {
     border-right: 5px solid var(--error-cell-bg-color);
 }
 
-
 .sudoku-grid-cell.err {
     background-color: var(--error-cell-bg-color);
     color: var(--error-cell-color);
     border: 1px solid #0050ff;
 }
 
-
 .sudoku-grid-cell.err.selected {
     background-color: black;
 }
-
-
 
 .evaluations {
     font-size: 1.6rem;
@@ -350,30 +336,26 @@ body, html {
 /*======================================*/
 /* Exec button block                  */
 /*======================================*/
-
-.exec-btn-groups {
-    padding-left: var(--space-y);
-    padding-right: var(--space-y);
+.game-col2 {
+    margin-left: 5px;
+}
+.ctrl-btn-group {
+    margin-top: 25px;
+  
+}
+.ctrl-btn-group p {
+    font-weight: bold;
+    font-size: 1.6rem;
 }
 
-.exec-btn-group, .auto-exec-container {
-    margin-top: 20px;
-}
-
-.manual-exec-btns, .automatic-exec {
-    margin-top: 5px;
-    padding-top: 10px;
-    padding-bottom: 5px;
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 2px;
+.auto-exec-btns {
+    padding: 5px;
 }
 
 .mode-btns {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
-    padding-right: 10px;
 }
 
 .btn-define, .btn-play {
@@ -478,6 +460,10 @@ body, html {
     color: var(--standard-btn-color);
 }
 
+.btn-automatic p {
+    font-weight: unset;
+}
+
 #btn-autoStep {
     height: 80px;
 }
@@ -486,23 +472,33 @@ body, html {
 /* Main button block */
 /*======================================*/
 
-.main-btns {
-    /*  border: 5px solid var(--red);  */
-    margin-top: 20px;
-    background-color: var(--screen-bg-color);
-    padding-left: 15px;
-    padding-right: 20px;
-    display: grid;
-    grid-template-columns: 1fr;
-    font-size: var(--font-size-btn);
+.mode-btns {
+    margin-top: 5px;
+    
+}
+.auto-exec-btns {
+    margin-top: 5px;
+    padding:5px;
+    border:var(--screen-bg-color) dashed 3px;
 }
 
-.manual-exec-btns p {
-    font-size: 1.6rem;
+.auto-exec-btns.on {
+    margin-top: 5px;
+    padding:5px;
+    border:darkgrey dashed 3px;
 }
-.automatic-exec p {
-    font-size: 1.6rem;
+
+.numbers {
+    margin-top: 5px;
+    padding:5px;
+    border:var(--screen-bg-color) dashed 3px;
 }
+.numbers.on {
+    margin-top: 5px;
+    padding:5px;
+    border:darkgrey dashed 3px;
+}
+
 
 .config-btns {
     display: grid;
@@ -531,6 +527,7 @@ body, html {
     padding: 5px;
     font-size: var(--font-size-btn);
     cursor: pointer;
+    
 }
 /*======================================*/
 /* Progress block */
@@ -543,30 +540,6 @@ body, html {
     color:var(--screen-color);
     font-size: 1.6rem;
 }
-.manual-exec-btns.on, .automatic-exec.on {
-    padding-right: 10px;
-    border-right: 5px solid var(--standard-btn-bg-color);
-}
-
-.manual-exec-btns, .automatic-exec {
-    padding-right: 10px;
-}
-
-.name-value {
-    display: inline;
-    padding-left: 5px; 
-}
-
-.depth-group {
-    margin-top: 10px;
-    display: grid;
-    grid-template-columns: 0.35fr 0.5fr 0.5fr;
-
-}
-
-.depth-label, .progress-label {
-    font-weight: bold;
-}
 
 .progress-group {
     margin-top: 5px;
@@ -576,17 +549,9 @@ body, html {
     gap: 2px;
 }
 
-.settings {
-    line-height: 20px;
+.evaluation {
     font-size: 1.6rem;
-    margin-top: 20px;
     margin-left: 20px;
-    margin-right: 10px;
-}
-
-.eval-value {
-    color: var(--screen-color);
-    padding-left: 5px;
 }
 
 .checkbox {

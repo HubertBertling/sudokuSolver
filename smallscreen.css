@@ -343,7 +343,7 @@ body, html {
 
 
 .evaluations {
-    font-size: 1.0rem;
+    font-size: 1.2rem;
     display: flex;
     padding-top: 5px;
     
@@ -373,28 +373,23 @@ body, html {
 /* Exec button block                  */
 /*======================================*/
 
-.exec-btn-groups {
-    padding-left: var(--space-y);
-    padding-right: var(--space-y);
+.ctrl-btn-group {
+    margin-top: 5px;
+  
+}
+.ctrl-btn-group p {
+    font-weight: bold;
+    font-size: 1.2rem;
 }
 
-.exec-btn-group, .auto-exec-container {
-    margin-top: 5px;
-}
-
-.manual-exec-btns, .automatic-exec {
-    margin-top: 5px;
-    padding-bottom: 5px;
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 2px;
+.auto-exec-btns {
+    padding: 2px;
 }
 
 .mode-btns {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
-    padding-right: 10px;
 }
 
 .btn-define, .btn-play {
@@ -423,7 +418,7 @@ body, html {
 
 
 .number {
-    height: var(--sudoku-cell-size);
+    height: 30px;
     border-radius: var(--border-radius);
     background-color: var(--standard-btn-bg-color);
     color: var(--standard-btn-color);
@@ -441,7 +436,7 @@ body, html {
 .delete {
     background-color: var(--delete-btn-bg-color);
     color: var(--delete-btn-color);
-    height: var(--sudoku-cell-size);
+    height: 30px;
     border-radius: var(--border-radius);
     display: grid;
     place-items: center;
@@ -461,7 +456,6 @@ body, html {
 }
 
 .btn-auto-group {
-    margin-top: 5px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
@@ -499,6 +493,9 @@ body, html {
     color: var(--standard-btn-color);
 }
 
+.btn-automatic p {
+    font-weight: unset;
+}
 
 #btn-autoStep {
     height: 40px;
@@ -530,26 +527,31 @@ body, html {
 /* Main button block */
 /*======================================*/
 
-.main-btns {
-    /*  border: 5px solid var(--red);  */
-    margin-top: 5px;
-    background-color: var(--screen-bg-color);
-    padding-left: 15px;
-    padding-right: 20px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    font-size: var(--font-size-btn);
+.mode-btns {
+    margin-top: 5px;    
 }
+
 .main-btns p {
     display: none;
 }
 
-.manual-exec-btns p {
-    font-size: 1.2rem;
+#btn-autoStep p {
+    display: none;
 }
-.automatic-exec p {
-    font-size: 1.2rem;
+
+.auto-exec-btns {
+    margin-top: 5px;
+    padding:5px;
+    border:var(--screen-bg-color) dashed 3px;
 }
+
+.auto-exec-btns.on {
+    margin-top: 5px;
+    padding:5px;
+    border:darkgrey dashed 3px;
+}
+
+
 .config-btns {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -574,7 +576,7 @@ body, html {
 }
 
 .main-btn {
-    height: 20px;
+    height: 30px;
     box-shadow: 3px 3px darkgray;
     background-color: var(--standard-btn-bg-color);
     color: var(--standard-btn-color);
@@ -591,31 +593,6 @@ body, html {
 /* Progress block */
 /*======================================*/
 
-.manual-exec-btns.on, .automatic-exec.on {
-    padding-right: 10px;
-    border-right: 5px solid var(--standard-btn-bg-color);
-}
-
-.manual-exec-btns, .automatic-exec {
-    padding-right: 10px;
-}
-
-.name-value {
-    display: inline;
-    padding-left: 5px; 
-}
-
-.depth-group {
-    margin-top: 5px;
-    display: grid;
-    grid-template-columns: 0.35fr 0.5fr 0.5fr;
-
-}
-
-.depth-label, .progress-label {
-    font-weight: bold;
-}
-
 .progress-group {
     margin-top: 5px;
     margin-right: 5px;
@@ -625,11 +602,8 @@ body, html {
     gap: 2px;
 }
 
-
-.eval-value {
-    color: var(--screen-color);
-    font-weight: bold;
-    padding-left: 5px;
+.evaluation {
+    font-size: 1.2rem;
 }
 
 .checkbox {
