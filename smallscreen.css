@@ -378,9 +378,15 @@ body, html {
   
 }
 .ctrl-btn-group p {
+    display: none;
     font-weight: bold;
     font-size: 1.2rem;
 }
+
+.mode-btns {   
+    border-top: darkgrey dashed 3px;
+}
+
 
 .auto-exec-btns {
     padding: 2px;
@@ -410,7 +416,8 @@ body, html {
 
 
 .numbers {
-    margin-top: 5px;
+    border-top: darkgrey dashed 3px;
+    padding-top: 5px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 5px;
@@ -539,20 +546,25 @@ body, html {
     display: none;
 }
 
+.btn-auto-group {
+    border-top: darkgrey dashed 3px;
+    padding-top: 5px;
+}
 .auto-exec-btns {
+    padding-top: 5px;
     margin-top: 5px;
-    padding:5px;
-    border:var(--screen-bg-color) dashed 3px;
 }
 
+/*
 .auto-exec-btns.on {
     margin-top: 5px;
     padding:5px;
     border:darkgrey dashed 3px;
 }
-
+*/
 
 .config-btns {
+    border-top: darkgrey dashed 3px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
@@ -603,12 +615,19 @@ body, html {
 }
 
 .evaluation {
+    border-top: darkgrey dashed 3px;
+    padding-top: 5px;
     font-size: 1.2rem;
 }
 
 .checkbox {
     margin-left: 3px;
     background-color: var(--screen-bg-color);
+}
+
+
+.step-count {
+    font-size: 1rem;
 }
 
 .step-count-box {
@@ -674,8 +693,11 @@ body, html {
 }
 
 .mobile-help {
+    border-top: darkgrey dashed 3px;
+
     margin-top:10px;
-    margin-left:30px;
+    padding-top: 5px;
+    padding-left:30px;
     font-size: 1.4rem;
     display: block;
 }
