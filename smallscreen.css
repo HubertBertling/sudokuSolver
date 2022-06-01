@@ -617,11 +617,26 @@ body, html {
     gap: 2px;
 }
 
-.evaluation {
-    padding-top:5px;
-    border-top: darkgrey dashed 3px;
-    padding-left: 20px;
+.mobile-help {
+    border-left: darkgrey dashed 3px;
+    padding-left:20px;
     padding-right: 20px;
+    font-size: 1.4rem;
+}
+
+ .last-row {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 5px;
+    border-top: darkgrey dashed 3px;
+    display: grid;
+    grid-template-columns: 6.6fr 0.3fr;
+    gap: 2px;
+    border-bottom: darkgrey dashed 3px;
+ }
+
+.evaluation {
+    padding-left: 20px;
     font-size: 1.2rem;
 }
 
@@ -694,17 +709,6 @@ body, html {
     line-height: 20px;
     vertical-align:center;
 }
-
-.mobile-help {
-    border-top: darkgrey dashed 3px;
-
-    margin-top:10px;
-    padding-top: 5px;
-    padding-left:30px;
-    font-size: 1.4rem;
-    display: block;
-}
-
 
 
 .textInDlgs {
