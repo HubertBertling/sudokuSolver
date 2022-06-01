@@ -549,32 +549,35 @@ body, html {
 .btn-auto-group {
     border-top: darkgrey dashed 3px;
     padding-top: 5px;
+    margin-top: 5px;
 }
+
 .auto-exec-btns {
+    margin-top: 3px;
     padding-top: 5px;
-    margin-top: 5px;
 }
 
-/*
-.auto-exec-btns.on {
-    margin-top: 5px;
-    padding:5px;
-    border:darkgrey dashed 3px;
-}
-*/
-
-.config-btns {
+.main-btns {
+    margin-top: 10px;
     border-top: darkgrey dashed 3px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2px;
+    gap: 3px;
+
+}
+
+.config-btns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
    
 }
 
 .storage-btns-mobile {
+    border-left: darkgrey dashed 3px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2px;
+    gap: 1px;
    
 }
 
@@ -615,9 +618,12 @@ body, html {
 }
 
 .evaluation {
+    padding-top:5px;
     border-top: darkgrey dashed 3px;
-    padding-top: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
     font-size: 1.2rem;
+   
 }
 
 .checkbox {
