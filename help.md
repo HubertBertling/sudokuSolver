@@ -4,9 +4,9 @@ layout: default
 
 # Sudoku-App
 
-Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Sudoku, manchmal auch nur als mittelschwer klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man diese Sudoku-App und den darin enthaltenen Solver nutzen. Er löst jedes Sudoku in wenigen Minuten und man kann ihm dabei zuschauen. Schritt für Schritt kann man verstehen, wie der Solver zur Lösung des Sudokus gelangt.
+Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Sudoku, manchmal auch nur als mittelschwer klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man diese Sudoku-App und den darin enthaltenen Solver nutzen. Er löst jedes Sudoku in wenigen Minuten. Das tun andere Sudoku-Solver auch. Die Besonderheit dieses Solvers besteht darin, dass man ihm dabei zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt. Man kann  sich einfach nur einen nächsten möglichen Schritt zeigen lassen und dann von Hand weitermachen.
 
-Zusammen mit der Lösung bestimmt der Solver den tatsächlichen Schwierigkeitsgrad des Sudokus. Sehr schwere Sudokus, Definition siehe unten, sind manuell kaum zu lösen. Sie sollten daher kein Grund für Frust sein. Bei leichten und mittleren Sudokus lässt der Solver den eigenen Denkfehler erkennen oder er zeigt bei mangelnder Idee für den nächsten Schritt mögliche nächste Schritte. Konsequenz: Mit dieser Sudoku-App macht das Sudokulösen wieder Spaß.
+Zusammen mit der Lösung bestimmt der Solver den tatsächlichen Schwierigkeitsgrad des Sudokus. Sehr schwere Sudokus, Definition siehe unten, sind manuell kaum zu lösen. Sie sollten daher kein Grund für Frust sein. Konsequenz: Mit dieser Sudoku-App macht das Sudokulösen Spaß, auch wenn mal ein sehr schweres Puzzle zu lösen ist.
 
 ## App-Überblick
 
@@ -16,7 +16,7 @@ Die App besteht aus zwei Komponenten, dem Sudoku-Solver und der Puzzle-Datenbank
 
 ## Die Komponente Sudoku-Solver
 
-Der Solver besteht im Wesentlichen aus der 9 x 9 Sudoku-Matrix. In den Zellen der Matrix können Nummern von 1 .. 9 gesetzt werden. um den Spieler zu unterstützen, werden für Zellen, die noch keine gesetzte Nummer haben, die aktuell noch möglichen Nummern der Zelle angezeigt. Zusätzlich werden die Zellen der Matrix in 3 x 3 Gruppen unterteilt, 9 an der Zahl.
+Der Solver besteht im Wesentlichen aus der 9 x 9 Sudoku-Matrix. In den Zellen der Matrix können Nummern von 1 .. 9 gesetzt werden. um den Spieler zu unterstützen, werden für Zellen, die noch keine gesetzte Nummer haben, die aktuell noch möglichen Nummern, die zulässigen Nummern, der Zelle angezeigt. Zusätzlich werden die Zellen der Matrix in 3 x 3 Gruppen unterteilt, 9 an der Zahl.
 
 ### Typischer Ablauf der Lösung eines Sudoku-Puzzles
 
@@ -91,7 +91,7 @@ Indirekt unzulässige Nummern spielen eine wichtige Rolle bei der Bestimmung der
 
 1. **Indirekt unzulässig wegen einer Single-Nummer:** Eine Nummer ist indirekt unzulässig wegen einer Single-Nummer, wenn sie in ihrer Spalte, Reihe oder Gruppe ein zweites mal auftritt.
 
-1. **Indirekt unzulässig wegen Pairing:** Eine Nummer ist indirekt unzulässig, wenn es in einer Gruppe, Zeile oder Spalte Paare gibt und Nummern dieser Paare zusätzlich in weiteren Zellen dieser Gruppe, Spalte oder Zeile auftauchen. Im nachfolgenden Beispiel ist das 4-6-Paar ein kritisches Paar. Das 4-6-Paar macht in seiner Gruppe alle 4 und 6 indirekt unzulässig. Diese Darstellung zeigt der Solver im Lazy-Auswertungsmodus. ![Indirekt unzulässig](./images/indirektWegenPairing.png)
+1. **Indirekt unzulässig wegen Pairing:** Eine Nummer ist indirekt unzulässig, wenn es in einer Gruppe, Zeile oder Spalte Paare gibt und Nummern dieser Paare zusätzlich in weiteren Zellen dieser Gruppe, Spalte oder Zeile auftauchen. Im nachfolgenden Beispiel ist das 4-6-Paar ein kritisches Paar. Das 4-6-Paar macht in seiner Gruppe alle 4 und 6 indirekt unzulässig. Diese Darstellung zeigt der Solver im Lazy-Auswertungsmodus. Der Solver findet damit mit der 5 eine Zelle mit eindeutiger Nummer. ![Indirekt unzulässig](./images/indirektWegenPairing.png)
 
 ### Auswertungsmethoden
 
@@ -184,7 +184,7 @@ Der Solver prüft nach der Setzung einer neuen Nummer, ob das Sudoku mit dieser 
 
 ### Vergleich der Ausführungsmodi Lazy und Strikt
 
-**Plus der Lazy-Auswertung: Nachvollziehbarkeit des Lösungsweges.** Die Lazy-Auswertung ist vorteilhaft, wenn man den Lösungsweg im Einzelnen nachvollziehen will. Es werden nur indirekt unzulässige Nummern berechnet und angezeigt, die für den nächsten Schritt relevant sind. Für diese wenigen indirekt unzulässigen Nummern ist ihre Verursachung leicht darstellbar und damit verstehbar, beispielsweise ein Pairing.
+**Vorteil der Lazy-Auswertung: Nachvollziehbarkeit des Lösungsweges.** Die Lazy-Auswertung ist vorteilhaft, wenn man den Lösungsweg im Einzelnen nachvollziehen will. Es werden nur indirekt unzulässige Nummern berechnet und angezeigt, die für den nächsten Schritt relevant sind. Für diese wenigen indirekt unzulässigen Nummern ist ihre Verursachung leicht darstellbar und damit verstehbar, beispielsweise ein Pairing.
 
 |   |   |
 |-------|--------|
@@ -193,7 +193,7 @@ Der Solver prüft nach der Setzung einer neuen Nummer, ob das Sudoku mit dieser 
   
 Im Lazy-Modus wird die Verursachung notwendiger Nummern oder indirekt unzulässiger Nummern angezeigt durch gestrichelte Border, wenn die Zelle der notwendigen Nummer oder indirekt unzulässigen Nummer selektiert ist.
 
-**Plus der strikten Auswertung: Lösung des Puzzles mit weniger Schritten.** Im Auswertungsmodus Strikt benötigt der Solver im Allgemeinen weniger Schritte bis zur Lösung des Puzzles als im Ausführungsmodus Lazy. Woran liegt das? Es liegt daran, dass der Solver im Ausführungsmodus Strikt sehr viel früher die Widersprüchlichkeit, falls vorhanden, der aktuellen Nummernbelegungen feststellt. Dies wiederum führt dazu, dass die Anzahl der Rückwärtsschritte entsprechend geringer wird und damit die Anzahl der Schritte insgesamt. Die Anzahl der Rückwärtsläufe bleibt in beiden Ausführungsmodi gleich. Der Solver untersucht in beiden Auswertungsmodi dieselben Optionen.
+**Vorteil der strikten Auswertung: Lösung des Puzzles mit weniger Schritten.** Im Auswertungsmodus Strikt benötigt der Solver im Allgemeinen weniger Schritte bis zur Lösung des Puzzles als im Ausführungsmodus Lazy. Woran liegt das? Es liegt daran, dass der Solver im Ausführungsmodus Strikt sehr viel früher die Widersprüchlichkeit, falls vorhanden, der aktuellen Nummernbelegungen feststellt. Dies wiederum führt dazu, dass die Anzahl der Rückwärtsschritte entsprechend geringer wird und damit die Anzahl der Schritte insgesamt. Die Anzahl der Rückwärtsläufe bleibt in beiden Ausführungsmodi gleich. Der Solver untersucht in beiden Auswertungsmodi dieselben Optionen.
 
 Dieser Sudoku-Solver zeichnet sich in erster Linie durch seine nachvollziehbare Lösungssuche aus. Die Schrittminimierung ist kein Ziel. Daher ist der Lazy-Ausführungsmodus der Default.
 
@@ -231,3 +231,11 @@ Beim Abspeichern kann dem Puzzle ein Name gegeben werden. Automatisch erhält es
 Die Puzzles der Datenbank können sortiert werden nach jeder Spalte. Dazu einfach den Spaltenkopf klicken. Wiederholtes Klicken wechselt zwischen der aufsteigenden und der absteigenden Sortierung.
 
 Gespeicherte Puzzles können auch wieder gelöscht werden. Durch Drücken der Lade-Taste wird das selektierte Puzzle in den Sudoku-Solver geladen. Mit den Pfeiltasten kann in der Tabelle vorwärts und rückwärts navigiert werden. Durch Klicken auf eine Zeile der Tabelle kann ein Puzzle direkt selektiert werden.
+
+## Die Smartphone Version
+
+Auf dem Smartphone ist der Solver als Web-Anwendung verfügbar. Also in einem Browser die URL eingeben. Die Funktionalität ist bis auf die Puzzle-Datenbank identisch.
+
+In der Smartphone-Version kann das aktuelle Puzzle gespeichert werden. Dabei wird ein eventuell schon vorher gespeichertes Puzzle überschrieben. Es kann also nur ein Puzzle gespeichert werden. Dies ermöglicht die Speicherung eines aktuellen Puzzles, um es vielleicht später analysieren zu können.
+
+![Smartphone](./images/smartphoneVersion.png)
