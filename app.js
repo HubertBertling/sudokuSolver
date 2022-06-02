@@ -1005,16 +1005,12 @@ class StepperOnGrid {
         // In der Regel sind das Zellen mit 2 Optionsnummern.
         let maxSelection = selectionList[0];
         let maxIndex = maxSelection.index;
-        // Selektionen mit wenigen Optionen werden bevorzugt. Deshalb die Länge der Option im Nenner.
-        let maxLengthFactor = Math.floor(1000 / maxSelection.options.length);
-        // Die hier gewählte Gewichtungsfunktion ist frei erfunden.
-        let maxWeight = maxLengthFactor + this.suGrid.sudoCells[maxIndex].countMyInfluencersWeight();
+        let maxWeight = this.suGrid.sudoCells[maxIndex].countMyInfluencersWeight();
         // Kontexte mit einem größeren Entscheidungsgrad, also mit weniger zulässigen Nummern, zählen mehr.
         for (let i = 1; i < selectionList.length; i++) {
             let currentSelection = selectionList[i];
             let currentIndex = currentSelection.index;
-            let currentLengthFactor = Math.floor(1000 / currentSelection.options.length);
-            let currentWeight = currentLengthFactor + this.suGrid.sudoCells[currentIndex].countMyInfluencersWeight();
+            let currentWeight = this.suGrid.sudoCells[currentIndex].countMyInfluencersWeight();
             if (currentWeight > maxWeight) {
                 maxSelection = currentSelection;
                 maxIndex = currentIndex;
