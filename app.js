@@ -2744,15 +2744,11 @@ class SudokuCell {
         // weil durch sie die Entscheidungen schneller vorangetrieben werden.
         let tmpWeight = 0;
         let summand = 0;
-        let factor = 0;
         this.myInfluencers.forEach(influencer => {
-            summand = 0;
-            factor = 0;
             if (influencer.getValue() == '0') {
                 // Gleiche Paare werden mit Priorität 1 bevorzugt
                 if (this.getTotalAdmissibles().equals(influencer.getTotalAdmissibles())) {
-                    factor = factor + 1;
-                    summand = 100 * factor;
+                    summand = 30;
                 } else {
                     // Influencer mit großer Anzahl zulässiger Nummern werden bevorzugt
                     summand = influencer.getTotalAdmissibles().size;
