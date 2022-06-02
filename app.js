@@ -2742,16 +2742,25 @@ class SudokuCell {
         let summand = 0;
         this.myInfluencers.forEach(influencer => {
             if (influencer.getValue() == '0') {
-                // Gleiche Paare werden mit Priorität 1 bevorzugt
+                // Paare, die vollständig in Influenz-Zellen enthalten sind
+                // werden bevorzugt
                 let tmpAdmissibles = this.getTotalAdmissibles();
-                if (tmpAdmissibles.equals(influencer.getTotalAdmissibles())) {
-                    summand = 300/tmpAdmissibles.size;
+                let influenceAdmissible = influencer.getTotalAdmissibles();
+                if (tmpAdmissibles.size == 2) {
+                    if (influenceAdmissible.isSuperset(tmpAdmissibles) 
+                     || influenceAdmissible.equals(tmpAdmissibles)) {
+                        // Die Gleichheit von Zellen wird hoch bewertet
+                        // Zweier Zellen höher als 3 Zellen
+                        summand = 27;
+                    } else {
+                        // Paare werden gegenüber größeren Mengen bevorzugt.
+                        summand = 18;
+                    }
                 } else {
-                    // Influencer mit großer Anzahl zulässiger Nummern werden bevorzugt
                     summand = influencer.getTotalAdmissibles().size;
                 }
+                tmpWeight = tmpWeight + summand;
             }
-            tmpWeight = tmpWeight + summand;
         });
         return tmpWeight;
     }
