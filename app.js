@@ -2747,10 +2747,11 @@ class SudokuCell {
                 let tmpAdmissibles = this.getTotalAdmissibles();
                 let influenceAdmissible = influencer.getTotalAdmissibles();
                 if (tmpAdmissibles.size == 2) {
-                    if (influenceAdmissible.isSuperset(tmpAdmissibles) 
-                     || influenceAdmissible.equals(tmpAdmissibles)) {
-                        // Die Gleichheit von Zellen wird hoch bewertet
-                        // Zweier Zellen höher als 3 Zellen
+                    if (influenceAdmissible.equals(tmpAdmissibles)) {
+                        // Mehrfachauftreten von Paaren bekommt die höchste Bewertung
+                        summand = 36;
+                    } else if (influenceAdmissible.isSuperset(tmpAdmissibles)) {
+                        // Das aktuelle Paar als Subset in den Influenz-Zellen
                         summand = 27;
                     } else {
                         // Paare werden gegenüber größeren Mengen bevorzugt.
