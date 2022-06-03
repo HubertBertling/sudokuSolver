@@ -2740,23 +2740,25 @@ class SudokuCell {
         // weil durch sie die Entscheidungen schneller vorangetrieben werden.
         let tmpWeight = 0;
         let summand = 0;
+        let tmpAdmissibles = this.getTotalAdmissibles();
+        if (tmpAdmissibles.size == 2){
+            tmpWeight = 300;
+        }
+        // Den Kontext der Zelle betrachten
         this.myInfluencers.forEach(influencer => {
             if (influencer.getValue() == '0') {
                 // Paare, die vollständig in Influenz-Zellen enthalten sind
                 // werden bevorzugt
-                let tmpAdmissibles = this.getTotalAdmissibles();
                 let influenceAdmissible = influencer.getTotalAdmissibles();
+                summand = 0;
                 if (tmpAdmissibles.size == 2) {
                     if (influenceAdmissible.equals(tmpAdmissibles)) {
                         // Mehrfachauftreten von Paaren bekommt die höchste Bewertung
-                        summand = 36;
+                        summand = 300;
                     } else if (influenceAdmissible.isSuperset(tmpAdmissibles)) {
                         // Das aktuelle Paar als Subset in den Influenz-Zellen
                         summand = 27;
-                    } else {
-                        // Paare werden gegenüber größeren Mengen bevorzugt.
-                        summand = 18;
-                    }
+                    } 
                 } else {
                     summand = influencer.getTotalAdmissibles().size;
                 }
