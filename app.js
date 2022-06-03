@@ -2741,7 +2741,7 @@ class SudokuCell {
         let tmpWeight = 0;
         let summand = 0;
         let tmpAdmissibles = this.getTotalAdmissibles();
-        if (tmpAdmissibles.size == 2){
+        if (tmpAdmissibles.size == 2) {
             tmpWeight = 300;
         }
         // Den Kontext der Zelle betrachten
@@ -2755,10 +2755,14 @@ class SudokuCell {
                     if (influenceAdmissible.equals(tmpAdmissibles)) {
                         // Mehrfachauftreten von Paaren bekommt die höchste Bewertung
                         summand = 300;
-                    } else if (influenceAdmissible.isSuperset(tmpAdmissibles)) {
-                        // Das aktuelle Paar als Subset in den Influenz-Zellen
-                        summand = 27;
-                    } 
+                        // } else if (influenceAdmissible.isSuperset(tmpAdmissibles)) {
+                    } else {
+                        let interSecSize = influenceAdmissible.intersection(tmpAdmissibles).size;
+                        if (interSecSize > 0) {
+                            // Das aktuelle Paar mit Schnitt in den Influenz-Zellen
+                            summand = 27 + interSecSize;
+                        }
+                    }
                 } else {
                     summand = influencer.getTotalAdmissibles().size;
                 }
