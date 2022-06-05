@@ -1913,7 +1913,7 @@ class SudokuGrid {
 
         let inAdmissiblesAdded = true;
         while (inAdmissiblesAdded) {
-            if (this.calculateNecessaryForNextStep()) return true;
+            if (this.calculateNecessarysForNextStep()) return true;
             if (this.calculateSinglesForNextStep()) return true;
 
             inAdmissiblesAdded = false;
@@ -2096,26 +2096,32 @@ class SudokuGrid {
         }
     }
 
-    calculateNecessaryForNextStep() {
+    calculateNecessarysForNextStep() {
         // Berechne und setze für jede nicht gesetzte Zelle
         // in der Menge ihrer möglichen Nummern die
         // notwendigen Nummern
+        // Die notwendigen Nummern werden komplett sofort berechnet, weil es geht
+        // und weil dies die Früherkennung von Widersprüchen verbessert.
+        // Die Berechnung von indirekt unzulässigen Nummern bleibt weiterhin lazy.
         // Iteriere über die Gruppen
+
+        let added = false;
         for (let i = 0; i < 9; i++) {
             let tmpGroup = this.sudoGroups[i];
-            if (tmpGroup.calculateNecessaryForNextStep()) return true;
+            if (tmpGroup.calculateNecessaryForNextStep()) added = true;
         }
         // Iteriere über die Reihen
         for (let i = 0; i < 9; i++) {
             let tmpRow = this.sudoRows[i];
-            if (tmpRow.calculateNecessaryForNextStep()) return true;
+            if (tmpRow.calculateNecessaryForNextStep()) added = true;
         }
         // Iteriere über die Spalten
         for (let i = 0; i < 9; i++) {
             let tmpCol = this.sudoCols[i];
-            if (tmpCol.calculateNecessaryForNextStep()) return true;
+            if (tmpCol.calculateNecessaryForNextStep()) added = true;
         }
-        return false;
+
+        return added;
     }
 
     calculateNecessarys() {
