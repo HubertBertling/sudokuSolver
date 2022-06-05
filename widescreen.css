@@ -411,7 +411,7 @@ body, html {
     cursor: pointer;
 }
 
-.number:active, .delete:active, .btn-redo:active, .btn-undo:active, .btn-automatic:active {
+.number:active, .delete:active, .btn-statistic:active, .btn-automatic:active {
     transform: translate(2px, 2px);
 }
 
@@ -505,6 +505,13 @@ body, html {
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
 }
+.storage-btns {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 2px;
+}
+
+
 
 .storage-btns-mobile {
     display:none;
@@ -633,12 +640,22 @@ body, html {
     padding: 2px; 
     box-sizing: border-box; 
 }
+
 .textInDlgs:last-child { margin-right: 0px; }
 
 .input-row {
     font-size: 1.6rem;
     margin: 5px;
+
 }
+input {
+    padding: 5px;
+}
+
+input[readonly]
+{
+    background-color: darkgrey;
+  }
 
 .ok-cancel-btns {
     margin-top: 5px;

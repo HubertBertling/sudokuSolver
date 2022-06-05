@@ -113,6 +113,7 @@
                         </div>
                         <div class="storage-btns">
                             <div class="main-btn" id="btn-save">Speichern</div>
+                            <div class="main-btn" id="btn-statistic">Statistik aktualisieren</div>
                         </div>
                         <div class="storage-btns-mobile">
                             <div class="main-btn" id="btn-save-mobile">Speichern</div>
@@ -189,7 +190,8 @@
         </div>
         <div class="puzzle-header">
             <h1>Selektiertes Puzzle:</h1>
-            <div class="pz-nr" id="pzNr">0</div>
+
+            <div class="pz-id-row" id="pz-id-row">0</div>
         </div>
         <div class="puzzle-line">
             <div>Puzzle: </div>
@@ -209,8 +211,10 @@
     <div id="backstore" style="display: none">
         <div id="contentSaveDlg">
             <form class="dlg-form">
+                <label for="puzzle-id">Puzzle-Id:</label>
+                <input type="text" id="save-dlg-puzzle-id" name="puzzle-id"><br>
                 <label for="puzzle-name">Puzzle-Name:</label>
-                <input type="text" id="puzzle-name" name="puzzle-name"><br><br>
+                <input type="text" id="puzzle-name" name="puzzle-name"><br>
                 <div class="ok-cancel-btns">
                     <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageOK" name="ok" value="OK" />
                     <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageCancel" name="cancel"

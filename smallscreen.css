@@ -573,6 +573,9 @@ body, html {
    
 }
 
+#btn-statistic {
+    display:none;
+}
 .storage-btns-mobile {
     border-left: darkgrey dashed 3px;
     display: grid;

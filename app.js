@@ -296,8 +296,23 @@ class SudokuApp {
         document.querySelector('#btn-save').addEventListener('click', () => {
             this.runner.stopTimer();
             this.successDialog.close();
-            this.puzzleSaveDialog.open();
+            let playedPuzzle = this.suGrid.getPlayedPuzzle();
+            this.puzzleSaveDialog.open(playedPuzzle.uid, playedPuzzle.obj.name);
         });
+
+        document.querySelector('#btn-statistic').addEventListener('click', () => {
+            this.runner.stopTimer();
+            this.successDialog.close();
+            let playedPuzzle = this.suGrid.getPlayedPuzzle();
+
+            let puzzleId = playedPuzzle.uid;
+            let puzzleObj = playedPuzzle.obj;
+            if (puzzleObj.name == '') {
+                this.puzzleSaveDialog.open();
+            }
+            his.sudokuPuzzleDB.savePuzzle(puzzleId, puzzleObj);
+        });
+
         document.querySelector('#btn-save-mobile').addEventListener('click', () => {
             this.runner.stopTimer();
             this.successDialog.close();
@@ -2816,6 +2831,7 @@ class PuzzleSaveDialog {
         this.myOpen = false;
 
         this.myPuzzleNameNode = document.getElementById("puzzle-name");
+        this.myPuzzleIdNode = document.getElementById("save-dlg-puzzle-id");
         this.okNode = document.getElementById("btn-saveStorageOK");
         this.cancelNode = document.getElementById("btn-saveStorageCancel");
         // Mit der Erzeugung des Wrappers werden 
@@ -2827,7 +2843,7 @@ class PuzzleSaveDialog {
             sudoApp.savePuzzleDlgCancelPressed();
         });
     }
-    open() {
+    open(uid, name) {
         if (window.screen.availWidth < 421) {
             this.winBox = new WinBox("Puzzle speichern unter ...", {
                 x: "center",
@@ -2841,12 +2857,18 @@ class PuzzleSaveDialog {
                 x: "center",
                 y: "center",
                 width: "300px",
-                height: "180px",
+                height: "240px",
                 mount: document.getElementById("contentSaveDlg")
             });
         }
+
         this.myOpen = true;
-        this.myPuzzleNameNode.value = '';
+        this.myPuzzleIdNode.removeAttribute("readonly");
+        this.myPuzzleIdNode.value = uid;
+        this.myPuzzleIdNode.setAttribute("readonly", true);
+        this.myPuzzleNameNode.value = name;
+
+        this.myPuzzleNameNode.value = name;
     }
 
     close() {
@@ -3300,19 +3322,19 @@ class SudokuPuzzleDB {
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         let key = Array.from(puzzleMap.keys())[this.selectedIndex];
         let selectedPZ = puzzleMap.get(key);
-        this.displayPZNr(key);
+        this.displayIdRow(key, selectedPZ.name);
         this.displayTable('puzzle', selectedPZ.puzzle);
         this.displayTable('solution', selectedPZ.solution);
         this.displayDefineCounter(selectedPZ);
     }
-    displayPZNr(nr) {
-        let nrElem = document.getElementById('pzNr')
-        nrElem.innerHTML = nr;
-        //       let pzAllNode = document.getElementById('pz-all');
-        //       pzAllNode.innerHTML = this.puzzles.length;
+    displayIdRow(uid, name) {
+        let puzzleIdentityRow = document.getElementById('pz-id-row')
+        puzzleIdentityRow.innerHTML =
+            '<b>Puzzle-Id</b> &nbsp' + uid + '; &nbsp'
+            + '<b>Name:</b> &nbsp' + name;
     }
     displayClearPZNr() {
-        let nrElem = document.getElementById('pzNr')
+        let nrElem = document.getElementById('pz-id-row')
         nrElem.innerHTML = "";
     }
 
