@@ -310,7 +310,8 @@ class SudokuApp {
             if (puzzleObj.name == '') {
                 this.puzzleSaveDialog.open();
             }
-            his.sudokuPuzzleDB.savePuzzle(puzzleId, puzzleObj);
+            this.sudokuPuzzleDB.savePuzzle(puzzleId, puzzleObj);
+            document.getElementById("puzzle-db-tab").click();
         });
 
         document.querySelector('#btn-save-mobile').addEventListener('click', () => {
