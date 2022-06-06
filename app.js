@@ -306,14 +306,13 @@ class SudokuApp {
             let playedPuzzleDbElement = this.suGrid.getPlayedPuzzleDbElement();
 
             let puzzleId = this.suGrid.loadedPuzzleId;
-            let puzzleName = this.sudokuPuzzleDB.getPuzzle(puzzleId).name;
-
             if (puzzleId == '') {
                 let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-                this.puzzleSaveDialog.open(newPuzzelId, puzzleName);
+                this.puzzleSaveDialog.open(newPuzzelId, '');
+            } else {
+                this.sudokuPuzzleDB.mergePlayedPuzzle(puzzleId, playedPuzzleDbElement);
+                document.getElementById("puzzle-db-tab").click();
             }
-            this.sudokuPuzzleDB.mergePlayedPuzzle(puzzleId, playedPuzzleDbElement);
-            document.getElementById("puzzle-db-tab").click();
         });
 
         document.querySelector('#btn-save-mobile').addEventListener('click', () => {
