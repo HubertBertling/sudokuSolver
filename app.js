@@ -3263,6 +3263,7 @@ class SudokuPuzzleDB {
         }
 
         let i = 0;
+        let selectedTr = null;
         for (let [key, pz] of puzzleMap) {
             let tr = document.createElement('tr');
             tr.setAttribute("onClick", "sudoApp.sudokuPuzzleDB.setSelected(this)");
@@ -3270,6 +3271,7 @@ class SudokuPuzzleDB {
             tr.classList.add('item')
             if (i == this.selectedIndex) {
                 tr.classList.add('selected');
+                selectedTr = tr;
             }
             i++;
 
@@ -3311,6 +3313,7 @@ class SudokuPuzzleDB {
 
             tbNode.appendChild(tr);
         }
+        selectedTr.scrollIntoView();
     }
 
 
