@@ -3208,6 +3208,7 @@ class SudokuPuzzleDB {
             if (displayRows[i].classList.contains('selected')) {
                 displayRows[i].classList.remove('selected');
                 displayRows[i + 1].classList.add('selected');
+                displayRows[i + 1].scrollIntoView();
                 this.selectedIndex = this.getIndex(displayRows[i + 1].cells[0].innerText);
                 this.displayCurrentPZ();
                 return;
@@ -3221,18 +3222,12 @@ class SudokuPuzzleDB {
             if (displayRows[i].classList.contains('selected')) {
                 displayRows[i].classList.remove('selected');
                 displayRows[i - 1].classList.add('selected');
+                displayRows[i - 1].scrollIntoView();
                 this.selectedIndex = this.getIndex(displayRows[i - 1].cells[0].innerText);
                 this.displayCurrentPZ();
                 return;
             }
         }
-
-        let str_puzzleMap = localStorage.getItem("localSudokuDB");
-        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-        if (this.selectedIndex > 0) {
-            this.selectedIndex--;
-        }
-        this.display();
     }
 
     display() {
