@@ -207,7 +207,7 @@ body, html {
 .auto-value-cell > div.auto-step-number {
     background-color: darkgrey; 
     color: black;
-    font-size: 0.9rem;
+    font-size: 1rem;
 }
 
 .auto-value-cell > div.auto-value-number {

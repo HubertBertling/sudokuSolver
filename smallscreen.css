@@ -161,7 +161,7 @@ body, html {
     width: var(--sudoku-cell-size); 
     border-radius: 5px;
     display: grid; 
-    font-size: 1.2rem;
+    font-size: var(--font-size-btn);
     place-items: center;
     cursor: pointer;
     margin: 1px;
@@ -209,7 +209,7 @@ body, html {
 .auto-value-cell > div.auto-step-number {
     background-color: darkgrey; 
     color: black;
-    font-size: 0.9rem;
+    font-size: 1rem;
 }
 
 .auto-value-cell > div.auto-value-number {
@@ -229,33 +229,6 @@ body, html {
  .auto-value-cell > div.open {
     background-color: var(--nested-cell-bg-color); 
  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .sudoku-grid-cell.nested {
     display: grid;
