@@ -134,7 +134,7 @@ class SudokuHelpPage extends SudokuPage {
     }
     open() {
         super.open();
-        document.getElementById('help-link').click();
+        // document.getElementById('help-link').click();
     }
 }
 class SudokuApp {
