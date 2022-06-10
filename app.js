@@ -92,6 +92,7 @@ class SudokuPage {
         this.myLinkNode.addEventListener('click', () => {
             sudoApp.tabView.open(this);
         })
+        this.close();
     }
     close() {
         this.myContentNode.style.display = "none";
