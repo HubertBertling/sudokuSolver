@@ -4,9 +4,9 @@ layout: default
 
 # Sudoku-App
 
-Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Sudoku, manchmal auch nur als mittelschwer klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man diese Sudoku-App und den darin enthaltenen Solver nutzen. Er löst jedes Sudoku in wenigen Minuten. Das tun andere Sudoku-Solver auch. Die Besonderheit dieses Solvers besteht darin, dass man ihm dabei zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt. Man kann  sich einfach nur einen nächsten möglichen Schritt zeigen lassen und dann von Hand weitermachen.
+Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Sudoku, manchmal auch nur als mittel klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man diese Sudoku-App und den darin enthaltenen Solver nutzen. Er löst jedes Sudoku in wenigen Minuten. Das tun andere Sudoku-Solver auch. Die Besonderheit dieses Solvers besteht darin, dass man ihm dabei zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt. Alternativ kann  sich auch einfach nur einen nächsten möglichen Schritt zeigen lassen und dann von Hand weitermachen.
 
-Zusammen mit der Lösung bestimmt der Solver den tatsächlichen Schwierigkeitsgrad des Sudokus. Sehr schwere Sudokus, Definition siehe unten, sind manuell kaum zu lösen. Sie sollten daher kein Grund für Frust sein. Konsequenz: Mit dieser Sudoku-App macht das Sudokulösen Spaß, auch wenn mal ein sehr schweres Puzzle zu lösen ist.
+Zusammen mit der Lösung bestimmt der Solver den tatsächlichen Schwierigkeitsgrad des Sudokus. Sehr schwere Sudokus, Definition siehe unten, sind manuell kaum zu lösen. Sie sollten daher kein Grund für Frust sein. Konsequenz: Mit dieser Sudoku-App macht das Sudokulösen Spaß, auch wenn mal ein schweres Puzzle zu lösen ist.
 
 ## App-Überblick
 
@@ -91,7 +91,8 @@ Indirekt unzulässige Nummern spielen eine wichtige Rolle bei der Bestimmung der
 
 1. **Indirekt unzulässig wegen einer Single-Nummer:** Eine Nummer ist indirekt unzulässig wegen einer Single-Nummer, wenn sie in ihrer Spalte, Reihe oder Gruppe ein zweites mal auftritt.
 
-1. **Indirekt unzulässig wegen Pairing:** Eine Nummer ist indirekt unzulässig, wenn es in einer Gruppe, Zeile oder Spalte Paare gibt und Nummern dieser Paare zusätzlich in weiteren Zellen dieser Gruppe, Spalte oder Zeile auftauchen. Im nachfolgenden Beispiel ist das 4-6-Paar ein kritisches Paar. Das 4-6-Paar macht in seiner Gruppe alle 4 und 6 indirekt unzulässig. Diese Darstellung zeigt der Solver im Lazy-Auswertungsmodus. Der Solver findet damit mit der 5 eine Zelle mit eindeutiger Nummer. ![Indirekt unzulässig](./images/indirektWegenPairing.png)
+1. **Indirekt unzulässig wegen Pairing:** Eine Nummer ist indirekt unzulässig, wenn es in einer Gruppe, Zeile oder Spalte Paare gibt und Nummern dieser Paare zusätzlich in weiteren Zellen dieser Gruppe, Spalte oder Zeile auftauchen. Im nachfolgenden Beispiel ist das 4-6-Paar ein kritisches Paar. Das 4-6-Paar macht in seiner Gruppe alle 4 und 6 indirekt unzulässig. Der Grund: Das Paar bedeutet, dass die 4 und die 6 auf jeden Fall in einer der beiden Zellen des Paares gesetzt werden muss. Aktuell steht nur noch nicht fest, ob die 6 oder die 4 oben ist. Fest steht aber jetzt schon, dass in den übrigen Zellen der Gruppe keine 4 oder 6 mehr vorkommen können. Die 4 und 6 sind hier indirekt unzulässig. Diese Gruppendarstellung mit den gestrichelten Kanten zeigt der Solver nur im Lazy-Auswertungsmodus. Der Solver findet damit mit der 5 eine Zelle mit eindeutiger Nummer. Nur die 5 kann noch gesetzt werden.
+![Indirekt unzulässig](./images/indirektWegenPairing.png)
 
 ### Auswertungsmethoden
 
@@ -133,7 +134,7 @@ Widerspruch - Single mehrfach:
 
 So wie es widerspruchsvolle Zellen geben kann - erkennbar an ihrem roten Hintergrund - so kann es auch widerspruchsvolle Gruppen geben. Eine Gruppe ist widerspruchsvoll, wenn eine der folgenden Bedingungen vorliegt:
 
-1. **Widerspruch - Single mehrfach:** Eine Nummer soll gleichzeitig in verschiedene Zellen der Gruppe gesetzt werden wie die 3 im Beispiel.
+1. **Widerspruch - Single mehrfach:** Eine Nummer soll gleichzeitig in verschiedenen Zellen der Gruppe gesetzt werden wie die 3 im Beispiel.
 1. **Widerspruch - Pairing:** Wegen des Paares {2 9} im nachfolgenden Beispiel ist die einzelne 2 in der Gruppe widersprüchlich. Die 2 muss in einer der beiden Paarzellen gesetzt werden. Wenn sie zusätzlich noch einmal einzeln gesetzt würde, würde sie mehrfach erscheinen, ein Widerspruch. Im zweiten Beispiel kommt kommt das Paar {1 9} dreimal vor. Ebenfalls ein Widerspruch.
 1. **Widerspruch - Dieselbe notwendige Nummer zweimal:** In der Gruppe tritt dieselbe Nummer in verschiedenen Zellen als notwendig auf.
 1. **Widerspruch - Fehlende Nummer:** In der Gruppe kommt eine Nummer überhaupt nicht vor. Im ersten Beispiel eines Pairing-Widerspruchs fehlt die 4 und im zweiten Beispiel die 3.
