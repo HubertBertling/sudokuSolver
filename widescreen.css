@@ -325,8 +325,8 @@ body, html {
     font-size: 1.6rem;
 }
 embed {
-    width: 100%;
-    height: auto;
+    width: 800px;
+    height: 100%;
 }
 
 .sudoku-title {
