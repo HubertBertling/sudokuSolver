@@ -77,7 +77,7 @@ Die manuelle Ausführung wird in jedem Fall in der Definitionsphase genutzt. In 
 |![Initialisieren](./images/initButton.png)|Die Taste **Initialisieren**. Durch das Drücken dieser Taste wird der Solver wird initialisiert. Danach ist die Sudoku-Tabelle leer.|
 |![Reset](./images/resetButton.png)|Die Taste **Zurücksetzen**. Mittels dieser Taste wird der Solver zurückgesetzt auf die Aufgabenstellung. D.h. alle in der Spielphase gesetzten Zellen werden gelöscht. Die Zellen der Definitionsphase bleiben erhalten.|
 |![Speichern](./images/storeButton.png)|Mittels dieser Taste kann das aktuelle Puzzle in der Datenbank gespeichert werden.|
-|![Statistik aktualisieren](./images/statistik.png)|Mittels dieser Taste kann für ein aus der Datenbank geladenes Puzlle das neue Ausführungsergebnis gespeichert werden.|
+|![Statistik aktualisieren](./images/statistik.png)|Mittels dieser Taste kann für ein aus der Datenbank geladenes Puzzle das neue Ausführungsergebnis gespeichert werden.|
 
 ## Theoretische Grundlagen des Solvers
 
