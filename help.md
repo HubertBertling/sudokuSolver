@@ -4,11 +4,11 @@ layout: default
 
 # Sudoku-App
 
-Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Sudoku, manchmal auch nur als mittel klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man diese Sudoku-App und den darin enthaltenen Solver nutzen. Er löst jedes Sudoku in wenigen Minuten. Das tun andere Sudoku-Solver auch.
+Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Sudoku, manchmal auch nur als leicht oder mittel klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man diese Sudoku-App und den darin enthaltenen Solver nutzen. Er löst jedes Sudoku in wenigen Minuten.
 
-Die Besonderheit dieses Solvers besteht darin, dass man ihm dabei zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt. Alternativ kann man sich auch einfach nur einen nächsten möglichen Schritt zeigen lassen und dann von Hand weitermachen.
+Das tun andere Sudoku-Solver auch. Die Besonderheit dieses Solvers besteht darin, dass man ihm dabei zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt. Alternativ kann man sich auch einfach nur einen nächsten möglichen Schritt zeigen lassen und dann von Hand weitermachen.
 
-Zusammen mit der Lösung bestimmt der Solver den tatsächlichen Schwierigkeitsgrad des Sudokus. Sehr schwere Sudokus, Definition siehe unten, sind manuell kaum zu lösen. Sie sollten daher kein Grund für Frust sein. Konsequenz: Mit dieser Sudoku-App macht das Sudokulösen Spaß, auch wenn mal ein schweres Puzzle zu lösen ist.
+Zusammen mit der Lösung bestimmt der Solver den tatsächlichen Schwierigkeitsgrad des Sudokus. Sehr schwere Sudokus, Definition siehe unten, sind manuell kaum zu lösen. Sie sollten daher kein Grund für Frust sein. Konsequenz: Mit dieser Sudoku-App macht das Sudokulösen Spaß, auch wenn mal ein schweres Puzzle dabei ist.
 
 ## App-Überblick
 
@@ -77,13 +77,14 @@ Die manuelle Ausführung wird in jedem Fall in der Definitionsphase genutzt. In 
 |![Initialisieren](./images/initButton.png)|Die Taste **Initialisieren**. Durch das Drücken dieser Taste wird der Solver wird initialisiert. Danach ist die Sudoku-Tabelle leer.|
 |![Reset](./images/resetButton.png)|Die Taste **Zurücksetzen**. Mittels dieser Taste wird der Solver zurückgesetzt auf die Aufgabenstellung. D.h. alle in der Spielphase gesetzten Zellen werden gelöscht. Die Zellen der Definitionsphase bleiben erhalten.|
 |![Speichern](./images/storeButton.png)|Mittels dieser Taste kann das aktuelle Puzzle in der Datenbank gespeichert werden.|
+|![Statistik aktualisieren](./images/statistik.png)|Mittels dieser Taste kann für ein aus der Datenbank geladenes Puzlle das neue Ausführungsergebnis gespeichert werden.|
 
 ## Theoretische Grundlagen des Solvers
 
 ### Notwendige Nummern
 
 ![Lazy notwendig](./images/lazynotwendig.png)
-Eine zulässige Nummer in einer Zelle ist notwendig, wenn die Nummer in ihrer Gruppe, Zeile oder Spalte einzig ist. D.h. sie kommt in der betreffenden Gruppe, Zeile oder Spalte nur genau einmal vor. Im Bild ist die grüne 3 notwendig, weil sie in ihrer Gruppe kein weiteres mal zulässig ist. Im Lazy-Auswertungsmodus zeigt der Solver die die Notwendigkeit verursachende Gruppe, Spalte oder Zeile an.
+Eine zulässige Nummer in einer Zelle ist notwendig, wenn die Nummer in ihrer Gruppe, Zeile oder Spalte einzig ist. D.h. sie kommt in der betreffenden Gruppe, Zeile oder Spalte nur genau einmal vor. Im Bild ist die grüne 4 notwendig, weil sie in ihrer Zeile kein weiteres mal zulässig ist. Im Lazy-Auswertungsmodus zeigt der Solver die die Notwendigkeit verursachende Gruppe, Spalte oder Zeile an, wenn man die Zelle mit der notwendigen Nummer selektiert.
 
 ### Indirekt unzulässige Nummern
 
@@ -93,7 +94,7 @@ Indirekt unzulässige Nummern spielen eine wichtige Rolle bei der Bestimmung der
 
 1. **Indirekt unzulässig wegen einer Single-Nummer:** Eine Nummer ist indirekt unzulässig wegen einer Single-Nummer, wenn sie in ihrer Spalte, Reihe oder Gruppe ein zweites mal auftritt.
 
-1. **Indirekt unzulässig wegen Pairing:** Eine Nummer ist indirekt unzulässig, wenn es in einer Gruppe, Zeile oder Spalte Paare gibt und Nummern dieser Paare zusätzlich in weiteren Zellen dieser Gruppe, Spalte oder Zeile auftauchen. Im nachfolgenden Beispiel ist das 4-6-Paar ein kritisches Paar. Das 4-6-Paar macht in seiner Gruppe alle 4 und 6 indirekt unzulässig. Der Grund: Das Paar bedeutet, dass die 4 und die 6 auf jeden Fall in einer der beiden Zellen des Paares gesetzt werden muss. Aktuell steht nur noch nicht fest, ob die 6 oder die 4 oben ist. Fest steht aber jetzt schon, dass in den übrigen Zellen der Gruppe keine 4 oder 6 mehr vorkommen können. Die 4 und 6 sind hier indirekt unzulässig. Diese Gruppendarstellung mit den gestrichelten Kanten zeigt der Solver nur im Lazy-Auswertungsmodus. Der Solver findet damit mit der 5 eine Zelle mit eindeutiger Nummer. Nur die 5 kann noch gesetzt werden.
+1. **Indirekt unzulässig wegen Pairing:** Eine Nummer ist indirekt unzulässig, wenn es in einer Gruppe, Zeile oder Spalte Paare gibt und Nummern dieser Paare zusätzlich in weiteren Zellen dieser Gruppe, Spalte oder Zeile auftauchen. Im nachfolgenden Beispiel ist das 4-6-Paar ein kritisches Paar. Das 4-6-Paar macht in seiner Gruppe alle 4 und 6 indirekt unzulässig. Der Grund: Das Paar bedeutet, dass die 4 und die 6 auf jeden Fall in einer der beiden Zellen des Paares gesetzt werden muss. Aktuell steht nur noch nicht fest, ob die 6 oder die 4 oben ist. Fest steht aber jetzt schon, dass in den übrigen Zellen der Gruppe keine 4 oder 6 mehr vorkommen können. Die 4 und 6 sind hier indirekt unzulässig. Diese Gruppendarstellung mit den gestrichelten Kanten zeigt der Solver nur im Lazy-Auswertungsmodus, wenn man eine Zelle mit indirekt unzulässigen Nummern selektiert. Der Solver findet die Zelle mit der 5 als eindeutiger Nummer. Nur die 5 kann noch gesetzt werden.
 ![Indirekt unzulässig](./images/indirektWegenPairing.png)
 
 ### Auswertungsmethoden
@@ -110,7 +111,7 @@ Die strikte Auswertung kann in zwei Varianten angezeigt werden:
 
 1. **Strikt -** : Die errechneten indirekten unzulässigen Nummern werden ausgeblendet. Das nachfolgende Bild zeigt die vorige Matrix im Strikt-Minus-Modus. ![Strikt Minus](./images/striktminus.png)
 
-In der Strikt-Minus-Matrix dieses Beispiels besitzen alle Zellen nur noch genau eine zulässige Nummer. Alle Nummern sind Singles. Mit anderen Worten: wir sehen hier die Lösung des Sudokus. Der Solver präsentiert hier eine Lösung ohne Backtracking. Die meisten leichten und mittleren Sudokus in den Zeitschriften besitzen diese Eigenschaft der kalkulierten Lösungsfindung.
+In der Strikt-Minus-Matrix dieses Beispiels besitzen alle Zellen nur noch genau eine zulässige Nummer. Alle Nummern sind Singles. Mit anderen Worten: wir sehen hier die Lösung des Sudokus. Der Solver präsentiert hier eine Lösung ohne Backtracking. Die meisten leichten und mittleren Sudokus in den Zeitschriften können ohne Backtracking gelöst werden.
 
 ## Widerspruchsvolle Sudokus
 
@@ -134,7 +135,7 @@ Widerspruchsvolle Zellen hatten wir oben schon kennengelernt. Es sind dies Zelle
 Widerspruch - Single mehrfach:
 <img src="./images/groupconflict.png" width="200px" height="200px"/>
 
-So wie es widerspruchsvolle Zellen geben kann - erkennbar an ihrem roten Hintergrund - so kann es auch widerspruchsvolle Gruppen geben. Eine Gruppe ist widerspruchsvoll, wenn eine der folgenden Bedingungen vorliegt:
+So wie es widerspruchsvolle Zellen geben kann - erkennbar an ihrem roten Hintergrund - kann es auch widerspruchsvolle Gruppen geben. Eine Gruppe ist widerspruchsvoll, wenn eine der folgenden Bedingungen vorliegt:
 
 1. **Widerspruch - Single mehrfach:** Eine Nummer soll gleichzeitig in verschiedenen Zellen der Gruppe gesetzt werden wie die 3 im Beispiel.
 1. **Widerspruch - Pairing:** Wegen des Paares {2 9} im nachfolgenden Beispiel ist die einzelne 2 in der Gruppe widersprüchlich. Die 2 muss in einer der beiden Paarzellen gesetzt werden. Wenn sie zusätzlich noch einmal einzeln gesetzt würde, würde sie mehrfach erscheinen, ein Widerspruch. Im zweiten Beispiel kommt kommt das Paar {1 9} dreimal vor. Ebenfalls ein Widerspruch.
@@ -177,7 +178,7 @@ Der Solver zeigt die Anzahl der zurückgelegten Schritte an. Jedes Setzen einer 
 Der Solver sucht gemäß der folgenden Priorität die nächste offene Zelle und die zu setzende Nummer:
 
 1. **Zelle mit notwendiger Nummer:** Der Solver wählt in der Matrix zunächst eine offene Zelle, die in der Menge ihrer zulässigen Nummern eine notwendige Nummer hat. Diese notwendige Nummer wird dann in der Zelle gesetzt.
-1. **Zelle mit direkter Single**: Wenn es keine Zelle mit notwendiger Nummer mehr gibt, wählt der Solver eine Zelle mit nur einer zulässigen Nummer. Er setzt diese Nummer.
+1. **Zelle mit direkter Single**: Wenn es keine Zelle mit notwendiger Nummer mehr gibt, wählt der Solver eine Zelle mit nur genau einer zulässigen Nummer. Er setzt diese Nummer.
 1. **Zelle mit indirekter Single**: Wenn es keine Zelle mit notwendiger Nummer oder mit direkter Single mehr gibt wählt der Solver eine Zelle mit indirekter Single.
 1. **Zelle mit minimaler Optionenmenge**. Sind keine Zellen mit notwendigen Nummern oder Singles mehr verfügbar, wählt der Solver eine Zelle mit minimaler Anzahl von zulässigen Nummern. Die sogenannten Optionen der Zelle. Meist besteht die minimale Optionenmenge aus zwei Optionen. Ist aber nicht eindeutig, d.h. es gibt in der Regel mehrere Zellen mit zwei Optionen. In dieser Menge wählt der Solver zufällig eine Zelle und setzt eine der beiden Optionennummern. Im Laufe der weiteren Suche kann sich herausstellen, dass diese Nummer keine Lösung des Sudokus erlaubt. Der Back-Tracking-Prozess kehrt im weiteren Verlauf zu dieser Zelle zurück und versucht dann mit der Wahl einer anderen Nummer aus der Optionenmenge die Lösung zu finden.
 
