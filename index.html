@@ -17,11 +17,11 @@
 
 <body>
     <!--Die drei Reiter der App-->
-    <button class="tablink tablinksolver" id="sudoku-grid-tab">Sudoku-Solver</button>
-    <button class="tablink tablinkdatabase" id="puzzle-db-tab">Puzzle-Datenbank</button>
-    <button class="tablink tablinkhelp" id="puzzle-help-tab">Hilfe</button>
+    <button class="tablink noprint tablinksolver" id="sudoku-grid-tab">Sudoku-Solver</button>
+    <button class="tablink noprint tablinkdatabase" id="puzzle-db-tab">Puzzle-Datenbank</button>
+    <button class="tablink noprint tablinkhelp" id="puzzle-help-tab">Hilfe</button>
     <!--Der Inhalt des Reiters Sudoku-Solver-->
-    <div id="sudoku-solver" class="tabcontent">
+    <div id="sudoku-solver" class="tabcontent ">
         <div class="sudoku-solver-in-tab">
             <div class="inputArea" id="inputArea">
                 <div class="gridArea" id="gridArea">
@@ -148,9 +148,9 @@
     </div>
     <!--Der Inhalt des Reiters Puzzle-Datenbank-->
     <div id="puzzle-db" class="tabcontent tabdatabase">
-        <section>
-            <div class="container">
-                <table class="puzzle-db-table" id="puzzle-db-table">
+        <section class="noprint">
+            <div class="container ">
+                <table class="puzzle-db-table " id="puzzle-db-table">
                     <thead class="puzzle-db-thead">
                         <tr>
                             <th style="cursor:pointer">Puzzle-Id <div>Puzzle-Id</div>
@@ -180,34 +180,32 @@
                 </table>
             </div>
         </section>
-        <div class="puzzle-btns">
-            <div class="pz-btn" id="pz-btn-load" onclick="sudoApp.loadCurrentPuzzle()">Laden </div>
-            <div class="pz-btn" id="pz-btn-previous" onclick="sudoApp.previousPuzzle()"><img
+        <div class="puzzle-btns ">
+            <div class="pz-btn noprint" id="pz-btn-load" onclick="sudoApp.loadCurrentPuzzle()">Laden </div>
+            <div class="pz-btn noprint" id="pz-btn-previous" onclick="sudoApp.previousPuzzle()"><img
                     src="images/pfeilrueckwaerts.png" class="forward-backward-image"></div>
-            <div class="pz-btn" id="pz-btn-next" onclick="sudoApp.nextPuzzle()"><img src="images/pfeilvorwaerts.png"
+            <div class="pz-btn noprint" id="pz-btn-next" onclick="sudoApp.nextPuzzle()"><img src="images/pfeilvorwaerts.png"
                     class="forward-backward-image"></div>
-            <div class="pz-btn" id="pz-btn-delete" onclick="sudoApp.deleteCurrentPuzzle()">Löschen</div>
+            <div class="pz-btn noprint" id="pz-btn-delete" onclick="sudoApp.deleteCurrentPuzzle()">Löschen</div>
+            <div class="pz-btn noprint" id="pz-btn-print" onclick="sudoApp.printCurrentPuzzle()">Drucken</div>
         </div>
-        <div class="puzzle-header">
+        <div class="puzzle-header noprint">
             <h1>Selektiertes Puzzle:</h1>
 
             <div class="pz-id-row" id="pz-id-row">0</div>
         </div>
         <div class="puzzle-line">
-            <div>Puzzle: </div>
+            <div class="noprint">Puzzle: </div>
             <div class="pz-table" id="puzzle">
             </div>
-            <div>Lösung: </div>
-            <div class="pz-table" id="solution">
+            <div class="noprint">Lösung: </div>
+            <div class="solution-table noprint" id="solution">
             </div>
         </div>
     </div>
     <!--Der Inhalt des Reiters Hilfe-->
-    <div id="help" class="tabcontent">
-        <!-- <iframe src="./help.html"  width= 100% height="100%" style="border:none;">  </iframe> -->
-        <!-- <div w3-include-html="./help.html"></div> -->
-        <embed src="./help.html"> </embed>
-        <!-- <a id="help-link" href="./help.html">Hilfe</a> -->
+    <div id="help" class="tabcontent ">
+        <embed class="help-embed" src="./help.html"> </embed>
     </div>
     <!--Dialoge -->
     <div id="backstore" style="display: none">
@@ -240,6 +238,7 @@
         </div>
     </div>
     <script src="./app.js"></script>
+    <link rel="stylesheet" type="text/css" media="print" href="print.css"/>
 </body>
 
 </html>

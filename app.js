@@ -436,6 +436,16 @@ class SudokuApp {
         this.tabView.openGrid();
     }
 
+    printCurrentPuzzle() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        let key = Array.from(puzzleMap.keys())[sudoApp.sudokuPuzzleDB.selectedIndex];
+        let selectedPZ = puzzleMap.get(key);
+        this.sudokuPuzzleDB.displayTablePrint('puzzle', selectedPZ.puzzle);
+        window.print();
+        this.sudokuPuzzleDB.display();
+    }
+
     loadCurrentMobilePuzzle() {
         this.runner.stopTimer();
         this.runner.init();
@@ -3371,6 +3381,34 @@ class SudokuPuzzleDB {
                 }
                 if (col === 2 || col === 5) {
                     cellField.style.borderRight = "4px solid white";
+                }
+                table.appendChild(cellField);
+                k++;
+            }
+        }
+    }
+
+    displayTablePrint(nodeId, tableArray) {
+        this.displayClearTable('puzzle');
+        let table = document.getElementById(nodeId);
+        let k = 0;
+        for (let row = 0; row < 9; row++) {
+            for (let col = 0; col < 9; col++) {
+                let cellField = document.createElement('div')
+                cellField.classList.add('cell-field');
+                if (tableArray[k] == '0') {
+                    let currentText = document.createTextNode('');
+                    cellField.appendChild(currentText);
+                } else {
+                    let currentText = document.createTextNode(tableArray[k]);
+                    cellField.appendChild(currentText);
+                }
+                cellField.style.border = "1px solid darkgrey";
+                if (row === 2 || row === 5) {
+                    cellField.style.borderBottom = "2px solid black";
+                }
+                if (col === 2 || col === 5) {
+                    cellField.style.borderRight = "2px solid black";
                 }
                 table.appendChild(cellField);
                 k++;

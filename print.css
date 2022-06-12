@@ -1,0 +1,30 @@
+@media print {
+    html, body {
+        height: 95%;
+    }
+    .noprint {
+        display: none;
+    } 
+    .puzzle-line {
+        font-size: 1.4rem;
+        color:black;
+        margin-top: 50px;
+        display: flex;
+        flex-direction: row;
+        line-height: normal;
+    }
+    .pz-table {
+        margin-left: 25px;
+        margin-right: 25px;
+        display: grid;
+        grid-template-columns: repeat(9, auto);
+    }
+    .cell-field {
+        position: relative;
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+    }
+    
+}

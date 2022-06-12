@@ -324,7 +324,7 @@ body, html {
     color: var(--help-color);
     font-size: 1.6rem;
 }
-embed {
+.help-embed {
     width: 100%;
     height: 85vh;
 }
@@ -705,7 +705,7 @@ input[readonly]
 .puzzle-btns {
     margin-top: 20px;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
 
 }
 
@@ -758,7 +758,7 @@ input[readonly]
     margin-right: 20px;
 }
 
-.pz-table {
+.pz-table, .solution-table {
     margin-left: 25px;
     margin-right: 25px;
     display: grid;
