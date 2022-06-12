@@ -441,9 +441,8 @@ class SudokuApp {
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         let key = Array.from(puzzleMap.keys())[sudoApp.sudokuPuzzleDB.selectedIndex];
         let selectedPZ = puzzleMap.get(key);
-        this.sudokuPuzzleDB.displayTablePrint('puzzle', selectedPZ.puzzle);
+        this.sudokuPuzzleDB.displayTablePrint('print-puzzle', selectedPZ.puzzle);
         window.print();
-        this.sudokuPuzzleDB.display();
     }
 
     loadCurrentMobilePuzzle() {
@@ -3389,7 +3388,7 @@ class SudokuPuzzleDB {
     }
 
     displayTablePrint(nodeId, tableArray) {
-        this.displayClearTable('puzzle');
+        this.displayClearTable('print-puzzle');
         let table = document.getElementById(nodeId);
         let k = 0;
         for (let row = 0; row < 9; row++) {

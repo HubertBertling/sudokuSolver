@@ -758,6 +758,10 @@ input[readonly]
     margin-right: 20px;
 }
 
+#print-puzzle {
+    display: none;
+}
+
 .pz-table, .solution-table {
     margin-left: 25px;
     margin-right: 25px;

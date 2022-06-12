@@ -4,7 +4,11 @@
     }
     .noprint {
         display: none;
+    }
+    #puzzle {
+        display: none;
     } 
+    
     .puzzle-line {
         font-size: 1.4rem;
         color:black;
