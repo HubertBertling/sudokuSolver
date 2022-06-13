@@ -705,7 +705,7 @@ input[readonly]
 .puzzle-btns {
     margin-top: 20px;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 
 }
 
@@ -776,6 +776,12 @@ input[readonly]
         background-color: grey;
         place-items: center;
         color: white;
+}
+
+#pz-btn-print {
+    margin-top: 20px;
+    margin-left: 100px;
+    width: 210px;
 }
 
 .tabdatabase {
