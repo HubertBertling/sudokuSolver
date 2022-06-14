@@ -711,7 +711,7 @@ input[readonly]
 
 .pz-btn {
     box-shadow: 3px 3px darkgray;
-    background-color: grey;
+    background-color: var(--standard-btn-bg-color);
     color: var(--standard-btn-color);
     border-radius: var(--border-radius);
     border: hidden;
