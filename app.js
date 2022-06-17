@@ -191,6 +191,50 @@ class SudokuApp {
             })
         });
 
+        window.addEventListener("keydown", (event) => {
+            switch (event.key) {
+                case "1":
+                case "2":
+                case "3":
+                case "4":
+                case "5":
+                case "6":
+                case "7":
+                case "8":
+                case "9":
+                    let btnNumber = event.key;
+                    if (this.autoExecOn) {
+                        // Während der automatischen Ausführung Nummer gedrückt
+                        // Der Stepper wird angehalten und beendet
+                        this.runner.stopTimer();
+                        this.runner.init();
+                        this.setAutoExecOff();
+                    } else {
+                        this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentPhase, false);
+                        this.runner.displayProgress();
+                    };
+                    break;
+                case "Delete":
+                case "Backspace":
+                    if (this.autoExecOn) {
+                        // Während der automatischen Ausführung Delete-Taste gedrückt
+                        // Der Stepper wird angehalten und beendet
+                        this.runner.stopTimer();
+                        this.runner.init();
+                        this.successDialog.close();
+                        this.setAutoExecOff();
+                        this.suGrid.deselect();
+                    } else {
+                        this.suGrid.deleteSelected(this.currentPhase, false);
+                        this.runner.displayProgress();
+                    };
+                    break;        
+                default:
+                  return; 
+              }
+        });
+
+
         //Click-Event für den Delete-Button setzen
         document.querySelector('#btn-delete-cell').addEventListener('click', () => {
             if (this.autoExecOn) {
@@ -332,6 +376,8 @@ class SudokuApp {
                 this.suGrid.setEvalType(radioNode.value);
             })
         });
+        
+
     }
 
     init() {
@@ -3324,7 +3370,7 @@ class SudokuPuzzleDB {
 
     displayClear() {
         this.displayClearPZNr();
-        this.displayClearTable('puzzle');
+        this.displayClearTable('screen-puzzle');
         this.displayClearTable('solution');
     }
 
@@ -3336,7 +3382,7 @@ class SudokuPuzzleDB {
         let key = Array.from(puzzleMap.keys())[this.selectedIndex];
         let selectedPZ = puzzleMap.get(key);
         this.displayIdRow(key, selectedPZ.name);
-        this.displayTable('puzzle', selectedPZ.puzzle);
+        this.displayTable('screen-puzzle', selectedPZ.puzzle);
         this.displayTable('solution', selectedPZ.solution);
         this.displayDefineCounter(selectedPZ);
     }
