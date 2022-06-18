@@ -178,17 +178,13 @@ class SudokuApp {
             e.addEventListener('click', () => {
                 // Hinweis: index + 1 = number on button
                 let btnNumber = (index + 1).toString();
-                if (this.autoExecOn) {
-                    // Während der automatischen Ausführung Nummer gedrückt
-                    // Der Stepper wird angehalten und beendet
-                    this.runner.stopTimer();
-                    this.runner.init();
-                    this.setAutoExecOff();
-                } else {
-                    this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentPhase, false);
-                    this.runner.displayProgress();
-                }
+                this.handleNumberPressed(btnNumber);
             })
+        });
+
+        //Click-Event für den Delete-Button setzen
+        document.querySelector('#btn-delete-cell').addEventListener('click', () => {
+            this.handleDeletePressed();
         });
 
         window.addEventListener("keydown", (event) => {
@@ -202,53 +198,15 @@ class SudokuApp {
                 case "7":
                 case "8":
                 case "9":
-                    let btnNumber = event.key;
-                    if (this.autoExecOn) {
-                        // Während der automatischen Ausführung Nummer gedrückt
-                        // Der Stepper wird angehalten und beendet
-                        this.runner.stopTimer();
-                        this.runner.init();
-                        this.setAutoExecOff();
-                    } else {
-                        this.suGrid.atCurrentSelectionSetNumber(btnNumber, this.currentPhase, false);
-                        this.runner.displayProgress();
-                    };
+                    this.handleNumberPressed(event.key);
                     break;
                 case "Delete":
                 case "Backspace":
-                    if (this.autoExecOn) {
-                        // Während der automatischen Ausführung Delete-Taste gedrückt
-                        // Der Stepper wird angehalten und beendet
-                        this.runner.stopTimer();
-                        this.runner.init();
-                        this.successDialog.close();
-                        this.setAutoExecOff();
-                        this.suGrid.deselect();
-                    } else {
-                        this.suGrid.deleteSelected(this.currentPhase, false);
-                        this.runner.displayProgress();
-                    };
+                    this.handleDeletePressed();
                     break;        
                 default:
                   return; 
               }
-        });
-
-
-        //Click-Event für den Delete-Button setzen
-        document.querySelector('#btn-delete-cell').addEventListener('click', () => {
-            if (this.autoExecOn) {
-                // Während der automatischen Ausführung Delete-Taste gedrückt
-                // Der Stepper wird angehalten und beendet
-                this.runner.stopTimer();
-                this.runner.init();
-                this.successDialog.close();
-                this.setAutoExecOff();
-                this.suGrid.deselect();
-            } else {
-                this.suGrid.deleteSelected(this.currentPhase, false);
-                this.runner.displayProgress();
-            }
         });
 
         // Die beiden Phase-Button 
@@ -378,6 +336,33 @@ class SudokuApp {
         });
         
 
+    }
+    handleNumberPressed(nr){
+        if (this.autoExecOn) {
+            // Während der automatischen Ausführung Nummer gedrückt
+            // Der Stepper wird angehalten und beendet
+            this.runner.stopTimer();
+            this.runner.init();
+            this.setAutoExecOff();
+        } else {
+            this.suGrid.atCurrentSelectionSetNumber(nr, this.currentPhase, false);
+            this.runner.displayProgress();
+        }
+    }
+
+    handleDeletePressed() {
+        if (this.autoExecOn) {
+            // Während der automatischen Ausführung Delete-Taste gedrückt
+            // Der Stepper wird angehalten und beendet
+            this.runner.stopTimer();
+            this.runner.init();
+            this.successDialog.close();
+            this.setAutoExecOff();
+            this.suGrid.deselect();
+        } else {
+            this.suGrid.deleteSelected(this.currentPhase, false);
+            this.runner.displayProgress();
+        }; 
     }
 
     init() {
