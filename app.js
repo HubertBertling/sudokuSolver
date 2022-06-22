@@ -1084,29 +1084,7 @@ class StepperOnGrid {
         }
     }
 
-    alternativeCalculateMinSelectionFrom(listAndFrequency) {
-        // Berechnet die nächste Selektion
-        // Nicht eindeutig;        
-        // In der Regel sind das Zellen mit 2 Optionsnummern.
-        let selectionList = listAndFrequency.selectionList;
-        let numberFrequency = listAndFrequency.numberFrequency;
-        let maxSelection = listAndFrequency.selectionList[0];
-        let maxIndex = maxSelection.index;
-        let maxWeight = this.suGrid.sudoCells[maxIndex].countMyInfluencersWeight(numberFrequency);
-        // Kontexte mit einem größeren Entscheidungsgrad, also mit weniger zulässigen Nummern, zählen mehr.
-        for (let i = 1; i < selectionList.length; i++) {
-            let currentSelection = selectionList[i];
-            let currentIndex = currentSelection.index;
-            let currentWeight = this.suGrid.sudoCells[currentIndex].countMyInfluencersWeight(numberFrequency);
-            if (currentWeight > maxWeight) {
-                maxSelection = currentSelection;
-                maxIndex = currentIndex;
-                maxWeight = currentWeight;
-            }
-        }
-        return maxSelection;
-    }
-
+   
     calculateMinSelectionFrom(selectionList) {
         // Berechnet die nächste Selektion
         // Nicht eindeutig;        
@@ -1182,74 +1160,24 @@ class StepperOnGrid {
 
     getOptionalSelections() {
         let selectionList = [];
-        let numberFrequency = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         for (let i = 0; i < 81; i++) {
-            switch (this.suGrid.sudoCells[i].getValue()) {
-                case '0': {
-                    // Zelle noch ungesetzt
-                    let selection = {
-                        index: i,
-                        options: Array.from(this.suGrid.sudoCells[i].getTotalAdmissibles()),
-                        necessaryOnes: Array.from(this.suGrid.sudoCells[i].getNecessarys()),
-                        level_0_singles: Array.from(this.suGrid.sudoCells[i].getSingles())
-                    }
-                    selectionList.push(selection);
-                    numberFrequency[0]++;    
-                    break;
+            if (this.suGrid.sudoCells[i].getValue() == '0') {
+                let selection = {
+                    index: i,
+                    options: Array.from(this.suGrid.sudoCells[i].getTotalAdmissibles()),
+                    necessaryOnes: Array.from(this.suGrid.sudoCells[i].getNecessarys()),
+                    level_0_singles: Array.from(this.suGrid.sudoCells[i].getSingles())
                 }
-                case '1': {
-                    // Zelle mit '1' gesetzt
-                    numberFrequency[1]++;
-                    break;
-                }
-                case '2': {
-                    numberFrequency[2]++;
-                    break;
-                }
-                case '3': {
-                    numberFrequency[3]++;
-                    break;
-                }
-                case '4': {
-                    numberFrequency[4]++;
-                    break;
-                }
-                case '5': {
-                    numberFrequency[5]++;
-                    break;
-                }
-                case '6': {
-                    numberFrequency[6]++;
-                    break;
-                }
-                case '7': {
-                    numberFrequency[7]++;
-                    break;
-                }
-                case '8': {
-                    numberFrequency[8]++;
-                    break;
-                }
-                case '9': {
-                    numberFrequency[9]++;
-                    break;
-                }
-                default: {
-                    // Kann nicht vorkommen
-                }
+                selectionList.push(selection);
             }
         }
         // Wenn alle Zellen gesetzt sind, ist diese Liste leer
-        let selectionListAndNumberFrequency = {
-            selectionList: selectionList,
-            numberFrequency: numberFrequency
-        }
-        return selectionListAndNumberFrequency;
+        return selectionList;
     }
 
+
     autoSelect() {
-        let listAndFrequency = this.getOptionalSelections();
-        let optionList = listAndFrequency.selectionList;
+        let optionList = this.getOptionalSelections();
         if (optionList.length == 0) {
             let emptySelection = {
                 index: -1,
@@ -1306,7 +1234,7 @@ class StepperOnGrid {
             return oneOption;
         }
    
-        let tmpMin = this.alternativeCalculateMinSelectionFrom(listAndFrequency);
+        let tmpMin = this.calculateMinSelectionFrom(optionList);
         // Falls es keine notwendigen Nummern gibt:
         // Bestimme eine nächste Zelle mit minimaler Anzahl zulässiger Nummern
         // Diese Zelle ist nicht eindeuitig
@@ -2882,18 +2810,14 @@ class SudokuCell {
         return tmpCount;
     }
 
-    countMyInfluencersWeight(numberFrequency) {
+    countMyInfluencersWeight() {
         // Idee: Kontexte mit einem größeren Endscheidungsgrad zählen mehr,
         // weil durch sie die Entscheidungen schneller vorangetrieben werden.
         let tmpWeight = 0;
-        let max = 0;
         let summand = 0;
         let tmpAdmissibles = this.getTotalAdmissibles();
         if (tmpAdmissibles.size == 2) {
-            tmpAdmissibles.forEach(nr => {
-                max = Math.max(max, numberFrequency[parseInt(nr)]);
-            })
-            tmpWeight = 300 + max;
+            tmpWeight = 300;
         }
         // Den Kontext der Zelle betrachten
         this.myInfluencers.forEach(influencer => {
