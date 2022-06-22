@@ -20,6 +20,16 @@ class SudokuSet extends Set {
         }
         return true;
     }
+
+    isSubset(superset) {
+        for (var elem of this) {
+            if (!superset.has(elem)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     union(setB) {
         var _union = new SudokuSet(this);
         for (var elem of setB) {
@@ -77,7 +87,7 @@ class SudokuTabView {
         this.myPages.forEach(page => {
             page.close();
         })
-        // Die Grid-Seite öffnen
+        // Die Grid-Seite öffnen (Die Grid-Seite ist die erste Seite)
         this.myPages[0].open();
     }
     init() {
@@ -134,7 +144,6 @@ class SudokuHelpPage extends SudokuPage {
     }
     open() {
         super.open();
-        // document.getElementById('help-link').click();
     }
 }
 class SudokuApp {
@@ -334,9 +343,8 @@ class SudokuApp {
                 this.suGrid.setEvalType(radioNode.value);
             })
         });
-        
-
     }
+
     handleNumberPressed(nr){
         if (this.autoExecOn) {
             // Während der automatischen Ausführung Nummer gedrückt
@@ -421,6 +429,7 @@ class SudokuApp {
             document.querySelector('#btn-play').classList.remove('pressed');
         }
     }
+
     sudokuCellPressed(cellNode, cell, index) {
         if (this.autoExecOn) {
             this.runner.stopTimer();
@@ -453,7 +462,6 @@ class SudokuApp {
     savePuzzleDlgCancelPressed() {
         this.puzzleSaveDialog.close()
     }
-
 
     loadCurrentPuzzle() {
         this.runner.stopTimer();
@@ -563,18 +571,29 @@ class BackTracker {
     // Der Backtracker dokumentiert die vom Stepper durchgeführten Schritte, so dass
     // sie bei Bedarf wieder rückgängig gemacht werden können.
     // Schritte müssen rückgängig gemacht werden, wenn der letzte vollzogene Schritt des
-    // Steppers für das Puzzle eine Widerspruch aufgedeckt hat. Dann muss der Stepper
+    // Steppers für das Puzzle einen Widerspruch aufgedeckt hat. Dann muss der Stepper
     // mit Hilfe des Backtrackers solange rückwärts gehen, bis er einen Optionsschritt erreicht,
     // an dem er beim ersten Besuch eine Option hatte. Nun startet er einen weiteren Versuch mit einer
     // anderen Option des Optionsschrittes.
+
+    // Der Backtracker erzeugt einen Ausführungsbaum aus Optionsschritten, die für jede Option
+    // des Optionsschrittes einen Optionspfad haben. Der Optionspfad besteht aus einer Sequenz
+    // von wirklichen Schritten, die eine Nummernsetzung dokumentieren.
+
     constructor() {
+        // Der Backtracker speichert den aktuellen Schritt des Backtracking-Prozesses.
+        // Initial ist der aktuelle Schritt ein Pseudo-Optionsschritt, der zugleich
+        // die Wurzel des Backtracking-Baumes ist.
+        // Die Besonderheiten des Wurzeloptionsschrittes:
+        // 1. Der Wurzeloptionsschritt befindet sich nicht in einem Pfad eines anderen Optionsschrittes
+        // 2. Der Wurzeloptionsschritt zeigt nicht auf eine Zelle der Sudoku-Matrix.
+        // 3. Die Optionsliste enthält keine zulässige Nummer.
         this.currentStep = new BackTrackOptionStep(null, -1, ['0']);
         this.maxDepth = 0;
     }
     getCurrentStep() {
         return this.currentStep;
     }
-
     getCurrentSearchDepth() {
         let tmpDepth = this.currentStep.getDepth();
         if (tmpDepth > this.maxDepth) {
@@ -608,25 +627,29 @@ class BackTracker {
 
 class BackTrackOptionStep {
     constructor(ownerPath, cellIndex, optionList) {
-        // Der Optinlstep befindet sich in einem Optionpath
+        // Der Optionstep befindet sich in einem Optionpath
         this.myOwnerPath = ownerPath;
-        // Der Step zeigt auf Sudokuzelle
         // Der BackTrackOptionStep zeigt auf eine Grid-Zelle
         this.myCellIndex = cellIndex;
+        // Der BackTrackOptionStep speichert die Optionsnummern des Schrittes
         this.myOptionList = optionList.slice();
-        // Reverse: Versuch, die normale Reihenfolge abzuarbeiten
+        // Die Optionsliste wird mittels pop-Operationen abgearbeitet.
+        // Damit dennoch die normale (FIFO) Reihenfolge der Bearbeitung realisiert wird,
+        // wird die Liste umgedreht.
         this.myNextOptions = optionList.slice().reverse();
 
         // Der OptonStep hat für jede Option einen eigenen BackTrackOptionPath
         if (optionList.length == 1) {
             // Dann kann es nur einen Pfad geben, und dieser wird sofort angelegt.
-            // Das ist die Startsituation
-            // Später gibt es keine einelementigen Optionlists.
-            // Sie sind durch die Realsteps abgebildet
+            // Nur der Optionsschritt an der Wurzel hat nur eine Option, eine Pseudo-Option.
+            // Später gibt es keine einelementigen Optionslisten.
+            // Denn eine Option wählen muss man erst, wenn mindestens 2 Optionen zur Auswahl stehen.
             this.myOwnerPath = new BackTrackOptionPath(optionList[0], this)
         }
     }
     isOpen(nr) {
+        // Die Nummer nr ist offen, wenn sie noch nicht probiert wurde,
+        // d.h. sie befindet sich noch in der NextOption-Liste
         for (let i = 0; i < this.myNextOptions.length; i++) {
             if (this.myNextOptions[i] == nr) {
                 return true;
@@ -635,6 +658,7 @@ class BackTrackOptionStep {
         return false;
     }
     options() {
+        // Die Optionen des Option-Steps
         let tmpOptionList = [];
         this.myOptionList.forEach(optionNr => {
             let tmpOption = {
@@ -647,6 +671,7 @@ class BackTrackOptionStep {
     }
 
     addBackTrackRealStep(cellIndex, cellValue) {
+        
         return this.myOwnerPath.addBackTrackRealStep(cellIndex, cellValue);
     }
     addBackTrackOptionStep(cellIndex, optionList) {
@@ -994,6 +1019,7 @@ class StepperOnGrid {
                     this.myBackTracker.addBackTrackOptionStep(tmpSelection.index, tmpSelection.options.slice());
                     // Die erste Option des Optionsschrittes, wird gleich gewählt
                     // Neuer realstep mit der ersten Optionsnummer
+
                     let realStep = this.myBackTracker.getNextBackTrackRealStep();
                     return 'inProgress';
                 }
@@ -1058,6 +1084,29 @@ class StepperOnGrid {
         }
     }
 
+    alternativeCalculateMinSelectionFrom(listAndFrequency) {
+        // Berechnet die nächste Selektion
+        // Nicht eindeutig;        
+        // In der Regel sind das Zellen mit 2 Optionsnummern.
+        let selectionList = listAndFrequency.selectionList;
+        let numberFrequency = listAndFrequency.numberFrequency;
+        let maxSelection = listAndFrequency.selectionList[0];
+        let maxIndex = maxSelection.index;
+        let maxWeight = this.suGrid.sudoCells[maxIndex].countMyInfluencersWeight(numberFrequency);
+        // Kontexte mit einem größeren Entscheidungsgrad, also mit weniger zulässigen Nummern, zählen mehr.
+        for (let i = 1; i < selectionList.length; i++) {
+            let currentSelection = selectionList[i];
+            let currentIndex = currentSelection.index;
+            let currentWeight = this.suGrid.sudoCells[currentIndex].countMyInfluencersWeight(numberFrequency);
+            if (currentWeight > maxWeight) {
+                maxSelection = currentSelection;
+                maxIndex = currentIndex;
+                maxWeight = currentWeight;
+            }
+        }
+        return maxSelection;
+    }
+
     calculateMinSelectionFrom(selectionList) {
         // Berechnet die nächste Selektion
         // Nicht eindeutig;        
@@ -1077,8 +1126,6 @@ class StepperOnGrid {
             }
         }
         return maxSelection;
-
-
     }
 
     calculateNeccesarySelectionFrom(selectionList) {
@@ -1135,23 +1182,74 @@ class StepperOnGrid {
 
     getOptionalSelections() {
         let selectionList = [];
+        let numberFrequency = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         for (let i = 0; i < 81; i++) {
-            if (this.suGrid.sudoCells[i].getValue() == '0') {
-                let selection = {
-                    index: i,
-                    options: Array.from(this.suGrid.sudoCells[i].getTotalAdmissibles()),
-                    necessaryOnes: Array.from(this.suGrid.sudoCells[i].getNecessarys()),
-                    level_0_singles: Array.from(this.suGrid.sudoCells[i].getSingles())
+            switch (this.suGrid.sudoCells[i].getValue()) {
+                case '0': {
+                    // Zelle noch ungesetzt
+                    let selection = {
+                        index: i,
+                        options: Array.from(this.suGrid.sudoCells[i].getTotalAdmissibles()),
+                        necessaryOnes: Array.from(this.suGrid.sudoCells[i].getNecessarys()),
+                        level_0_singles: Array.from(this.suGrid.sudoCells[i].getSingles())
+                    }
+                    selectionList.push(selection);
+                    numberFrequency[0]++;    
+                    break;
                 }
-                selectionList.push(selection);
+                case '1': {
+                    // Zelle mit '1' gesetzt
+                    numberFrequency[1]++;
+                    break;
+                }
+                case '2': {
+                    numberFrequency[2]++;
+                    break;
+                }
+                case '3': {
+                    numberFrequency[3]++;
+                    break;
+                }
+                case '4': {
+                    numberFrequency[4]++;
+                    break;
+                }
+                case '5': {
+                    numberFrequency[5]++;
+                    break;
+                }
+                case '6': {
+                    numberFrequency[6]++;
+                    break;
+                }
+                case '7': {
+                    numberFrequency[7]++;
+                    break;
+                }
+                case '8': {
+                    numberFrequency[8]++;
+                    break;
+                }
+                case '9': {
+                    numberFrequency[9]++;
+                    break;
+                }
+                default: {
+                    // Kann nicht vorkommen
+                }
             }
         }
         // Wenn alle Zellen gesetzt sind, ist diese Liste leer
-        return selectionList;
+        let selectionListAndNumberFrequency = {
+            selectionList: selectionList,
+            numberFrequency: numberFrequency
+        }
+        return selectionListAndNumberFrequency;
     }
 
     autoSelect() {
-        let optionList = this.getOptionalSelections();
+        let listAndFrequency = this.getOptionalSelections();
+        let optionList = listAndFrequency.selectionList;
         if (optionList.length == 0) {
             let emptySelection = {
                 index: -1,
@@ -1207,9 +1305,10 @@ class StepperOnGrid {
             }
             return oneOption;
         }
-        let tmpMin = this.calculateMinSelectionFrom(optionList);
+   
+        let tmpMin = this.alternativeCalculateMinSelectionFrom(listAndFrequency);
         // Falls es keine notwendigen Nummern gibt:
-        // Bestimmt eine nächste Zelle mit minimaler Anzahl zulässiger Nummern
+        // Bestimme eine nächste Zelle mit minimaler Anzahl zulässiger Nummern
         // Diese Zelle ist nicht eindeuitig
         // Diese Zelle kann eine mit der vollen Optionsmenge sein
         switch (this.levelOfDifficulty) {
@@ -1224,7 +1323,6 @@ class StepperOnGrid {
                 // Schwierigkeitsgrad bleibt unverändert.
             }
         }
-
         return tmpMin;
     }
 
@@ -2784,14 +2882,18 @@ class SudokuCell {
         return tmpCount;
     }
 
-    countMyInfluencersWeight() {
+    countMyInfluencersWeight(numberFrequency) {
         // Idee: Kontexte mit einem größeren Endscheidungsgrad zählen mehr,
         // weil durch sie die Entscheidungen schneller vorangetrieben werden.
         let tmpWeight = 0;
+        let max = 0;
         let summand = 0;
         let tmpAdmissibles = this.getTotalAdmissibles();
         if (tmpAdmissibles.size == 2) {
-            tmpWeight = 300;
+            tmpAdmissibles.forEach(nr => {
+                max = Math.max(max, numberFrequency[parseInt(nr)]);
+            })
+            tmpWeight = 300 + max;
         }
         // Den Kontext der Zelle betrachten
         this.myInfluencers.forEach(influencer => {
@@ -2804,7 +2906,6 @@ class SudokuCell {
                     if (influenceAdmissible.equals(tmpAdmissibles)) {
                         // Mehrfachauftreten von Paaren bekommt die höchste Bewertung
                         summand = 300;
-                        // } else if (influenceAdmissible.isSuperset(tmpAdmissibles)) {
                     } else {
                         let interSecSize = influenceAdmissible.intersection(tmpAdmissibles).size;
                         if (interSecSize > 0) {
