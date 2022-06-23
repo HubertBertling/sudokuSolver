@@ -3170,9 +3170,8 @@ class SudokuPuzzleDB {
 
     saveMobilePuzzle(playedPuzzleDbElement) {
         let puzzleId = 'l2rcvi2mobile8h05azkg';
-        let puzzleDbElement = playedPuzzleDbElement.obj;
-        puzzleDbElement.name = 'mobile';
-        this.savePuzzle(puzzleId, puzzleDbElement);
+        playedPuzzleDbElement.name = 'mobile';
+        this.savePuzzle(puzzleId, playedPuzzleDbElement);
     }
 
     saveNamedPuzzle(id, name, playedPuzzleDbElement) {
