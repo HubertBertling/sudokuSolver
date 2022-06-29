@@ -1,15 +1,15 @@
 :root {
     /* app colors */
-/*    --screen-bg-color: white; */
---screen-bg-color: #F2E2F2; 
---screen-color: #0d1117;
---standard-btn-bg-color: rgba(0,0,0,.25);
---standard-btn-color: black;
-    --delete-btn-bg-color:  #e91e63; 
+    /*    --screen-bg-color: white; */
+    --screen-bg-color: #F2E2F2;
+    --screen-color: #0d1117;
+    --standard-btn-bg-color: rgba(0, 0, 0, .25);
+    --standard-btn-color: black;
+    --delete-btn-bg-color: #e91e63;
     --delete-btn-color: white;
 
-    --help-color: #4e67c8; 
-   
+    --help-color: #4e67c8;
+
     /* Cell colors */
     --defined-cell-bg-color: #7986CB;
     --defined-cell-color: #FFF9C4;
@@ -24,12 +24,12 @@
     --selected-cell-color: white;
     --selected-cell-border-color: black;
 
-    --error-cell-bg-color:  #e91e63;
+    --error-cell-bg-color: #e91e63;
     --error-cell-color: white;
 
-     /* Other definitions */
+    /* Other definitions */
     --sudoku-cell-size: 68px;
-    --border-radius: 10px;
+    --border-radius: 5px;
     --space-y: 20px;
     --font-size-btn: 1.6rem;
     --font-size-sm: 1rem;
@@ -45,7 +45,7 @@
 
 * {
     padding: 0;
-    margin: 0; 
+    margin: 0;
     /* padding and border are included in the width and height */
     box-sizing: border-box;
 }
@@ -53,59 +53,61 @@
 
 
 /* Set height of body and the document to 100% */
-body, html {
+body,
+html {
     font-family: 'Open Sans', sans-serif;
     height: 800px;
-    background-color: var(--screen-bg-color); 
+    background-color: var(--screen-bg-color);
 }
 
 /* Style tab links */
 .tablink {
-  background-color: #555;
-  color: white;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  /* font-size: 17px; */
-  font-size: 1.8rem;
-  font-weight: bold;
-  width: 25%;
+    background-color: #555;
+    color: white;
+    float: left;
+    border: none;
+    outline: none;
+    /*  cursor: pointer; */
+    padding: 14px 16px;
+    /* font-size: 17px; */
+    font-size: 1.8rem;
+    font-weight: bold;
+    width: 25%;
 }
+
 .tablinkdatabase {
     background-color: #666;
 }
 
 .tablink:hover {
-  background-color: #777;
+    background-color: #777;
 }
 
 /* Style the tab content (and add height:100% for full page content) */
 .tabcontent {
-  display: none;
-  color: black;
-  padding-top: 80px; 
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 20px;
-  /* height: 100%; */
-  }
+    display: none;
+    color: black;
+    padding-top: 80px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    /* height: 100%; */
+}
 
 .puzzle-header {
     font-size: 1.6rem;
-    display: inline-block; 
-    color: black; 
+    display: inline-block;
+    color: black;
     margin-top: 40px;
 }
 
 .tooltip {
     position: relative;
-    display:inline-block ;
+    display: inline-block;
     border-bottom: 1px dotted black;
-  }
-  
-  .tooltip .tooltiptext {
+}
+
+.tooltip .tooltiptext {
     visibility: hidden;
     width: 70px;
     background-color: black;
@@ -114,17 +116,17 @@ body, html {
     border-radius: 6px;
     padding: 5px 0;
     top: -30px;
-    left: 50%; 
-  
+    left: 50%;
+
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
-  }
-  
-  .tooltip:hover .tooltiptext {
+}
+
+.tooltip:hover .tooltiptext {
     visibility: visible;
-  }
-  
+}
+
 /*======================================*/
 /* Sudoku grid block */
 /*======================================*/
@@ -133,13 +135,16 @@ body, html {
     place-items: center;
     grid-template-columns: 1fr;
 }
+
 .inputArea {
+    z-index: 1;
     display: grid;
-   /* place-items: center; */
+    /* place-items: center; */
     grid-template-columns: repeat(2, auto);
 }
+
 .gridArea {
-    display: grid; 
+    display: grid;
     grid-template-columns: repeat(1, auto);
 }
 
@@ -149,7 +154,7 @@ body, html {
 }
 
 .sudoku-group {
-    margin:5px;
+    margin: 5px;
     display: grid;
     grid-template-columns: repeat(3, auto);
     border-radius: var(--border-radius);
@@ -157,14 +162,14 @@ body, html {
 }
 
 .sudoku-grid-cell {
-    position: relative;   
+    position: relative;
     height: var(--sudoku-cell-size);
-    width: var(--sudoku-cell-size); 
+    width: var(--sudoku-cell-size);
     border-radius: var(--border-radius);
-    display: grid; 
+    display: grid;
     font-size: var(--font-size-btn);
     place-items: center;
-    cursor: pointer;
+    /*    cursor: pointer; */
     margin: 3px;
 }
 
@@ -172,62 +177,79 @@ body, html {
     background-color: var(--defined-cell-bg-color);
     color: var(--defined-cell-color);
 }
+
 .sudoku-grid-cell.play {
     background-color: var(--played-cell-bg-color);
     color: var(--played-cell-color);
 }
 
 
-.auto-step-number { grid-area: step; }
-.auto-value-number { grid-area: value; }
-.auto-value-option1 { grid-area: option1; }
-.auto-value-option2 { grid-area: option2; }
-.auto-value-option3 { grid-area: option3; }
+.auto-step-number {
+    grid-area: step;
+}
+
+.auto-value-number {
+    grid-area: value;
+}
+
+.auto-value-option1 {
+    grid-area: option1;
+}
+
+.auto-value-option2 {
+    grid-area: option2;
+}
+
+.auto-value-option3 {
+    grid-area: option3;
+}
 
 .auto-value-cell {
     display: grid;
-   /* grid-template-columns: 0.1fr 0.9fr; */
+    /* grid-template-columns: 0.1fr 0.9fr; */
     grid-template-areas:
-    'step value value value'
-    'step option1 option2 option3';
+        'step value value value'
+        'step option1 option2 option3';
     gap: 2px;
     padding: 2px;
     border-radius: 3px;
     height: 58px;
     width: 58px;
-    background-color: grey ;
+    background-color: grey;
     color: var(--played-cell-color);
- }
-
- .auto-value-cell > div {
-     text-align: center; 
-     padding: 2px;
-     background-color:var(--played-cell-bg-color);
 }
 
-.auto-value-cell > div.auto-step-number {
-    background-color: darkgrey; 
+.auto-value-cell>div {
+    text-align: center;
+    padding: 2px;
+    background-color: var(--played-cell-bg-color);
+}
+
+.auto-value-cell>div.auto-step-number {
+    background-color: darkgrey;
     color: black;
     font-size: 1rem;
 }
 
-.auto-value-cell > div.auto-value-number {
+.auto-value-cell>div.auto-value-number {
     font-size: 1.6rem;
- }
+}
 
- .auto-value-cell > div.auto-value-option1 {
+.auto-value-cell>div.auto-value-option1 {
     font-size: 1.2rem;
- }
- .auto-value-cell > div.auto-value-option2 {
-    font-size: 1.2rem;
- }
- .auto-value-cell > div.auto-value-option3 {
-    font-size: 1.2rem;
- }
+}
 
- .auto-value-cell > div.open {
-    background-color: var(--nested-cell-bg-color); 
- }
+.auto-value-cell>div.auto-value-option2 {
+    font-size: 1.2rem;
+}
+
+.auto-value-cell>div.auto-value-option3 {
+    font-size: 1.2rem;
+}
+
+.auto-value-cell>div.open {
+    background-color: var(--nested-cell-bg-color);
+}
 
 .sudoku-grid-cell.nested {
     display: grid;
@@ -237,7 +259,7 @@ body, html {
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-color);
     border: 1px solid #0050ff
-    }
+}
 
 .sudoku-grid-cell.selected {
     background-color: var(--selected-cell-bg-color);
@@ -254,12 +276,12 @@ body, html {
     border: 1px solid white;
 }
 
-.nested>div.inAdmissible  {
+.nested>div.inAdmissible {
     padding: 1px;
     border-radius: 3px;
     font-size: 1.4rem;
-    background-color: Crimson ;
-    color: white ;
+    background-color: Crimson;
+    color: white;
     border: 1px solid white;
 }
 
@@ -272,6 +294,7 @@ body, html {
 .sudoku-grid-cell.hover {
     border: 3px solid var(--selected-cell-border-color);
 }
+
 .sudoku-grid-cell.hover-red {
     border: 4px dashed Crimson;
 }
@@ -285,13 +308,16 @@ body, html {
     color: var(--error-cell-color);
 }
 
-.sudoku-grid-cell.row-err, .sudoku-grid-cell.col-err  {
+.sudoku-grid-cell.row-err,
+.sudoku-grid-cell.col-err {
     border: 3px solid var(--error-cell-bg-color);
 }
-.sudoku-grid-cell.col-err  {
-    border-top : 5px solid var(--error-cell-bg-color);
+
+.sudoku-grid-cell.col-err {
+    border-top: 5px solid var(--error-cell-bg-color);
     border-bottom: 5px solid var(--error-cell-bg-color);
 }
+
 .sudoku-grid-cell.row-err {
     border-left: 5px solid var(--error-cell-bg-color);
     border-right: 5px solid var(--error-cell-bg-color);
@@ -311,19 +337,22 @@ body, html {
     font-size: 1.6rem;
     display: flex;
     padding-top: 5px;
-    
-  
+
+
 }
+
 .sudoku-header {
     color: var(--screen-color);
     text-align: center;
-    font-weight:bold;
+    font-weight: bold;
 
 }
+
 .helpNode {
     color: var(--help-color);
     font-size: 1.6rem;
 }
+
 .help-embed {
     width: 100%;
     height: 85vh;
@@ -335,19 +364,23 @@ body, html {
     font-size: 2.4rem;
 
 }
+
 .help {
-    margin-bottom:10px;
+    margin-bottom: 10px;
 }
+
 /*======================================*/
 /* Exec button block                  */
 /*======================================*/
 .game-col2 {
     margin-left: 5px;
 }
+
 .ctrl-btn-group {
-    margin-top: 25px;
-  
+    margin-top: 20px;
+
 }
+
 .ctrl-btn-group p {
     font-weight: bold;
     font-size: 1.6rem;
@@ -363,7 +396,8 @@ body, html {
     gap: 2px;
 }
 
-.btn-define, .btn-play {
+.btn-define,
+.btn-play {
     box-shadow: 3px 3px darkgray;
     margin: 5px;
 }
@@ -374,7 +408,8 @@ body, html {
 }
 
 
-.btn-define.pressed, .btn-play.pressed {
+.btn-define.pressed,
+.btn-play.pressed {
     box-shadow: 0px 0px darkgray;
     transform: translate(2px, 2px);
 }
@@ -397,13 +432,15 @@ body, html {
     place-items: center;
     font-size: var(--font-size-btn);
     box-shadow: 3px 3px darkgray;
-    cursor: pointer;
+    /* cursor: pointer; */
 }
 
-.number:active, .delete:active {
+.number:active,
+.delete:active {
     box-shadow: 0 0px darkgray;
-    transform: translate(2px, 2px); 
+    transform: translate(2px, 2px);
 }
+
 .delete {
     background-color: var(--delete-btn-bg-color);
     color: var(--delete-btn-color);
@@ -413,10 +450,27 @@ body, html {
     place-items: center;
     font-size: var(--font-size-btn);
     box-shadow: 3px 3px darkgray;
-    cursor: pointer;
+    /*  cursor: pointer; */
 }
 
-.number:active, .delete:active, .btn-statistic:active, .btn-automatic:active {
+.btn-rm-exec-infos {
+    margin-top: 10px;
+    background-color: var(--played-cell-bg-color);
+    color: black;
+    height: 30px;
+    border-radius: var(--border-radius);
+    display: grid;
+    place-items: center;
+    font-size: var(--font-size-btn);
+    box-shadow: 3px 3px darkgray;
+    /* cursor: pointer; */
+}
+
+.number:active,
+.delete:active,
+.btn-rm-exec-infos:active,
+.btn-statistic:active,
+.btn-automatic:active {
     transform: translate(2px, 2px);
 }
 
@@ -439,20 +493,23 @@ body, html {
 }
 
 
-.btn-define, .btn-play, .btn-automatic {
-    padding: 5px;
+.btn-define,
+.btn-play,
+.btn-automatic {
+    padding: 3px;
     border-radius: var(--border-radius);
     box-shadow: 3px 3px darkgray;
     border: hidden;
     display: grid;
     place-items: center;
     font-size: var(--font-size-btn);
-    cursor: pointer;
-    
+    /* cursor: pointer; */
+
 }
+
 .btn-automatic:active {
     box-shadow: 0 0px darkgray;
-    transform: translate(2px, 2px); 
+    transform: translate(2px, 2px);
 }
 
 .btn-play {
@@ -470,7 +527,7 @@ body, html {
 }
 
 #btn-autoStep {
-    height: 80px;
+    height: 50px;
 }
 
 /*======================================*/
@@ -479,68 +536,74 @@ body, html {
 
 .mode-btns {
     margin-top: 5px;
-    
+
 }
+
 .auto-exec-btns {
     margin-top: 5px;
-    padding:5px;
-    border:var(--screen-bg-color) dashed 3px;
+    padding: 5px;
+    border: var(--screen-bg-color) dashed 3px;
 }
 
 .auto-exec-btns.on {
     margin-top: 5px;
-    padding:5px;
-    border:darkgrey dashed 3px;
+    padding: 5px;
+    border: darkgrey dashed 3px;
 }
 
-.numbers {
+.manual-btn-group {
     margin-top: 5px;
-    padding:5px;
-    border:var(--screen-bg-color) dashed 3px;
-}
-.numbers.on {
-    margin-top: 5px;
-    padding:5px;
-    border:darkgrey dashed 3px;
+    padding: 5px;
+    border: var(--screen-bg-color) dashed 3px;
 }
 
+.manual-btn-group.on {
+    margin-top: 5px;
+    padding: 5px;
+    border: darkgrey dashed 3px;
+}
 
 .config-btns {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2px;
 }
+
 .storage-btns {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     gap: 2px;
 }
-
-
+#image-autostep {
+    display: none;
+}
 
 .storage-btns-mobile {
-    display:none;
+    display: none;
 }
 
 .main-btn:active {
     box-shadow: 0 0px darkgray;
     transform: translate(2px, 2px);
+    background-color: lightblue;
+
 }
 
 .main-btn {
-    box-shadow: 3px 3px darkgray;
+    box-shadow: 2px 2px darkgray;
     background-color: var(--standard-btn-bg-color);
     color: var(--standard-btn-color);
     border-radius: var(--border-radius);
     border: hidden;
     display: grid;
     place-items: center;
-    margin: 5px;
-    padding: 5px;
+    margin: 3px;
+    padding: 3px;
     font-size: var(--font-size-btn);
-    cursor: pointer;
-    
+    /* cursor: pointer; */
+
 }
+
 /*======================================*/
 /* Progress block */
 /*======================================*/
@@ -549,7 +612,7 @@ body, html {
     border-bottom: 3px solid #0d1117;
     padding-top: 5px;
     padding-bottom: 10px;
-    color:var(--screen-color);
+    color: var(--screen-color);
     font-size: 1.6rem;
 }
 
@@ -573,26 +636,32 @@ body, html {
 
 .step-count-box {
     line-height: 20px;
-    height: 20px;  
-    display:flex;
+    height: 20px;
+    display: flex;
     margin-right: 5px;
 }
+
 .forward-backward-image {
     width: 18px;
     height: 18px;
 }
-.forward, .backward {
+
+.forward,
+.backward {
     height: 20px;
     padding-left: 20px;
     padding-right: 20px;
 }
+
 .autoMode-radio-btns {
     place-items: center;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    background-color: var(--screen-bg-color);   
+    background-color: var(--screen-bg-color);
 }
-.forward.checked, .backward.checked {
+
+.forward.checked,
+.backward.checked {
     background-color: var(--played-cell-bg-color);
 }
 
@@ -601,12 +670,13 @@ body, html {
     width: 100%;
     height: 20px;
     font-size: 1.6rem;
-    text-align:right;
+    text-align: right;
     padding-right: 5px;
     background-color: var(--nested-cell-bg-color);
 }
 
-#myBarDef, #myBarPlay {
+#myBarDef,
+#myBarPlay {
     position: absolute;
     width: 20%;
     height: 20px;
@@ -624,12 +694,13 @@ body, html {
     z-index: 1;
     background-color: var(--played-cell-bg-color);
     color: black;
-    text-align:right;
+    text-align: right;
     padding-right: 5px;
 }
+
 .total-bar-value {
     line-height: 20px;
-    vertical-align:center;
+    vertical-align: center;
 }
 
 
@@ -640,27 +711,30 @@ body, html {
 
 .textInDlgs {
     font-size: 1.6rem;
-    float: left; 
-    width: 49%; margin-right: 1%; 
-    padding: 2px; 
-    box-sizing: border-box; 
+    float: left;
+    width: 49%;
+    margin-right: 1%;
+    padding: 2px;
+    box-sizing: border-box;
 }
 
-.textInDlgs:last-child { margin-right: 0px; }
+.textInDlgs:last-child {
+    margin-right: 0px;
+}
 
 .input-row {
     font-size: 1.6rem;
     margin: 5px;
 
 }
+
 input {
     padding: 5px;
 }
 
-input[readonly]
-{
+input[readonly] {
     background-color: darkgrey;
-  }
+}
 
 .ok-cancel-btns {
     margin-top: 5px;
@@ -670,10 +744,11 @@ input[readonly]
     grid-template-columns: 1fr 1fr;
 }
 
-.successForm, .dlg-form {
+.successForm,
+.dlg-form {
     margin-left: 10px;
     margin-right: 10px;
-    margin-top: 10px; 
+    margin-top: 10px;
     font-size: 1.6rem;
     display: grid;
     grid-template-columns: 1fr;
@@ -690,8 +765,14 @@ input[readonly]
 /*=======================================*/
 /* WinBox 
 /*=======================================*/
-.wb-full  { display: none }
-.wb-title { font-size: 1.6rem }
+.wb-full {
+    display: none
+}
+
+.wb-title {
+    font-size: 1.6rem
+}
+
 .wb-body {
     /* the width of window frame border: */
     margin: 4px;
@@ -725,34 +806,37 @@ input[readonly]
 }
 
 .status-line {
-    
+
     font-size: 1.6rem;
-    color:black;
+    color: black;
     padding-top: 5px;
     margin-top: 5px;
     line-height: normal;
     display: flex;
     width: 100%;
 }
+
 .status-line-item {
     flex-direction: row;
     padding-left: 5px;
     padding-right: 5px;
-    
+
 }
 
 .puzzle-line {
     font-size: 1.4rem;
-    color:black;
+    color: black;
     margin-top: 50px;
     display: flex;
     flex-direction: row;
     line-height: normal;
 }
+
 .pz-nr {
     margin-left: 20px;
     margin-right: 5px;
 }
+
 .pz-all {
     margin-left: 5px;
     margin-right: 20px;
@@ -762,20 +846,22 @@ input[readonly]
     display: none;
 }
 
-.pz-table, .solution-table {
+.pz-table,
+.solution-table {
     margin-left: 25px;
     margin-right: 25px;
     display: grid;
     grid-template-columns: repeat(9, auto);
 }
+
 .cell-field {
-        position: relative;
-        width: 30px;
-        height: 30px;
-        display: grid;
-        background-color: grey;
-        place-items: center;
-        color: white;
+    position: relative;
+    width: 30px;
+    height: 30px;
+    display: grid;
+    background-color: grey;
+    place-items: center;
+    color: white;
 }
 
 #pz-btn-print {
@@ -787,40 +873,46 @@ input[readonly]
 .tabdatabase {
     padding-bottom: 100px;
 }
-  section {
+
+section {
     font-size: 1.4rem;
     position: relative;
     border: 1px solid #000;
     padding-top: 37px;
     background: #500;
-  }
-  section.positioned {
+}
+
+section.positioned {
     position: absolute;
-    top:100px;
-    left:100px;
-    width:600px;
+    top: 100px;
+    left: 100px;
+    width: 600px;
     box-shadow: 0 0 15px #333;
-  }
-  .container {
+}
+
+.container {
     overflow-y: auto;
     height: 200px;
-  }
+}
 
-  table {
+table {
     border-spacing: 0;
-    width:100%;
-  }
+    width: 100%;
+}
 
-  .puzzle-db-table td + td {
-    border-left:1px solid #eee;
-  }
-  .puzzle-db-table td, th {
-    border-bottom:1px solid #eee;
+.puzzle-db-table td+td {
+    border-left: 1px solid #eee;
+}
+
+.puzzle-db-table td,
+th {
+    border-bottom: 1px solid #eee;
     background: #ddd;
     color: #000;
     padding: 5px 5px;
-  }
-  .puzzle-db-table th {
+}
+
+.puzzle-db-table th {
     height: 0;
     line-height: 0;
     padding-top: 0;
@@ -828,8 +920,9 @@ input[readonly]
     color: transparent;
     border: none;
     white-space: nowrap;
-  }
-  .puzzle-db-table th div{
+}
+
+.puzzle-db-table th div {
     position: absolute;
     background: transparent;
     color: #fff;
@@ -838,14 +931,15 @@ input[readonly]
     margin-left: -2px;
     line-height: normal;
     border-left: 1px solid #800;
-  }
-  .puzzle-db-table th:first-child div{
-    border: none;
-  }
+}
 
-  .puzzle-db-tbody tr.selected td{
-      background-color: lightcyan;
-  }
+.puzzle-db-table th:first-child div {
+    border: none;
+}
+
+.puzzle-db-tbody tr.selected td {
+    background-color: lightcyan;
+}
 
 
 /*======================================*/
@@ -868,6 +962,7 @@ input[readonly]
 .cell-err {
     animation: zoom-out-shake 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
 
 @keyframes zoom-out-shake {
     0% {

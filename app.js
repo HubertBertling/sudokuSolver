@@ -1,9 +1,26 @@
 let sudoApp;
-
 const start = () => {
     sudoApp = new (SudokuApp);
     sudoApp.init();
 }
+
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function getRandomNumbers(numberOfrandoms, min, max) {
+    let randoms = [];
+    let currentRandom = 0;
+    while (randoms.length < numberOfrandoms) {
+        currentRandom = getRandomIntInclusive(min, max);
+        if (currentRandom < max && !randoms.includes(currentRandom)) {
+            randoms.push(currentRandom);
+        }
+    }
+    return randoms;
+}
+
 class SudokuSet extends Set {
     // Die mathematische Menge ohne Wiederholungen
     // Intensiv genutzt für die Berechnung indirekt unzulässiger
@@ -165,8 +182,8 @@ class SudokuApp {
 
         // Für eine automatische Lösungssuche legt die App
         // einen Stepper an. Für jede Ausführung einen neuen.
-        this.runner;
-
+        this.stepper;
+        
         // ==============================================================
         // Die Ansichtselemente der App
         // ==============================================================
@@ -196,6 +213,13 @@ class SudokuApp {
             this.handleDeletePressed();
         });
 
+        document.querySelector('#btn-rm-exec-infos').addEventListener('click', () => {
+            this.autoExecOn = false;
+            this.suGrid.removeAutoExecCellInfos();
+            this.displayOnOffStatus();
+
+        });
+
         window.addEventListener("keydown", (event) => {
             switch (event.key) {
                 case "1":
@@ -212,24 +236,24 @@ class SudokuApp {
                 case "Delete":
                 case "Backspace":
                     this.handleDeletePressed();
-                    break;        
+                    break;
                 default:
-                  return; 
-              }
+                    return;
+            }
         });
 
         // Die beiden Phase-Button 
         document.querySelector('#btn-define').addEventListener('click', () => {
             sudoApp.setGamePhase('define');
-            this.runner.stopTimer();
-            this.runner.init();
+            this.stepper.stopTimer();
+            this.stepper.init();
             this.setAutoExecOff();
             this.suGrid.deselect();
         });
         document.querySelector('#btn-play').addEventListener('click', () => {
             sudoApp.setGamePhase('play');
-            this.runner.stopTimer();
-            this.runner.init();
+            this.stepper.stopTimer();
+            this.stepper.init();
             this.setAutoExecOff();
             this.suGrid.deselect();
         });
@@ -237,83 +261,75 @@ class SudokuApp {
         // Automatische Ausführung: schrittweise
         document.querySelector('#btn-autoStep').addEventListener('click', () => {
             if (this.autoExecOn) {
-                this.runner.triggerAutoStep();
+                this.stepper.triggerAutoStep('user');
             } else {
-                if (this.runner.deadlockReached()) {
+                if (this.stepper.deadlockReached()) {
                     alert("Keine (weitere) Lösung gefunden!");
                 } else {
                     this.setGamePhase('play');
                     this.setAutoExecOn();
                     this.suGrid.deselect();
-                    this.runner.triggerAutoStep();
+                    this.stepper.triggerAutoStep('user');
                 }
             }
         });
 
         // Automatische Ausführung: starten bzw. fortsetzen
         document.querySelector('#btn-run').addEventListener('click', () => {
-            if (this.autoExecOn) {
-                this.runner.startTimer();
-            } else {
-                if (this.runner.deadlockReached()) {
-                    alert("Keine (weitere) Lösung gefunden!");
-                } else {
-                    this.setGamePhase('play');
-                    this.setAutoExecOn();
-                    this.suGrid.deselect();
-                    this.runner.init();
-                    this.successDialog.close();
-                    this.runner.startTimer();
-                }
-            }
+            this.autoExecRunTimerControlled();
         });
+
 
         // Automatische Ausführung pausieren
         document.querySelector('#btn-pause').addEventListener('click', () => {
-            sudoApp.runner.stopTimer();
+            sudoApp.stepper.stopTimer();
         });
 
         // Automatische Ausführung beenden
         document.querySelector('#btn-stop').addEventListener('click', () => {
-            this.runner.stopTimer();
-            this.runner.init();
+            this.stepper.stopTimer();
+            this.stepper.init();
             this.setAutoExecOff();
             this.suGrid.deselect();
         });
 
         // Der Initialisieren-Button: Initialisiert die Tabelle
         document.querySelector('#btn-init').addEventListener('click', () => {
-            this.runner.stopTimer()
-            this.runner.init();
+            this.stepper.stopTimer()
+            this.stepper.init();
             this.successDialog.close();
             this.setAutoExecOff();
             this.suGrid.deselect();
             this.suGrid.init();
-            this.runner.displayProgress();
+            this.stepper.displayProgress();
             this.setGamePhase('define');
         });
         // Der Zurücksetzen-Button: Setzt die Tabelle zurück auf die Definition.
         // Alle Zellen bis auf die, die zur Definition gehören, werden gelöscht
         document.querySelector('#btn-reset').addEventListener('click', () => {
-            this.runner.stopTimer();
-            this.runner.init();
+            this.stepper.stopTimer();
+            this.stepper.init();
             this.successDialog.close();
             this.setAutoExecOff();
             this.suGrid.deselect();
             this.suGrid.reset();
-            this.runner.displayProgress();
+            this.stepper.displayProgress();
+        });
+        // Der Generieren-Button: generiert ein neues Puzzle
+        document.querySelector('#btn-generate').addEventListener('click', () => {
+            this.generatePuzzleHandler();
         });
         // Der Speichern-Button: Das aktuelle Puzzle wird unter einem Namen 
         // in der Puzzle-DB gespeichert.
         document.querySelector('#btn-save').addEventListener('click', () => {
-            this.runner.stopTimer();
+            this.stepper.stopTimer();
             this.successDialog.close();
             let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
             this.puzzleSaveDialog.open(newPuzzelId, '');
         });
 
         document.querySelector('#btn-statistic').addEventListener('click', () => {
-            this.runner.stopTimer();
+            this.stepper.stopTimer();
             this.successDialog.close();
             let playedPuzzleDbElement = this.suGrid.getPlayedPuzzleDbElement();
 
@@ -328,7 +344,7 @@ class SudokuApp {
         });
 
         document.querySelector('#btn-save-mobile').addEventListener('click', () => {
-            this.runner.stopTimer();
+            this.stepper.stopTimer();
             this.successDialog.close();
             this.savePuzzleMobile();
         });
@@ -345,16 +361,57 @@ class SudokuApp {
         });
     }
 
-    handleNumberPressed(nr){
+    generatePuzzleHandler() {
+        sudoApp.stepper.init();
+        sudoApp.suGrid.generatePuzzle();
+        sudoApp.stepper.init();
+        sudoApp.setAutoExecOff();
+        sudoApp.stepper.displayProgress();
+    }
+    
+    autoExecRun() {
+        if (this.autoExecOn) {
+            this.stepper.solverLoop();
+        } else {
+            if (this.stepper.deadlockReached()) {
+                alert("Keine (weitere) Lösung gefunden!");
+            } else {
+                this.setGamePhase('play');
+                this.setAutoExecOn();
+                this.suGrid.deselect();
+                this.stepper.init();
+                this.stepper.solverLoop();
+            }
+        }
+    }
+
+    autoExecRunTimerControlled() {
+        if (this.autoExecOn) {
+            this.stepper.startTimerLoop();
+        } else {
+            if (this.stepper.deadlockReached()) {
+                alert("Keine (weitere) Lösung gefunden!");
+            } else {
+                this.setGamePhase('play');
+                this.setAutoExecOn();
+                this.suGrid.deselect();
+                this.stepper.init();
+                this.successDialog.close();
+                this.stepper.startTimerLoop('user');
+            }
+        }
+    }
+
+    handleNumberPressed(nr) {
         if (this.autoExecOn) {
             // Während der automatischen Ausführung Nummer gedrückt
             // Der Stepper wird angehalten und beendet
-            this.runner.stopTimer();
-            this.runner.init();
+            this.stepper.stopTimer();
+            this.stepper.init();
             this.setAutoExecOff();
         } else {
             this.suGrid.atCurrentSelectionSetNumber(nr, this.currentPhase, false);
-            this.runner.displayProgress();
+            this.stepper.displayProgress();
         }
     }
 
@@ -362,15 +419,15 @@ class SudokuApp {
         if (this.autoExecOn) {
             // Während der automatischen Ausführung Delete-Taste gedrückt
             // Der Stepper wird angehalten und beendet
-            this.runner.stopTimer();
-            this.runner.init();
+            this.stepper.stopTimer();
+            this.stepper.init();
             this.successDialog.close();
             this.setAutoExecOff();
             this.suGrid.deselect();
         } else {
             this.suGrid.deleteSelected(this.currentPhase, false);
-            this.runner.displayProgress();
-        }; 
+            this.stepper.displayProgress();
+        };
     }
 
     init() {
@@ -382,15 +439,16 @@ class SudokuApp {
         this.setGamePhase('define');
         this.setAutoExecOff();
         // Ein neuer Stepper wird angelegt und initialisert
-        this.runner = new StepperOnGrid(this.suGrid);
-        this.runner.init();
+        this.stepper = new StepperOnGrid(this.suGrid);
+        this.stepper.init();
         this.tabView.init();
     }
 
     setAutoExecOn() {
         if (!this.autoExecOn) {
+            this.suGrid.removeAutoExecCellInfos();
             this.autoExecOn = true;
-            this.runner.init();
+            this.stepper.init();
             this.successDialog.close();
             this.displayOnOffStatus();
         }
@@ -398,7 +456,7 @@ class SudokuApp {
 
     setAutoExecOff() {
         this.autoExecOn = false;
-        this.suGrid.removeAutoExecCellInfos();
+        // this.suGrid.removeAutoExecCellInfos();
         this.displayOnOffStatus();
     }
 
@@ -407,7 +465,7 @@ class SudokuApp {
     }
 
     displayOnOffStatus() {
-        let manualGroup = document.getElementById("numbers");
+        let manualGroup = document.getElementById("manual-btn-group");
         let autoGroup = document.getElementById("auto-exec-btns");
         if (this.autoExecOn) {
             manualGroup.classList.remove('on');
@@ -432,8 +490,8 @@ class SudokuApp {
 
     sudokuCellPressed(cellNode, cell, index) {
         if (this.autoExecOn) {
-            this.runner.stopTimer();
-            this.runner.init();
+            this.stepper.stopTimer();
+            this.stepper.init();
             this.successDialog.close();
             this.setAutoExecOff();
             this.suGrid.deselect();
@@ -464,13 +522,13 @@ class SudokuApp {
     }
 
     loadCurrentPuzzle() {
-        this.runner.stopTimer();
-        this.runner.init();
+        this.stepper.stopTimer();
+        this.stepper.init();
         this.setAutoExecOff();
         let puzzle = this.sudokuPuzzleDB.getSelectedPuzzle();
         let uid = this.sudokuPuzzleDB.getSelectedUid();
         this.suGrid.loadPuzzle(uid, puzzle);
-        this.runner.displayProgress();
+        this.stepper.displayProgress();
         this.setGamePhase('play');
         this.tabView.openGrid();
     }
@@ -485,8 +543,8 @@ class SudokuApp {
     }
 
     loadCurrentMobilePuzzle() {
-        this.runner.stopTimer();
-        this.runner.init();
+        this.stepper.stopTimer();
+        this.stepper.init();
         this.setAutoExecOff();
         let uid = 'l2rcvi2mobile8h05azkg';
         if (!this.sudokuPuzzleDB.has(uid)) {
@@ -494,7 +552,7 @@ class SudokuApp {
         }
         let puzzle = this.sudokuPuzzleDB.getPuzzle(uid);
         this.suGrid.loadPuzzle(uid, puzzle);
-        this.runner.displayProgress();
+        this.stepper.displayProgress();
         this.setGamePhase('play');
     }
 
@@ -520,8 +578,8 @@ class SudokuApp {
     successDlgOKPressed() {
         this.successDialog.close();
         if (sudoApp.successDialog.further()) {
-            this.runner.setAutoDirection('backward');
-            this.runner.startTimer();
+            this.stepper.setAutoDirection('backward');
+            this.stepper.startTimerLoop();
         }
     }
 
@@ -671,7 +729,7 @@ class BackTrackOptionStep {
     }
 
     addBackTrackRealStep(cellIndex, cellValue) {
-        
+
         return this.myOwnerPath.addBackTrackRealStep(cellIndex, cellValue);
     }
     addBackTrackOptionStep(cellIndex, optionList) {
@@ -851,6 +909,7 @@ class StepperOnGrid {
     // ein Rückwärtsschritt ist ein Paar (Zelle selektieren, gesetzte Nummer zurücknehmen)
 
     constructor(suGrid) {
+        this.myResult = '';
         this.suGrid = suGrid;
         this.myBackTracker;
         this.timer = false;
@@ -865,6 +924,7 @@ class StepperOnGrid {
     }
 
     init() {
+        this.myResult = '';
         this.goneSteps = 0;
         this.countBackwards = 0;
         this.autoDirection = 'forward';
@@ -926,9 +986,9 @@ class StepperOnGrid {
         return this.timer !== false;
     }
 
-    startTimer() {
+    startTimerLoop() {
         if (!this.isRunning()) {
-            this.timer = window.setInterval(() => { sudoApp.runner.triggerAutoStep(); }, this.execSpeed);
+            this.timer = window.setInterval(() => { sudoApp.stepper.triggerAutoStep('user'); }, this.execSpeed);
         }
     }
 
@@ -938,18 +998,28 @@ class StepperOnGrid {
         this.timer = false;
     }
 
-    triggerAutoStep() {
-        let result = this.autoStep();
-        this.displayStatus();
-        if (result == 'success') {
+    solverLoop() {
+        while (this.myResult == '' || this.myResult == 'inProgress') {
+            sudoApp.stepper.triggerAutoStep('system');
+        }
+    }
+
+    triggerAutoStep(caller) {
+        this.myResult = this.autoStep();
+        if (caller == 'user') {
+            this.displayStatus();
+        }
+        if (this.myResult == 'success') {
             if (this.isRunning()) {
                 this.stopTimer();
             }
             this.suGrid.difficulty = this.levelOfDifficulty;
             this.suGrid.backTracks = this.countBackwards;
             this.suGrid.steps = this.goneSteps;
-            sudoApp.successDialog.open();
-        } else if (result == 'fail') {
+            if (caller == 'user') {
+                sudoApp.successDialog.open();
+            }
+        } else if (this.myResult == 'fail') {
             this.stopTimer();
             alert("Keine (weitere) Lösung gefunden!");
         } else {
@@ -1084,7 +1154,7 @@ class StepperOnGrid {
         }
     }
 
-   
+
     calculateMinSelectionFrom(selectionList) {
         // Berechnet die nächste Selektion
         // Nicht eindeutig;        
@@ -1233,7 +1303,7 @@ class StepperOnGrid {
             }
             return oneOption;
         }
-   
+
         let tmpMin = this.calculateMinSelectionFrom(optionList);
         // Falls es keine notwendigen Nummern gibt:
         // Bestimme eine nächste Zelle mit minimaler Anzahl zulässiger Nummern
@@ -1749,8 +1819,10 @@ class SudokuGrid {
     countDefSteps() {
         let tmp = 0;
         for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].getPhase() == 'define') {
-                tmp++;
+            if (this.sudoCells[i].getValue() !== '0') {
+                if (this.sudoCells[i].getPhase() == 'define') {
+                    tmp++;
+                }
             }
         }
         return tmp;
@@ -1761,14 +1833,83 @@ class SudokuGrid {
         // Die Zellen der Aufgabenstellung bleiben erhalten
         // Schritt 1: Die aktuelle Selektion wird zurückgesetzt
         this.initCurrentSelection();
-        // this.initActionHistory();
         // Schritt 2: Die aktuellen Zellinhalte werden gelöscht
         for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].getPhase() !== 'define') {
-                this.sudoCells[i].clear();
+            if (this.sudoCells[i].getValue() !== '0') {
+                if (this.sudoCells[i].getPhase() == 'play') {
+                    this.sudoCells[i].clear();
+                }
             }
         }
         this.refresh();
+    }
+
+    set() {
+        // Alle in der Phase 'play' gesetzten Zahlen werden zur Definition
+        // hinzugefügt.
+        // Schritt 1: Die aktuelle Selektion wird zurückgesetzt
+        this.initCurrentSelection();
+        // Schritt 2: Die aktuellen Zellinhalte werden gelöscht
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].getValue() !== '0') {
+                if (this.sudoCells[i].getPhase() == 'play') {
+                    this.sudoCells[i].clearAutoExecInfo();
+                    this.sudoCells[i].setPhase('define');
+                }
+            }
+        }
+        this.refresh();
+    }
+
+    generatePuzzle() {
+        // Initialisiere Tabelle
+        sudoApp.stepper.stopTimer()
+        sudoApp.stepper.init();
+        sudoApp.setAutoExecOff();
+        sudoApp.suGrid.deselect();
+        sudoApp.suGrid.init();
+        sudoApp.setGamePhase('define');
+
+        // Setze in Zelle 0 eine zufällige Nummer
+        sudoApp.sudokuCellPressed(this.sudoCells[0], 0);
+        sudoApp.handleNumberPressed(getRandomIntInclusive(1, 9).toString());
+
+        // Löse dieses Sudoku
+        sudoApp.autoExecRun();
+        // Setze das gelöste Puzzle in den define-Modus
+        this.set();
+        // Setze das Puzzle in den Define-Mode
+        sudoApp.setGamePhase('define')
+        // Lösche in der Lösung Nummern solange
+        // wie das verbleibende Puzzle backtrack-frei bleibt.
+
+        let reduced = true;
+        while (reduced) {
+            reduced = this.reduce();
+        }
+    }
+
+    reduce() {
+        let tmpReduced = false;
+        let randomCellOrder = getRandomNumbers(81, 0, 81);
+        for (let i = 0; i < 81; i++) {
+            let k = randomCellOrder[i];
+            if (this.sudoCells[k].getValue() !== '0') {
+                this.select(this.sudoCells[k], k);
+                let tmpNr = this.sudoCells[k].getValue();
+                this.deleteSelected('define', false);
+                this.evaluateGrid();
+                if (this.sudoCells[k].getTotalAdmissibles().size == 1
+                    || this.sudoCells[k].getNecessarys().size == 1) {
+                    tmpReduced = true;
+                } else {
+                    this.select(this.sudoCells[k], k);
+                    this.sudoCells[k].manualSetValue(tmpNr, 'define');
+                }
+            }
+        }
+        this.refresh();
+        return tmpReduced;
     }
 
     getPlayedPuzzleDbElement() {
@@ -2704,6 +2845,10 @@ class SudokuCell {
 
     getPhase() {
         return this.myGamePhase;
+    }
+
+    setPhase(phase) {
+        this.myGamePhase = phase;
     }
 
     select() {

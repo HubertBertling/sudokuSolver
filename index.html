@@ -13,7 +13,7 @@
     <script src="dist/winbox.bundle.js"></script>
     <link rel="stylesheet" media="screen and (max-width: 420px)" href="smallscreen.css">
     <link rel="stylesheet" media="screen and (min-width: 421px)" href="widescreen.css">
-    <link rel="stylesheet" media="print" type="text/css" href="print.css"/>
+    <link rel="stylesheet" media="print" type="text/css" href="print.css" />
 </head>
 
 <body>
@@ -24,6 +24,7 @@
     <!--Der Inhalt des Reiters Sudoku-Solver-->
     <div id="sudoku-solver" class="tabcontent ">
         <div class="sudoku-solver-in-tab">
+            <div id="loader"></div>
             <div class="inputArea" id="inputArea">
                 <div class="gridArea" id="gridArea">
                     <div class="main-sudoku-grid" id="main-sudoku-grid">
@@ -69,17 +70,22 @@
                     </div>
                     <div class="ctrl-btn-group manual-exec-btns on" id="manual-exec-btns">
                         <p>Manuelle Ausführung</p>
-                        <div class="numbers" id="numbers">
-                            <div class="number">1</div>
-                            <div class="number">2</div>
-                            <div class="number">3</div>
-                            <div class="number">4</div>
-                            <div class="number">5</div>
-                            <div class="number">6</div>
-                            <div class="number">7</div>
-                            <div class="number">8</div>
-                            <div class="number">9</div>
-                            <div class="delete" id="btn-delete-cell">X</div>
+                        <div class="manual-btn-group" id="manual-btn-group">
+                            <div class="numbers" id="numbers">
+                                <div class="number">1</div>
+                                <div class="number">2</div>
+                                <div class="number">3</div>
+                                <div class="number">4</div>
+                                <div class="number">5</div>
+                                <div class="number">6</div>
+                                <div class="number">7</div>
+                                <div class="number">8</div>
+                                <div class="number">9</div>
+                                <div class="delete" id="btn-delete-cell">X</div>
+                            </div>
+                            <div class="btn-rm-exec-infos tooltip" id="btn-rm-exec-infos">
+                                Schrittanzeige beenden
+                            </div>
                         </div>
                     </div>
                     <div class="ctrl-btn-group automatic-exec on" id="automatic-exec">
@@ -100,7 +106,7 @@
                                 </div>
                             </div>
                             <div class="btn-automatic tooltip" id="btn-autoStep">
-                                <img src="images/step-96.png" class="btn-image">
+                                <img src="images/step-96.png" class="btn-image" id="image-autostep">
                                 <p>Automatische Ausführung</p>
                                 <p>Schritt für Schritt</p>
                             </div>
@@ -112,6 +118,9 @@
                             <div class="main-btn" id="btn-init">Initialisieren</div>
                             <div class="main-btn" id="btn-reset">Zurücksetzen</div>
                         </div>
+
+                        <div class="main-btn" id="btn-generate">Neues Puzzle</div>
+
                         <div class="storage-btns">
                             <div class="main-btn" id="btn-save">Speichern</div>
                             <div class="main-btn" id="btn-statistic">Statistik aktualisieren</div>
@@ -141,7 +150,7 @@
                         </div>
                         <div class="mobile-help">
                             <a id="help-link" href="./help.html">Hilfe</a>
-                        </div>    
+                        </div>
                     </div>
                 </div>
             </div>
@@ -152,7 +161,7 @@
         <section class="noprint">
             <div class="container ">
                 <table class="puzzle-db-table " id="puzzle-db-table">
-                    <!--Die Datenbanktabelle-->                    
+                    <!--Die Datenbanktabelle-->
                     <thead class="puzzle-db-thead">
                         <tr>
                             <th style="cursor:pointer">Puzzle-Id <div>Puzzle-Id</div>
@@ -177,7 +186,7 @@
                         </tr>
                     </thead>
                     <tbody class="puzzle-db-tbody" id="puzzle-db-tbody">
-                    <!--Der Inhalt der Datenbanktabelle wird per JS aus dem Local-Store geladen-->
+                        <!--Der Inhalt der Datenbanktabelle wird per JS aus dem Local-Store geladen-->
                     </tbody>
                 </table>
             </div>
@@ -187,8 +196,8 @@
             <div class="pz-btn noprint" id="pz-btn-load" onclick="sudoApp.loadCurrentPuzzle()">Laden </div>
             <div class="pz-btn noprint" id="pz-btn-previous" onclick="sudoApp.previousPuzzle()"><img
                     src="images/pfeilrueckwaerts.png" class="forward-backward-image"></div>
-            <div class="pz-btn noprint" id="pz-btn-next" onclick="sudoApp.nextPuzzle()"><img src="images/pfeilvorwaerts.png"
-                    class="forward-backward-image"></div>
+            <div class="pz-btn noprint" id="pz-btn-next" onclick="sudoApp.nextPuzzle()"><img
+                    src="images/pfeilvorwaerts.png" class="forward-backward-image"></div>
             <div class="pz-btn noprint" id="pz-btn-delete" onclick="sudoApp.deleteCurrentPuzzle()">Löschen</div>
         </div>
         <div class="puzzle-header">
@@ -215,7 +224,7 @@
             <div class="solution-table noprint" id="solution">
             </div>
         </div>
-            <!--In der Druckausgabe wird der Druck-Button unterdrückt-->
+        <!--In der Druckausgabe wird der Druck-Button unterdrückt-->
         <div class="pz-btn noprint" id="pz-btn-print" onclick="sudoApp.printCurrentPuzzle()">Drucken</div>
     </div>
     <!--Der Inhalt des Reiters Hilfe-->
