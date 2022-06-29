@@ -183,7 +183,7 @@ class SudokuApp {
         // Für eine automatische Lösungssuche legt die App
         // einen Stepper an. Für jede Ausführung einen neuen.
         this.stepper;
-        
+
         // ==============================================================
         // Die Ansichtselemente der App
         // ==============================================================
@@ -308,7 +308,7 @@ class SudokuApp {
         // Alle Zellen bis auf die, die zur Definition gehören, werden gelöscht
         document.querySelector('#btn-reset').addEventListener('click', () => {
             this.stepper.stopTimer();
-            this.stepper.init();
+          //  this.stepper.init();
             this.successDialog.close();
             this.setAutoExecOff();
             this.suGrid.deselect();
@@ -362,13 +362,11 @@ class SudokuApp {
     }
 
     generatePuzzleHandler() {
-        sudoApp.stepper.init();
         sudoApp.suGrid.generatePuzzle();
-        sudoApp.stepper.init();
-        sudoApp.setAutoExecOff();
         sudoApp.stepper.displayProgress();
+        sudoApp.suGrid.displayBenchmark('-', sudoApp.suGrid.difficulty);
     }
-    
+
     autoExecRun() {
         if (this.autoExecOn) {
             this.stepper.solverLoop();
@@ -456,7 +454,6 @@ class SudokuApp {
 
     setAutoExecOff() {
         this.autoExecOn = false;
-        // this.suGrid.removeAutoExecCellInfos();
         this.displayOnOffStatus();
     }
 
@@ -935,7 +932,7 @@ class StepperOnGrid {
     }
 
     displayStatus() {
-        this.displayBenchmark();
+        this.suGrid.displayBenchmark(this.countBackwards, this.levelOfDifficulty);
         this.displayAutoDirection();
         this.displayProgress();
         this.displayGoneSteps();
@@ -958,12 +955,6 @@ class StepperOnGrid {
         }
     }
 
-    displayBenchmark() {
-        let evalNode = document.getElementById("evaluations");
-        evalNode.innerHTML =
-            '<b>Rückwärtsläufe:</b> &nbsp' + this.countBackwards + '; &nbsp'
-            + '<b>Schwierigkeitsgrad:</b> &nbsp' + this.levelOfDifficulty;
-    }
 
     displayProgress() {
         let countDef = this.suGrid.countDefSteps();
@@ -1752,7 +1743,7 @@ class SudokuGrid {
         // noch nicht in der DB befinden. 
         // Sie besitzen daher auch noch keine Id.
         this.loadedPuzzleId = '';
-        this.difficulty = 'unbestimmt';
+        this.difficulty = 'Keine Angabe';
         this.steps = 0;
         this.backTracks = 0;
         this.sudoCells = [];
@@ -1769,7 +1760,7 @@ class SudokuGrid {
         this.indexSelected = -1;
         this.loadedPuzzleId = '';
         this.steps = 0;
-        this.difficulty = 'unbestimmt';
+        this.difficulty = 'Keine Angabe';
         this.backTracks = 0;
         // Erzeuge die interne Tabelle
         this.createSudoGrid();
@@ -1887,6 +1878,14 @@ class SudokuGrid {
         while (reduced) {
             reduced = this.reduce();
         }
+        // Löse dieses Sudoku, um den Schwierigkeitsgrad zu ermitteln.
+
+        sudoApp.stepper.init();
+        sudoApp.setAutoExecOff();
+        sudoApp.suGrid.deselect();
+        sudoApp.autoExecRun();
+        sudoApp.suGrid.reset();  
+        this.refresh();        
     }
 
     reduce() {
@@ -1899,8 +1898,9 @@ class SudokuGrid {
                 let tmpNr = this.sudoCells[k].getValue();
                 this.deleteSelected('define', false);
                 this.evaluateGrid();
-                if (this.sudoCells[k].getTotalAdmissibles().size == 1
-                    || this.sudoCells[k].getNecessarys().size == 1) {
+                let neccessaryCondition = (this.sudoCells[k].getNecessarys().size == 1);
+                let totalAdmissibleCondition = (this.sudoCells[k].getTotalAdmissibles().size == 1);
+                if (neccessaryCondition || totalAdmissibleCondition) {
                     tmpReduced = true;
                 } else {
                     this.select(this.sudoCells[k], k);
@@ -1908,8 +1908,14 @@ class SudokuGrid {
                 }
             }
         }
-        this.refresh();
         return tmpReduced;
+    }
+
+    displayBenchmark(countBackwards, levelOfDifficulty) {
+        let evalNode = document.getElementById("evaluations");
+        evalNode.innerHTML =
+            '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards + '; &nbsp'
+            + '<b>Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty;
     }
 
     getPlayedPuzzleDbElement() {
