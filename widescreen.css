@@ -144,6 +144,7 @@ html {
 }
 
 .gridArea {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(1, auto);
 }
@@ -940,9 +941,9 @@ th {
 }
 #loader {
     display: none;
-    position:absolute;
-    left: 30%;
-    top: 30%;
+    position: absolute;
+    left: 35%;
+    top: 35%;
     z-index: 2;
     width: 200px;
     height: 200px;
