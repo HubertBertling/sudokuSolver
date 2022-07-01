@@ -939,6 +939,7 @@ th {
 .puzzle-db-tbody tr.selected td {
     background-color: lightcyan;
 }
+
 #loader {
     display: none;
     position: absolute;
