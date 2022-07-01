@@ -292,6 +292,9 @@ class SudokuApp {
         let webworkerGenerate = new Worker("sudokuGen.js");
         webworkerGenerate.onmessage = function (e) {
             let puzzle = JSON.parse(e.data);
+            sudoApp.stepper.stopTimer();
+            sudoApp.stepper.init();
+            sudoApp.setAutoExecOff();      
             sudoApp.suGrid.loadPuzzle('-', puzzle);
             sudoApp.stepper.displayProgress();
             sudoApp.setGamePhase('play');
