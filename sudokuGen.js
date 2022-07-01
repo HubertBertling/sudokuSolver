@@ -1,10 +1,18 @@
-importScripts('sudokuCommon.js');
+importScripts('./sudokuCommon.js');
 
 let inMainApp = false;
 
-self.onmessage = function(n) {
+let sudoApp;
+const start = () => {
+    sudoApp = new SudokuWorkerApp();
+    sudoApp.init();
+}
+
+
+self.onmessage = function (n) {
     if (n.data == "Run") {
-        let puzzle = sudoApp.suGrid.generatePuzzle();   
+        sudoApp.suGrid.generatePuzzle();
+        let puzzle = sudoApp.suGrid.getPlayedPuzzleDbElement();
         let str_puzzle = JSON.stringify(puzzle);
         self.postMessage(str_puzzle);
         self.close();
@@ -59,6 +67,10 @@ class SudokuWorkerApp {
                 this.stepper.solverLoop();
             }
         }
+    }
+
+    setGamePhase(gamePhase) {
+        this.currentPhase = gamePhase;
     }
 
     autoExecRunTimerControlled() {
@@ -130,7 +142,7 @@ class SudokuWorkerApp {
         return this.autoExecOn;
     }
 
- 
+
     sudokuCellPressed(cellNode, cell, index) {
         if (this.autoExecOn) {
             this.stepper.stopTimer();
@@ -158,3 +170,5 @@ class SudokuWorkerApp {
         return this.currentPhase;
     }
 }
+
+start();

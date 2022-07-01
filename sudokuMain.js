@@ -1,7 +1,8 @@
+
 let inMainApp = true;
 let sudoApp;
 const start = () => {
-    sudoApp = new (SudokuApp);
+    sudoApp = new SudokuApp();
     sudoApp.init();
 }
 
@@ -287,17 +288,17 @@ class SudokuApp {
     }
 
     generatePuzzleHandler() {
-        // Hier loader anzeigen
+        document.getElementById("loader").style.display = "block";
         let webworkerGenerate = new Worker("sudokuGen.js");
-        webworkerGenerate.postMessage('Run');
-        webworkerGenerate.onmessage = function (str_puzzleElement) {
-            let puzzle = new SudokuPuzzle(JSON.parse(str_puzzleElement));
-            this.suGrid.loadPuzzle('-', puzzle);
-            this.stepper.displayProgress();
-            this.setGamePhase('play');
-            // this.tabView.openGrid();    
+        webworkerGenerate.onmessage = function (e) {
+            let puzzle = JSON.parse(e.data);
+            sudoApp.suGrid.loadPuzzle('-', puzzle);
+            sudoApp.stepper.displayProgress();
+            sudoApp.setGamePhase('play');
+            sudoApp.tabView.openGrid();    
+            document.getElementById("loader").style.display = "none";
         }
-        webworkerGenerate.terminate();
+        webworkerGenerate.postMessage('Run');
     }
 
     autoExecRun() {

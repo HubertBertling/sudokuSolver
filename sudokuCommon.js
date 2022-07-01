@@ -371,7 +371,9 @@ class StepperOnGrid {
         this.goneSteps = 0;
         this.levelOfDifficulty = 'Keine Angabe';
         this.countBackwards = 0;
-        this.progressBar = new ProgressBar();
+        if (inMainApp) {
+            this.progressBar = new ProgressBar();
+        }
         this.autoDirection = 'forward';
         this.init();
     }
@@ -444,9 +446,11 @@ class StepperOnGrid {
     }
 
     stopTimer() {
-        // Die automatische Ausführung
-        window.clearInterval(this.timer);
-        this.timer = false;
+        if (inMainApp) {
+            // Die automatische Ausführung
+            window.clearInterval(this.timer);
+            this.timer = false;
+        }
     }
 
     solverLoop() {
@@ -1350,7 +1354,6 @@ class SudokuGrid {
         sudoApp.setAutoExecOff();
         sudoApp.suGrid.deselect();
         sudoApp.autoExecRun();
-        sudoApp.suGrid.reset();
         this.refresh();
     }
 
@@ -1386,7 +1389,38 @@ class SudokuGrid {
 
     getPlayedPuzzleDbElement() {
         // Zusammenstellung des Puzzles, um es abspeichern zu können
-        let puzzleDbElement = new SudokuPuzzle();
+        let puzzleDbElement = new SudokuPuzzle(
+            "-",
+            0,
+            'ungelöst',
+            0,
+            0,
+            'Keine Angabe',
+            0,
+            (new Date()).toJSON(),
+            [
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+            ],
+            [
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                "0", "0", "0", "0", "0", "0", "0", "0", "0",
+            ]
+        );
         puzzleDbElement.defCount = 0;
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getPhase() == 'define') {
@@ -1416,6 +1450,7 @@ class SudokuGrid {
 
     loadPuzzle(uid, puzzleDbElement) {
         this.loadedPuzzleId = uid;
+        this.difficulty = puzzleDbElement.level;
         let puzzle = puzzleDbElement.puzzle;
         for (let i = 0; i < 81; i++) {
             if (puzzle[i] == '0') {
@@ -1424,6 +1459,7 @@ class SudokuGrid {
                 this.sudoCells[i].manualSetValue(puzzle[i], 'define');
             }
         }
+        this.displayBenchmark(0, this.difficulty);
         this.displayPuzzle(uid, puzzleDbElement.name);
         this.refresh();
     }
@@ -2326,7 +2362,9 @@ class SudokuCell {
     }
 
     select() {
-        this.myCellNode.classList.add('selected');
+        if (inMainApp) {
+            this.myCellNode.classList.add('selected');
+        }
         if (sudoApp.suGrid.evalType == 'lazy') {
             // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
             // wird die verursachende collection angezeigt.
@@ -2387,24 +2425,34 @@ class SudokuCell {
     }
 
     setSelected() {
-        this.myCellNode.classList.add('hover');
+        if (inMainApp) {
+            this.myCellNode.classList.add('hover');
+        }
     }
     setRedSelected() {
-        this.myCellNode.classList.add('hover-red');
+        if (inMainApp) {
+            this.myCellNode.classList.add('hover-red');
+        }
     }
 
     setGreenSelected() {
-        this.myCellNode.classList.add('hover-green');
+        if (inMainApp) {
+            this.myCellNode.classList.add('hover-green');
+        }
     }
 
     deselect() {
-        this.myCellNode.classList.remove('selected');
-        this.myInfluencers.forEach(e => e.unsetSelected());
+        if (inMainApp) {
+            this.myCellNode.classList.remove('selected');
+            this.myInfluencers.forEach(e => e.unsetSelected());
+        }
     }
     unsetSelected() {
-        this.myCellNode.classList.remove('hover');
-        this.myCellNode.classList.remove('hover-red');
-        this.myCellNode.classList.remove('hover-green');
+        if (inMainApp) {
+            this.myCellNode.classList.remove('hover');
+            this.myCellNode.classList.remove('hover-red');
+            this.myCellNode.classList.remove('hover-green');
+        }
     }
     getValue() {
         return this.myValue;
@@ -2503,26 +2551,39 @@ class SudokuPuzzleDB {
         let str_puzzleDB = localStorage.getItem("localSudokuDB");
         if (str_puzzleDB == null) {
             // Falls der Local-Storage leer ist, wird ein erstes Puzzle angelegt.
-            let puzzleDbElement = new SudokuPuzzle();
-            puzzleDbElement.name = "BeispielSchwer";
-            puzzleDbElement.defCount = 26;
-            puzzleDbElement.status = 'ungelöst';
-            puzzleDbElement.stepsLazy = 0;
-            puzzleDbElement.stepsStrict = 0;
-            puzzleDbElement.level = 'unbestimmt';
-            puzzleDbElement.backTracks = 0;
-            puzzleDbElement.date = (new Date()).toJSON();
-            puzzleDbElement.puzzle = [
-                "0", "0", "0", "3", "0", "0", "0", "0", "5",
-                "0", "2", "0", "0", "8", "9", "0", "0", "0",
-                "0", "0", "8", "0", "0", "6", "0", "0", "3",
-                "8", "0", "9", "0", "0", "1", "0", "3", "6",
-                "0", "0", "0", "9", "0", "3", "0", "5", "0",
-                "0", "0", "1", "7", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "7", "1",
-                "0", "8", "2", "0", "1", "0", "0", "0", "0",
-                "0", "1", "0", "0", "3", "4", "0", "0", "0"
-            ];
+            let puzzleDbElement = new SudokuPuzzle(
+                "BeispielSchwer",
+                26,
+                'ungelöst',
+                0,
+                0,
+                'Keine Angabe',
+                0,
+                (new Date()).toJSON(),
+                [
+                    "0", "0", "0", "3", "0", "0", "0", "0", "5",
+                    "0", "2", "0", "0", "8", "9", "0", "0", "0",
+                    "0", "0", "8", "0", "0", "6", "0", "0", "3",
+                    "8", "0", "9", "0", "0", "1", "0", "3", "6",
+                    "0", "0", "0", "9", "0", "3", "0", "5", "0",
+                    "0", "0", "1", "7", "0", "0", "0", "0", "0",
+                    "0", "0", "0", "0", "0", "0", "0", "7", "1",
+                    "0", "8", "2", "0", "1", "0", "0", "0", "0",
+                    "0", "1", "0", "0", "3", "4", "0", "0", "0"
+                ],
+                [
+                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                ]
+            );
+
             let puzzleMap = new Map();
             let uid = Date.now().toString(36) + Math.random().toString(36).substr(2);
             puzzleMap.set(uid, puzzleDbElement);
@@ -3007,33 +3068,26 @@ class SudokuPuzzleDB {
 }
 
 class SudokuPuzzle {
-    constructor() {
-        this.name = '';
-        this.defCount = 0;
-        this.status = 'ungelöst';
-        this.stepsLazy = 0;
-        this.stepsStrict = 0;
-        this.level = 'Keine Angabe';
-        this.backTracks = 0;
-        this.date = (new Date()).toJSON();
-        this.puzzle = ['0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0'];
-        this.solution = ['0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0',
-            '0', '0', '0', '0', '0', '0', '0', '0', '0'];
-
+    constructor(
+        name,
+        defCount,
+        status,
+        stepsLazy,
+        stepsStrict,
+        level,
+        backTracks,
+        date,
+        puzzle,
+        solution) {
+        this.name = name;
+        this.defCount = defCount;
+        this.status = status;
+        this.stepsLazy = stepsLazy;
+        this.stepsStrict = stepsStrict;
+        this.level = level;
+        this.backTracks = backTracks;
+        this.date = date;
+        this.puzzle = puzzle;
+        this.solution = solution;
     }
 }

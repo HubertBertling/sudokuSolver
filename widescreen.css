@@ -585,8 +585,6 @@ html {
 .main-btn:active {
     box-shadow: 0 0px darkgray;
     transform: translate(2px, 2px);
-    background-color: lightblue;
-
 }
 
 .main-btn {
@@ -940,7 +938,32 @@ th {
 .puzzle-db-tbody tr.selected td {
     background-color: lightcyan;
 }
-
+#loader {
+    display: none;
+    position:absolute;
+    left: 30%;
+    top: 30%;
+    z-index: 2;
+    width: 200px;
+    height: 200px;
+    border: 48px solid var(--played-cell-bg-color);
+    border-radius: 50%;
+    border-top: 48px solid var(--defined-cell-bg-color);
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+  }
+  
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
 
 /*======================================*/
 /* Global block */
