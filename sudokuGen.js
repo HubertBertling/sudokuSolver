@@ -47,12 +47,6 @@ class SudokuWorkerApp {
         // ==============================================================
     }
 
-    generatePuzzleHandler() {
-        sudoApp.suGrid.generatePuzzle();
-        sudoApp.stepper.displayProgress();
-        sudoApp.suGrid.displayBenchmark('-', sudoApp.suGrid.difficulty);
-    }
-
     autoExecRun() {
         if (this.autoExecOn) {
             this.stepper.solverLoop();
@@ -69,24 +63,31 @@ class SudokuWorkerApp {
         }
     }
 
+    sudokuCellPressed(cellNode, cell, index) {
+        if (this.autoExecOn) {
+            this.stepper.stopTimer();
+            this.stepper.init();
+            this.successDialog.close();
+            this.setAutoExecOff();
+            this.suGrid.deselect();
+        }
+        this.suGrid.select(cellNode, cell, index);
+    }
+
+
     setGamePhase(gamePhase) {
         this.currentPhase = gamePhase;
     }
 
-    autoExecRunTimerControlled() {
-        if (this.autoExecOn) {
-            this.stepper.startTimerLoop();
-        } else {
-            if (this.stepper.deadlockReached()) {
-                alert("Keine (weitere) Lösung gefunden!");
-            } else {
-                this.setGamePhase('play');
-                this.setAutoExecOn();
-                this.suGrid.deselect();
-                this.stepper.init();
-                this.stepper.startTimerLoop('user');
-            }
-        }
+    init() {
+        this.suGrid.init();
+        // Die App kann in verschiedenen Ausführungsmodi sein
+        // 'automatic' 'manual'
+        this.setGamePhase('define');
+        this.setAutoExecOff();
+        // Ein neuer Stepper wird angelegt und initialisert
+        this.stepper = new StepperOnGrid(this.suGrid);
+        this.stepper.init();
     }
 
     handleNumberPressed(nr) {
@@ -98,6 +99,7 @@ class SudokuWorkerApp {
             this.setAutoExecOff();
         } else {
             this.suGrid.atCurrentSelectionSetNumber(nr, this.currentPhase, false);
+            this.stepper.displayProgress();
         }
     }
 
@@ -112,19 +114,10 @@ class SudokuWorkerApp {
             this.suGrid.deselect();
         } else {
             this.suGrid.deleteSelected(this.currentPhase, false);
+            this.stepper.displayProgress();
         };
     }
 
-    init() {
-        this.suGrid.init();
-        // Die App kann in verschiedenen Ausführungsmodi sein
-        // 'automatic' 'manual'
-        this.setGamePhase('define');
-        this.setAutoExecOff();
-        // Ein neuer Stepper wird angelegt und initialisert
-        this.stepper = new StepperOnGrid(this.suGrid);
-        this.stepper.init();
-    }
 
     setAutoExecOn() {
         if (!this.autoExecOn) {
@@ -140,30 +133,6 @@ class SudokuWorkerApp {
 
     autoExecIsOn() {
         return this.autoExecOn;
-    }
-
-
-    sudokuCellPressed(cellNode, cell, index) {
-        if (this.autoExecOn) {
-            this.stepper.stopTimer();
-            this.stepper.init();
-            this.successDialog.close();
-            this.setAutoExecOff();
-            this.suGrid.deselect();
-        }
-        this.suGrid.select(cellNode, cell, index);
-    }
-
-    loadCurrentPuzzle() {
-        this.stepper.stopTimer();
-        this.stepper.init();
-        this.setAutoExecOff();
-        let puzzle = this.sudokuPuzzleDB.getSelectedPuzzle();
-        let uid = this.sudokuPuzzleDB.getSelectedUid();
-        this.suGrid.loadPuzzle(uid, puzzle);
-        this.stepper.displayProgress();
-        this.setGamePhase('play');
-        this.tabView.openGrid();
     }
 
     getPhase() {

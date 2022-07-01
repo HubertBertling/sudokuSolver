@@ -1332,7 +1332,7 @@ class SudokuGrid {
         sudoApp.setGamePhase('define');
 
         // Setze in Zelle 0 eine zufällige Nummer
-        sudoApp.sudokuCellPressed(this.sudoCells[0], 0);
+        sudoApp.sudokuCellPressed(sudoApp.suGrid.sudoCells[0], 0);
         sudoApp.handleNumberPressed(getRandomIntInclusive(1, 9).toString());
 
         // Löse dieses Sudoku
@@ -1354,7 +1354,7 @@ class SudokuGrid {
         sudoApp.setAutoExecOff();
         sudoApp.suGrid.deselect();
         sudoApp.autoExecRun();
-        this.refresh();
+        sudoApp.refresh();
     }
 
     reduce() {
