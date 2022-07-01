@@ -1383,8 +1383,8 @@ class SudokuGrid {
     displayBenchmark(countBackwards, levelOfDifficulty) {
         let evalNode = document.getElementById("evaluations");
         evalNode.innerHTML =
-            '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards + '; &nbsp'
-            + '<b>Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty;
+        '<b>Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+            + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
     }
 
     getPlayedPuzzleDbElement() {
