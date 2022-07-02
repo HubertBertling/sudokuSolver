@@ -870,6 +870,33 @@ body, html {
       background-color: lightcyan;
   }
 
+  #loader {
+    display: none;
+    position: absolute;
+    left: 35%;
+    top: 35%;
+    z-index: 2;
+    width: 200px;
+    height: 200px;
+    border: 48px solid #fbf9f900; 
+    border-radius: 50%;
+    border-top: 48px solid var(--defined-cell-bg-color);
+    border-bottom: 48px solid black;
+    border-right: 48px solid var(--played-cell-bg-color);
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+  }
+  
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 
 /*======================================*/
 /* Global block */
