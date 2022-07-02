@@ -139,12 +139,14 @@ class SudokuApp {
             this.handleDeletePressed();
         });
 
+   /*
         document.querySelector('#btn-rm-exec-infos').addEventListener('click', () => {
             this.autoExecOn = false;
             this.suGrid.removeAutoExecCellInfos();
             this.displayOnOffStatus();
 
         });
+        */
 
         window.addEventListener("keydown", (event) => {
             switch (event.key) {
@@ -213,10 +215,15 @@ class SudokuApp {
 
         // Automatische Ausführung beenden
         document.querySelector('#btn-stop').addEventListener('click', () => {
+            this.autoExecOn = false;
+            this.suGrid.removeAutoExecCellInfos();
+            this.displayOnOffStatus();
+            /*
             this.stepper.stopTimer();
             this.stepper.init();
             this.setAutoExecOff();
             this.suGrid.deselect();
+            */
         });
 
         // Der Initialisieren-Button: Initialisiert die Tabelle
