@@ -543,26 +543,29 @@ html {
 .auto-exec-btns {
     margin-top: 5px;
     padding: 5px;
-    border: var(--screen-bg-color) dashed 3px;
+   /* border: var(--screen-bg-color) dashed 3px; */
 }
-
+/*
 .auto-exec-btns.on {
     margin-top: 5px;
     padding: 5px;
     border: darkgrey dashed 3px;
 }
+*/
 
 .manual-btn-group {
     margin-top: 5px;
     padding: 5px;
-    border: var(--screen-bg-color) dashed 3px;
+    /* border: var(--screen-bg-color) dashed 3px; */
 }
 
+/*
 .manual-btn-group.on {
     margin-top: 5px;
     padding: 5px;
     border: darkgrey dashed 3px;
 }
+*/
 
 .config-btns {
     display: grid;
