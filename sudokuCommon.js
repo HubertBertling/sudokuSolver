@@ -1431,6 +1431,7 @@ class SudokuGrid {
             }
         }
         // Status setzen
+        puzzleDbElement.level = this.difficulty;
         if (this.solved()) {
             puzzleDbElement.status = 'gelöst';
             if (this.evalType == 'lazy') {
@@ -1438,7 +1439,6 @@ class SudokuGrid {
             } else {
                 puzzleDbElement.stepsStrict = this.steps;
             }
-            puzzleDbElement.level = this.difficulty;
             puzzleDbElement.backTracks = this.backTracks;
             for (let i = 0; i < 81; i++) {
                 puzzleDbElement.solution[i] = this.sudoCells[i].getValue();
