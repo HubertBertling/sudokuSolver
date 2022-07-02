@@ -215,6 +215,7 @@ class SudokuApp {
 
         // Automatische Ausführung beenden
         document.querySelector('#btn-stop').addEventListener('click', () => {
+            this.stepper.stopTimer();
             this.autoExecOn = false;
             this.suGrid.removeAutoExecCellInfos();
             this.displayOnOffStatus();
