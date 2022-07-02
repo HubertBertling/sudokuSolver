@@ -245,6 +245,9 @@ class SudokuApp {
         document.querySelector('#btn-generate').addEventListener('click', () => {
             this.generatePuzzleHandler();
         });
+        document.querySelector('#btn-generate-mobile').addEventListener('click', () => {
+            this.generatePuzzleHandler();
+        });
         // Der Speichern-Button: Das aktuelle Puzzle wird unter einem Namen 
         // in der Puzzle-DB gespeichert.
         document.querySelector('#btn-save').addEventListener('click', () => {
