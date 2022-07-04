@@ -4,9 +4,9 @@ layout: default
 
 # Sudoku-App
 
-Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Sudoku, manchmal auch nur als leicht oder mittel klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man diese Sudoku-App und den darin enthaltenen Solver nutzen. Er löst jedes Sudoku in wenigen Minuten.
+Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Puzzle, manchmal sogar nur als leicht klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man diese Sudoku-App und den darin enthaltenen Solver nutzen. Er löst jedes Sudoku in wenigen Minuten.
 
-Das tun andere Sudoku-Solver auch. Die Besonderheit dieses Solvers besteht darin, dass man ihm dabei zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt. Alternativ kann man sich auch einfach nur einen nächsten möglichen Schritt zeigen lassen und dann von Hand weitermachen.
+Das tun andere Sudoku-Solver auch. Die Besonderheit dieses Solvers besteht darin, dass man ihm bei der Lösungssuche zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt. Alternativ kann man sich auch einfach nur einen nächsten möglichen Schritt zeigen lassen und dann von Hand weitermachen.
 
 Zusammen mit der Lösung bestimmt der Solver den tatsächlichen Schwierigkeitsgrad des Sudokus. Sehr schwere Sudokus, Definition siehe unten, sind manuell kaum zu lösen. Sie sollten daher kein Grund für Frust sein. Konsequenz: Mit dieser Sudoku-App macht das Sudokulösen Spaß, auch wenn mal ein schweres Puzzle dabei ist.
 
@@ -14,11 +14,11 @@ Zusammen mit der Lösung bestimmt der Solver den tatsächlichen Schwierigkeitsgr
 
 ![Anwendungsansicht](./images/AppView.png)
 
-Die App besteht aus zwei Komponenten, dem Sudoku-Solver und der Puzzle-Datenbank. Mit Hilfe des Sudoku-Solvers kann man beliebige Sudoku-Aufgaben, sprich Sudoku-Puzzles, manuell oder automatisch lösen. In der Puzzle-Datenbank können Puzzles und mit ihren Eigenschaften, etwa dem Schwierigkeitsgrad, den benötigten Lösungsschritten und der Lösung selbst gespeichert werden.
+Die App besteht aus zwei Komponenten, dem Sudoku-Solver und der Puzzle-Datenbank. Mit Hilfe des Sudoku-Solvers kann man beliebige Sudoku-Aufgaben, sprich Sudoku-Puzzles, manuell oder automatisch lösen. In der Puzzle-Datenbank können Puzzles mit ihren Eigenschaften, etwa dem Schwierigkeitsgrad, den benötigten Lösungsschritten und der Lösung selbst gespeichert werden.
 
 ## Die Komponente Sudoku-Solver
 
-Der Solver besteht im Wesentlichen aus der 9 x 9 Sudoku-Matrix. In den Zellen der Matrix können Nummern von 1 .. 9 gesetzt werden. um den Spieler zu unterstützen, werden für Zellen, die noch keine gesetzte Nummer haben, die aktuell noch möglichen Nummern, die zulässigen Nummern, der Zelle angezeigt. Zusätzlich werden die Zellen der Matrix in 3 x 3 Gruppen unterteilt, 9 an der Zahl.
+Der Solver besteht im Wesentlichen aus der 9 x 9 Sudoku-Matrix. In den Zellen der Matrix können Nummern von 1 .. 9 gesetzt werden. Um den Spieler zu unterstützen, werden für Zellen, die noch keine gesetzte Nummer haben, die aktuell noch möglichen Nummern, die zulässigen Nummern, der Zelle angezeigt. Zusätzlich werden die Zellen der Matrix in 3 x 3 Gruppen unterteilt, 9 an der Zahl.
 
 ### Typischer Ablauf der Lösung eines Sudoku-Puzzles
 
@@ -44,8 +44,8 @@ Soll eine Nummern-Setzung zurückgenommen werden, muss die betroffene Zelle sele
 |<img src="./images/auto4option.png" width="160px"/>|**Automatisch gesetzte Nummer einer Auswahl:** Der Solver hat in dieser Zelle automatisch die Nummer 3 gesetzt. Und zwar in der 11. Setzung einer Nummer. Nach der ersten Option 6 hat er die zweite Option 3 gewählt. Jetzt sind alle Optionen dieser Zelle abgearbeitet.|
 |<img src="./images/optionCell.png" width="160px"/>|**Zulässige Nummern:** Für diese Zelle wurde noch keine Nummer gesetzt. Nur noch eine der Nummern 1, 3, 5 und 7 kann gewählt werden. Das sind die (noch) zulässigen Nummern der Zelle. Die nicht aufgeführten Nummern sind direkt unzulässig.|
 |<img src="./images/neccessary.png" width="160px"/>|**Notwendige Nummer:** Für die nebenstehende Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die drei Nummern 2, 5 und 8 setzbar. Jedoch hat der Solver ermittelt, dass die Nummer 8 notwendig ist, damit das Sudoku lösbar bleibt. 8 ist eine notwendige Nummer für diese Zelle. Eine Nummer in einer Zelle ist notwendig, wenn die Nummer in ihrer Gruppe, Zeile oder Spalte einzig ist. D.h. sie kommt in der betreffenden Gruppe, Zeile oder Spalte nur genau einmal vor. In der obigen Beispielmatrix ist die 8 einzig in ihrer Gruppe. Bei der Bestimmung notwendiger Nummern spielen indirekt unzulässige Nummern (rot markiert) keine Rolle.|
-|<img src="./images/indirect.png" width="160px"/>|**Indirekt unzulässige Nummer:** Für die nebenstehende Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die drei Nummern 1, 7 und 8 setzbar. Jedoch hat der Solver ermittelt, dass die 7 indirekt unzulässig ist. Wenn man sie setzen würde, würde der Solver einige Schritte später die Widersprüchlichkeit des Puzzles feststellen. Zur Definition der indirekten Unzulässigkeit siehe den entsprechenden Abschnitt dieser Hilfe.|
-|<img src="./images/direkterSingle.png" width="160px"/> <img src="./images/indirekterSingle.png" width="160px"/>| **Singles:** Eine Single-Nummer ist eine zulässige Nummer in einer Zelle, wenn es keine weiteren zulässigen Nummern in der Zelle gibt. Im nebenstehenden Beispiel sind die 7 und die 1 Singles. Die 7 bezeichnen wir auch als **direktes Single**, weil zu seiner Bestimmung nicht auf indirekt unzulässige Nummern zurückgegriffen werden muss. Im Gegensatz dazu ist die 1 ein **indirektes Single**. Die 1 ist ein Single, weil die rote 5 und 6 indirekt unzulässig sind.|
+|<img src="./images/indirect.png" width="160px"/>|**Indirekt unzulässige Nummer:** Für die nebenstehende Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die drei Nummern 1, 7 und 8 setzbar. Jedoch hat der Solver ermittelt, dass die 7 indirekt unzulässig ist. Wenn man sie setzen würde, würde der Solver einige Schritte später die Widersprüchlichkeit des Puzzles feststellen. Zur Definition der indirekten Unzulässigkeit siehe den entsprechenden Abschnitt dieser Hilfe. Hinweis: **Direkt unzulässige Nummern** werden gar nicht angezeigt. In der nebenstehenden Zelle sind die Nummern 2, 3, 4, 5, 6 und 9 direkt unzulässig.|
+|<img src="./images/direkterSingle.png" width="160px"/> <img src="./images/indirekterSingle.png" width="160px"/>| **Singles:** Eine Single-Nummer ist eine zulässige Nummer in einer Zelle, wenn es keine weiteren zulässigen Nummern in der Zelle gibt. Im nebenstehenden Beispiel sind die 7 und die 1 Singles. Die 7 bezeichnen wir auch als **direktes Single**, weil zu seiner Bestimmung nicht auf indirekt unzulässige Nummern zurückgegriffen werden muss. Im Gegensatz dazu ist die 1 ein **indirektes Single**. Die 1 ist in dieser Zelle ein Single, weil die rote 5 und 6 indirekt unzulässig sind.|
 |<img src="./images/nochoice.png" width="160px"/>|**Widerspruch - Leere Option:** Für diese Zelle wurde noch keine Nummer gesetzt. Allerdings gibt es keine zulässige Nummer mehr, die noch gesetzt werden könnte. D.h. das Sudoku ist widersprüchlich. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet der Solver in den Rückwärts-Modus um.|
 |<img src="./images/twoNeccessary.png" width="160px"/>|**Widerspruch - zwei notwendige Nummern:** Für diese Zelle wurde noch keine Nummer gesetzt. Ohne direkten Konflikt sind noch die Nummern 1, 2, 3, 6, 7 und 8 setzbar. Jedoch hat der Solver zwei verschiedene notwendige Nummern für diese Zelle ermittelt: 1 und 2. Das geht natürlich nicht. Es können in einer Zelle nicht zwei Nummern gleichzeitig gesetzt werden. D.h. das Sudoku ist widersprüchlich. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet der Solver in den Rückwärts-Modus um.|
 |<img src="./images/conflct.png" width="160px"/>|**Widerspruch - Dieselbe Nummer mehrmals:** Für diese Zelle wurde die Nummer 8 gesetzt. Diese Nummer ist direkt unzulässig, weil in der Spalte, Reihe oder Zellgruppe dieser Zelle bereits eine 8 gesetzt ist. Das zweite oder dritte Auftreten der Nummer wird ebenfalls rot unterlegt angezeigt.|
@@ -55,20 +55,22 @@ Soll eine Nummern-Setzung zurückgenommen werden, muss die betroffene Zelle sele
 |Phase  |Bedeutung  |
 |---------|---------|
 |![Definieren](./images/define.png)|Die Taste **Definieren**. Das Drücken dieser Taste versetzt den Solver in die Definitionsphase. In dieser Phase überträgt man die zu lösende Sudoku-Aufgabe in den Solver. Nach der Initialisierung ist diese Taste automatisch gesetzt.|
-|![Spielen](./images/play.png)|Die Taste **Spielen**. Das Drücken dieser Taste versetzt den Solver in die Spielphase. Die Spielphase kann manuell oder automatisch durchgeführt werden. Wird die automatische Ausführung gestartet, wird diese Taste automatisch gesetzt.|
+|![Spielen](./images/play.png)|Die Taste **Lösen**. Das Drücken dieser Taste versetzt den Solver in die Lösungsphase. Die Lösungsphase kann manuell oder automatisch durchgeführt werden. Wird die automatische Ausführung gestartet, wird diese Taste automatisch gesetzt.|
+
+Hinweis: In der Definitionsphase gesetzte Nummern, dies sind blaue Nummern, können in der Lösungsphase nicht gelöscht werden. Falls Nummern der Definition gelöscht werden sollen, muss man zuvor die Definieren-Taste drücken.
 
 ### Manuelle Ausführung
 
-Die manuelle Ausführung wird in jedem Fall in der Definitionsphase genutzt. In der Spielphase ist sie optional. Die Spielphase kann alternativ auch automatisch durchgeführt werden.
+Die manuelle Ausführung wird in jedem Fall in der Definitionsphase genutzt. In der Lösungsphase ist sie optional. Die Lösungsphase kann alternativ auch automatisch durchgeführt werden.
 
 ### Automatische Ausführung
 
 |Taste  |Bedeutung  |
 |---------|---------|
-|![Spielen](./images/playButton.png)|Die **Play-Taste**. Der Solver startet den automatischen Lösungssuchprozess. Zusätzlich wird ein Timer gestartet, der in der eingestellten Geschwindigkeit die Ausführung automatischer Suchschritte anstößt.|
-|![Pause](./images/pauseButton.png)|Die **Pause-Taste**. Der Taktgeber der automatischen Ausführung wird angehalten, nicht jedoch der Suchprozess abgebrochen. Der Spieler kann jetzt weitere automatische Suchschritte mit der Step-Taste von Hand anstoßen. Oder er kann durch das erneute Drücken der Play-Taste die getaktete automatische Ausführung fortsetzen.|
+|![Spielen](./images/playButton.png)|Die **Start-Taste**. Der Solver startet den automatischen Lösungssuchprozess. Zusätzlich wird ein Timer gestartet, der in der eingestellten Geschwindigkeit die Ausführung automatischer Suchschritte anstößt.|
+|![Pause](./images/pauseButton.png)|Die **Pause-Taste**. Der Taktgeber der automatischen Ausführung wird angehalten, nicht jedoch der Suchprozess abgebrochen. Der Spieler kann jetzt weitere automatische Suchschritte mit der Schritt-Taste von Hand anstoßen. Oder er kann durch das erneute Drücken der Start-Taste die getaktete automatische Ausführung fortsetzen.|
 |![Stop](./images/stopButton.png)|Die **Stop-Taste**. Der Taktgeber der automatischen Ausführung wird angehalten und der aktuelle Suchprozess wird abgebrochen.|
-|![Step](./images/stepButton.png)|Die **Step-Taste**. Der Solver führt den nächsten automatischen Suchschritt aus. Falls noch nicht geschehen, startet er zuvor den Suchprozess überhaupt. Mit dieser Taste kann man den Solver Schritt für Schritt arbeiten lassen und so jeden einzelnen seiner Schritte verstehen.|
+|![Step](./images/stepButtonGroß.png)|Die **Schritt-Taste**. Der Solver führt den nächsten automatischen Suchschritt aus. Falls noch nicht geschehen, startet er zuvor den Suchprozess überhaupt. Mit dieser Taste kann man den Solver Schritt für Schritt arbeiten lassen und so jeden einzelnen seiner Schritte verstehen.|
 
 ### Initialisieren und Zurücksetzen
 
@@ -76,10 +78,11 @@ Die manuelle Ausführung wird in jedem Fall in der Definitionsphase genutzt. In 
 |---------|---------|
 |![Initialisieren](./images/initButton.png)|Die Taste **Initialisieren**. Durch das Drücken dieser Taste wird der Solver wird initialisiert. Danach ist die Sudoku-Tabelle leer.|
 |![Reset](./images/resetButton.png)|Die Taste **Zurücksetzen**. Mittels dieser Taste wird der Solver zurückgesetzt auf die Aufgabenstellung. D.h. alle in der Spielphase gesetzten Zellen werden gelöscht. Die Zellen der Definitionsphase bleiben erhalten.|
-|![Speichern](./images/storeButton.png)|Mittels dieser Taste kann das aktuelle Puzzle in der Datenbank gespeichert werden.|
-|![Statistik aktualisieren](./images/statistik.png)|Mittels dieser Taste kann für ein aus der Datenbank geladenes Puzzle das neue Ausführungsergebnis gespeichert werden.|
+|![Speichern](./images/puzzleneu.png)|Die Taste **Neues Puzzle**. Mittels dieser Taste kann ein neues Puzzle generiert werden. Der Generator generiert nur Puzzles mit den Schwierigkeitsgraden Leicht, Mittel und Schwer. Also keine sehr schweren Puzzles. Die generierten Puzzles können also ohne Backtracking gelöst werden.|
+|![Speichern](./images/storeButton.png)|Die Taste **Puzzle speichern**. Mittels dieser Taste kann das aktuelle Puzzle in der Datenbank gespeichert werden.|
+|![Statistik aktualisieren](./images/statistik.png)|Die Taste **Puzzle-Daten aktualisieren**. Mittels dieser Taste kann für ein aus der Datenbank geladenes Puzzle das neue Ausführungsergebnis gespeichert werden.|
 
-## Theoretische Grundlagen des Solvers
+## Basisbegriffe des Solvers
 
 ### Notwendige Nummern
 
@@ -88,14 +91,13 @@ Eine zulässige Nummer in einer Zelle ist notwendig, wenn die Nummer in ihrer Gr
 
 ### Indirekt unzulässige Nummern
 
-Indirekt unzulässige Nummern spielen eine wichtige Rolle bei der Bestimmung der nächsten zu setzenden Nummer mittels indirekter Singles. Ebenso bilden sie die Grundlage für die frühe Erkennung der Widersprüchlichkeit eines Puzzles. Dazu später mehr. Indirekt unzulässige Nummern werden rot angezeigt. Wann ist eine Nummer indirekt unzulässig? Der vorliegende Solver kennt drei unterschiedliche Gründe.
+Direkt unzulässige Nummern sind Nummern, die in einer Gruppe, Spalte oder Zeile bereits einmal existieren. In einer ungesetzten Zelle werden die direkt unzulässigen Nummern nicht mehr angezeigt. Anders dagegen Indirekt unzulässige Nummern. Indirekt unzulässige Nummern werden rot angezeigt. Wann ist eine Nummer indirekt unzulässig? Der vorliegende Solver kennt drei unterschiedliche Gründe.
 
 1. **Indirekt unzulässig wegen einer notwendigen Nummer:** Eine Nummer ist indirekt unzulässig wegen einer notwendigen Nummer, wenn sie in ihrer Spalte, Reihe oder Gruppe auch als notwendige Nummer auftritt. Im nachfolgenden Beispiel sind die roten Nummern 8 wegen der grünen 8 indirekt unzulässig. Die grüne 8 ist notwendig, weil sie in ihrer Spalte einzig ist, also in der Spalte kein weiteres mal zulässig ist.![Indirekt wegen notwendig](./images/indirektwgnotwendig.png)
 
-1. **Indirekt unzulässig wegen einer Single-Nummer:** Eine Nummer ist indirekt unzulässig wegen einer Single-Nummer, wenn sie in ihrer Spalte, Reihe oder Gruppe ein zweites mal auftritt.
+1. **Indirekt unzulässig wegen einer Single-Nummer:** Eine Nummer ist indirekt unzulässig wegen einer Single-Nummer, wenn sie in ihrer Spalte, Reihe oder Gruppe ein zweites mal auftreten würde.
 
-1. **Indirekt unzulässig wegen Pairing:** Eine Nummer ist indirekt unzulässig, wenn es in einer Gruppe, Zeile oder Spalte Paare gibt und Nummern dieser Paare zusätzlich in weiteren Zellen dieser Gruppe, Spalte oder Zeile auftauchen. Im nachfolgenden Beispiel ist das 4-6-Paar ein kritisches Paar. Das 4-6-Paar macht in seiner Gruppe alle 4 und 6 indirekt unzulässig. Der Grund: Das Paar bedeutet, dass die 4 und die 6 auf jeden Fall in einer der beiden Zellen des Paares gesetzt werden muss. Aktuell steht nur noch nicht fest, ob die 6 oder die 4 oben ist. Fest steht aber jetzt schon, dass in den übrigen Zellen der Gruppe keine 4 oder 6 mehr vorkommen können. Die 4 und 6 sind hier indirekt unzulässig. Diese Gruppendarstellung mit den gestrichelten Kanten zeigt der Solver nur im Lazy-Auswertungsmodus, wenn man eine Zelle mit indirekt unzulässigen Nummern selektiert. Der Solver findet die Zelle mit der 5 als eindeutiger Nummer. Nur die 5 kann noch gesetzt werden.
-![Indirekt unzulässig](./images/indirektWegenPairing.png)
+1. **Indirekt unzulässig wegen Pairing:** Eine Nummer ist indirekt unzulässig, wenn es in einer Gruppe, Zeile oder Spalte Paare gibt und Nummern dieser Paare zusätzlich in weiteren Zellen dieser Gruppe, Spalte oder Zeile auftauchen. Im nachfolgenden Beispiel ist das 4-6-Paar ein kritisches Paar. Das 4-6-Paar macht in seiner Gruppe alle 4 und 6 indirekt unzulässig. Der Grund: Das Paar bedeutet, dass die 4 und die 6 auf jeden Fall in einer der beiden Zellen des Paares gesetzt werden muss. Aktuell steht nur noch nicht fest, ob die 6 oder die 4 oben ist. Fest steht aber jetzt schon, dass in den übrigen Zellen der Gruppe keine 4 oder 6 mehr vorkommen können. Die 4 und 6 sind hier indirekt unzulässig. Diese Gruppendarstellung mit den gestrichelten Kanten zeigt der Solver nur im Lazy-Auswertungsmodus, wenn man eine Zelle mit indirekt unzulässigen Nummern selektiert. Der Solver findet die Zelle mit der 5 als eindeutiger Nummer. ![Indirekt unzulässig](./images/indirektWegenPairing.png)
 
 ### Auswertungsmethoden
 
@@ -103,11 +105,11 @@ Die beiden Beispielmatrizen im vorigen Abschnitt zeigen den Solver in unterschie
 
 1. **Lazy Auswertung:** Diese Auswertungsmethode praktiziert eine verzögerte Auswertung. Die Auswertung erfolgt nur soweit, bis die nächste notwendige oder direkte oder indirekte Single-Nummer bestimmt ist. Diese Nummer wird dann gesetzt.
 
-1. **Strikte Auswertung:** Diese  Auswertungsmethode führt eine vollständige Auswertung durch: Alle aktuell indirekt unzulässigen Nummern, alle notwendigen Nummern, alle direkten Singles und indirekten Singles werden ermittelt. Danach können diese Nummern nach und nach gesetzt werden.
+1. **Strikte Auswertung:** Diese  Auswertungsmethode führt eine vollständige Auswertung durch: Alle aktuell indirekt unzulässigen Nummern, alle notwendigen Nummern, alle direkten Singles und indirekten Singles werden ermittelt. Danach können diese Nummern Schritt für Schritt gesetzt werden.
 
 Die strikte Auswertung kann in zwei Varianten angezeigt werden:
 
-1. **Strikt +**: Alle errechneten indirekt unzulässigen Nummern werden angezeigt.
+1. **Strikt +**: Alle errechneten indirekt unzulässigen Nummern werden angezeigt. Bei sehr vielen indirekt unzulässigen Nummern wird das schnell sehr unübersichtlich.
 
 1. **Strikt -** : Die errechneten indirekten unzulässigen Nummern werden ausgeblendet. Das nachfolgende Bild zeigt die vorige Matrix im Strikt-Minus-Modus. ![Strikt Minus](./images/striktminus.png)
 
@@ -128,7 +130,7 @@ Es können mehrere dieser Bedingungen gleichzeitig vorliegen.
 
 ![Keine](./images/nochoice.png) ![ZweiNotwendige](./images/twoNeccessary.png) ![Konflikt](./images/conflct.png)
 
-Widerspruchsvolle Zellen hatten wir oben schon kennengelernt. Es sind dies Zellen mit leerer Option, Zellen mit zwei notwendigen Nummern gleichzeitig und Zellen, die eine Nummer mehrfach setzen, also so setzen, dass eine Nummer in einer Gruppe, Zeile oder Spalte mehrfach auftritt.
+Widerspruchsvolle Zellen hatten wir oben schon kennengelernt. Es sind dies Zellen mit leerer Option, Zellen mit zwei notwendigen Nummern gleichzeitig und Zellen, die mit einer direkt unzulässigen Nummer belegt sind.
 
 ### Widerspruchsvolle Gruppen
 
@@ -180,7 +182,7 @@ Der Solver sucht gemäß der folgenden Priorität die nächste offene Zelle und 
 1. **Zelle mit notwendiger Nummer:** Der Solver wählt in der Matrix zunächst eine offene Zelle, die in der Menge ihrer zulässigen Nummern eine notwendige Nummer hat. Diese notwendige Nummer wird dann in der Zelle gesetzt.
 1. **Zelle mit direkter Single**: Wenn es keine Zelle mit notwendiger Nummer mehr gibt, wählt der Solver eine Zelle mit nur genau einer zulässigen Nummer. Er setzt diese Nummer.
 1. **Zelle mit indirekter Single**: Wenn es keine Zelle mit notwendiger Nummer oder mit direkter Single mehr gibt wählt der Solver eine Zelle mit indirekter Single.
-1. **Zelle mit minimaler Optionenmenge**. Sind keine Zellen mit notwendigen Nummern oder Singles mehr verfügbar, wählt der Solver eine Zelle mit minimaler Anzahl von zulässigen Nummern. Die sogenannten Optionen der Zelle. Meist besteht die minimale Optionenmenge aus zwei Optionen. Ist aber nicht eindeutig, d.h. es gibt in der Regel mehrere Zellen mit zwei Optionen. In dieser Menge wählt der Solver zufällig eine Zelle und setzt eine der beiden Optionennummern. Im Laufe der weiteren Suche kann sich herausstellen, dass diese Nummer keine Lösung des Sudokus erlaubt. Der Back-Tracking-Prozess kehrt im weiteren Verlauf zu dieser Zelle zurück und versucht dann mit der Wahl einer anderen Nummer aus der Optionenmenge die Lösung zu finden.
+1. **Zelle mit minimaler Optionenmenge**. Sind keine Zellen mit notwendigen Nummern oder Singles mehr verfügbar, wählt der Solver eine Zelle mit minimaler Anzahl von zulässigen Nummern. Die sogenannten **Optionen der Zelle**. Meist besteht die minimale Optionenmenge aus zwei Optionen. Ist aber nicht eindeutig, d.h. es gibt in der Regel mehrere Zellen mit zwei Optionen. In dieser Menge wählt der Solver zufällig eine Zelle und setzt eine der beiden Optionennummern. Im Laufe der weiteren Suche kann sich herausstellen, dass diese Nummer keine Lösung des Sudokus erlaubt. Der Back-Tracking-Prozess kehrt im weiteren Verlauf zu dieser Zelle zurück und versucht dann mit der Wahl einer anderen Nummer aus der Optionenmenge die Lösung zu finden.
 
 ### Wie prüft der Solver die neu gesetzte Nummer?
 
@@ -224,6 +226,7 @@ Beim Abspeichern kann dem Puzzle ein Name gegeben werden. Automatisch erhält es
 |Attribut  |Bedeutung  |
 |---------|---------|
 |Puzzle-ID|Die eindeutige ID des gespeicherten Puzzles.|
+|Name|Name des gespeicherten Puzzles. Muss nicht eindeutig sein.|
 |Definierte Zellen|Die Zahl der der definierten Zellen des Puzzles.|
 |Status|Der Spielstatus des gespeicherten Puzzles.|
 |Schritte (lazy)|Die Anzahl der Schritte, die der Solver brauchte, um das Puzzle im Auswertungsmodus Lazy zu lösen.|
@@ -232,14 +235,21 @@ Beim Abspeichern kann dem Puzzle ein Name gegeben werden. Automatisch erhält es
 |#Rückwärts|Die Anzahl der Rückwärtsläufe, die der Solver durchgeführt hat, um das Puzzle zu lösen.|
 |Datum|Datum, an dem das Puzzle zuletzt gespeichert wurde.
 
+### Gespeicherte Puzzles sortieren
 Die Puzzles der Datenbank können sortiert werden nach jeder Spalte. Dazu einfach den Spaltenkopf klicken. Wiederholtes Klicken wechselt zwischen der aufsteigenden und der absteigenden Sortierung.
 
-Gespeicherte Puzzles können auch wieder gelöscht werden. Durch Drücken der Lade-Taste wird das selektierte Puzzle in den Sudoku-Solver geladen. Mit den Pfeiltasten kann in der Tabelle vorwärts und rückwärts navigiert werden. Durch Klicken auf eine Zeile der Tabelle kann ein Puzzle direkt selektiert werden.
+### Navigieren
+Mit den Pfeiltasten kann in der Tabelle vorwärts und rückwärts navigiert werden. Durch Klicken auf eine Zeile der Tabelle kann ein Puzzle direkt selektiert werden.
 
+### Puzzle laden
+Durch Drücken der Lade-Taste wird das selektierte Puzzle in den Sudoku-Solver geladen.
+### Puzzle löschen
+Gespeicherte Puzzles können auch wieder gelöscht werden.
+
+### Puzzle drucken
+Mittels der Taste Drucken kann das aktuell selektierte Puzzle gedruckt werden. Dabei wird nur die Aufgabe, nicht aber die Lösung ausgedruckt. Dies ist besonders dann nützlich wenn man ein generiertes Puzzle von Hand auf dem Papier lösen möchte.
 ## Die Smartphone Version
 
 Auf dem Smartphone ist der Solver als Web-Anwendung verfügbar. Also in einem Browser die URL eingeben. Die Funktionalität ist bis auf die Puzzle-Datenbank identisch.
 
 In der Smartphone-Version kann das aktuelle Puzzle gespeichert werden. Dabei wird ein eventuell schon vorher gespeichertes Puzzle überschrieben. Es kann also nur ein Puzzle gespeichert werden. Dies ermöglicht die Speicherung eines aktuellen Puzzles, um es vielleicht später analysieren zu können.
-
-![Smartphone](./images/smartphoneVersion.png)
