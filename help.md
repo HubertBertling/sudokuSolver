@@ -111,7 +111,7 @@ Die strikte Auswertung kann in zwei Varianten angezeigt werden:
 
 1. **Strikt +**: Alle errechneten indirekt unzulässigen Nummern werden angezeigt. Bei sehr vielen indirekt unzulässigen Nummern wird das schnell sehr unübersichtlich.
 
-1. **Strikt -** : Die errechneten indirekten unzulässigen Nummern werden ausgeblendet. Das nachfolgende Bild zeigt die vorige Matrix im Strikt-Minus-Modus. ![Strikt Minus](./images/striktminus.png)
+1. **Strikt -** : Die errechneten indirekten unzulässigen Nummern werden ausgeblendet. Das nachfolgende Bild zeigt die vor vorige Matrix mit dem Puzzle-Namen 'Schwer 2 Singles' im Strikt-Minus-Modus. ![Strikt Minus](./images/striktminus.png)
 
 In der Strikt-Minus-Matrix dieses Beispiels besitzen alle Zellen nur noch genau eine zulässige Nummer. Alle Nummern sind Singles. Mit anderen Worten: wir sehen hier die Lösung des Sudokus. Der Solver präsentiert hier eine Lösung ohne Backtracking. Die meisten leichten und mittleren Sudokus in den Zeitschriften können ohne Backtracking gelöst werden.
 
