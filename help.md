@@ -16,7 +16,7 @@ Zusammen mit der Lösung bestimmt der Solver den tatsächlichen Schwierigkeitsgr
 
 Die App besteht aus zwei Komponenten, dem Sudoku-Solver und der Puzzle-Datenbank. Mit Hilfe des Sudoku-Solvers kann man beliebige Sudoku-Aufgaben, sprich Sudoku-Puzzles, manuell oder automatisch lösen. In der Puzzle-Datenbank können Puzzles mit ihren Eigenschaften, etwa dem Schwierigkeitsgrad, den benötigten Lösungsschritten und der Lösung selbst gespeichert werden.
 
-## Die Komponente Sudoku-Solver
+## Der Sudoku-Solver
 
 Der Solver besteht im Wesentlichen aus der 9 x 9 Sudoku-Matrix. In den Zellen der Matrix können Nummern von 1 .. 9 gesetzt werden. Um den Lösungser zu unterstützen, werden für Zellen, die noch keine gesetzte Nummer haben, die aktuell noch möglichen Nummern, die zulässigen Nummern, der Zelle angezeigt. Zusätzlich werden die Zellen der Matrix in 3 x 3 Gruppen unterteilt, 9 an der Zahl.
 
@@ -78,11 +78,15 @@ Die manuelle Ausführung wird in jedem Fall in der Definitionsphase genutzt. In 
 |---------|---------|
 |![Initialisieren](./images/initButton.png)|Die Taste **Initialisieren**. Durch das Drücken dieser Taste wird der Solver initialisiert. Danach ist die Sudoku-Tabelle leer.|
 |![Reset](./images/resetButton.png)|Die Taste **Zurücksetzen**. Mittels dieser Taste wird der Solver zurückgesetzt auf die Aufgabenstellung. D.h. alle in der Lösungsphase gesetzten Zellen werden gelöscht. Die Zellen der Definitionsphase bleiben erhalten.|
-|![Speichern](./images/puzzleneu.png)|Die Taste **Neues Puzzle**. Mittels dieser Taste kann ein neues Puzzle generiert werden. Der Generator generiert nur Puzzles mit den Schwierigkeitsgraden Leicht, Mittel und Schwer. Also keine sehr schweren Puzzles. Die generierten Puzzles können daher ohne Backtracking (Trial and Error) gelöst werden.|
+|![Speichern](./images/puzzleneu.png)|Die Taste **Neues Puzzle**. Mittels dieser Taste kann ein neues Puzzle generiert werden.|
 |![Speichern](./images/storeButton.png)|Die Taste **Puzzle speichern**. Mittels dieser Taste kann das aktuelle Puzzle in der Datenbank gespeichert werden.|
 |![Statistik aktualisieren](./images/statistik.png)|Die Taste **Puzzle-Daten aktualisieren**. Mittels dieser Taste kann für ein aus der Datenbank geladenes Puzzle das neue Ausführungsergebnis gespeichert werden. Falls das aktuelle Puzzle nicht aus der Datenbank geladen wurde, wird der Speicherdialog angestoßen.|
 
 ## Basisbegriffe des Solvers
+
+### Zulässige und direkt unzulässige Nummern
+
+Für eine noch nicht belegte Zelle der Sudoku-Matrix unterscheiden wir zulässige und unzulässge Nummern. Für eine unbelegte Zelle ist eine Nummer **direkt unzulässig**, wenn in der Gruppe, Zeile oder Spalte dieser Zelle eine Zelle existiert, in der diese Nummer gesetzt ist. Alle anderen Nummern heißen **zulässige** Nummern dieser Zelle. In einer unbelegten Zelle werden nur die zulässigen Nummern der Zelle angezeigt.
 
 ### Notwendige Nummern
 
@@ -91,7 +95,7 @@ Eine zulässige Nummer in einer Zelle ist notwendig, wenn die Nummer in ihrer Gr
 
 ### Indirekt unzulässige Nummern
 
-Direkt unzulässige Nummern sind Nummern, die in einer Gruppe, Spalte oder Zeile bereits einmal existieren. In einer ungesetzten Zelle werden die direkt unzulässigen Nummern nicht mehr angezeigt. Anders dagegen Indirekt unzulässige Nummern. Indirekt unzulässige Nummern werden rot angezeigt. Wann ist eine Nummer indirekt unzulässig? Der vorliegende Solver kennt drei unterschiedliche Gründe.
+Direkt unzulässige Nummern sind Nummern, die in einer Gruppe, Spalte oder Zeile bereits einmal existieren. In einer ungesetzten Zelle werden die direkt unzulässigen Nummern nicht angezeigt. Anders dagegen Indirekt unzulässige Nummern. Indirekt unzulässige Nummern werden rot angezeigt. Wann ist eine Nummer indirekt unzulässig? Der vorliegende Solver kennt drei unterschiedliche Gründe.
 
 1. **Indirekt unzulässig wegen einer notwendigen Nummer:** Eine Nummer ist indirekt unzulässig wegen einer notwendigen Nummer, wenn sie in ihrer Spalte, Reihe oder Gruppe auch als notwendige Nummer auftritt. Im nachfolgenden Beispiel sind die roten Nummern 8 wegen der grünen 8 indirekt unzulässig. Die grüne 8 ist notwendig, weil sie in ihrer Spalte einzig ist, also in der Spalte kein weiteres mal zulässig ist.![Indirekt wegen notwendig](./images/indirektwgnotwendig.png)
 
@@ -167,7 +171,7 @@ Widerspruch - Single mehrfach:
 Widerspruch - Dieselbe notwendige Nummer zweimal:
 ![Notwedig-Konflikt](./images/notwendigWiderspruch.png)
 
-## Den Solver beobachten
+## Die Lösungssuche des Solvers
 
 ### Vorwärts und Rückwärts
 
@@ -189,6 +193,7 @@ Der Solver sucht gemäß der folgenden Priorität die nächste offene Zelle und 
 Der Solver prüft nach der Setzung einer neuen Nummer, ob das Sudoku mit dieser gesetzten Nummer widersprüchlich geworden ist. Falls ja, wird der Solver in den Rückwärts-Modus geschaltet und geht zurück bis zu einer Zelle, die mehrere Optionen für eine Nummernsetzung hatte.
 
 ### Vergleich der Ausführungsmodi Lazy und Strikt
+
 Wir vergleichen die jeweiligen Vorteile der Ausführungsmodi.
 
 **Vorteil der Lazy-Auswertung: Nachvollziehbarkeit des Lösungsweges.** Die Lazy-Auswertung ist vorteilhaft, wenn man den Lösungsweg im Einzelnen nachvollziehen will. Es werden nur indirekt unzulässige Nummern berechnet und angezeigt, die für den nächsten Schritt relevant sind. Für diese wenigen indirekt unzulässigen Nummern ist ihre Verursachung leicht visuell darstellbar und damit verstehbar, beispielsweise ein Pairing.
@@ -215,6 +220,10 @@ Wenn man bei der manuellen Lösung eines Sudokus nicht weiterkommt, kann man den
 1. **Extrem Schwer**: Extrem schwer sind Sudokus, die mehrere Lösungen haben. Sie haben keine eindeutige Lösung. Der Solver beherrscht auch Sudokus, die mehrere Lösungen haben. Nach der Erfolgsmeldung mit der ersten Lösung kann der Anwender nach der nächsten Lösung suchen lassen, solange bis der Solver meldet: "*Keine weitere Lösung gefunden*".
 
 Extrem oder sehr schwere Sudokus eignen sich nicht für die manuelle Lösungssuche. Die in den Zeitungen oder Zeitschriften als Leicht, Mittel oder Schwer klassifizierten Sudoku-Aufgaben sind meistens in dem hier dargestellten Sinn Leicht oder Mittel. Selten auch einmal schwer. D.h. die Zeitungs-Sudokus können in der Regel ohne Backtracking gelöst werden.
+
+## Der Sudoku-Generator
+
+Nahtlos integriert in den Sudoku.Solver findet sich ein SUdoku-Generator. Mittels der Taste **Neues Puzzle** kann ein neues Puzzle generiert werden. Der Generator generiert nur Puzzles mit den Schwierigkeitsgraden Leicht, Mittel und Schwer. Also keine sehr schweren Puzzles. Die generierten Puzzles können daher ohne Backtracking (Trial and Error) gelöst werden.
 
 ## Die Puzzle-Datenbank
 
