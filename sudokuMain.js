@@ -219,12 +219,6 @@ class SudokuApp {
             this.autoExecOn = false;
             this.suGrid.removeAutoExecCellInfos();
             this.displayOnOffStatus();
-            /*
-            this.stepper.stopTimer();
-            this.stepper.init();
-            this.setAutoExecOff();
-            this.suGrid.deselect();
-            */
         });
 
         // Der Initialisieren-Button: Initialisiert die Tabelle
@@ -299,19 +293,31 @@ class SudokuApp {
     }
 
     generatePuzzleHandler() {
+        // Der sich drehende Loader wird angezeigt
         document.getElementById("loader").style.display = "block";
+        // Ein neuer Web Worker, der die Generierung durchführt, 
+        // wird erzeugt.
         let webworkerGenerate = new Worker("sudokuGen.js");
+        // Dem Web Worker wird ein Message handler mitgegeben, der
+        // das generierte Puzzle als String erhält
         webworkerGenerate.onmessage = function (e) {
+            // Das Puzzle aus dem gelieferten String erzeugen
             let puzzle = JSON.parse(e.data);
+            // Initialisierungen vor dem Laden
             sudoApp.stepper.stopTimer();
             sudoApp.stepper.init();
-            sudoApp.setAutoExecOff();    
+            sudoApp.setAutoExecOff();
+            // Das Puzzle wird in das Grid geladen    
             sudoApp.suGrid.loadPuzzle('-', puzzle);
+            // Anzeigen des generierten Puzzles
             sudoApp.stepper.displayProgress();
             sudoApp.setGamePhase('play');
-            sudoApp.tabView.openGrid();    
+            sudoApp.tabView.openGrid();
+            // Der sich drehende Loader wird gestoppt    
             document.getElementById("loader").style.display = "none";
         }
+        // Dem neuen Web Worker wird die Nachricht Run geschickt,
+        // wodurch die Generierung des neuen Puzzles gestartet wird.
         webworkerGenerate.postMessage('Run');
     }
 

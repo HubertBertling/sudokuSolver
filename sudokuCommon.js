@@ -1246,8 +1246,8 @@ class SudokuGrid {
     }
 
     evaluateMatrix() {
-        if (this.evalType == 'lazy') this.evaluateGridForNextStep();
-        if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') this.evaluateGrid();
+        if (this.evalType == 'lazy') this.evaluateGridLazy();
+        if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') this.evaluateGridStrict();
     }
 
     removeAutoExecCellInfos() {
@@ -1310,7 +1310,7 @@ class SudokuGrid {
         // hinzugefügt.
         // Schritt 1: Die aktuelle Selektion wird zurückgesetzt
         this.initCurrentSelection();
-        // Schritt 2: Die aktuellen Zellinhalte werden gelöscht
+        // Schritt 2: Play in define umwandeln und Ausführungs-Infos löschen.
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() !== '0') {
                 if (this.sudoCells[i].getPhase() == 'play') {
@@ -1337,23 +1337,22 @@ class SudokuGrid {
 
         // Löse dieses Sudoku
         sudoApp.autoExecRun();
-        // Setze das gelöste Puzzle in den define-Modus
+        // Mache die gelösten Zellen define-Zellen
         this.set();
         // Setze das Puzzle in den Define-Mode
         sudoApp.setGamePhase('define')
         // Lösche in der Lösung Nummern solange
         // wie das verbleibende Puzzle backtrack-frei bleibt.
-
         let reduced = true;
         while (reduced) {
             reduced = this.reduce();
         }
-        // Löse dieses Sudoku, um den Schwierigkeitsgrad zu ermitteln.
-
+        // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
         sudoApp.stepper.init();
         sudoApp.setAutoExecOff();
         sudoApp.suGrid.deselect();
         sudoApp.autoExecRun();
+        // Speichere den Schwierigkeitsgrad.
         this.refresh();
     }
 
@@ -1363,15 +1362,23 @@ class SudokuGrid {
         for (let i = 0; i < 81; i++) {
             let k = randomCellOrder[i];
             if (this.sudoCells[k].getValue() !== '0') {
+                // Selektiere Zelle mit gesetzter Nummer
                 this.select(this.sudoCells[k], k);
+                // Notiere die gesetzte Nummer
                 let tmpNr = this.sudoCells[k].getValue();
+                // Lösche die gesetzte Nummer
                 this.deleteSelected('define', false);
-                this.evaluateGrid();
+                // Werte die verbliebene Matrix strikt aus.
+                this.evaluateGridStrict();
                 let neccessaryCondition = (this.sudoCells[k].getNecessarys().size == 1);
                 let totalAdmissibleCondition = (this.sudoCells[k].getTotalAdmissibles().size == 1);
                 if (neccessaryCondition || totalAdmissibleCondition) {
+                    // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer,
+                    // Entweder eine notwendige Nummer oder eine Single-Nummer
                     tmpReduced = true;
                 } else {
+                    // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
+                    // Dann wird die Löschung zurückgenommen.
                     this.select(this.sudoCells[k], k);
                     this.sudoCells[k].manualSetValue(tmpNr, 'define');
                 }
@@ -1623,7 +1630,7 @@ class SudokuGrid {
         }
     }
 
-    evaluateGridForNextStep() {
+    evaluateGridLazy() {
         // Berechne das Grid nur soweit, 
         // dass der nächste eindeutige Schritt getan werden kann
         this.clearEvaluations();
@@ -1646,7 +1653,7 @@ class SudokuGrid {
         }
     }
 
-    evaluateGrid() {
+    evaluateGridStrict() {
         this.clearEvaluations();
         this.calculate_level_0_inAdmissibles();
         this.calculateNecessarys();
