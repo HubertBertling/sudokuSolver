@@ -76,11 +76,11 @@ Die manuelle Ausführung wird in jedem Fall in der Definitionsphase genutzt. In 
 
 |Taste  |Bedeutung  |
 |---------|---------|
-|![Initialisieren](./images/initButton.png)|Die Taste **Initialisieren**. Durch das Drücken dieser Taste wird der Solver wird initialisiert. Danach ist die Sudoku-Tabelle leer.|
+|![Initialisieren](./images/initButton.png)|Die Taste **Initialisieren**. Durch das Drücken dieser Taste wird der Solver initialisiert. Danach ist die Sudoku-Tabelle leer.|
 |![Reset](./images/resetButton.png)|Die Taste **Zurücksetzen**. Mittels dieser Taste wird der Solver zurückgesetzt auf die Aufgabenstellung. D.h. alle in der Lösungsphase gesetzten Zellen werden gelöscht. Die Zellen der Definitionsphase bleiben erhalten.|
-|![Speichern](./images/puzzleneu.png)|Die Taste **Neues Puzzle**. Mittels dieser Taste kann ein neues Puzzle generiert werden. Der Generator generiert nur Puzzles mit den Schwierigkeitsgraden Leicht, Mittel und Schwer. Also keine sehr schweren Puzzles. Die generierten Puzzles können also ohne Backtracking gelöst werden.|
+|![Speichern](./images/puzzleneu.png)|Die Taste **Neues Puzzle**. Mittels dieser Taste kann ein neues Puzzle generiert werden. Der Generator generiert nur Puzzles mit den Schwierigkeitsgraden Leicht, Mittel und Schwer. Also keine sehr schweren Puzzles. Die generierten Puzzles können daher ohne Backtracking (Trial and Error) gelöst werden.|
 |![Speichern](./images/storeButton.png)|Die Taste **Puzzle speichern**. Mittels dieser Taste kann das aktuelle Puzzle in der Datenbank gespeichert werden.|
-|![Statistik aktualisieren](./images/statistik.png)|Die Taste **Puzzle-Daten aktualisieren**. Mittels dieser Taste kann für ein aus der Datenbank geladenes Puzzle das neue Ausführungsergebnis gespeichert werden.|
+|![Statistik aktualisieren](./images/statistik.png)|Die Taste **Puzzle-Daten aktualisieren**. Mittels dieser Taste kann für ein aus der Datenbank geladenes Puzzle das neue Ausführungsergebnis gespeichert werden. Falls das aktuelle Puzzle nicht aus der Datenbank geladen wurde, wird der Speicherdialog angestoßen.|
 
 ## Basisbegriffe des Solvers
 
