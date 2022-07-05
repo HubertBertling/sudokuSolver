@@ -271,7 +271,7 @@ class SudokuApp {
             let playedPuzzleDbElement = this.suGrid.getPlayedPuzzleDbElement();
 
             let puzzleId = this.suGrid.loadedPuzzleId;
-            if (puzzleId == '') {
+            if (puzzleId == '' || puzzleId == '-') {
                 let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
                 this.puzzleSaveDialog.open(newPuzzelId, '');
             } else {
