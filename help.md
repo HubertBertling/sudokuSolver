@@ -18,7 +18,7 @@ Die HB-Sudoku-App besteht aus zwei Komponenten, dem Sudoku-Solver/Generator und 
 
 ## Der Sudoku-Solver
 
-Der Solver besteht im Wesentlichen aus der 9 x 9 Sudoku-Matrix. In den Zellen der Matrix können Nummern von 1 .. 9 gesetzt werden. Um den Lösungser zu unterstützen, werden für Zellen, die noch keine gesetzte Nummer haben, die aktuell noch möglichen Nummern, die zulässigen Nummern, der Zelle angezeigt. Zusätzlich werden die Zellen der Matrix in 3 x 3 Gruppen unterteilt, 9 an der Zahl.
+Der Solver besteht im Wesentlichen aus der 9 x 9 Sudoku-Matrix. In den Zellen der Matrix können Nummern von 1 .. 9 gesetzt werden. Zusätzlich werden die Zellen der Matrix in 3 x 3 Gruppen unterteilt, 9 an der Zahl. Um den Spieler bei der Lösung zu unterstützen, werden für Zellen, die noch keine gesetzte Nummer haben, die aktuell noch möglichen Nummern, die zulässigen Nummern, der Zelle angezeigt.
 
 ### Typischer Ablauf der Lösung eines Sudoku-Puzzles
 
