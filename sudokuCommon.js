@@ -2968,16 +2968,17 @@ class SudokuPuzzleDB {
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         let key = Array.from(puzzleMap.keys())[this.selectedIndex];
         let selectedPZ = puzzleMap.get(key);
-        this.displayIdRow(key, selectedPZ.name);
+        this.displayIdRow(key, selectedPZ.name, selectedPZ.level);
         this.displayTable('screen-puzzle', selectedPZ.puzzle);
         this.displayTable('solution', selectedPZ.solution);
         this.displayDefineCounter(selectedPZ);
     }
-    displayIdRow(uid, name) {
+    displayIdRow(uid, name, level) {
         let puzzleIdentityRow = document.getElementById('pz-id-row')
         puzzleIdentityRow.innerHTML =
             '<b>Puzzle-Id:</b> &nbsp' + uid + '; &nbsp'
-            + '<b>Name:</b> &nbsp' + name;
+            + '<b>Name:</b> &nbsp' + name + '; &nbsp'
+            + '<b>Schwierigkeitsgrad:</b> &nbsp' + level + ';';
     }
     displayClearPZNr() {
         let nrElem = document.getElementById('pz-id-row')
