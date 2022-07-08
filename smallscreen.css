@@ -349,7 +349,7 @@ body, html {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 5px;
-    padding: 5px;
+    padding: 10px;
     font-size: 1.2rem;
 
 }
@@ -362,7 +362,7 @@ body, html {
   .mobile-interface {
     background-color: var(--standard-btn-bg-color);
     text-align: center;
-    padding-top:10px;
+    padding-top:20px;
     padding-bottom: 8px;
     }
 
@@ -397,8 +397,8 @@ body, html {
   }
 
   label {
-    margin-left: 5px;
-    margin-right: 5px;
+    margin-left: 3px;
+    margin-right: 3px;
     float:right;
   }
    .btn-image {
