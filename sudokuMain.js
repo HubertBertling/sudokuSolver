@@ -318,6 +318,18 @@ class SudokuApp {
                 this.suGrid.setEvalType(radioNode.value);
             })
         });
+        // Radio-Button Auswertungstyp: Lazy, Strikt+ oder Strikt-
+        let mobileRadioEvalNodes = document.querySelectorAll('.mobile-eval-type');
+        mobileRadioEvalNodes.forEach(radioNode => {
+            radioNode.addEventListener('click', () => {
+                this.suGrid.deselect();
+                this.suGrid.setEvalType(radioNode.value);
+            })
+        });
+    }
+
+    helpFunktion() {
+        window.open('./help.html');
     }
 
     generatePuzzleHandler() {
@@ -459,23 +471,23 @@ class SudokuApp {
         if (gamePhase == 'play') {
             this.currentPhase = 'play';
             this.btns = document.querySelectorAll('.btn-define');
-            this.btns.forEach(btn =>{
+            this.btns.forEach(btn => {
                 btn.classList.remove('pressed');
             });
             this.btns = document.querySelectorAll('.btn-play');
-            this.btns.forEach(btn =>{
+            this.btns.forEach(btn => {
                 btn.classList.add('pressed');
             });
         } else if (gamePhase == 'define') {
             this.currentPhase = 'define';
             this.btns = document.querySelectorAll('.btn-define');
-            this.btns.forEach(btn =>{
+            this.btns.forEach(btn => {
                 btn.classList.add('pressed');
             });
             this.btns = document.querySelectorAll('.btn-play');
-            this.btns.forEach(btn =>{
+            this.btns.forEach(btn => {
                 btn.classList.remove('pressed');
-            }); 
+            });
         }
     }
 

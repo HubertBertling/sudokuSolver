@@ -114,7 +114,7 @@
                         <p>Puzzle</p>
                         <div class="config-btns">
                             <div class="main-btn btn-init" id="btn-init">Initialisieren</div>
-                            <div class="main-btn" id="btn-reset">Zurücksetzen</div>
+                            <div class="main-btn btn-reset" id="btn-reset">Zurücksetzen</div>
                         </div>
 
                         <div class="main-btn btn-generate" id="btn-generate">Neues Puzzle</div>
@@ -160,21 +160,21 @@
 
         <div class="mobile-evaluation">
           <div>
-            <input type="radio" class="eval-type" id="lazy" name="auswertung" value="lazy" checked>
-            <label for="lazy">Lazy</label>
+            <input type="radio" class="mobile-eval-type" id="mobile-lazy" name="auswertung" value="mobile-lazy" checked>
+            <label for="mobile-lazy">Lazy</label>
           </div>
           <div>
-            <input type="radio" class="eval-type" id="strict-plus" name="auswertung" value="strict-plus">
-            <label for="strict-plus">S +</label>
+            <input type="radio" class="mobile-eval-type" id="mobile-strict-plus" name="auswertung" value="mobile-strict-plus">
+            <label for="mobile-strict-plus">S +</label>
           </div>
           <div>
-            <input type="radio" class="eval-type" id="strict-minus" name="auswertung" value="strict-minus">
-            <label for="strict-minus">S -</label>
+            <input type="radio" class="mobile-eval-type" id="mobile-strict-minus" name="auswertung" value="mobile-strict-minus">
+            <label for="mobile-strict-minus">S -</label>
           </div>
         </div>
     
         <div class="mobile-interface mobile-btn" id="btn-save-mobile">Speichern</div>
-        <div class="mobile-interface mobile-btn" onclick= "href = './help.html';">?</div>
+        <div class="mobile-interface mobile-btn" onclick= "sudoApp.helpFunktion()">?</div>
         <div class="mobile-interface mobile-btn btn-init">Initialisieren</div>
         <div class="mobile-interface mobile-btn btn-reset">Zurücksetzen</div>
         <div class="mobile-interface mobile-btn" id="btn-restore-mobile">Wiederherst.</div>
