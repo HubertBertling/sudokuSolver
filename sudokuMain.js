@@ -302,12 +302,13 @@ class SudokuApp {
             }
         });
 
-        document.querySelector('#btn-save-mobile').addEventListener('click', () => {
+        document.getElementById('btn-save-mobile').addEventListener('click', () => {
             this.stepper.stopTimer();
             this.successDialog.close();
             this.savePuzzleMobile();
         });
-        document.querySelector('#btn-restore-mobile').addEventListener('click', () => {
+
+        document.getElementById('btn-restore-mobile').addEventListener('click', () => {
             this.loadCurrentMobilePuzzle();
         });
         // Radio-Button Auswertungstyp: Lazy, Strikt+ oder Strikt-
