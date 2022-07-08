@@ -85,15 +85,14 @@ body, html {
 }
 
 /* Style the tab content (and add height:100% for full page content) */
-.tabcontent {
+/* .tabcontent {
   color: black;
   padding: 5px;
-  height: 100%;
-  display: flex;
+  height: 100%; 
+  display: flex; 
   flex-direction: column;
-
 }
-
+*/
 .tooltip {
     position: relative;
     display:inline-block ;
@@ -340,7 +339,8 @@ body, html {
 /* Button block                  */
 /*======================================*/
 .game-col2 {
-    display:none;
+    display:
+    none;
 }
 
 
@@ -349,8 +349,8 @@ body, html {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 5px;
-    padding: 10px;
-    font-size: 1.2rem;
+    padding: 5px;
+    font-size: 1.4rem;
 
 }
 
@@ -362,8 +362,8 @@ body, html {
   .mobile-interface {
     background-color: var(--standard-btn-bg-color);
     text-align: center;
-    padding-top:20px;
-    padding-bottom: 8px;
+    padding-top:10px;
+    padding-bottom: 10px;
     }
 
   .btn-define {
@@ -397,8 +397,8 @@ body, html {
   }
 
   label {
-    margin-left: 3px;
-    margin-right: 3px;
+    margin-left: 5px;
+    margin-right: 10px;
     float:right;
   }
    .btn-image {
