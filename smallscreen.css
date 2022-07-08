@@ -362,8 +362,8 @@ body, html {
   .mobile-interface {
     background-color: var(--standard-btn-bg-color);
     text-align: center;
-    padding-top:10px;
-    padding-bottom: 10px;
+    padding-top:15px;
+    padding-bottom: 15px;
     }
 
   .btn-define {
