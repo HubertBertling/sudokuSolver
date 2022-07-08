@@ -364,6 +364,7 @@ body, html {
     text-align: center;
     padding-top:15px;
     padding-bottom: 15px;
+    border-radius: 3px;
     }
 
   .btn-define {
