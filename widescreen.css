@@ -373,6 +373,11 @@ html {
 /*======================================*/
 /* Exec button block                  */
 /*======================================*/
+
+.mobile-grid-container {
+    display: none;
+}
+
 .game-col2 {
     margin-left: 5px;
 }
@@ -437,12 +442,12 @@ html {
 }
 
 .number:active,
-.delete:active {
+.btn-delete-cell:active {
     box-shadow: 0 0px darkgray;
     transform: translate(2px, 2px);
 }
 
-.delete {
+.btn-delete-cell {
     background-color: var(--delete-btn-bg-color);
     color: var(--delete-btn-color);
     height: 40px;
@@ -468,7 +473,7 @@ html {
 }
 
 .number:active,
-.delete:active,
+.btn-delete-cell:active,
 .btn-rm-exec-infos:active,
 .btn-statistic:active,
 .btn-automatic:active {

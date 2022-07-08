@@ -60,6 +60,7 @@
 
                     </div>
                 </div>
+
                 <div class="game-col2">
                     <div class="ctrl-btn-group">
                         <p>Spielmodus</p>
@@ -81,31 +82,28 @@
                                 <div class="number">7</div>
                                 <div class="number">8</div>
                                 <div class="number">9</div>
-                                <div class="delete" id="btn-delete-cell">X</div>
+                                <div class="btn-delete-cell" id="btn-delete-cell">X</div>
                             </div>
-              <!--          <div class="btn-rm-exec-infos tooltip" id="btn-rm-exec-infos">
-                                Schrittanzeige beenden
-                            </div>  -->
                         </div>
                     </div>
                     <div class="ctrl-btn-group automatic-exec on" id="automatic-exec">
                         <p>Automatisch Lösen</p>
                         <div class="auto-exec-btns" id="auto-exec-btns">
                             <div class="btn-auto-group">
-                                <div class="btn-automatic tooltip" id="btn-run"><img src="images/play-96.png"
+                                <div class="btn-automatic tooltip btn-run" id="btn-run"><img src="images/play-96.png"
                                         class="btn-image">
                                     <span class="tooltiptext">Start</span>
                                 </div>
-                                <div class="btn-automatic tooltip" id="btn-pause"><img src="images/pause-96.png"
+                                <div class="btn-automatic tooltip btn-pause" id="btn-pause"><img src="images/pause-96.png"
                                         class="btn-image">
                                     <span class="tooltiptext">Pause</span>
                                 </div>
-                                <div class="btn-automatic tooltip" id="btn-stop"><img src="images/stop-96.png"
+                                <div class="btn-automatic tooltip btn-stop" id="btn-stop"><img src="images/stop-96.png"
                                         class="btn-image">
                                     <span class="tooltiptext">Stop</span>
                                 </div>
                             </div>
-                            <div class="btn-automatic tooltip" id="btn-autoStep">
+                            <div class="btn-automatic tooltip btn-autoStep" id="btn-autoStep">
                                 <img src="images/step-96.png" class="btn-image" id="image-autostep">
                                 <p>Automatisch Lösen</p>
                                 <p>Schritt für Schritt</p>
@@ -115,18 +113,18 @@
                     <div class="ctrl-btn-group main-btns">
                         <p>Puzzle</p>
                         <div class="config-btns">
-                            <div class="main-btn" id="btn-init">Initialisieren</div>
+                            <div class="main-btn btn-init" id="btn-init">Initialisieren</div>
                             <div class="main-btn" id="btn-reset">Zurücksetzen</div>
                         </div>
 
-                        <div class="main-btn" id="btn-generate">Neues Puzzle</div>
+                        <div class="main-btn btn-generate" id="btn-generate">Neues Puzzle</div>
 
                         <div class="storage-btns">
                             <div class="main-btn" id="btn-save">Puzzle speichern</div>
                             <div class="main-btn" id="btn-statistic">Puzzle-Daten aktualisieren</div>
                         </div>
                         <div class="storage-btns-mobile">
-                            <div class="main-btn" id="btn-generate-mobile">Neu</div>
+                            <div class="main-btn btn-generate" id="btn-generate-mobile">Neu</div>
                             <div class="main-btn" id="btn-save-mobile">Speichern</div>
                             <div class="main-btn" id="btn-restore-mobile">Wiederherst.</div>
                         </div>
@@ -154,9 +152,62 @@
                         </div>
                     </div>
                 </div>
-            </div>
+
+              
         </div>
     </div>
+
+    <div class="mobile-grid-container">
+
+        <div class="mobile-evaluation">
+          <div>
+            <input type="radio" class="eval-type" id="lazy" name="auswertung" value="lazy" checked>
+            <label for="lazy">Lazy</label>
+          </div>
+          <div>
+            <input type="radio" class="eval-type" id="strict-plus" name="auswertung" value="strict-plus">
+            <label for="strict-plus">Strikt +</label>
+          </div>
+          <div>
+            <input type="radio" class="eval-type" id="strict-minus" name="auswertung" value="strict-minus">
+            <label for="strict-minus">Strikt -</label>
+          </div>
+        </div>
+    
+        <div class="mobile-interface mobile-btn" id="btn-save-mobile">Speichern</div>
+        <div class="mobile-interface mobile-btn" href="./help.html">?</div>
+        <div class="mobile-interface mobile-btn btn-init">Initialisieren</div>
+        <div class="mobile-interface mobile-btn btn-reset">Zurücksetzen</div>
+        <div class="mobile-interface mobile-btn" id="btn-restore-mobile">Wiederherst.</div>
+        <div class="mobile-interface mobile-btn btn-generate">Neu</div>
+        <div class="mobile-interface mobile-btn btn-define">Definieren</div>
+        <div class="mobile-interface mobile-btn btn-play">Lösen</div>
+        <div class="mobile-interface mobile-btn btn-delete-cell">X</div>
+        <div class="mobile-interface mobile-btn tooltip btn-run" id="btn-run"><img src="images/play-96.png" class="btn-image">
+          <span class="tooltiptext">Start</span>
+        </div>
+        <div class="mobile-interface mobile-btn mobile-number">1</div>
+        <div class="mobile-interface mobile-btn mobile-number">2</div>
+        <div class="mobile-interface mobile-btn mobile-number">3</div>
+        <div class="mobile-interface mobile-btn tooltip btn-pause"><img src="images/pause-96.png" class="btn-image">
+          <span class="tooltiptext">Pause</span>
+        </div>
+        <div class="mobile-interface mobile-btn mobile-number">4</div>
+        <div class="mobile-interface mobile-btn mobile-number">5</div>
+        <div class="mobile-interface mobile-btn mobile-number">6</div>
+        <div class="mobile-interface mobile-btn tooltip btn-stop"><img src="images/stop-96.png" class="btn-image">
+          <span class="tooltiptext">Stop</span>
+        </div>
+        <div class="mobile-interface mobile-btn mobile-number">7</div>
+        <div class="mobile-interface mobile-btn mobile-number">8</div>
+        <div class="mobile-interface mobile-btn mobile-number">9</div>
+        <div class="mobile-interface mobile-btn btn-automatic tooltip" id="btn-autoStep">
+          <img src="images/step-96.png" class="btn-image" id="image-autostep">
+          <span class="tooltiptext">Schritt</span>
+        </div>
+      </div>
+
+
     <!--Der Inhalt des Reiters Puzzle-Datenbank-->
     <div id="puzzle-db" class="tabcontent tabdatabase">
         <section class="noprint">
@@ -262,7 +313,7 @@
             </form>
         </div>
     </div>
-    <script src="./sudokuCommon.js"></script>   
+    <script src="./sudokuCommon.js"></script>
     <script src="./sudokuMain.js"></script>
 </body>
 

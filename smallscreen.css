@@ -109,7 +109,7 @@ body, html {
     border-radius: 6px;
     padding: 5px 0;
     top: -30px;
-    left: 50%; 
+    left: 25%; 
   
     /* Position the tooltip */
     position: absolute;
@@ -328,10 +328,6 @@ body, html {
     font-weight:bold;
 
 }
-.helpNode {
-    color: var(--help-color);
-    font-size: 1.6rem;
-}
 
 .sudoku-title {
     padding-top: 20px;
@@ -339,252 +335,78 @@ body, html {
     font-size: 2.4rem;
 
 }
-.help {
-    margin-bottom:10px;
-}
-/*======================================*/
-/* Exec button block                  */
-/*======================================*/
 
-.ctrl-btn-group {
+/*======================================*/
+/* Button block                  */
+/*======================================*/
+.game-col2 {
+    display:none;
+}
+
+
+.mobile-grid-container {
     margin-top: 5px;
-  
-}
-.ctrl-btn-group p {
-    display: none;
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-.mode-btns {   
-    border-top: darkgrey dashed 3px;
-}
-
-
-.auto-exec-btns {
-    padding: 2px;
-}
-
-.mode-btns {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    padding: 5px;
+    font-size: 1.2rem;
+
 }
 
-.btn-define, .btn-play {
-    box-shadow: 3px 3px darkgray;
-    margin: 5px;
+.mobile-evaluation {
+    margin: 10px;
+
 }
 
-.btn-define {
+  .mobile-interface {
+    background-color: var(--standard-btn-bg-color);
+    text-align: center;
+    padding-top:10px;
+    padding-bottom: 8px;
+    }
+
+  .btn-define {
     background-color: var(--defined-cell-bg-color);
     color: var(--defined-cell-color);
-}
+  }
 
+  .btn-play {
+    background-color: var(--played-cell-bg-color);
+  }
 
-.btn-define.pressed, .btn-play.pressed {
+  .btn-define.pressed,
+  .btn-play.pressed {
     box-shadow: 0px 0px darkgray;
     transform: translate(2px, 2px);
-}
+  }
 
 
-.numbers {
-    border-top: darkgrey dashed 3px;
-    padding-top: 5px;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 5px;
-}
+  .mobile-btn:active {
+    transform: translate(2px, 2px);
+  }
 
-
-.number {
-    height: 30px;
-    border-radius: var(--border-radius);
-    background-color: var(--standard-btn-bg-color);
-    color: var(--standard-btn-color);
-    display: grid;
-    place-items: center;
-    font-size: var(--font-size-btn);
-    box-shadow: 3px 3px darkgray;
-    cursor: pointer;
-}
-
-.number:active, .delete:active {
-    box-shadow: 0 0px darkgray;
-    transform: translate(2px, 2px); 
-}
-.delete {
+  .btn-delete-cell {
     background-color: var(--delete-btn-bg-color);
-    color: var(--delete-btn-color);
-    height: 30px;
-    border-radius: var(--border-radius);
-    display: grid;
-    place-items: center;
-    font-size: var(--font-size-btn);
-    box-shadow: 3px 3px darkgray;
-    cursor: pointer;
-}
+    color:var(--delete-btn-color);
+  }
 
-.number:active, .delete:active, .btn-redo:active, .btn-undo:active, .btn-automatic:active {
-    transform: translate(2px, 2px);
-}
+  .mobile-evaluation {
+    grid-column: 1 / span 2;
+    display: flex;
+  }
 
-.auto-exec-btns {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 10px;
-}
-
-.btn-auto-group {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
-
-.btn-image {
-    width: 25px;
-    height: 20px;
-}
+  label {
+    margin-left: 5px;
+    margin-right: 5px;
+    float:right;
+  }
+   .btn-image {
+    width: 20px;
+    height: 17px;
+  }
 
 
-.btn-define, .btn-play, .btn-automatic {
-    padding: 5px;
-    border-radius: var(--border-radius);
-    box-shadow: 3px 3px darkgray;
-    border: hidden;
-    display: grid;
-    place-items: center;
-    font-size: var(--font-size-btn);
-    cursor: pointer;
-    
-}
-.btn-automatic:active {
-    box-shadow: 0 0px darkgray;
-    transform: translate(2px, 2px); 
-}
-
-.btn-play {
-    background-color: var(--played-cell-bg-color);
-    color: var(--standard-btn-color);
-}
-
-.btn-automatic {
-    background-color: var(--standard-btn-bg-color);
-    color: var(--standard-btn-color);
-}
-
-.btn-automatic p {
-    font-weight: unset;
-}
-
-#btn-autoStep {
-    height: 40px;
-}
-
-#btn-autoStep a {
-    display:none;
-}
-
-#btn-rm-exec-infos {
-    display: none;
-}
-#btn-generate {
-    display: none;
-}
-.settings {
-    display: grid;
-    grid-template-columns: 0.3fr 0.7fr;
-    line-height: 10px;
-    font-size: 1.4rem;
-    margin-top: 10px;
-    margin-left: 20px;
-}
-
-.settings p {
-    font-size: 1.2rem;
-}
-
-.evaluation {
-    display:grid;
-    grid-template-columns: 0.3fr 0.3fr 0.3fr;
-}
-/*======================================*/
-/* Main button block */
-/*======================================*/
-
-.mode-btns {
-    margin-top: 5px;    
-}
-
-.main-btns p {
-    display: none;
-}
-
-#btn-autoStep p {
-    display: none;
-}
-
-.btn-auto-group {
-    border-top: darkgrey dashed 3px;
-    padding-top: 5px;
-    margin-top: 5px;
-}
-
-.auto-exec-btns {
-    margin-top: 3px;
-    padding-top: 5px;
-}
-
-.main-btns {
-    margin-top: 10px;
-    border-top: darkgrey dashed 3px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 3px;
-
-}
-
-.config-btns {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
-   
-}
-
-#btn-statistic {
-    display:none;
-}
-.storage-btns-mobile {
-    border-left: darkgrey dashed 3px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-   
-}
-
-.main-btn:active {
-    box-shadow: 0 0px darkgray;
-    transform: translate(2px, 2px);
-}
-
-.storage-btns {
-    display: none;
-}
-
-.main-btn {
-    height: 30px;
-    box-shadow: 3px 3px darkgray;
-    background-color: var(--standard-btn-bg-color);
-    color: var(--standard-btn-color);
-    border-radius: var(--border-radius);
-    border: hidden;
-    display: grid;
-    place-items: center;
-    margin: 5px;
-    padding: 5px;
-    font-size: 1.2rem;
-    cursor: pointer;
-}
 /*======================================*/
 /* Progress block */
 /*======================================*/

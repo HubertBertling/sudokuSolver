@@ -124,6 +124,7 @@ class SudokuApp {
         // Event-Handler der App setzen
         // ==============================================================
 
+
         // Click-Event für die Nummern-Buttons setzen
         this.number_inputs = document.querySelectorAll('.number');
         this.number_inputs.forEach((e, index) => {
@@ -133,20 +134,22 @@ class SudokuApp {
                 this.handleNumberPressed(btnNumber);
             })
         });
+        this.number_inputs = document.querySelectorAll('.mobile-number');
+        this.number_inputs.forEach((e, index) => {
+            e.addEventListener('click', () => {
+                // Hinweis: index + 1 = number on button
+                let btnNumber = (index + 1).toString();
+                this.handleNumberPressed(btnNumber);
+            })
+        });
 
         //Click-Event für den Delete-Button setzen
-        document.querySelector('#btn-delete-cell').addEventListener('click', () => {
-            this.handleDeletePressed();
+        this.btns = document.querySelectorAll('.btn-delete-cell');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.handleDeletePressed();
+            })
         });
-
-   /*
-        document.querySelector('#btn-rm-exec-infos').addEventListener('click', () => {
-            this.autoExecOn = false;
-            this.suGrid.removeAutoExecCellInfos();
-            this.displayOnOffStatus();
-
-        });
-        */
 
         window.addEventListener("keydown", (event) => {
             switch (event.key) {
@@ -171,84 +174,109 @@ class SudokuApp {
         });
 
         // Die beiden Phase-Button 
-        document.querySelector('#btn-define').addEventListener('click', () => {
-            sudoApp.setGamePhase('define');
-            this.stepper.stopTimer();
-            this.stepper.init();
-            this.setAutoExecOff();
-            this.suGrid.deselect();
+        this.btns = document.querySelectorAll('.btn-define');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                sudoApp.setGamePhase('define');
+                this.stepper.stopTimer();
+                this.stepper.init();
+                this.setAutoExecOff();
+                this.suGrid.deselect();
+            })
         });
-        document.querySelector('#btn-play').addEventListener('click', () => {
-            sudoApp.setGamePhase('play');
-            this.stepper.stopTimer();
-            this.stepper.init();
-            this.setAutoExecOff();
-            this.suGrid.deselect();
+
+        this.btns = document.querySelectorAll('.btn-play');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                sudoApp.setGamePhase('play');
+                this.stepper.stopTimer();
+                this.stepper.init();
+                this.setAutoExecOff();
+                this.suGrid.deselect();
+            })
         });
 
         // Automatische Ausführung: schrittweise
-        document.querySelector('#btn-autoStep').addEventListener('click', () => {
-            if (this.autoExecOn) {
-                this.stepper.triggerAutoStep('user');
-            } else {
-                if (this.stepper.deadlockReached()) {
-                    alert("Keine (weitere) Lösung gefunden!");
-                } else {
-                    this.setGamePhase('play');
-                    this.setAutoExecOn();
-                    this.suGrid.deselect();
+        this.btns = document.querySelectorAll('.btn-autoStep');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (this.autoExecOn) {
                     this.stepper.triggerAutoStep('user');
+                } else {
+                    if (this.stepper.deadlockReached()) {
+                        alert("Keine (weitere) Lösung gefunden!");
+                    } else {
+                        this.setGamePhase('play');
+                        this.setAutoExecOn();
+                        this.suGrid.deselect();
+                        this.stepper.triggerAutoStep('user');
+                    }
                 }
-            }
+            })
         });
 
         // Automatische Ausführung: starten bzw. fortsetzen
-        document.querySelector('#btn-run').addEventListener('click', () => {
-            this.autoExecRunTimerControlled();
+        this.btns = document.querySelectorAll('.btn-run');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.autoExecRunTimerControlled();
+            })
         });
 
 
         // Automatische Ausführung pausieren
-        document.querySelector('#btn-pause').addEventListener('click', () => {
-            sudoApp.stepper.stopTimer();
+        this.btns = document.querySelectorAll('.btn-pause');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                sudoApp.stepper.stopTimer();
+            })
         });
 
         // Automatische Ausführung beenden
-        document.querySelector('#btn-stop').addEventListener('click', () => {
-            this.stepper.stopTimer();
-            this.autoExecOn = false;
-            this.suGrid.removeAutoExecCellInfos();
-            this.displayOnOffStatus();
+        this.btns = document.querySelectorAll('.btn-stop');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.stepper.stopTimer();
+                this.autoExecOn = false;
+                this.suGrid.removeAutoExecCellInfos();
+                this.displayOnOffStatus();
+            })
         });
 
         // Der Initialisieren-Button: Initialisiert die Tabelle
-        document.querySelector('#btn-init').addEventListener('click', () => {
-            this.stepper.stopTimer()
-            this.stepper.init();
-            this.successDialog.close();
-            this.setAutoExecOff();
-            this.suGrid.deselect();
-            this.suGrid.init();
-            this.stepper.displayProgress();
-            this.setGamePhase('define');
+        this.btns = document.querySelectorAll('.btn-init');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.stepper.stopTimer()
+                this.stepper.init();
+                this.successDialog.close();
+                this.setAutoExecOff();
+                this.suGrid.deselect();
+                this.suGrid.init();
+                this.stepper.displayProgress();
+                this.setGamePhase('define');
+            })
         });
         // Der Zurücksetzen-Button: Setzt die Tabelle zurück auf die Definition.
         // Alle Zellen bis auf die, die zur Definition gehören, werden gelöscht
-        document.querySelector('#btn-reset').addEventListener('click', () => {
-            this.stepper.stopTimer();
-            //  this.stepper.init();
-            this.successDialog.close();
-            this.setAutoExecOff();
-            this.suGrid.deselect();
-            this.suGrid.reset();
-            this.stepper.displayProgress();
+        this.btns = document.querySelectorAll('.btn-reset');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.stepper.stopTimer();
+                //  this.stepper.init();
+                this.successDialog.close();
+                this.setAutoExecOff();
+                this.suGrid.deselect();
+                this.suGrid.reset();
+                this.stepper.displayProgress();
+            })
         });
         // Der Generieren-Button: generiert ein neues Puzzle
-        document.querySelector('#btn-generate').addEventListener('click', () => {
-            this.generatePuzzleHandler();
-        });
-        document.querySelector('#btn-generate-mobile').addEventListener('click', () => {
-            this.generatePuzzleHandler();
+        this.btns = document.querySelectorAll('.btn-generate');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.generatePuzzleHandler();
+            })
         });
         // Der Speichern-Button: Das aktuelle Puzzle wird unter einem Namen 
         // in der Puzzle-DB gespeichert.
@@ -430,12 +458,24 @@ class SudokuApp {
     setGamePhase(gamePhase) {
         if (gamePhase == 'play') {
             this.currentPhase = 'play';
-            document.querySelector('#btn-define').classList.remove('pressed');
-            document.querySelector('#btn-play').classList.add('pressed');
+            this.btns = document.querySelectorAll('.btn-define');
+            this.btns.forEach(btn =>{
+                btn.classList.remove('pressed');
+            });
+            this.btns = document.querySelectorAll('.btn-play');
+            this.btns.forEach(btn =>{
+                btn.classList.add('pressed');
+            });
         } else if (gamePhase == 'define') {
             this.currentPhase = 'define';
-            document.querySelector('#btn-define').classList.add('pressed');
-            document.querySelector('#btn-play').classList.remove('pressed');
+            this.btns = document.querySelectorAll('.btn-define');
+            this.btns.forEach(btn =>{
+                btn.classList.add('pressed');
+            });
+            this.btns = document.querySelectorAll('.btn-play');
+            this.btns.forEach(btn =>{
+                btn.classList.remove('pressed');
+            }); 
         }
     }
 
