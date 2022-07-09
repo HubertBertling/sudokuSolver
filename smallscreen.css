@@ -376,13 +376,16 @@ body, html {
     background-color: var(--played-cell-bg-color);
   }
 
-  .btn-define.pressed,
-  .btn-play.pressed {
-    box-shadow: 0px 0px darkgray;
-    transform: translate(2px, 2px);
+  .btn-define.pressed {
+    /* transform: translate(2px, 2px); */
+    border: 2px solid darkblue;
   }
 
+  .btn-play.pressed {
+    border: 2px solid darkgreen;
+  }
 
+  
   .mobile-btn:active {
     transform: translate(2px, 2px);
   }
