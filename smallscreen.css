@@ -84,15 +84,10 @@ body, html {
   background-color: #777;
 }
 
-/* Style the tab content (and add height:100% for full page content) */
-/* .tabcontent {
-  color: black;
-  padding: 5px;
-  height: 100%; 
-  display: flex; 
-  flex-direction: column;
+.tabcontent {
+    display:none;
 }
-*/
+
 .tooltip {
     position: relative;
     display:inline-block ;
