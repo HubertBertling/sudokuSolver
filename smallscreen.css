@@ -313,6 +313,7 @@ body, html {
     font-size: 1.2rem;
     display: flex;
     padding-top: 5px;
+    margin-left: 5px;;
     
   
 }
@@ -449,6 +450,7 @@ body, html {
 
 .step-count {
     font-size: 1rem;
+    margin-left: 5px;;
 }
 
 .step-count-box {
