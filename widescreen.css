@@ -694,7 +694,7 @@ html {
 #myBarDef {
     z-index: 2;
     background-color: var(--defined-cell-bg-color);
-    color: black;
+    color: white;
     text-align: center;
 }
 
