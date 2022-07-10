@@ -29,7 +29,7 @@
     --error-cell-color: white;
 
      /* Other definitions */
-    --sudoku-cell-size: 38px;
+    --sudoku-cell-size: 44px;
     --border-radius: 5px;
     --space-y: 20px;
     --gap: 5px;
@@ -143,22 +143,22 @@ body, html {
 }
 
 .sudoku-group {
+    margin: 3px;
     display: grid;
     grid-template-columns: repeat(3, auto);
     border-radius: var(--border-radius);
     place-items: center;
-    margin: 3px;
 }
 
 .sudoku-grid-cell {
+    position: relative;
     height: var(--sudoku-cell-size);
     width: var(--sudoku-cell-size); 
     border-radius: 5px;
     display: grid; 
     font-size: var(--font-size-btn);
     place-items: center;
-    cursor: pointer;
-    margin: 1px;
+    margin: 2px;
   }
 
 .sudoku-grid-cell.define {
@@ -186,10 +186,9 @@ body, html {
     'step value value value'
     'step option1 option2 option3';
     gap: 1px;
-    padding: 1px;
     border-radius: 2px;
-    height: 36px;
-    width: 36px;
+    height: 40px;
+    width: 40px;
     background-color: grey ;
     color: var(--played-cell-color);
  }
@@ -207,7 +206,7 @@ body, html {
 }
 
 .auto-value-cell > div.auto-value-number {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
  }
 
  .auto-value-cell > div.auto-value-option1 {
@@ -249,6 +248,7 @@ body, html {
     border: 1px solid white;
 }
 
+/*
 .nested>div.inAdmissible  {
     padding: 1px;
     border-radius: 3px;
@@ -256,6 +256,14 @@ body, html {
     background-color: Crimson ;
     color: white ;
     border: 1px solid white;
+}
+*/
+
+.nested>div.inAdmissible  {
+    font-weight: bold;
+    font-size: 1.0rem;
+    color: Crimson ;
+
 }
 
 
@@ -275,7 +283,7 @@ body, html {
 }
 
 .sudoku-grid-cell.hover-green {
-    border: 4px dashed darkgreen;
+    border: 3px dashed darkgreen;
 }
 
 .sudoku-group.err {
@@ -314,8 +322,6 @@ body, html {
     font-size: 1.2rem;
     display: flex;
     padding-top: 5px;
-    margin-left: 5px;;
-    
   
 }
 .sudoku-header {
@@ -403,8 +409,8 @@ body, html {
     float:right;
   }
    .btn-image {
-    width: 20px;
-    height: 17px;
+    width: 18px;
+    height: 16px;
   }
 
 
