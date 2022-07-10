@@ -88,6 +88,7 @@ body, html {
     display:none;
 }
 
+/*
 .tooltip {
     position: relative;
     display:inline-block ;
@@ -105,7 +106,7 @@ body, html {
     top: -30px;
     left: 25%; 
   
-    /* Position the tooltip */
+    /* Position the tooltip 
     position: absolute;
     z-index: 1;
   }
@@ -114,6 +115,7 @@ body, html {
     visibility: visible;
   }
   
+  */
 
 
 .tabdatabase {
@@ -460,14 +462,13 @@ body, html {
 
 .step-count {
     font-size: 1rem;
-    margin-left: 5px;;
+    margin-left: 5px;
 }
 
 .step-count-box {
     line-height: 20px;
     height: 20px;  
     display:flex;
-    margin-right: 5px;
 }
 .forward-backward-image {
     width: 18px;
@@ -475,8 +476,8 @@ body, html {
 }
 .forward, .backward {
     height: 20px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 .autoMode-radio-btns {
     place-items: center;
