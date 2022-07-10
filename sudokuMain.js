@@ -691,13 +691,9 @@ class SuccessDialog {
         this.winBox;
         this.myOpen = false;
         this.okNode = document.getElementById("btn-successOK");
-        this.cancelNode = document.getElementById("btn-successCancel");
         this.checkBoxNode = document.getElementById("further");
         this.okNode.addEventListener('click', () => {
             sudoApp.successDlgOKPressed();
-        });
-        this.cancelNode.addEventListener('click', () => {
-            sudoApp.successDlgCancelPressed();
         });
     }
     open() {
