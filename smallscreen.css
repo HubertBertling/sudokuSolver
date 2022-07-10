@@ -264,6 +264,12 @@ body, html {
 }
 */
 
+.nested>div.inAdmissible  {
+    font-weight: bold;
+    font-size: 1.0rem;
+    color:  Crimson ;
+}
+
 .nested>div.neccessary.inAdmissible {
     /* background:blueviolet; */
     color: #0d1117;
