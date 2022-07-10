@@ -373,6 +373,9 @@ body, html {
     padding-top:12px;
     padding-bottom: 12px;
     border-radius: 3px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
     }
 
   .btn-define {
@@ -416,6 +419,7 @@ body, html {
    .btn-image {
     width: 18px;
     height: 16px;
+    margin-right: 5px;
   }
 
 
