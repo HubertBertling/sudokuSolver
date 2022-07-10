@@ -167,7 +167,7 @@ body, html {
 }
 .sudoku-grid-cell.play {
     background-color: var(--played-cell-bg-color);
-    color: var(--played-cell-color);
+    color: var(--played-cell-color); 
 }
 
 
@@ -243,6 +243,7 @@ body, html {
 .nested>div.neccessary {
     padding: 1px;
     border-radius: 3px;
+    font-size: 1.2rem;
     background-color: #56c7aa;
     color: #0d1117;
     border: 1px solid white;
