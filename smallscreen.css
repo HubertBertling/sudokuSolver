@@ -365,8 +365,8 @@ body, html {
   .mobile-interface {
     background-color: var(--standard-btn-bg-color);
     text-align: center;
-    padding-top:15px;
-    padding-bottom: 15px;
+    padding-top:12px;
+    padding-bottom: 12px;
     border-radius: 3px;
     }
 
