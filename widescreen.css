@@ -640,6 +640,9 @@ html {
     margin-left: 20px;
 }
 
+.eval-type {
+    margin: 5px;
+}
 .checkbox {
     margin-left: 3px;
     background-color: var(--screen-bg-color);
