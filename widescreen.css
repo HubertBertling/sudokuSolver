@@ -269,7 +269,10 @@ html {
 }
 
 .nested>div.neccessary {
-    padding: 1px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 4px;
+    padding-right: 4px;
     border-radius: 3px;
     background-color: #56c7aa;
     font-size: 1.4rem;
@@ -278,7 +281,10 @@ html {
 }
 
 .nested>div.inAdmissible {
-    padding: 1px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 4px;
+    padding-right: 4px;
     border-radius: 3px;
     font-size: 1.4rem;
     background-color: Crimson;

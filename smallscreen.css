@@ -247,11 +247,15 @@ body, html {
 }
 
 .nested>div.neccessary {
-    padding: 1px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 4px;
+    padding-right: 4px;
+  
     border-radius: 3px;
     font-size: 1.4rem;
     background-color: #56c7aa;
-    color: #0d1117;
+    color: #0d1117; 
     border: 1px solid white;
 }
 
