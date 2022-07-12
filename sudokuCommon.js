@@ -1390,7 +1390,7 @@ class SudokuGrid {
     displayBenchmark(countBackwards, levelOfDifficulty) {
         let evalNode = document.getElementById("evaluations");
         evalNode.innerHTML =
-        '<b>Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+            '<b>Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
             + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
     }
 
@@ -1826,26 +1826,23 @@ class SudokuGrid {
     calculateNecessarysForNextStep() {
         // Berechne und setze für jede nicht gesetzte Zelle
         // in der Menge ihrer möglichen Nummern die
-        // notwendigen Nummern
-        // Die notwendigen Nummern werden komplett sofort berechnet, weil es geht
-        // und weil dies die Früherkennung von Widersprüchen verbessert.
-        // Die Berechnung von indirekt unzulässigen Nummern bleibt weiterhin lazy.
+        // notwendigen Nummern.
+      
         // Iteriere über die Gruppen
-
         let added = false;
         for (let i = 0; i < 9; i++) {
             let tmpGroup = this.sudoGroups[i];
-            if (tmpGroup.calculateNecessaryForNextStep()) added = true;
+            if (tmpGroup.calculateNecessaryForNextStep()) { added = true; return added}
         }
         // Iteriere über die Reihen
         for (let i = 0; i < 9; i++) {
             let tmpRow = this.sudoRows[i];
-            if (tmpRow.calculateNecessaryForNextStep()) added = true;
+            if (tmpRow.calculateNecessaryForNextStep()) { added = true; return added }
         }
         // Iteriere über die Spalten
         for (let i = 0; i < 9; i++) {
             let tmpCol = this.sudoCols[i];
-            if (tmpCol.calculateNecessaryForNextStep()) added = true;
+            if (tmpCol.calculateNecessaryForNextStep()) { added = true; return added }
         }
 
         return added;
