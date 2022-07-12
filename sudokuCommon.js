@@ -975,6 +975,7 @@ class NineCellCollection {
             if (cellIndex !== -1) {
                 this.myCells[cellIndex].addNecessary(i.toString(), this);
                 added = true;
+                return added;
             }
         }
         return added;
