@@ -965,6 +965,7 @@ class NineCellCollection {
     }
 
     calculateNecessaryForNextStep() {
+        // Berechne für die NineCellCollection alle notwendigen Nummern.
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
         // die in der Gruppe, Reihe oder Spalte der Zelle genau einmal vorkommen.
         let added = false;
@@ -975,7 +976,7 @@ class NineCellCollection {
             if (cellIndex !== -1) {
                 this.myCells[cellIndex].addNecessary(i.toString(), this);
                 added = true;
-                return added;
+        //      return added;
             }
         }
         return added;
@@ -1816,7 +1817,7 @@ class SudokuGrid {
     }
 
     calculate_level_0_inAdmissibles() {
-        // Berechne und setze für jede nicht gesetzte Zelle 
+        // Berechne für jede nicht gesetzte Zelle 
         // die noch möglichen Nummern
         for (let i = 0; i < 81; i++) {
             let tmpCell = this.sudoCells[i];
@@ -1825,7 +1826,7 @@ class SudokuGrid {
     }
 
     calculateNecessarysForNextStep() {
-        // Berechne und setze für jede nicht gesetzte Zelle
+        // Berechne für jede nicht gesetzte Zelle
         // in der Menge ihrer möglichen Nummern die
         // notwendigen Nummern.
       
@@ -1833,17 +1834,26 @@ class SudokuGrid {
         let added = false;
         for (let i = 0; i < 9; i++) {
             let tmpGroup = this.sudoGroups[i];
-            if (tmpGroup.calculateNecessaryForNextStep()) { added = true; return added}
+            if (tmpGroup.calculateNecessaryForNextStep()) { 
+                added = true; 
+        //      return added;
+            }
         }
         // Iteriere über die Reihen
         for (let i = 0; i < 9; i++) {
             let tmpRow = this.sudoRows[i];
-            if (tmpRow.calculateNecessaryForNextStep()) { added = true; return added }
+            if (tmpRow.calculateNecessaryForNextStep()) { 
+                added = true; 
+        //      return added;
+            }
         }
         // Iteriere über die Spalten
         for (let i = 0; i < 9; i++) {
             let tmpCol = this.sudoCols[i];
-            if (tmpCol.calculateNecessaryForNextStep()) { added = true; return added }
+            if (tmpCol.calculateNecessaryForNextStep()) { 
+                added = true; 
+        //      return added;
+            }
         }
 
         return added;
