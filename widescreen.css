@@ -224,7 +224,7 @@ html {
 .auto-value-cell>div.auto-step-number {
     background-color: darkgrey;
     color: black;
-    font-size: 1rem;
+    font-size: 1.2rem;
 }
 
 .auto-value-cell>div.auto-value-number {
@@ -649,6 +649,7 @@ html {
     height: 20px;
     display: flex;
     margin-right: 5px;
+    width: 110px;
 }
 
 .forward-backward-image {
