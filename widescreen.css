@@ -28,7 +28,7 @@
     --error-cell-color: white;
 
     /* Other definitions */
-    --sudoku-cell-size: 68px;
+    --sudoku-cell-size: 62px;
     --border-radius: 5px;
     --space-y: 20px;
     --font-size-btn: 1.6rem;
@@ -171,7 +171,7 @@ html {
     font-size: var(--font-size-btn);
     place-items: center;
     /*    cursor: pointer; */
-    margin: 3px;
+    margin: 2px;
 }
 
 .sudoku-grid-cell.define {
@@ -207,23 +207,18 @@ html {
 
 .auto-value-cell {
     display: grid;
-    /* grid-template-columns: 0.1fr 0.9fr; */
     grid-template-areas:
         'step value value value'
         'step option1 option2 option3';
     gap: 2px;
-    padding: 2px;
-    border-radius: 3px;
-    height: 58px;
-    width: 58px;
     background-color: grey;
     color: var(--played-cell-color);
 }
 
 .auto-value-cell>div {
-    text-align: center;
-    padding: 2px;
     background-color: var(--played-cell-bg-color);
+    text-align: center;
+    padding: 4px 2px;
 }
 
 .auto-value-cell>div.auto-step-number {
@@ -241,7 +236,7 @@ html {
 }
 
 .auto-value-cell>div.auto-value-option2 {
-    font-size: 1.2rem;
+    font-size: 1.2rem;    
 }
 
 .auto-value-cell>div.auto-value-option3 {
@@ -249,6 +244,7 @@ html {
 }
 
 .auto-value-cell>div.open {
+    font-size: 1.2rem;
     background-color: var(--nested-cell-bg-color);
 }
 
@@ -290,12 +286,6 @@ html {
     background-color: Crimson;
     color: white;
     border: 1px solid white;
-}
-
-.nested>div.neccessary.inAdmissible {
-    /* background:blueviolet; */
-    color: #0d1117;
-    background-color: #56c7aa;
 }
 
 .sudoku-grid-cell.hover {
