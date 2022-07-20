@@ -88,36 +88,6 @@ body, html {
     display:none;
 }
 
-/*
-.tooltip {
-    position: relative;
-    display:inline-block ;
-    border-bottom: 1px dotted black;
-  }
-  
-  .tooltip .tooltiptext {
-    visibility: hidden;
-    width: 70px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    top: -30px;
-    left: 25%; 
-  
-    /* Position the tooltip 
-    position: absolute;
-    z-index: 1;
-  }
-  
-  .tooltip:hover .tooltiptext {
-    visibility: visible;
-  }
-  
-  */
-
-
 .tabdatabase {
     color: white;
     font-size: 1.0rem;
@@ -188,22 +158,18 @@ body, html {
 
 .auto-value-cell {
     display: grid;
-   /* grid-template-columns: 0.1fr 0.9fr; */
     grid-template-areas:
     'step value value value'
     'step option1 option2 option3';
     gap: 1px;
-    border-radius: 2px;
-    height: 40px;
-    width: 40px;
     background-color: grey ;
     color: var(--played-cell-color);
  }
 
  .auto-value-cell > div {
-     text-align: center; 
-     padding: 1px;
+     text-align: center;   
      background-color:var(--played-cell-bg-color);
+     padding: 2px 1px;
 }
 
 .auto-value-cell > div.auto-step-number {
@@ -213,7 +179,7 @@ body, html {
 }
 
 .auto-value-cell > div.auto-value-number {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
  }
 
  .auto-value-cell > div.auto-value-option1 {
@@ -227,6 +193,7 @@ body, html {
  }
 
  .auto-value-cell > div.open {
+    font-size: 1rem;
     background-color: var(--nested-cell-bg-color); 
  }
 
@@ -259,29 +226,11 @@ body, html {
     border: 1px solid white;
 }
 
-/*
-.nested>div.inAdmissible  {
-    padding: 1px;
-    border-radius: 3px;
-    font-size: 1.0rem;
-    background-color: Crimson ;
-    color: white ;
-    border: 1px solid white;
-}
-*/
-
 .nested>div.inAdmissible  {
     font-weight: bold;
     font-size: 1.0rem;
     color:  Crimson ;
 }
-
-.nested>div.neccessary.inAdmissible {
-    /* background:blueviolet; */
-    color: #0d1117;
-    background-color: #56c7aa;
-}
-
 
 .sudoku-grid-cell.hover {
     border: 3px solid var(--selected-cell-border-color);
@@ -469,7 +418,7 @@ body, html {
 }
 
 .step-count {
-    font-size: 1rem;
+    font-size: 1.2rem;
     margin-left: 5px;
 }
 
@@ -477,6 +426,7 @@ body, html {
     line-height: 20px;
     height: 20px;  
     display:flex;
+    width: 80px;
 }
 .forward-backward-image {
     width: 18px;
