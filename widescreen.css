@@ -375,21 +375,47 @@ html {
 }
 
 .game-col2 {
-    margin-left: 5px;
+    margin-left: 10px;
 }
 
-.ctrl-btn-group {
-    margin-top: 20px;
-
+.pc-btn {
+    border: none;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 30px;
+    border-radius: var(--border-radius);
+    background-color: var(--standard-btn-bg-color);
+    color: var(--standard-btn-color);
+    font-size: var(--font-size-btn);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 2px 2px black;
+    
 }
 
-.ctrl-btn-group p {
+.pc-btn:active {
+    box-shadow: none;
+    transform: translate(3px, 3px);
+}
+
+.mode-btn-group {
+    margin-top: 10px;
+}
+
+.mode-btn-group p {
     font-weight: bold;
     font-size: 1.6rem;
 }
 
-.auto-exec-btns {
-    padding: 5px;
+
+.manual-btn-group {
+  margin-top: 15px;
+}
+
+.manual-btn-group p {
+    font-weight: bold;
+    font-size: 1.6rem;
 }
 
 .mode-btns {
@@ -400,13 +426,17 @@ html {
 
 .btn-define,
 .btn-play {
-    box-shadow: 3px 3px darkgray;
     margin: 5px;
 }
 
 .btn-define {
     background-color: var(--defined-cell-bg-color);
     color: var(--defined-cell-color);
+}
+
+.btn-play {
+    background-color: var(--played-cell-bg-color);
+    color: var(--standard-btn-color);
 }
 
 
@@ -416,7 +446,6 @@ html {
     transform: translate(2px, 2px);
 }
 
-
 .numbers {
     margin-top: 5px;
     display: grid;
@@ -424,56 +453,26 @@ html {
     gap: 5px;
 }
 
-
 .number {
-    height: 40px;
-    border-radius: var(--border-radius);
-    background-color: var(--standard-btn-bg-color);
-    color: var(--standard-btn-color);
     display: grid;
     place-items: center;
-    font-size: var(--font-size-btn);
-    box-shadow: 3px 3px darkgray;
     /* cursor: pointer; */
-}
-
-.number:active,
-.btn-delete-cell:active {
-    box-shadow: 0 0px darkgray;
-    transform: translate(2px, 2px);
 }
 
 .btn-delete-cell {
     background-color: var(--delete-btn-bg-color);
     color: var(--delete-btn-color);
-    height: 40px;
-    border-radius: var(--border-radius);
     display: grid;
     place-items: center;
-    font-size: var(--font-size-btn);
-    box-shadow: 3px 3px darkgray;
     /*  cursor: pointer; */
 }
 
-.btn-rm-exec-infos {
-    margin-top: 10px;
-    background-color: var(--played-cell-bg-color);
-    color: black;
-    height: 30px;
-    border-radius: var(--border-radius);
-    display: grid;
-    place-items: center;
-    font-size: var(--font-size-btn);
-    box-shadow: 3px 3px darkgray;
-    /* cursor: pointer; */
+.automatic-btn-group {
+    margin-top: 15px;
 }
-
-.number:active,
-.btn-delete-cell:active,
-.btn-rm-exec-infos:active,
-.btn-statistic:active,
-.btn-automatic:active {
-    transform: translate(2px, 2px);
+.automatic-btn-group p {
+    font-weight: bold;
+    font-size: 1.6rem;
 }
 
 .auto-exec-btns {
@@ -494,122 +493,61 @@ html {
     height: 20px;
 }
 
-
-.btn-define,
-.btn-play,
-.btn-automatic {
-    padding: 3px;
-    border-radius: var(--border-radius);
-    box-shadow: 3px 3px darkgray;
-    border: hidden;
-    display: grid;
-    place-items: center;
-    font-size: var(--font-size-btn);
-    /* cursor: pointer; */
-
+.puzzle-btn-group {
+    margin-top: 15px;
+}
+.puzzle-btn-group p {
+    font-weight: bold;
+    font-size: 1.6rem;
 }
 
-.btn-automatic:active {
-    box-shadow: 0 0px darkgray;
-    transform: translate(2px, 2px);
-}
-
-.btn-play {
-    background-color: var(--played-cell-bg-color);
-    color: var(--standard-btn-color);
-}
-
-.btn-automatic {
-    background-color: var(--standard-btn-bg-color);
-    color: var(--standard-btn-color);
-}
 
 .btn-automatic p {
     font-weight: unset;
 }
 
 #btn-autoStep {
+    display: block;
     height: 50px;
 }
-
-/*======================================*/
-/* Main button block */
-/*======================================*/
-
-.mode-btns {
-    margin-top: 5px;
-
-}
-
-.auto-exec-btns {
-    margin-top: 5px;
-    padding: 5px;
-   /* border: var(--screen-bg-color) dashed 3px; */
-}
-/*
-.auto-exec-btns.on {
-    margin-top: 5px;
-    padding: 5px;
-    border: darkgrey dashed 3px;
-}
-*/
-
-.manual-btn-group {
-    margin-top: 5px;
-    padding: 5px;
-    /* border: var(--screen-bg-color) dashed 3px; */
-}
-
-/*
-.manual-btn-group.on {
-    margin-top: 5px;
-    padding: 5px;
-    border: darkgrey dashed 3px;
-}
-*/
 
 .config-btns {
     margin-top: 10px;
     margin-bottom: 10px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2px;
+    gap: 5px;
 }
 
 .storage-btns {
     margin-top: 10px;
     display: grid;
     grid-template-columns: repeat(1, 1fr);
-    gap: 2px;
+    gap: 7px;
 }
 
 #image-autostep {
     display: none;
 }
 
+
+.eval-btn-group {
+    margin-top: 15px;
+
+}
+.eval-btn-group p {
+    font-weight: bold;
+    font-size: 1.6rem;
+}
+
+label {
+    font-size: var(--font-size-btn);
+}
+
 .storage-btns-mobile {
     display: none;
 }
 
-.main-btn:active {
-    box-shadow: 0 0px darkgray;
-    transform: translate(2px, 2px);
-}
-
-.main-btn {
-    box-shadow: 2px 2px darkgray;
-    background-color: var(--standard-btn-bg-color);
-    color: var(--standard-btn-color);
-    border-radius: var(--border-radius);
-    border: hidden;
-    display: grid;
-    place-items: center;
-    margin: 3px;
-    padding: 3px;
-    font-size: var(--font-size-btn);
-    /* cursor: pointer; */
-
-}
 
 /*======================================*/
 /* Progress block */
@@ -798,22 +736,7 @@ input[readonly] {
     margin-top: 20px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-
-}
-
-.pz-btn {
-    box-shadow: 3px 3px darkgray;
-    background-color: var(--standard-btn-bg-color);
-    color: var(--standard-btn-color);
-    border-radius: var(--border-radius);
-    border: hidden;
-    display: grid;
-    place-items: center;
-    margin: 5px;
-    margin-bottom: 10px;
-    padding: 5px;
-    font-size: var(--font-size-btn);
-    cursor: pointer;
+    gap: 10px;
 }
 
 .status-line {

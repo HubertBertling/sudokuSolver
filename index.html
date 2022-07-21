@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#fff">
     <title>Sudoku</title>
-    <meta name="google-site-verification" content="LH0Rw7nrbXxB3_gDB3adJ9jzVcKCcY3e1BNSr1SjqF4"/>
+    <meta name="google-site-verification" content="LH0Rw7nrbXxB3_gDB3adJ9jzVcKCcY3e1BNSr1SjqF4" />
     <link rel="shortcut icon" href="./images/icon.png" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,69 +63,65 @@
                 </div>
 
                 <div class="game-col2">
-                    <div class="ctrl-btn-group">
+                    <div class="mode-btn-group">
                         <p>Spielmodus</p>
                         <div class="mode-btns">
-                            <div class="btn-define" id="btn-define">Definieren</div>
-                            <div class="btn-play" id="btn-play">Lösen</div>
+                            <button class="pc-btn btn-define" id="btn-define">Definieren</button>
+                            <button class="pc-btn btn-play" id="btn-play">Lösen</button>
                         </div>
                     </div>
-                    <div class="ctrl-btn-group manual-exec-btns on" id="manual-exec-btns">
+                    <div class="manual-btn-group" id="manual-exec-btns">
                         <p>Manuell Lösen</p>
-                        <div class="manual-btn-group" id="manual-btn-group">
-                            <div class="numbers" id="numbers">
-                                <div class="number">1</div>
-                                <div class="number">2</div>
-                                <div class="number">3</div>
-                                <div class="number">4</div>
-                                <div class="number">5</div>
-                                <div class="number">6</div>
-                                <div class="number">7</div>
-                                <div class="number">8</div>
-                                <div class="number">9</div>
-                                <div class="btn-delete-cell" id="btn-delete-cell">X</div>
-                            </div>
+                        <div class="numbers" id="numbers">
+                            <button class="pc-btn number">1</button>
+                            <button class="pc-btn number">2</button>
+                            <button class="pc-btn number">3</button>
+                            <button class="pc-btn number">4</button>
+                            <button class="pc-btn number">5</button>
+                            <button class="pc-btn number">6</button>
+                            <button class="pc-btn number">7</button>
+                            <button class="pc-btn number">8</button>
+                            <button class="pc-btn number">9</button>
+                            <button class="pc-btn btn-delete-cell" id="btn-delete-cell">X</button>
                         </div>
                     </div>
-                    <div class="ctrl-btn-group automatic-exec on" id="automatic-exec">
+                    <div class="automatic-btn-group automatic-exec" id="automatic-exec">
                         <p>Automatisch Lösen</p>
                         <div class="auto-exec-btns" id="auto-exec-btns">
                             <div class="btn-auto-group">
-                                <div class="btn-automatic tooltip btn-run" id="btn-run"><img src="images/play-96.png"
-                                        class="btn-image">
+                                <button class="pc-btn btn-automatic tooltip btn-run" id="btn-run"><img
+                                        src="images/play-96.png" class="btn-image">
                                     <span class="tooltiptext">Start</span>
-                                </div>
-                                <div class="btn-automatic tooltip btn-pause" id="btn-pause"><img
+                                </button>
+                                <button class="pc-btn btn-automatic tooltip btn-pause" id="btn-pause"><img
                                         src="images/pause-96.png" class="btn-image">
                                     <span class="tooltiptext">Pause</span>
-                                </div>
-                                <div class="btn-automatic tooltip btn-stop" id="btn-stop"><img src="images/stop-96.png"
-                                        class="btn-image">
+                                </button>
+                                <button class="pc-btn btn-automatic tooltip btn-stop" id="btn-stop"><img
+                                        src="images/stop-96.png" class="btn-image">
                                     <span class="tooltiptext">Stop</span>
-                                </div>
+                                </button>
                             </div>
-                            <div class="btn-automatic tooltip btn-autoStep" id="btn-autoStep">
+                            <button class="pc-btn tooltip btn-autoStep" id="btn-autoStep">
                                 <img src="images/step-96.png" class="btn-image" id="image-autostep">
-                                <p>Automatisch Lösen</p>
-                                <p>Schritt für Schritt</p>
-                            </div>
+                                <span>Automatisch Lösen</span><br>
+                                <span>Schritt für Schritt</span>
+                            </button>
                         </div>
                     </div>
-                    <div class="ctrl-btn-group main-btns">
+                    <div class="puzzle-btn-group">
                         <p>Puzzle</p>
                         <div class="config-btns">
-                            <div class="main-btn btn-init" id="btn-init">Initialisieren</div>
-                            <div class="main-btn btn-reset" id="btn-reset">Zurücksetzen</div>
-                        </div>
-
-                        <div class="main-btn btn-generate" id="btn-generate">Neues Puzzle</div>
-
+                            <button class="pc-btn btn-init" id="btn-init">Initialisieren</button>
+                            <button class="pc-btn btn-reset" id="btn-reset">Zurücksetzen</button>
+                        </div>                
                         <div class="storage-btns">
-                            <div class="main-btn" id="btn-save">Puzzle speichern</div>
-                            <div class="main-btn" id="btn-statistic">Puzzle-Daten aktualisieren</div>
+                            <button class="pc-btn btn-generate" id="btn-generate">Neues Puzzle</button>
+                            <button class="pc-btn" id="btn-save">Puzzle speichern</button>
+                            <button class="pc-btn" id="btn-statistic">Puzzle-Daten aktualisieren</button>
                         </div>
                     </div>
-                    <div class="ctrl-btn-group last-row">
+                    <div class="eval-btn-group last-row">
                         <p>Auswertung</p>
                         <div class="evaluation">
                             <div>
@@ -167,40 +163,40 @@
                         </div>
                     </div>
 
-                    <div class="mobile-interface mobile-btn" id="btn-save-mobile">Speichern</div>
-                    <div class="mobile-interface mobile-btn" onclick="sudoApp.helpFunktion()">?</div>
-                    <div class="mobile-interface mobile-btn btn-init">Initialisieren</div>
-                    <div class="mobile-interface mobile-btn btn-reset">Zurücksetzen</div>
-                    <div class="mobile-interface mobile-btn" id="btn-restore-mobile">Wiederherst.</div>
-                    <div class="mobile-interface mobile-btn btn-generate">Neu</div>
-                    <div class="mobile-interface mobile-btn btn-define">Definieren</div>
-                    <div class="mobile-interface mobile-btn btn-play">Lösen</div>
-                    <div class="mobile-interface mobile-btn btn-delete-cell">X</div>
-                    <div class="mobile-interface mobile-btn btn-run" id="btn-run"><img src="images/play-96.png"
+                    <button class="mobile-interface mobile-btn" id="btn-save-mobile">Speichern</button>
+                    <button class="mobile-interface mobile-btn" onclick="sudoApp.helpFunktion()">?</button>
+                    <button class="mobile-interface mobile-btn btn-init">Initialisieren</button>
+                    <button class="mobile-interface mobile-btn btn-reset">Zurücksetzen</button>
+                    <button class="mobile-interface mobile-btn" id="btn-restore-mobile">Wiederherst.</button>
+                    <button class="mobile-interface mobile-btn btn-generate">Neu</button>
+                    <button class="mobile-interface mobile-btn btn-define">Definieren</button>
+                    <button class="mobile-interface mobile-btn btn-play">Lösen</button>
+                    <button class="mobile-interface mobile-btn btn-delete-cell">X</button>
+                    <button class="mobile-interface mobile-btn btn-run" id="btn-run"><img src="images/play-96.png"
                             class="btn-image">
                         <span>Start</span>
-                    </div>
-                    <div class="mobile-interface mobile-btn mobile-number">1</div>
-                    <div class="mobile-interface mobile-btn mobile-number">2</div>
-                    <div class="mobile-interface mobile-btn mobile-number">3</div>
-                    <div class="mobile-interface mobile-btn btn-pause"><img src="images/pause-96.png"
+                    </button>
+                    <button class="mobile-interface mobile-btn mobile-number">1</button>
+                    <button class="mobile-interface mobile-btn mobile-number">2</button>
+                    <button class="mobile-interface mobile-btn mobile-number">3</button>
+                    <button class="mobile-interface mobile-btn btn-pause"><img src="images/pause-96.png"
                             class="btn-image">
                         <span>Pause</span>
-                    </div>
-                    <div class="mobile-interface mobile-btn mobile-number">4</div>
-                    <div class="mobile-interface mobile-btn mobile-number">5</div>
-                    <div class="mobile-interface mobile-btn mobile-number">6</div>
-                    <div class="mobile-interface mobile-btn btn-stop"><img src="images/stop-96.png"
+                    </button>
+                    <button class="mobile-interface mobile-btn mobile-number">4</button>
+                    <button class="mobile-interface mobile-btn mobile-number">5</button>
+                    <button class="mobile-interface mobile-btn mobile-number">6</button>
+                    <button class="mobile-interface mobile-btn btn-stop"><img src="images/stop-96.png"
                             class="btn-image">
                         <span>Stop</span>
-                    </div>
-                    <div class="mobile-interface mobile-btn mobile-number">7</div>
-                    <div class="mobile-interface mobile-btn mobile-number">8</div>
-                    <div class="mobile-interface mobile-btn mobile-number">9</div>
-                    <div class="mobile-interface mobile-btn btn-automatic btn-autoStep" id="btn-autoStep">
+                    </button>
+                    <button class="mobile-interface mobile-btn mobile-number">7</button>
+                    <button class="mobile-interface mobile-btn mobile-number">8</button>
+                    <button class="mobile-interface mobile-btn mobile-number">9</button>
+                    <button class="mobile-interface mobile-btn btn-automatic btn-autoStep" id="btn-autoStep">
                         <img src="images/step-96.png" class="btn-image" id="image-autostep">
                         <span>Schritt</span>
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>
@@ -246,12 +242,12 @@
         </section>
         <div class="puzzle-btns ">
             <!--Die 4 buttons unterhalb der Puzzle-Datenbanktabelle -->
-            <div class="pz-btn noprint" id="pz-btn-load" onclick="sudoApp.loadCurrentPuzzle()">Laden </div>
-            <div class="pz-btn noprint" id="pz-btn-previous" onclick="sudoApp.previousPuzzle()"><img
-                    src="images/pfeilrueckwaerts.png" class="forward-backward-image"></div>
-            <div class="pz-btn noprint" id="pz-btn-next" onclick="sudoApp.nextPuzzle()"><img
-                    src="images/pfeilvorwaerts.png" class="forward-backward-image"></div>
-            <div class="pz-btn noprint" id="pz-btn-delete" onclick="sudoApp.deleteCurrentPuzzle()">Löschen</div>
+            <button class="pc-btn noprint" id="pz-btn-load" onclick="sudoApp.loadCurrentPuzzle()">Laden </button>
+            <button class="pc-btn noprint" id="pz-btn-previous" onclick="sudoApp.previousPuzzle()"><img
+                    src="images/pfeilrueckwaerts.png" class="forward-backward-image"></button>
+            <button class="pc-btn noprint" id="pz-btn-next" onclick="sudoApp.nextPuzzle()"><img
+                    src="images/pfeilvorwaerts.png" class="forward-backward-image"></button>
+            <button class="pc-btn noprint" id="pz-btn-delete" onclick="sudoApp.deleteCurrentPuzzle()">Löschen</button>
         </div>
         <div class="puzzle-header">
             <!--Die Überschrift zum aktuell geladenen Puzzle-->
@@ -278,7 +274,7 @@
             </div>
         </div>
         <!--In der Druckausgabe wird der Druck-Button unterdrückt-->
-        <div class="pz-btn noprint" id="pz-btn-print" onclick="sudoApp.printCurrentPuzzle()">Drucken</div>
+        <button class="pc-btn noprint" id="pz-btn-print" onclick="sudoApp.printCurrentPuzzle()">Drucken</button>
     </div>
     <!--Der Inhalt des Reiters Hilfe-->
     <div id="help" class="tabcontent ">

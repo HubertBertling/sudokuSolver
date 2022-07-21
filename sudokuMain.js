@@ -457,7 +457,7 @@ class SudokuApp {
     }
 
     displayOnOffStatus() {
-        let manualGroup = document.getElementById("manual-btn-group");
+       /* let manualGroup = document.getElementById("manual-btn-group");
         let autoGroup = document.getElementById("auto-exec-btns");
         if (this.autoExecOn) {
             manualGroup.classList.remove('on');
@@ -466,6 +466,7 @@ class SudokuApp {
             autoGroup.classList.remove('on');
             manualGroup.classList.add('on');
         }
+        */
     }
 
     setGamePhase(gamePhase) {
