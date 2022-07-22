@@ -261,7 +261,7 @@ Beim Abspeichern kann dem Puzzle ein Name gegeben werden. Automatisch erhält es
 
 ## Die Smartphone Version der App
 
-![Smartphone](./images/SmartphoneVersion.png)
+![Smartphone](./images/smartphoneVersion.png)
 
 Auf dem Smartphone ist der Solver/Generator als Web-Anwendung verfügbar. Also in einem Browser die URL eingeben. Die Funktionalität ist bis auf die Puzzle-Datenbank identisch.
 
