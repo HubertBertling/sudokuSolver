@@ -1345,9 +1345,8 @@ class SudokuGrid {
         this.set();
         // Setze das Puzzle in den Define-Mode
         sudoApp.setGamePhase('define')
-        // Lösche in der Lösung Nummern solange
+        // Lösche in der Lösung Nummern, solange
         // wie das verbleibende Puzzle backtrack-frei bleibt.
-        // und speichere den ermittelten Schwierigkeitsgrad
         this.reduce();
         // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
         sudoApp.stepper.init();
@@ -1373,8 +1372,8 @@ class SudokuGrid {
                 let totalAdmissibleCondition = (this.sudoCells[k].getTotalAdmissibles().size == 1);
                 if (neccessaryCondition || totalAdmissibleCondition) {
                     // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer,
-                    // Entweder eine notwendige Nummer oder eine Single-Nummer
-                    // tmpReduced = true;
+                    // Entweder eine notwendige Nummer oder eine Single-Nummer-
+                    // D.h. die gelöschte Nummer ist eindeutig wiederherstellbar.
                 } else {
                     // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
                     // Dann wird die Löschung zurückgenommen.

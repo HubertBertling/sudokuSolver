@@ -168,7 +168,7 @@ html {
     width: var(--sudoku-cell-size);
     border-radius: var(--border-radius);
     display: grid;
-    font-size: var(--font-size-btn);
+    font-size: 1.8rem;
     place-items: center;
     /*    cursor: pointer; */
     margin: 2px;
@@ -228,7 +228,7 @@ html {
 }
 
 .auto-value-cell>div.auto-value-number {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
 }
 
 .auto-value-cell>div.auto-value-option1 {

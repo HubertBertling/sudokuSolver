@@ -219,7 +219,7 @@ html {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     place-items: center;
-    font-size: 1.0rem;
+    font-size: 1.2rem;
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-color);
     border: 1px solid #0050ff
@@ -246,7 +246,7 @@ html {
 
 .nested>div.inAdmissible {
     font-weight: bold;
-    font-size: 1.0rem;
+    font-size: 1.2rem;
     color: Crimson;
 }
 
