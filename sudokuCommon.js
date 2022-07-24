@@ -1347,21 +1347,16 @@ class SudokuGrid {
         sudoApp.setGamePhase('define')
         // Lösche in der Lösung Nummern solange
         // wie das verbleibende Puzzle backtrack-frei bleibt.
-        let reduced = true;
-        while (reduced) {
-            reduced = this.reduce();
-        }
+        // und speichere den ermittelten Schwierigkeitsgrad
+        this.reduce();
         // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
         sudoApp.stepper.init();
         sudoApp.setAutoExecOff();
         sudoApp.suGrid.deselect();
         sudoApp.autoExecRun();
-        // Speichere den Schwierigkeitsgrad.
-        this.refresh();
     }
 
     reduce() {
-        let tmpReduced = false;
         let randomCellOrder = getRandomNumbers(81, 0, 81);
         for (let i = 0; i < 81; i++) {
             let k = randomCellOrder[i];
@@ -1379,7 +1374,7 @@ class SudokuGrid {
                 if (neccessaryCondition || totalAdmissibleCondition) {
                     // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer,
                     // Entweder eine notwendige Nummer oder eine Single-Nummer
-                    tmpReduced = true;
+                    // tmpReduced = true;
                 } else {
                     // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
                     // Dann wird die Löschung zurückgenommen.
@@ -1388,7 +1383,6 @@ class SudokuGrid {
                 }
             }
         }
-        return tmpReduced;
     }
 
     displayBenchmark(countBackwards, levelOfDifficulty) {
@@ -2044,6 +2038,7 @@ class SudokuCell {
         // gefolgert werden kann.
         return totalInAdmissibles.difference(this.getNecessarys());
     }
+
     getAdmissibles() {
         // Die zulässigen Zahlen einer Zelle sind das Komplement der unzulässigen Zahlen
         return new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
@@ -2057,6 +2052,16 @@ class SudokuCell {
 
     getNecessarys() {
         return new SudokuSet(this.myNecessarys);
+    }
+    containsNecessaryNr() {
+        return this.myNecessarys.size == 1;
+    }
+    containsDirectSingle() {
+        return this.myLevel_0_inAdmissibles.size == 8;
+    }
+    containsIndirectSingle() {
+        return this.getTotalInAdmissibles().size == 8 &&
+            !this.containsDirectSingle();
     }
     getTotalSingles() {
         let singles = this.getTotalAdmissibles();
