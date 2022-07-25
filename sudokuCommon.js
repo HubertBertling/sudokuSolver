@@ -642,16 +642,17 @@ class StepperOnGrid {
         let emptySelection = {
             index: -1,
             options: [],
+            indirectNecessaryOnes: [],
             necessaryOnes: [],
             level_0_singles: []
         }
         return emptySelection;
     }
 
-    calculateLevel_0_SinglesSelectionFrom(selectionList) {
-        // Berechnet Selektion von Zellen, die eine notwendige Nummer enthalten.
+    calculateIndirectNeccesarySelectionFrom(selectionList) {
+        // Berechnet Selektion von Zellen, die eine indirekt notwendige Nummer enthalten.
         for (let i = 0; i < selectionList.length; i++) {
-            if (selectionList[i].level_0_singles.length > 0) {
+            if (selectionList[i].indirectNecessaryOnes.length > 0) {
                 return selectionList[i];
             }
         }
@@ -659,6 +660,26 @@ class StepperOnGrid {
         let emptySelection = {
             index: -1,
             options: [],
+            indirectNecessaryOnes: [],
+            necessaryOnes: [],
+            level_0_singles: []
+        }
+        return emptySelection;
+    }
+
+
+    calculateLevel_0_SinglesSelectionFrom(selectionList) {
+        // Berechnet Selektion von Zellen, die ein level_0_single enthalten.
+        for (let i = 0; i < selectionList.length; i++) {
+            if (selectionList[i].level_0_singles.length > 0) {
+                return selectionList[i];
+            }
+        }
+        // Falls es keine Zellen mit dieser Eigenschaft gibt
+        let emptySelection = {
+            index: -1,
+            options: [],
+            indirectNecessaryOnes: [],
             necessaryOnes: [],
             level_0_singles: []
         }
@@ -677,6 +698,7 @@ class StepperOnGrid {
         let emptySelection = {
             index: -1,
             options: [],
+            indirectNecessaryOnes: [],
             necessaryOnes: [],
             level_0_singles: []
         }
@@ -690,6 +712,7 @@ class StepperOnGrid {
                 let selection = {
                     index: i,
                     options: Array.from(this.suGrid.sudoCells[i].getTotalAdmissibles()),
+                    indirectNecessaryOnes: Array.from(this.suGrid.sudoCells[i].getIndirectNecessarys()),
                     necessaryOnes: Array.from(this.suGrid.sudoCells[i].getNecessarys()),
                     level_0_singles: Array.from(this.suGrid.sudoCells[i].getSingles())
                 }
@@ -707,6 +730,7 @@ class StepperOnGrid {
             let emptySelection = {
                 index: -1,
                 options: [],
+                indirectNecessaryOnes: [],
                 necessaryOnes: [],
                 level_0_singles: []
             }
@@ -740,6 +764,22 @@ class StepperOnGrid {
                 }
             }
             return tmpLevel_0_single;
+        }
+        //Bestimmt die nächste Zelle mit indirekt notwendiger Nummer unter den zulässigen Nummern
+        let tmpIndirectNeccessary = this.calculateIndirectNeccesarySelectionFrom(optionList);
+        if (tmpIndirectNeccessary.index !== -1) {
+            switch (this.levelOfDifficulty) {
+                    case 'Keine Angabe':
+                    case 'Leicht':
+                    case 'Mittel': {
+                        this.levelOfDifficulty = 'Schwer';
+                        break;
+                    }
+                    default: {
+                        // Schwierigkeitsgrad bleibt unverändert.
+                    }
+            }
+            return tmpIndirectNeccessary;
         }
         // Bestimmt die nächste Zelle mit level > 0 single, d.h.
         // unter Verwendung von indirekt unzulässigen Nummern
@@ -995,6 +1035,38 @@ class NineCellCollection {
         }
     }
 
+    calculateIndirectNecessaryForNextStep() {
+        // Berechne für die NineCellCollection alle notwendigen Nummern.
+        // Notwendige Nummern sind zulässige Nummern einer Zelle,
+        // die in der Gruppe, Reihe oder Spalte der Zelle genau einmal vorkommen.
+        let added = false;
+        for (let i = 1; i < 10; i++) {
+            let cellIndex = this.occursOnceInTotalAdmissibles(i);
+            // Wenn die Nummer i genau einmal in der Collection vorkommt
+            // trage sie ein in der Necessary-liste der Zelle
+            if (cellIndex !== -1) {
+                this.myCells[cellIndex].addIndirektNecessary(i.toString(), this);
+                added = true;
+                //      return added;
+            }
+        }
+        return added;
+    }
+
+    calculateIndirektNecessarys() {
+        // Indirekt notwendige Nummern sind zulässige Nummern einer Zelle,
+        // die in der Gruppe, Reihe oder Spalte der Zelle total genau einmal vorkommen.
+        // Also unter Berücksichtigung der indirekt unzulässigen Nummern.
+        for (let i = 1; i < 10; i++) {
+            let cellIndex = this.occursOnceInTotalAdmissibles(i);
+            // Wenn die Nummer i genau einmal in der Collection vorkommt
+            // trage sie ein in der Necessary-liste der Zelle
+            if (cellIndex !== -1) {
+                this.myCells[cellIndex].addIndirektNecessary(i.toString(), this);
+            }
+        }
+    }
+
     occursOnce(permNr) {
         // Berechne, ob die Zahl permNr in möglichen Zahlen aller Zellen 
         // der Collection genau einmal vorkommt
@@ -1007,6 +1079,30 @@ class NineCellCollection {
         for (let i = 0; i < 9; i++) {
             if (this.myCells[i].getValue() == '0') {
                 if (this.myCells[i].getAdmissibles().has(permNr.toString())) {
+                    countOccurrences++;
+                    lastCellNr = i;
+                }
+            }
+        }
+        if (countOccurrences == 1) {
+            return lastCellNr;
+        } else {
+            return -1;
+        }
+    }
+
+    occursOnceInTotalAdmissibles(permNr) {
+        // Berechne, ob die Zahl permNr in den total zulässigen Zahlen aller Zellen 
+        // der Collection genau einmal vorkommt
+        // Rücgabe: der Index der Zelle, die das einmalige Auftreten enthält
+        // -1, falls die Nummer gar nicht auftaucht oder mehrmals
+        let countOccurrences = 0;
+        let lastCellNr = -1;
+
+        // Iteriere über alle Zellen der Collection
+        for (let i = 0; i < 9; i++) {
+            if (this.myCells[i].getValue() == '0') {
+                if (this.myCells[i].getTotalAdmissibles().has(permNr.toString())) {
                     countOccurrences++;
                     lastCellNr = i;
                 }
@@ -1637,7 +1733,8 @@ class SudokuGrid {
         while (inAdmissiblesAdded) {
             if (this.calculateNecessarysForNextStep()) return true;
             if (this.calculateSinglesForNextStep()) return true;
-
+            if (this.calculateIndirectNecessarysForNextStep()) return true;
+        
             inAdmissiblesAdded = false;
 
             if (this.derive_inAdmissiblesFromNecessarys()) {
@@ -1854,6 +1951,40 @@ class SudokuGrid {
         return added;
     }
 
+    calculateIndirectNecessarysForNextStep () {
+        // Berechne für jede nicht gesetzte Zelle
+        // in der Menge ihrer indirekt
+        // notwendigen Nummern.
+
+        // Iteriere über die Gruppen
+        let added = false;
+        for (let i = 0; i < 9; i++) {
+            let tmpGroup = this.sudoGroups[i];
+            if (tmpGroup.calculateIndirectNecessaryForNextStep()) {
+                added = true;
+                //      return added;
+            }
+        }
+        // Iteriere über die Reihen
+        for (let i = 0; i < 9; i++) {
+            let tmpRow = this.sudoRows[i];
+            if (tmpRow.calculateIndirectNecessaryForNextStep()) {
+                added = true;
+                //      return added;
+            }
+        }
+        // Iteriere über die Spalten
+        for (let i = 0; i < 9; i++) {
+            let tmpCol = this.sudoCols[i];
+            if (tmpCol.calculateIndirectNecessaryForNextStep()) {
+                added = true;
+                //      return added;
+            }
+        }
+
+        return added;
+    }
+
     calculateNecessarys() {
         // Berechne und setze für jede nicht gesetzte Zelle
         // in der Menge ihrer möglichen Nummern die
@@ -1981,6 +2112,10 @@ class SudokuCell {
         // Außer bei widerspruchsvollen Sudokus einelementig
         this.myNecessarys = new SudokuSet();
         this.myNecessaryCollections = new Map();
+ 
+      // Außer bei widerspruchsvollen Sudokus einelementig
+      this.myIndirectNecessarys = new SudokuSet();
+      this.myIndirectNecessaryCollections = new Map();
     }
 
     setInfluencers(influencers) {
@@ -2052,6 +2187,9 @@ class SudokuCell {
     getNecessarys() {
         return new SudokuSet(this.myNecessarys);
     }
+    getIndirectNecessarys() {
+        return new SudokuSet(this.myIndirectNecessarys);
+    }
     containsNecessaryNr() {
         return this.myNecessarys.size == 1;
     }
@@ -2110,6 +2248,17 @@ class SudokuCell {
         for (let i = 0; i < admissibleNodes.length; i++) {
             if (this.myNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
                 admissibleNodes[i].classList.add('neccessary');
+
+            }
+
+        }
+    }
+
+    displayIndirectNecessary() {
+        let admissibleNodes = this.myCellNode.children;
+        for (let i = 0; i < admissibleNodes.length; i++) {
+            if (this.myIndirectNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
+                admissibleNodes[i].classList.add('indirect-neccessary');
 
             }
 
@@ -2549,6 +2698,12 @@ class SudokuCell {
         this.myNecessarys.add(nr);
         this.myNecessaryCollections.set(nr, nineCellCollection);
     }
+
+    addIndirectNecessary(nr, nineCellCollection) {
+        this.myIndirectNecessarys.add(nr);
+        this.myIndirectNecessaryCollections.set(nr, nineCellCollection);
+    }
+
 
     isInsolvable() {
         return (
