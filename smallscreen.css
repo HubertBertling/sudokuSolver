@@ -30,7 +30,7 @@
     --error-cell-color: white;
 
     /* Other definitions */
-    --sudoku-cell-size: 39px;
+    --sudoku-cell-size: 40px;
     --border-radius: 5px;
     --space-y: 20px;
     --gap: 5px;
@@ -93,15 +93,19 @@ html {
 
 
 
-.tabcontent {
+.tabdatabase, .tabhelp {
     display: none;
     color: black;
     padding: 5px;
 }
 
+
+
 .tabsolver {
     max-width: fit-content;
-    min-width:fit-content;
+    min-width:fit-content; 
+    color: black;
+    padding: 5px;
 }
 
 
@@ -583,145 +587,8 @@ label {
     margin: 4px;
 }
 
-
-/*=======================================*/
-/* Puzzle-Datenbank 
-/*=======================================*/
-
-.puzzle-btns {
-    margin-top: 20px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-
-}
-
-.pz-btn {
-    box-shadow: 3px 3px darkgray;
-    background-color: grey;
-    color: var(--standard-btn-color);
-    border-radius: var(--border-radius);
-    border: hidden;
-    display: grid;
-    place-items: center;
-    margin: 5px;
-    margin-bottom: 10px;
-    padding: 5px;
-    font-size: var(--font-size-btn);
-    cursor: pointer;
-}
-
 .status-line {
     display: none;
-}
-
-.status-line-item {
-    display: none;
-
-}
-
-
-.puzzle-line {
-    font-size: 1.4rem;
-    color: black;
-    margin-top: 50px;
-    display: flex;
-    flex-direction: row;
-    line-height: normal;
-}
-
-.pz-nr {
-    margin-left: 20px;
-    margin-right: 5px;
-}
-
-.pz-all {
-    margin-left: 5px;
-    margin-right: 20px;
-}
-
-.pz-table {
-    margin-left: 25px;
-    margin-right: 25px;
-    display: grid;
-    grid-template-columns: repeat(9, auto);
-}
-
-.cell-field {
-    position: relative;
-    width: 30px;
-    height: 30px;
-    display: grid;
-    background-color: grey;
-    place-items: center;
-    color: white;
-}
-
-
-section {
-    font-size: 1.4rem;
-    position: relative;
-    border: 1px solid #000;
-    padding-top: 37px;
-    background: #500;
-}
-
-section.positioned {
-    position: absolute;
-    top: 100px;
-    left: 100px;
-    width: 600px;
-    box-shadow: 0 0 15px #333;
-}
-
-.container {
-    overflow-y: auto;
-    height: 200px;
-}
-
-table {
-    border-spacing: 0;
-    width: 100%;
-}
-
-.puzzle-db-table td+td {
-    border-left: 1px solid #eee;
-}
-
-.puzzle-db-table td,
-th {
-    border-bottom: 1px solid #eee;
-    background: #ddd;
-    color: #000;
-    padding: 10px 20px;
-}
-
-.puzzle-db-table th {
-    height: 0;
-    line-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    color: transparent;
-    border: none;
-    white-space: nowrap;
-}
-
-.puzzle-db-table th div {
-    position: absolute;
-    background: transparent;
-    color: #fff;
-    padding: 9px 20px;
-    top: 0;
-    margin-left: -20px;
-    line-height: normal;
-    border-left: 1px solid #800;
-}
-
-.puzzle-db-table th:first-child div {
-    border: none;
-}
-
-.puzzle-db-tbody tr.selected td {
-    background-color: lightcyan;
 }
 
 #loader {

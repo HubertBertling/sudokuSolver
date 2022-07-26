@@ -104,7 +104,7 @@ html {
 
 .tabsolver, .tabdatabase {
     max-width: fit-content;
-    min-width:fit-content;
+    min-width:fit-content; 
 }
 .tabhelp {
     width: 100%;
