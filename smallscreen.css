@@ -97,10 +97,12 @@ html {
     display: none;
     color: black;
     padding: 5px;
-    max-width: fit-content;
-    min-width: fit-content;
-   }
+}
 
+.tabsolver {
+    max-width: fit-content;
+    min-width:fit-content;
+}
 
 
 /*======================================*/

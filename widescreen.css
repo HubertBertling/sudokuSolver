@@ -100,6 +100,9 @@ html {
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
+}
+
+.tabsolver, .tabdatabase {
     max-width: fit-content;
     min-width:fit-content;
 }
