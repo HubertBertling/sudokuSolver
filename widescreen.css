@@ -106,11 +106,9 @@ html {
     max-width: fit-content;
     min-width:fit-content;
 }
-
-.help-embed {
+.tabhelp {
     width: 100%;
 }
-
 
 .puzzle-header {
     font-size: 1.6rem;
