@@ -107,6 +107,11 @@ html {
     min-width:fit-content;
 }
 
+.help-embed {
+    width: 100%;
+}
+
+
 .puzzle-header {
     font-size: 1.6rem;
     display: inline-block;
