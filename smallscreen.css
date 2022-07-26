@@ -6,9 +6,10 @@
 
     --standard-btn-bg-color: rgba(0, 0, 0, .25);
     --standard-btn-color: black;
+
     --delete-btn-bg-color: #e91e63;
     --delete-btn-color: white;
-
+    --standard-btn-height: 35px;
     --help-color: #4e67c8;
 
     /* Cell colors */
@@ -29,7 +30,7 @@
     --error-cell-color: white;
 
     /* Other definitions */
-    --sudoku-cell-size: 41px;
+    --sudoku-cell-size: 39px;
     --border-radius: 5px;
     --space-y: 20px;
     --gap: 5px;
@@ -63,6 +64,9 @@ html {
     background-color: var(--screen-bg-color);
 }
 
+.app-content {
+    display:grid;
+}
 
 
 /* Style tab links */
@@ -81,39 +85,34 @@ html {
     width: 25%;
 }
 
-.tablink:hover {
-    background-color: #777;
-}
+ .tabcontainer {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+ }
+
+
 
 .tabcontent {
     display: none;
-}
-
-.tabdatabase {
-    color: white;
-    font-size: 1.0rem;
-
-}
-
-.tabsolver {
+    color: black;
     padding: 5px;
-}
+    max-width: fit-content;
+    min-width: fit-content;
+   }
+
 
 
 /*======================================*/
 /* Sudoku grid block */
 /*======================================*/
 
-.inputArea {
-    max-width: 410px;
+.gridArea {
+    position: relative;
     display: grid;
-    grid-template-columns: repeat(1, auto);
+    grid-template-columns: repeat(1, auto);  
 }
 
-.gridArea {
-    display: grid;
-    grid-template-columns: repeat(1, auto);
-}
 
 .main-sudoku-grid {
     display: grid;
@@ -132,7 +131,7 @@ html {
     position: relative;
     height: var(--sudoku-cell-size);
     width: var(--sudoku-cell-size);
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     display: grid;
     font-size: var(--font-size-btn);
     place-items: center;
@@ -219,7 +218,7 @@ html {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     place-items: center;
-    font-size: 1.0rem;
+    font-size: 1rem;
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-color);
     border: 1px solid #0050ff
@@ -329,24 +328,24 @@ html {
 
 
 .mobile-grid-container {
-    margin-top: 5px;
+    margin-top: 10px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 5px;
     font-size: 1.4rem;
-
 }
+
 
 .mobile-evaluation {
-    margin: 10px;
-
+    margin-left: 10px;
 }
+
 
 .mobile-btn {
     background-color: var(--standard-btn-bg-color);
     text-align: center;
-    padding-top: 12px;
-    padding-bottom: 12px;
+
+    height: var(--standard-btn-height);
     border-radius: 3px;
     display: flex;
     justify-content: center;
@@ -383,9 +382,11 @@ html {
 }
 
 .mobile-evaluation {
+    place-items: center;
     grid-column: 1 / span 2;
     display: flex;
 }
+
 
 label {
     margin-left: 5px;

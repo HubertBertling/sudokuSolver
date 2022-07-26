@@ -5,6 +5,7 @@
     --screen-color: #0d1117;
     --standard-btn-bg-color: rgba(0, 0, 0, .25);
     --standard-btn-color: black;
+    --standard-btn-height: 30px;
     --delete-btn-bg-color: #e91e63;
     --delete-btn-color: white;
 
@@ -50,16 +51,17 @@
     box-sizing: border-box;
 }
 
-
-
 /* Set height of body and the document to 100% */
 body,
 html {
     font-family: 'Open Sans', sans-serif;
-    height: 800px;
+    height: 100%;
     background-color: var(--screen-bg-color);
 }
 
+.app-content {
+    display:grid;
+}
 /* Style tab links */
 .tablink {
     background-color: #555;
@@ -84,14 +86,22 @@ html {
 }
 
 /* Style the tab content (and add height:100% for full page content) */
+.tabcontainer {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+ }
+
+
 .tabcontent {
     display: none;
     color: black;
-    padding-top: 80px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 20px;
-    /* height: 100%; */
+    padding-top: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    max-width: fit-content;
+    min-width:fit-content;
 }
 
 .puzzle-header {
@@ -132,15 +142,7 @@ html {
 /*======================================*/
 .sudoku-solver-in-tab {
     display: grid;
-    place-items: center;
-    grid-template-columns: 1fr;
-}
-
-.inputArea {
-    z-index: 1;
-    display: grid;
-    /* place-items: center; */
-    grid-template-columns: repeat(2, auto);
+    grid-template-columns: repeat(3, auto);
 }
 
 .gridArea {
@@ -375,6 +377,7 @@ html {
 }
 
 .game-col2 {
+    margin-top: 10px;
     margin-left: 10px;
 }
 
@@ -382,7 +385,7 @@ html {
     border: none;
     padding-left: 5px;
     padding-right: 5px;
-    height: 30px;
+    height: var(--standard-btn-height);
     border-radius: var(--border-radius);
     background-color: var(--standard-btn-bg-color);
     color: var(--standard-btn-color);
@@ -397,10 +400,6 @@ html {
 .pc-btn:active {
     box-shadow: none;
     transform: translate(3px, 3px);
-}
-
-.mode-btn-group {
-    margin-top: 10px;
 }
 
 .mode-btn-group p {
