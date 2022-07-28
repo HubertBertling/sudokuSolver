@@ -5,6 +5,7 @@
     --screen-color: #0d1117;
     --standard-btn-bg-color: rgba(0, 0, 0, .25);
     --standard-btn-color: black;
+    --standard-btn-height: 20px;
     --delete-btn-bg-color: #e91e63;
     --delete-btn-color: white;
 
@@ -31,7 +32,7 @@
     --sudoku-cell-size: 62px;
     --border-radius: 5px;
     --space-y: 20px;
-    --font-size-btn: 1.6rem;
+    --font-size-btn: 1.2rem;
     --font-size-sm: 1rem;
     --font-size: 1.2rem;
     --font-size-lg: 1.8rem;
@@ -50,16 +51,17 @@
     box-sizing: border-box;
 }
 
-
-
 /* Set height of body and the document to 100% */
 body,
 html {
     font-family: 'Open Sans', sans-serif;
-    height: 800px;
+    height: 100vh;
     background-color: var(--screen-bg-color);
 }
 
+.app-content {
+    display:grid;
+}
 /* Style tab links */
 .tablink {
     background-color: #555;
@@ -68,9 +70,9 @@ html {
     border: none;
     outline: none;
     /*  cursor: pointer; */
-    padding: 14px 16px;
+    padding: 10px 12px;
     /* font-size: 17px; */
-    font-size: 1.8rem;
+    font-size: 1.2rem;
     font-weight: bold;
     width: 25%;
 }
@@ -84,21 +86,32 @@ html {
 }
 
 /* Style the tab content (and add height:100% for full page content) */
+.tabcontainer {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+ }
+
+
 .tabcontent {
     display: none;
     color: black;
-    padding-top: 80px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 20px;
-    /* height: 100%; */
+    padding: 10px;
+}
+
+.tabsolver, .tabdatabase {
+    max-width: fit-content;
+    min-width:fit-content; 
+}
+.tabhelp {
+    width: 100%;
 }
 
 .puzzle-header {
-    font-size: 1.6rem;
+    font-size: 1.2rem;
     display: inline-block;
     color: black;
-    margin-top: 40px;
+    margin-top: 20px;
 }
 
 .tooltip {
@@ -132,15 +145,7 @@ html {
 /*======================================*/
 .sudoku-solver-in-tab {
     display: grid;
-    place-items: center;
-    grid-template-columns: 1fr;
-}
-
-.inputArea {
-    z-index: 1;
-    display: grid;
-    /* place-items: center; */
-    grid-template-columns: repeat(2, auto);
+    grid-template-columns: repeat(3, auto);
 }
 
 .gridArea {
@@ -155,7 +160,7 @@ html {
 }
 
 .sudoku-group {
-    margin: 5px;
+    margin: 3px;
     display: grid;
     grid-template-columns: repeat(3, auto);
     border-radius: var(--border-radius);
@@ -164,11 +169,11 @@ html {
 
 .sudoku-grid-cell {
     position: relative;
-    height: var(--sudoku-cell-size);
-    width: var(--sudoku-cell-size);
+    height: 40px;
+    width: 40px;
     border-radius: var(--border-radius);
     display: grid;
-    font-size: 1.8rem;
+    font-size: var(--font-size-btn);
     place-items: center;
     /*    cursor: pointer; */
     margin: 2px;
@@ -218,33 +223,33 @@ html {
 .auto-value-cell>div {
     background-color: var(--played-cell-bg-color);
     text-align: center;
-    padding: 4px 2px;
+    padding: 2px 1px;
 }
 
 .auto-value-cell>div.auto-step-number {
     background-color: darkgrey;
     color: black;
-    font-size: 1.2rem;
+    font-size: 0.8rem;
 }
 
 .auto-value-cell>div.auto-value-number {
-    font-size: 1.8rem;
+    font-size: var(--font-size-btn);
 }
 
 .auto-value-cell>div.auto-value-option1 {
-    font-size: 1.2rem;
+    font-size: 0.8rem;
 }
 
 .auto-value-cell>div.auto-value-option2 {
-    font-size: 1.2rem;    
+    font-size: 0.8rem;    
 }
 
 .auto-value-cell>div.auto-value-option3 {
-    font-size: 1.2rem;
+    font-size: 0.8rem;
 }
 
 .auto-value-cell>div.open {
-    font-size: 1.2rem;
+    font-size: 0.8rem;
     background-color: var(--nested-cell-bg-color);
 }
 
@@ -252,7 +257,7 @@ html {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     place-items: center;
-    font-size: 1.6rem;
+    font-size: 1.0rem;
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-color);
     border: 1px solid #0050ff
@@ -267,11 +272,11 @@ html {
 .nested>div.neccessary {
     padding-top: 1px;
     padding-bottom: 1px;
-    padding-left: 4px;
-    padding-right: 4px;
+    padding-left: 3px;
+    padding-right: 3px;
     border-radius: 3px;
     background-color: #56c7aa;
-    font-size: 1.4rem;
+    font-size: 1.0rem;
     color: #0d1117;
     border: 1px solid white;
 }
@@ -289,15 +294,9 @@ html {
 }
 
 .nested>div.inAdmissible {
-    padding-top: 1px;
-    padding-bottom: 1px;
-    padding-left: 4px;
-    padding-right: 4px;
-    border-radius: 3px;
-    font-size: 1.4rem;
-    background-color: Crimson;
-    color: white;
-    border: 1px solid white;
+    font-weight: bold;
+    font-size: 1.0rem;
+    color: Crimson;
 }
 
 .sudoku-grid-cell.hover {
@@ -305,11 +304,11 @@ html {
 }
 
 .sudoku-grid-cell.hover-red {
-    border: 4px dashed Crimson;
+    border: 2px dashed Crimson;
 }
 
 .sudoku-grid-cell.hover-green {
-    border: 4px dashed darkgreen;
+    border: 2px dashed darkgreen;
 }
 
 .sudoku-group.err {
@@ -319,17 +318,17 @@ html {
 
 .sudoku-grid-cell.row-err,
 .sudoku-grid-cell.col-err {
-    border: 3px solid var(--error-cell-bg-color);
+    border: 2px solid var(--error-cell-bg-color);
 }
 
 .sudoku-grid-cell.col-err {
-    border-top: 5px solid var(--error-cell-bg-color);
-    border-bottom: 5px solid var(--error-cell-bg-color);
+    border-top: 2px solid var(--error-cell-bg-color);
+    border-bottom: 2px solid var(--error-cell-bg-color);
 }
 
 .sudoku-grid-cell.row-err {
-    border-left: 5px solid var(--error-cell-bg-color);
-    border-right: 5px solid var(--error-cell-bg-color);
+    border-left: 2px solid var(--error-cell-bg-color);
+    border-right: 2px solid var(--error-cell-bg-color);
 }
 
 .sudoku-grid-cell.err {
@@ -343,7 +342,7 @@ html {
 }
 
 .evaluations {
-    font-size: 1.6rem;
+    font-size: 1.0rem;
     display: flex;
     padding-top: 5px;
 
@@ -387,6 +386,7 @@ html {
 }
 
 .game-col2 {
+    margin-top: 10px;
     margin-left: 10px;
 }
 
@@ -394,7 +394,7 @@ html {
     border: none;
     padding-left: 5px;
     padding-right: 5px;
-    height: 30px;
+    height: var(--standard-btn-height);
     border-radius: var(--border-radius);
     background-color: var(--standard-btn-bg-color);
     color: var(--standard-btn-color);
@@ -411,23 +411,19 @@ html {
     transform: translate(3px, 3px);
 }
 
-.mode-btn-group {
-    margin-top: 10px;
-}
-
 .mode-btn-group p {
     font-weight: bold;
-    font-size: 1.6rem;
+    font-size: 1.0rem;
 }
 
 
 .manual-btn-group {
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 .manual-btn-group p {
     font-weight: bold;
-    font-size: 1.6rem;
+    font-size: 1.2rem;
 }
 
 .mode-btns {
@@ -480,11 +476,11 @@ html {
 }
 
 .automatic-btn-group {
-    margin-top: 15px;
+    margin-top: 10px;
 }
 .automatic-btn-group p {
     font-weight: bold;
-    font-size: 1.6rem;
+    font-size: 1.2rem;
 }
 
 .auto-exec-btns {
@@ -497,20 +493,20 @@ html {
     margin-top: 5px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 5px;
 }
 
 .btn-image {
-    width: 25px;
-    height: 20px;
+    width: 18px;
+    height: 16px;
 }
 
 .puzzle-btn-group {
-    margin-top: 15px;
+    margin-top: 10px;
 }
 .puzzle-btn-group p {
     font-weight: bold;
-    font-size: 1.6rem;
+    font-size: 1.2rem;
 }
 
 
@@ -520,7 +516,7 @@ html {
 
 #btn-autoStep {
     display: block;
-    height: 50px;
+    height: 40px;
 }
 
 .config-btns {
@@ -535,7 +531,7 @@ html {
     margin-top: 10px;
     display: grid;
     grid-template-columns: repeat(1, 1fr);
-    gap: 7px;
+    gap: 5px;
 }
 
 #image-autostep {
@@ -544,12 +540,12 @@ html {
 
 
 .eval-btn-group {
-    margin-top: 15px;
+    margin-top: 10px;
 
 }
 .eval-btn-group p {
     font-weight: bold;
-    font-size: 1.6rem;
+    font-size: 1.2rem;
 }
 
 label {
@@ -570,20 +566,20 @@ label {
     padding-top: 5px;
     padding-bottom: 10px;
     color: var(--screen-color);
-    font-size: 1.6rem;
+    font-size: 1.0rem;
 }
 
 .progress-group {
     margin-top: 5px;
-    line-height: 20px;
+    line-height: 16px;
     display: grid;
     grid-template-columns: 0.25fr 0.1fr 1fr;
     gap: 2px;
 }
 
 .evaluation {
-    font-size: 1.6rem;
-    margin-left: 20px;
+    font-size: 1.0rem;
+    margin-left: 10px;
 }
 
 .eval-type {
@@ -595,23 +591,23 @@ label {
 }
 
 .step-count-box {
-    line-height: 20px;
-    height: 20px;
+    line-height: 16px;
+    height: 16px;
     display: flex;
     margin-right: 5px;
-    width: 120px;
+    width: 70px;
 }
 
 .forward-backward-image {
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
 }
 
 .forward,
 .backward {
-    height: 20px;
-    padding-left: 20px;
-    padding-right: 20px;
+    height: 16px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .autoMode-radio-btns {
@@ -629,8 +625,8 @@ label {
 #myProgress {
     position: relative;
     width: 100%;
-    height: 20px;
-    font-size: 1.6rem;
+    height: 16px;
+    font-size: 1.0rem;
     text-align: right;
     padding-right: 5px;
     background-color: var(--nested-cell-bg-color);
@@ -640,8 +636,8 @@ label {
 #myBarPlay {
     position: absolute;
     width: 20%;
-    height: 20px;
-    line-height: 20px;
+    height: 16px;
+    line-height: 16px;
 }
 
 #myBarDef {
@@ -660,7 +656,7 @@ label {
 }
 
 .total-bar-value {
-    line-height: 20px;
+    line-height: 16px;
     vertical-align: center;
 }
 
@@ -748,12 +744,12 @@ input[readonly] {
     margin-top: 20px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 5px;
 }
 
 .status-line {
 
-    font-size: 1.6rem;
+    font-size: 1.0rem;
     color: black;
     padding-top: 5px;
     margin-top: 5px;
@@ -770,16 +766,16 @@ input[readonly] {
 }
 
 .puzzle-line {
-    font-size: 1.4rem;
+    font-size: 1.0rem;
     color: black;
-    margin-top: 50px;
+    margin-top: 10px;
     display: flex;
     flex-direction: row;
     line-height: normal;
 }
 
 .pz-nr {
-    margin-left: 20px;
+    margin-left: 10px;
     margin-right: 5px;
 }
 
@@ -794,16 +790,16 @@ input[readonly] {
 
 .pz-table,
 .solution-table {
-    margin-left: 25px;
-    margin-right: 25px;
+    margin-left: 5px;
+    margin-right: 5px;
     display: grid;
     grid-template-columns: repeat(9, auto);
 }
 
 .cell-field {
     position: relative;
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     display: grid;
     background-color: grey;
     place-items: center;
@@ -811,9 +807,9 @@ input[readonly] {
 }
 
 #pz-btn-print {
-    margin-top: 20px;
-    margin-left: 100px;
-    width: 210px;
+    margin-top: 10px;
+    margin-left: 50px;
+    width: 140px;
 }
 
 .tabdatabase {
@@ -821,7 +817,7 @@ input[readonly] {
 }
 
 section {
-    font-size: 1.4rem;
+    font-size: 1.0rem;
     position: relative;
     border: 1px solid #000;
     padding-top: 37px;
@@ -838,7 +834,7 @@ section.positioned {
 
 .container {
     overflow-y: auto;
-    height: 200px;
+    height: 100px;
 }
 
 table {
@@ -890,8 +886,8 @@ th {
 #loader {
     display: none;
     position: absolute;
-    left: 35%;
-    top: 35%;
+    left: 30%;
+    top: 20%;
     z-index: 2;
     width: 200px;
     height: 200px;
