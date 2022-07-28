@@ -282,15 +282,9 @@ html {
 }
 
 .nested>div.inAdmissible {
-    padding-top: 1px;
-    padding-bottom: 1px;
-    padding-left: 3px;
-    padding-right: 3px;
-    border-radius: 3px;
+    font-weight: bold;
     font-size: 1.0rem;
-    background-color: Crimson;
-    color: white;
-    border: 1px solid white;
+    color: Crimson;
 }
 
 .sudoku-grid-cell.hover {
@@ -880,8 +874,8 @@ th {
 #loader {
     display: none;
     position: absolute;
-    left: 35%;
-    top: 35%;
+    left: 30%;
+    top: 20%;
     z-index: 2;
     width: 200px;
     height: 200px;
