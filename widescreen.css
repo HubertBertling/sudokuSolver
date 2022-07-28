@@ -172,11 +172,12 @@ html {
 
 .sudoku-grid-cell {
     position: relative;
-    height: var(--sudoku-cell-size);
-    width: var(--sudoku-cell-size);
+    max-height:fit-content;
+    height: 9.5vh;
+    width: 9.5vh;
     border-radius: var(--border-radius);
     display: grid;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     place-items: center;
     /*    cursor: pointer; */
     margin: 2px;
@@ -236,7 +237,7 @@ html {
 }
 
 .auto-value-cell>div.auto-value-number {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
 }
 
 .auto-value-cell>div.auto-value-option1 {
