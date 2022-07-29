@@ -878,7 +878,94 @@ class NineCellCollection {
         return (myNumbers.size !== 9);
     }
 
+    calculateEqualSubPairs() {
+        // Berechnet Subpaare in der Collection. Dies sind
+        // Zellen, die mindestens 2 Nummern enthalten und
+        // zwei Zellen enthalten das gleiche Paar-Subset und
+        // alle anderen Zellen enthalten keine der Paarnummern.
+
+        // Idee: Zähle für jede Nummer 1 .. 9 die Häufigkeit ihres Auftretens
+        // numberCounts[0] = Häufigkeit der 1, bzw. die Indices der Auftreten der 1
+        // numberCounts[1] = Häufigkeit der 2, bzw. die Indices der Auftreten der 2
+        // usw.
+
+        this.numberCounts = [];
+        this.twinPosition = [];
+        this.equalSubPairs = [];
+        for (let i = 0; i < 9; i++) {
+            // Für die 9 Nummern jeweils eine leere Indices-Liste
+            this.numberCounts.push([]);
+            // Für jede Position in der Collection eine leere twin-nummernliste
+            this.twinPosition.push([]);
+        }
+        // Iteriere über die Collection
+        for (let i = 0; i < 9; i++) {
+            if (this.myCells[i].getValue() == '0') {
+                let permNumbers = this.myCells[i].getAdmissibles();
+                permNumbers.forEach(nr => {
+                    let iNr = parseInt(nr);
+                    // Für jede Nummer die Indices ihres Auftretens speichern
+                    this.numberCounts[iNr - 1].push(i);
+                })
+            }
+        }
+        // NumberCounts auswerten auf Paare
+        // Bestimme Nummern, die genau 2 mal vorkommen
+        // Iteriere über die Nummern
+        for (let i = 0; i < 9; i++) {
+            if (this.numberCounts[i].length == 2) {
+                // Eine Nummer, für die es 2 Indices gibt, 
+                // d.h. in der collection gibt es sie 2-mal.
+                // In twinPosition für jede twin-Nummer die beiden Positionen speichern.
+                this.twinPosition[this.numberCounts[i][0]].push(i + 1);
+                this.twinPosition[this.numberCounts[i][1]].push(i + 1);
+            }
+        }
+        // Ein Subpaar liegt dann vor, wenn 
+        // an einer twinPosition exakt 2 Nummern vorliegen und
+        // die gleichen zwei Nummern an einer zweiten Postion ein weiteres mal vorliegen.
+        // Rückgabe: Nummernpaare mit jeweils 2 Positionen. Gegebenenfalls leer
+
+        // Es können mehrere Paare vorhanden sein
+        let tmpSubPairs = [];
+        for (let i = 0; i < 9; i++) {
+            if (this.twinPosition[i].length == 2) {
+                // An dieser Position liegen zwei twin-nummern vor
+                // Checke alle begonnenen Paare
+                let equalSubPairFound = false;
+                for (let k = 0; k < tmpSubPairs.length; k++) {
+                    let tmpSubPair = tmpSubPairs[k];
+                    if (tmpSubPair.nr1 == this.twinPosition[i][0].toString() &&
+                        tmpSubPair.nr2 == this.twinPosition[i][1].toString()) {
+                        // Übereinstimmung  mit einem begonnenen Paar
+                        tmpSubPair.pos2 = i;
+                        // Das Paar ist vollständig
+                        this.equalSubPairs.push(tmpSubPair);
+                        equalSubPairFound = true;
+                        // tmpSubPairs = [];
+                    }
+                }
+                if (!equalSubPairFound) {
+                    // Keine Übereinstimmung mit einem begonnenen Paar
+                    // Ein neues Paar wird begonnen.
+                    let tmpSubPair = {
+                        nr1: this.twinPosition[i][0].toString(),
+                        nr2: this.twinPosition[i][1].toString(),
+                        pos1: i,
+                        pos2: -1
+                    }
+                    tmpSubPairs.push(tmpSubPair);
+                }
+            }
+        }
+
+    }
+
+
+
     calculateEqualPairs() {
+        // Zellen, die exakt ein Paar enthalten und
+        // zwei Zellen enthalten das gleiche Paar
         this.myPairInfos = [];
         // Iteriere über die Collection
         for (let i = 0; i < 9; i++) {
@@ -921,6 +1008,51 @@ class NineCellCollection {
                 }
             }
         }
+    }
+
+    derive_inAdmissiblesFromEqualSubPairs() {
+        this.calculateEqualSubPairs();
+        let inAdmissiblesAdded = false;
+        for (let k = 0; k < this.equalSubPairs.length; k++) {
+            let equalSubPair = this.equalSubPairs[k];
+            // Erste Paar-Zelle bereinigen
+            let cell1 = this.myCells[equalSubPair.pos1];
+            let tmpAdmissibles1 = cell1.getTotalAdmissibles();
+            let newInAdmissibles1 = tmpAdmissibles1.difference(new SudokuSet([equalSubPair.nr1, equalSubPair.nr2]));
+
+            if (newInAdmissibles1.size > 0) {
+                cell1.myLevel_gt0_inAdmissibles =
+                    cell1.myLevel_gt0_inAdmissibles.union(newInAdmissibles1);
+                newInAdmissibles1.forEach(inAdNr => {
+                    let inAdmissibleSubPairInfo = {
+                        collection: this,
+                        subPairCell1: this.myCells[equalSubPair.pos1],
+                        subPairCell2: this.myCells[equalSubPair.pos2]
+                    }
+                    cell1.myLevel_gt0_inAdmissiblesFromSubPairs.set(inAdNr, inAdmissibleSubPairInfo)
+                })
+                inAdmissiblesAdded = true;
+            }
+
+            // Zweite Paar-Zelle bereinigen
+            let cell2 = this.myCells[equalSubPair.pos2];
+            let tmpAdmissibles2 = cell2.getTotalAdmissibles();
+            let newInAdmissibles2 = tmpAdmissibles2.difference(new SudokuSet([equalSubPair.nr1, equalSubPair.nr2]));
+            if (newInAdmissibles2.size > 0) {
+                cell2.myLevel_gt0_inAdmissibles =
+                    cell2.myLevel_gt0_inAdmissibles.union(newInAdmissibles2);
+                newInAdmissibles2.forEach(inAdNr => {
+                    let inAdmissibleSubPairInfo = {
+                        collection: this,
+                        subPairCell1: this.myCells[equalSubPair.pos1],
+                        subPairCell2: this.myCells[equalSubPair.pos2]
+                    }
+                    cell2.myLevel_gt0_inAdmissiblesFromSubPairs.set(inAdNr, inAdmissibleSubPairInfo)
+                })
+                inAdmissiblesAdded = true;
+            }
+        }
+        return inAdmissiblesAdded;
     }
 
     derive_inAdmissiblesFromEqualPairs() {
@@ -1644,6 +1776,8 @@ class SudokuGrid {
                 inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromSingles()) {
                 inAdmissiblesAdded = true;
+            } else if (this.derive_inAdmissiblesFromEqualSubPairs()) {
+                inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromEqualPairs()) {
                 inAdmissiblesAdded = true;
             }
@@ -1656,12 +1790,14 @@ class SudokuGrid {
         this.calculateNecessarys();
         let c1 = this.derive_inAdmissiblesFromNecessarys();
         let c2 = this.derive_inAdmissiblesFromSingles();
-        let c3 = this.derive_inAdmissiblesFromEqualPairs();
-        let inAdmissiblesAdded = c1 || c2 || c3;
+        let c3 = this.derive_inAdmissiblesFromEqualSubPairs();
+        let c4 = this.derive_inAdmissiblesFromEqualPairs();
+        let inAdmissiblesAdded = c1 || c2 || c3 || c4;
         while (inAdmissiblesAdded) {
             let c1 = this.derive_inAdmissiblesFromSingles();
-            let c2 = this.derive_inAdmissiblesFromEqualPairs();
-            inAdmissiblesAdded = c1 || c2;
+            let c2 = this.derive_inAdmissiblesFromEqualSubPairs();
+            let c3 = this.derive_inAdmissiblesFromEqualPairs();
+            inAdmissiblesAdded = c1 || c2 || c3;
         }
     }
 
@@ -1789,6 +1925,29 @@ class SudokuGrid {
         for (let i = 0; i < 9; i++) {
             let tmpCol = this.sudoCols[i];
             c3 = c3 || tmpCol.derive_inAdmissiblesFromEqualPairs();
+        }
+        let inAdmissiblesAdded = c1 || c2 || c3;
+        return inAdmissiblesAdded;
+    }
+
+    derive_inAdmissiblesFromEqualSubPairs() {
+        let c1 = false;
+        let c2 = false;
+        let c3 = false;
+        // Iteriere über die Gruppen
+        for (let i = 0; i < 9; i++) {
+            let tmpGroup = this.sudoGroups[i];
+            c1 = c1 || tmpGroup.derive_inAdmissiblesFromEqualSubPairs();
+        }
+        // Iteriere über die Reihen
+        for (let i = 0; i < 9; i++) {
+            let tmpRow = this.sudoRows[i];
+            c2 = c2 || tmpRow.derive_inAdmissiblesFromEqualSubPairs();
+        }
+        // Iteriere über die Spalten
+        for (let i = 0; i < 9; i++) {
+            let tmpCol = this.sudoCols[i];
+            c3 = c3 || tmpCol.derive_inAdmissiblesFromEqualSubPairs();
         }
         let inAdmissiblesAdded = c1 || c2 || c3;
         return inAdmissiblesAdded;
@@ -1975,6 +2134,7 @@ class SudokuCell {
         this.myLevel_0_inAdmissibles = new SudokuSet();
         this.myLevel_gt0_inAdmissibles = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromPairs = new Map();
+        this.myLevel_gt0_inAdmissiblesFromSubPairs = new Map();
         this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
 
@@ -2010,6 +2170,7 @@ class SudokuCell {
         this.myLevel_gt0_inAdmissibles = new SudokuSet();
         this.myNecessarys = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromPairs = new Map();
+        this.myLevel_gt0_inAdmissiblesFromSubPairs = new Map();
         this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
 
@@ -2426,6 +2587,7 @@ class SudokuCell {
                 })
             }
 
+            
             if (this.myLevel_gt0_inAdmissibles.size > 0 &&
                 this.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
                 // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
@@ -2442,7 +2604,20 @@ class SudokuCell {
                     pairInfo.pairCell2.setRedSelected();
                 })
             }
-        }
+
+
+            if (this.myLevel_gt0_inAdmissibles.size > 0 &&
+                this.myLevel_gt0_inAdmissiblesFromSubPairs.size > 0) {
+                const [pairInfo] = this.myLevel_gt0_inAdmissiblesFromSubPairs.values();
+                pairInfo.collection.myCells.forEach(cell => {
+                    if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
+                        cell.setRedSelected();
+                    } else {
+                        cell.setSelected();
+                    }
+                });
+
+            }         }
     }
 
     setSelected() {
@@ -2465,6 +2640,7 @@ class SudokuCell {
     deselect() {
         if (inMainApp) {
             this.myCellNode.classList.remove('selected');
+            this.unsetSelected();
             this.myInfluencers.forEach(e => e.unsetSelected());
         }
     }
