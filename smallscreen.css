@@ -189,6 +189,7 @@ html {
     background-color: darkgrey;
     color: black;
     font-size: 0.8rem;
+    width: 1rem;
 }
 
 .auto-value-cell>div.auto-value-number {

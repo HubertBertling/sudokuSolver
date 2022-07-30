@@ -223,13 +223,14 @@ html {
 .auto-value-cell>div {
     background-color: var(--played-cell-bg-color);
     text-align: center;
-    padding: 2px 1px;
+    padding: 0.1rem ;
 }
 
 .auto-value-cell>div.auto-step-number {
     background-color: darkgrey;
     color: black;
     font-size: 0.8rem;
+    width: 1rem;
 }
 
 .auto-value-cell>div.auto-value-number {
@@ -238,14 +239,20 @@ html {
 
 .auto-value-cell>div.auto-value-option1 {
     font-size: 0.8rem;
+    width: 0.6rem;
+    padding: 0.1rem ;
 }
 
 .auto-value-cell>div.auto-value-option2 {
-    font-size: 0.8rem;    
+    font-size: 0.8rem;
+    width: 0.6rem;
+    padding: 0.1rem ;
 }
 
 .auto-value-cell>div.auto-value-option3 {
     font-size: 0.8rem;
+    width: 0.6rem;
+    padding: 0.1rem ;
 }
 
 .auto-value-cell>div.open {
@@ -284,13 +291,13 @@ html {
 .nested>div.indirect-neccessary {
     padding-top: 1px;
     padding-bottom: 1px;
-    padding-left: 4px;
-    padding-right: 4px;
+    padding-left: 3px;
+    padding-right: 3px;
     border-radius: 3px;
     background-color: #56c7aa;
-    font-size: 1.4rem;
+    font-size: 1.0rem;
     color: #0d1117;
-    border: 1px solid red;
+    border: 1px solid white;
 }
 
 .nested>div.inAdmissible {
@@ -300,15 +307,15 @@ html {
 }
 
 .sudoku-grid-cell.hover {
-    border: 3px solid var(--selected-cell-border-color);
+    border: 2px solid var(--selected-cell-border-color);
 }
 
 .sudoku-grid-cell.hover-red {
-    border: 2px dashed Crimson;
+    border: 3px dashed Crimson;
 }
 
 .sudoku-grid-cell.hover-green {
-    border: 2px dashed darkgreen;
+    border: 3px dashed darkgreen;
 }
 
 .sudoku-group.err {
@@ -318,7 +325,7 @@ html {
 
 .sudoku-grid-cell.row-err,
 .sudoku-grid-cell.col-err {
-    border: 2px solid var(--error-cell-bg-color);
+    border: 3px solid var(--error-cell-bg-color);
 }
 
 .sudoku-grid-cell.col-err {
