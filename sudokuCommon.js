@@ -2608,6 +2608,8 @@ class SudokuCell {
 
             if (this.myLevel_gt0_inAdmissibles.size > 0 &&
                 this.myLevel_gt0_inAdmissiblesFromSubPairs.size > 0) {
+                // Für ein Subpaar muss nicht jede einzelne Nummer geprüft werden.
+                // 
                 const [pairInfo] = this.myLevel_gt0_inAdmissiblesFromSubPairs.values();
                 pairInfo.collection.myCells.forEach(cell => {
                     if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
