@@ -1872,12 +1872,16 @@ class SudokuGrid {
 
             if (this.derive_inAdmissiblesFromNecessarys()) {
                 inAdmissiblesAdded = true;
+                console.log('derive_inAdmissiblesFromNecessarys');
             } else if (this.derive_inAdmissiblesFromSingles()) {
                 inAdmissiblesAdded = true;
+                console.log('derive_inAdmissiblesFromSingles');
             } else if (this.derive_inAdmissiblesFromEqualSubPairs()) {
                 inAdmissiblesAdded = true;
+                console.log('derive_inAdmissiblesFromEqualSubPairs');
             } else if (this.derive_inAdmissiblesFromEqualPairs()) {
                 inAdmissiblesAdded = true;
+                console.log('derive_inAdmissiblesFromEqualPairs');
             }
         }
     }
@@ -1885,18 +1889,22 @@ class SudokuGrid {
     evaluateGridStrict() {
         this.clearEvaluations();
         this.calculate_level_0_inAdmissibles();
+
         this.calculateNecessarys();
         this.calculateIndirectNecessarys();
+     
         let c1 = this.derive_inAdmissiblesFromNecessarys();
         let c2 = this.derive_inAdmissiblesFromSingles();
         let c3 = this.derive_inAdmissiblesFromEqualSubPairs();
         let c4 = this.derive_inAdmissiblesFromEqualPairs();
+     
         let inAdmissiblesAdded = c1 || c2 || c3 || c4;
         while (inAdmissiblesAdded) {
-            let c1 = this.derive_inAdmissiblesFromSingles();
-            let c2 = this.derive_inAdmissiblesFromEqualSubPairs();
-            let c3 = this.derive_inAdmissiblesFromEqualPairs();
-            inAdmissiblesAdded = c1 || c2 || c3;
+            let c1 = this.derive_inAdmissiblesFromNecessarys();
+            let c2 = this.derive_inAdmissiblesFromSingles();
+            let c3 = this.derive_inAdmissiblesFromEqualSubPairs();
+            let c4 = this.derive_inAdmissiblesFromEqualPairs();
+            inAdmissiblesAdded = c1 || c2 || c3 || c4;
         }
     }
 
@@ -1920,8 +1928,15 @@ class SudokuGrid {
 
 
     derive_inAdmissiblesFromNecessarys() {
-        // Das zweite Auftreten einer notwendigen Nummer ist indirekt unzulässig
+        // Das zweite Auftreten einer notwendigen Nummer(indirekt oder direkt) ist indirekt unzulässig
         // Iteriere über alle Zellen
+
+    // ==================================================================================== 
+    // Diese Funktion muss nach NineCellCollection verlagert werden.
+    // Damit Für jede inadmissible die verursachende Zeile oder Spalte gezeigt werden kann.
+    // ==================================================================================== 
+    
+
         let inAdmissiblesAdded = false;
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() == '0') {
@@ -1930,6 +1945,7 @@ class SudokuGrid {
                 this.sudoCells[i].myInfluencers.forEach(cell => {
                     if (cell.getValue() == '0') {
                         necessarysInContext = necessarysInContext.union(cell.getNecessarys());
+                        necessarysInContext = necessarysInContext.union(cell.getIndirectNecessarys());
                     }
                 })
                 let oldInAdmissibles = new SudokuSet(this.sudoCells[i].myLevel_gt0_inAdmissibles);
@@ -1962,10 +1978,19 @@ class SudokuGrid {
         }
         return added;
     }
-
+  
     derive_inAdmissiblesFromSingles() {
         // Das das zweite Auftreten einer einzig verbliebenen Nummer ist indirekt unzulässig
         // Iteriere über alle Zellen
+
+    // ==================================================================================== 
+    // Diese Funktion muss nach NineCellCollection verlagert werden.
+    // Damit Für jede inadmissible die verursachende Zeile oder Spalte gezeigt werden kann.
+    // ==================================================================================== 
+   
+
+
+
         let inAdmissiblesAdded = false;
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() == '0') {

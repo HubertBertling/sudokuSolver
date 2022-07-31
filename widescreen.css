@@ -297,7 +297,7 @@ html {
     background-color: #56c7aa;
     font-size: 1.0rem;
     color: #0d1117;
-    border: 1px solid white;
+    border: 1px solid red;
 }
 
 .nested>div.inAdmissible {
