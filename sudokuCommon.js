@@ -1870,18 +1870,16 @@ class SudokuGrid {
 
             inAdmissiblesAdded = false;
 
-            if (this.derive_inAdmissiblesFromNecessarys()) {
+            // inAdmissiblesFromNecessarys kann es nicht mehr geben, 
+            // weil die necessarys im ersten Teil der Schleife verbraucht werden
+
+            // derive_inAdmissiblesFromSingles kann es nicht mehr geben,
+            // aus dem gleichen Grund.
+
+            if (this.derive_inAdmissiblesFromEqualSubPairs()) {
                 inAdmissiblesAdded = true;
-                console.log('derive_inAdmissiblesFromNecessarys');
-            } else if (this.derive_inAdmissiblesFromSingles()) {
-                inAdmissiblesAdded = true;
-                console.log('derive_inAdmissiblesFromSingles');
-            } else if (this.derive_inAdmissiblesFromEqualSubPairs()) {
-                inAdmissiblesAdded = true;
-                console.log('derive_inAdmissiblesFromEqualSubPairs');
             } else if (this.derive_inAdmissiblesFromEqualPairs()) {
                 inAdmissiblesAdded = true;
-                console.log('derive_inAdmissiblesFromEqualPairs');
             }
         }
     }
@@ -1897,8 +1895,8 @@ class SudokuGrid {
         let c2 = this.derive_inAdmissiblesFromSingles();
         let c3 = this.derive_inAdmissiblesFromEqualSubPairs();
         let c4 = this.derive_inAdmissiblesFromEqualPairs();
-     
         let inAdmissiblesAdded = c1 || c2 || c3 || c4;
+    
         while (inAdmissiblesAdded) {
             let c1 = this.derive_inAdmissiblesFromNecessarys();
             let c2 = this.derive_inAdmissiblesFromSingles();
@@ -1930,12 +1928,6 @@ class SudokuGrid {
     derive_inAdmissiblesFromNecessarys() {
         // Das zweite Auftreten einer notwendigen Nummer(indirekt oder direkt) ist indirekt unzulässig
         // Iteriere über alle Zellen
-
-    // ==================================================================================== 
-    // Diese Funktion muss nach NineCellCollection verlagert werden.
-    // Damit Für jede inadmissible die verursachende Zeile oder Spalte gezeigt werden kann.
-    // ==================================================================================== 
-    
 
         let inAdmissiblesAdded = false;
         for (let i = 0; i < 81; i++) {
@@ -1973,7 +1965,9 @@ class SudokuGrid {
         let added = false;
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() == '0') {
-                if (this.sudoCells[i].getTotalAdmissibles().size == 1) return true;
+                if (this.sudoCells[i].getTotalAdmissibles().size == 1) {
+                    return true;
+                }
             }
         }
         return added;
@@ -1982,14 +1976,6 @@ class SudokuGrid {
     derive_inAdmissiblesFromSingles() {
         // Das das zweite Auftreten einer einzig verbliebenen Nummer ist indirekt unzulässig
         // Iteriere über alle Zellen
-
-    // ==================================================================================== 
-    // Diese Funktion muss nach NineCellCollection verlagert werden.
-    // Damit Für jede inadmissible die verursachende Zeile oder Spalte gezeigt werden kann.
-    // ==================================================================================== 
-   
-
-
 
         let inAdmissiblesAdded = false;
         for (let i = 0; i < 81; i++) {
