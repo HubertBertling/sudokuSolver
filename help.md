@@ -99,13 +99,21 @@ Eine zulässige Nummer in einer Zelle ist notwendig, wenn die Nummer in ihrer Gr
 
 ### Indirekt unzulässige Nummern
 
-Direkt unzulässige Nummern sind Nummern, die in einer Gruppe, Spalte oder Zeile bereits einmal existieren. In einer ungesetzten Zelle werden die direkt unzulässigen Nummern nicht angezeigt. Anders dagegen Indirekt unzulässige Nummern. Indirekt unzulässige Nummern werden rot angezeigt. Wann ist eine Nummer indirekt unzulässig? Der vorliegende Solver kennt drei unterschiedliche Gründe.
+Direkt unzulässige Nummern sind Nummern, die in einer Gruppe, Spalte oder Zeile bereits einmal existieren. In einer ungesetzten Zelle werden die direkt unzulässigen Nummern nicht angezeigt. Anders dagegen Indirekt unzulässige Nummern. Indirekt unzulässige Nummern werden rot angezeigt. Eine zulässige Nummer ist indirekt unzulässig, wenn ihre Setzung in der Zelle das Puzzle widerspruchsvoll macht. 
+
+Wie kann man rein logisch ohne Back-Tracking erkennen, dass eine Nummer indirekt unzulässig ist (rot ist)? Der vorliegende Solver kennt bislang folgende unterschiedliche logische Kriterien. Hinweis: Die rein logische Erkennung der indirekten Unzulässigkeit ist unvollständig. D.h. es gibt so schwere Puzzles, dass deren Lösung nur unter Verwendung von Back-Tracking erreicht werden kann. Nun zu den von diesem Solver unterstützten Kriterien.
 
 1. **Indirekt unzulässig wegen einer notwendigen Nummer:** Eine Nummer ist indirekt unzulässig wegen einer notwendigen Nummer, wenn sie in ihrer Spalte, Reihe oder Gruppe auch als notwendige Nummer auftritt. Im nachfolgenden Beispiel sind die roten Nummern 8 wegen der grünen 8 indirekt unzulässig. Die grüne 8 ist notwendig, weil sie in ihrer Gruppe einzig ist, also in der Gruppe kein weiteres mal zulässig ist.![Indirekt wegen notwendig](./images/indirektwgnotwendig.png)
 
 1. **Indirekt unzulässig wegen einer Single-Nummer:** Eine Nummer ist indirekt unzulässig wegen einer Single-Nummer, wenn sie in der Spalte, Reihe oder Gruppe der Single-Nummer ein zweites mal auftreten würde.
 
 1. **Indirekt unzulässig wegen Pairing:** Eine Nummer ist indirekt unzulässig, wenn es in einer Gruppe, Zeile oder Spalte Paare gibt und Nummern dieser Paare zusätzlich in weiteren Zellen dieser Gruppe, Spalte oder Zeile auftauchen. Im nachfolgenden Beispiel ist das 4-6-Paar ein kritisches Paar. Das 4-6-Paar macht in seiner Gruppe alle 4 und 6 indirekt unzulässig. Der Grund: Das Paar bedeutet, dass die 4 und die 6 auf jeden Fall in einer der beiden Zellen des Paares gesetzt werden muss. Aktuell steht nur noch nicht fest, ob die 6 oder die 4 oben ist. Fest steht aber jetzt schon, dass in den übrigen Zellen der Gruppe keine 4 oder 6 mehr vorkommen können. Die 4 und 6 sind hier indirekt unzulässig. Diese Gruppendarstellung mit den gestrichelten Kanten zeigt der Solver nur im Lazy-Auswertungsmodus, wenn man eine Zelle mit indirekt unzulässigen Nummern selektiert hat.![Indirekt unzulässig](./images/indirektWegenPairing.png)
+
+1. **Indirekt unzulässig wegen Hidden-Pairing:** Eine Nummer ist indirekt unzulässig, wenn es in einer Gruppe, Zeile oder Spalte Paare gibt ...
+
+1. **Indirekt unzulässig wegen Überschneidung:** Eine Nummer ist indirekt unzulässig,
+
+1. **Indirekt unzulässig wegen Pair-Wing:** Eine Nummer ist indirekt unzulässig,
 
 ### Auswertungsmethoden
 

@@ -352,9 +352,15 @@ html {
     font-size: 1.0rem;
     display: flex;
     padding-top: 5px;
-
-
 }
+
+.technique {
+    font-size: 1.0rem;
+    display: flex;
+    padding-top: 5px;
+    color: Crimson;
+}
+
 
 .sudoku-header {
     color: var(--screen-color);

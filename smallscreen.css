@@ -317,6 +317,16 @@ html {
 
 }
 
+
+.technique {
+    font-size: 1.2rem;
+    display: flex;
+    padding-top: 0.5rem;
+    padding-left: 0.5rem;
+    color: Crimson;
+}
+
+
 .sudoku-header {
     color: var(--screen-color);
     text-align: center;

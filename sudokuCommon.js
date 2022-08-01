@@ -1613,6 +1613,13 @@ class SudokuGrid {
         }
     }
 
+    displayTechnique(tech) {
+        let evalNode = document.getElementById("technique");
+        evalNode.innerHTML =
+            '<b>Technik:</b> &nbsp' + tech;
+    }
+
+
     displayBenchmark(countBackwards, levelOfDifficulty) {
         let evalNode = document.getElementById("evaluations");
         evalNode.innerHTML =
@@ -2808,6 +2815,7 @@ class SudokuCell {
                     pairInfo.pairCell1.setRedSelected();
                     pairInfo.pairCell2.setRedSelected();
                 })
+                sudoApp.suGrid.displayTechnique('(Normales) Paar')
             }
 
 
@@ -2823,8 +2831,9 @@ class SudokuCell {
                         cell.setSelected();
                     }
                 });
-
+                sudoApp.suGrid.displayTechnique('Verstecktes Paar')
             }
+
         }
     }
 
@@ -2849,6 +2858,7 @@ class SudokuCell {
         if (inMainApp) {
             this.myCellNode.classList.remove('selected');
             this.unsetSelected();
+            sudoApp.suGrid.displayTechnique('');
             this.myInfluencers.forEach(e => e.unsetSelected());
         }
     }
