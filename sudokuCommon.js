@@ -1614,9 +1614,11 @@ class SudokuGrid {
     }
 
     displayTechnique(tech) {
-        let evalNode = document.getElementById("technique");
-        evalNode.innerHTML =
-            '<b>Technik:</b> &nbsp' + tech;
+        if (inMainApp) {
+            let evalNode = document.getElementById("technique");
+            evalNode.innerHTML =
+                '<b>Lösungstechnik:</b> &nbsp' + tech;
+        }
     }
 
 
@@ -1802,6 +1804,7 @@ class SudokuGrid {
         this.sudoCols.forEach(sudoCol => {
             sudoCol.display();
         });
+        this.displayTechnique('-');
     }
 
     initCurrentSelection() {
@@ -1897,13 +1900,13 @@ class SudokuGrid {
 
         this.calculateNecessarys();
         this.calculateIndirectNecessarys();
-     
+
         let c1 = this.derive_inAdmissiblesFromNecessarys();
         let c2 = this.derive_inAdmissiblesFromSingles();
         let c3 = this.derive_inAdmissiblesFromEqualSubPairs();
         let c4 = this.derive_inAdmissiblesFromEqualPairs();
         let inAdmissiblesAdded = c1 || c2 || c3 || c4;
-    
+
         while (inAdmissiblesAdded) {
             let c1 = this.derive_inAdmissiblesFromNecessarys();
             let c2 = this.derive_inAdmissiblesFromSingles();
@@ -1979,7 +1982,7 @@ class SudokuGrid {
         }
         return added;
     }
-  
+
     derive_inAdmissiblesFromSingles() {
         // Das das zweite Auftreten einer einzig verbliebenen Nummer ist indirekt unzulässig
         // Iteriere über alle Zellen
@@ -2858,7 +2861,7 @@ class SudokuCell {
         if (inMainApp) {
             this.myCellNode.classList.remove('selected');
             this.unsetSelected();
-            sudoApp.suGrid.displayTechnique('');
+            sudoApp.suGrid.displayTechnique('-');
             this.myInfluencers.forEach(e => e.unsetSelected());
         }
     }
