@@ -1137,6 +1137,143 @@ class NineCellCollection {
         return inAdmissiblesAdded;
     }
 
+    derive_inAdmissiblesFromPairWing() {
+        this.calculateEqualPairs();
+        let inAdmissiblesAdded = false;
+        for (let i = 0; i < this.myPairInfos.length; i++) {
+            if (this.myPairInfos[i].pairIndices.length == 2 &&
+                  sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myGroup !== 
+                  sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myGroup) {
+                // Ein Paar, das zweimal in der Collection vorkommt
+                // Das Paar muss in verschieden Gruppen sein
+
+                // Jetzt die SenkrechtCollections bestimmen
+                let senkrecht1 = null;
+                let senkrecht2 = null;
+                let waagerecht = null;
+                let senkrecht1PairWingCell = null;
+                let senkrecht2PairWingCell = null;
+                let pairWingNr = -1;
+
+                if (sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myRow == this) {
+                    senkrecht1 = sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myCol;
+                } else {
+                    senkrecht1 = this;
+                }
+                if (sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myRow == this) {
+                    senkrecht2 = sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myCol;
+                } else {
+                    senkrecht2 = this;
+                }
+
+                // In einer der beiden Senkrechten muss es eine Wing-Nummer geben
+                // Eine Wing-Nummer ist eine der beiden Paar-Nummern. 
+                // In der Senkrechten darf sie nur genau einmal vorkommen. Die Paar-Zelle ausgenommen.
+                // Die Wing-Senkrechte, Wing-Zelle und Wing-Nummer bestimmen
+
+                let pair = this.myPairInfos[i].pairSet;
+                let tmpWingCell = null;
+                let tmpWingCellCount = 0;
+                       
+                // Die Wing-Cell für senkrecht1 bestimmen
+                for (let j = 0; j < 9; j++) {
+                    if (senkrecht1.myCells[j].getValue() == '0') {
+                        if (senkrecht1.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[0] &&
+                            senkrecht1.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[1]) {
+                            // Zelle der Senkrechten, die nicht Paar-Zelle ist
+                            let tmpAdmissibles = this.myCells[j].getTotalAdmissibles();
+                            let tmpIntersection = tmpAdmissibles.intersection(pair);
+                            let tmpWingCell = null;
+                            if (tmpIntersection.size > 0) {
+                                // Kandidat WingCell
+                                tmpWingCell = this.myCells[j];
+                                tmpWingCellCount++;
+                            }
+                        }
+                    }
+                }
+                if (tmpWingCellCount == 1){
+                    senkrecht1PairWingCell = tmpWingCell;        
+                }
+                // Falls es keine WingCell für senkrecht1 gibt WingCell für senkrecht2 bestimmen
+                tmpWingCell = null;
+                tmpWingCellCount = 0;
+                
+                for (let j = 0; j < 9; j++) {
+                    if (senkrecht2.myCells[j].getValue() == '0') {
+                        if (senkrecht2.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[0] &&
+                            senkrecht2.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[1]) {
+                            // Zelle der Senkrechten, die nicht Paar-Zelle ist
+                            let tmpAdmissibles = this.myCells[j].getTotalAdmissibles();
+                            let tmpIntersection = tmpAdmissibles.intersection(pair);
+                            let tmpWingCell = null;
+                            if (tmpIntersection.size > 0) {
+                                // Kandidat WingCell
+                                tmpWingCell = this.myCells[j];
+                                tmpWingCellCount++;
+                            }
+                        }
+                    }
+                }
+                if (tmpWingCellCount == 1){
+                    senkrecht2PairWingCell = tmpWingCell;        
+                }
+                // Die Waagerechte der der WingCell bestimmen, falls es eine
+                // Wingcell gibt
+                if (senkrecht1PairWingCell !== null ) {
+                    if (senkrecht1PairWingCell.myRow == senkrecht1) {
+                        waagerecht = senkrecht1PairWingCell.myCol;
+                    } else {
+                        waagerecht = senkrecht1;
+                    }    
+                } else if (senkrecht2PairWingCell !== null) {
+                    if (senkrecht2PairWingCell.myRow == senkrecht2) {
+                        waagerecht = senkrecht2PairWingCell.myCol;
+                    } else {
+                        waagerecht = senkrecht2;
+                    }  
+                }
+
+                // Die Kreuzgruppe bestimmen
+
+                // 
+
+                // Prüfe, ob Nummern dieses Paar in den admissibles der Collection vorkommen
+                for (let j = 0; j < 9; j++) {
+                    if (this.myCells[j].getValue() == '0') {
+                        if (this.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[0] &&
+                            this.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[1]) {
+                            // Zelle der Collection, die nicht Paar-Zelle ist
+                            let tmpAdmissibles = this.myCells[j].getTotalAdmissibles();
+                            let tmpIntersection = tmpAdmissibles.intersection(pair);
+                            let oldInAdmissibles = new SudokuSet(this.myCells[j].myLevel_gt0_inAdmissibles);
+                            this.myCells[j].myLevel_gt0_inAdmissibles =
+                                this.myCells[j].myLevel_gt0_inAdmissibles.union(tmpIntersection);
+
+                            let localAdded = !oldInAdmissibles.equals(this.myCells[j].myLevel_gt0_inAdmissibles);
+                            inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
+                            if (localAdded) {
+                                let newInAdmissibles =
+                                    this.myCells[j].myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
+                                newInAdmissibles.forEach(inAdNr => {
+                                    let inAdmissiblePairInfo = {
+                                        collection: this,
+                                        pairCell1: sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[0]],
+                                        pairCell2: sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[1]]
+                                    }
+                                    this.myCells[j].myLevel_gt0_inAdmissiblesFromPairs.set(inAdNr, inAdmissiblePairInfo);
+                                })
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return inAdmissiblesAdded;
+    }
+
+
+
     calculateNecessaryForNextStep() {
         // Berechne für die NineCellCollection alle notwendigen Nummern.
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
