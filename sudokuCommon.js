@@ -1911,7 +1911,6 @@ class SudokuGrid {
         this.sudoCols.forEach(sudoCol => {
             sudoCol.display();
         });
-        this.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
     }
 
     initCurrentSelection() {
@@ -2543,6 +2542,7 @@ class SudokuGrid {
     refresh() {
         this.evaluateMatrix();
         if (inMainApp) {
+            this.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
             this.display();
         }
     }
@@ -2554,6 +2554,7 @@ class SudokuGrid {
             for (let i = 0; i < 81; i++) {
                 this.sudoCells[i].deselect();
             }    
+            this.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
             // Lösche die Selektionsinformation der Tabelle
             this.selectedCell = undefined;
             this.indexSelected = -1;
@@ -3230,6 +3231,8 @@ class SudokuCell {
         if (sudoApp.suGrid.evalType == 'lazy') {
             // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
             // wird die verursachende collection angezeigt.
+            sudoApp.suGrid.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
+     
             if (this.myNecessarys.size > 0) {
                 let collection = this.myNecessaryCollections.get(Array.from(this.myNecessarys)[0]);
                 collection.myCells.forEach(e => {
@@ -3325,7 +3328,6 @@ class SudokuCell {
                 sudoApp.suGrid.displayTechnique('Überschneidung');
 
             }
-
         }
     }
 
@@ -3350,7 +3352,6 @@ class SudokuCell {
         if (inMainApp) {
             this.myCellNode.classList.remove('selected');
             this.unsetSelected();
-            sudoApp.suGrid.displayTechnique('<Selektiere Zelle mit roten Nummern>');
          //   this.myInfluencers.forEach(e => e.unsetSelected());
         }
     }
