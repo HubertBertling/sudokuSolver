@@ -2380,14 +2380,6 @@ class SudokuGrid {
                         let newInAdmissibles =
                             tmpCell.myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
                         // Die Liste der indirekt unzulässigen verursacht von overlap wird gesetzt
-
-                     //   let strNumberString = '';
-                     //   newInAdmissibles.forEach(nr => {
-                     //       strNumberString = strNumberString + nr + ', ';
-                     //   });
-                     //   console.log('         Neue unzulässige in der Gruppe: ' + strNumberString);
-                     //   console.log('');
-
                         tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping = newInAdmissibles;
                         let overlapInfo = {
                             group: this.sudoGroups[i],
@@ -2427,15 +2419,6 @@ class SudokuGrid {
                     if (localAdded) {
                         let newInAdmissibles =
                             tmpCell.myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
-                        // Die Liste der indirekt unzulässigen verursacht von overlap wird gesetzt
-
-                    //    let strNumberString = '';
-                    //    newInAdmissibles.forEach(nr => {
-                    //        strNumberString = strNumberString + nr + ', ';
-                    //    });
-                    //    console.log('         Neue unzulässige in der Gruppe: ' + strNumberString);
-                    //    console.log('');
-
                         tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping = newInAdmissibles;
                         let overlapInfo = {
                             group: this.sudoGroups[i],
@@ -2460,11 +2443,9 @@ class SudokuGrid {
 
         for (let i = 0; i < 9; i++) {
             tmpGroup = this.sudoGroups[i];
-            console.log('Gruppe: ' + i);
             // Iteriere über die Zeilen der Gruppe
             for (let j = 0; j < 3; j++) {
                 let z = this.groupRow2MatrixRow(i, j);
-                //               console.log('   Zeile: ' + z);
                 let numbersInRowOutsideGroup = new SudokuSet();
                 let numbersInRowInsideGroup = new SudokuSet();
                 let strongNumbersInRowInsideGroup = new SudokuSet();
@@ -2473,27 +2454,14 @@ class SudokuGrid {
                 for (let k = 0; k < 9; k++) {
                     if (tmpRow.myCells[k].getValue() == '0') {
                         if (this.groupIndex_MatrixCol_2_GroupCol(k, i) >= 0 && this.groupIndex_MatrixCol_2_GroupCol(k, i) < 3) {
-                            // k ist Index in Gruppe
-                            //                         console.log('      Zelle ' + k + ' in der Gruppe');
                             numbersInRowInsideGroup = numbersInRowInsideGroup.union(tmpRow.myCells[k].getTotalAdmissibles());
                         } else {
-                            //                         console.log('      Zelle ' + k + ' außerhalb der Gruppe')
                             numbersInRowOutsideGroup = numbersInRowOutsideGroup.union(tmpRow.myCells[k].getTotalAdmissibles());
                         }
-                    } else {
-                        //                     console.log('      Zelle ' + k + ' belegt');
                     }
                     strongNumbersInRowInsideGroup = numbersInRowInsideGroup.difference(numbersInRowOutsideGroup);
                 }
                 // Die Gruppenzellen um die strengen Nummern reduzieren
-                let strNumberString = '';
-                strongNumbersInRowInsideGroup.forEach(nr => {
-                    strNumberString = strNumberString + nr + ', ';
-                });
-                if (strNumberString !== '') {
-                    console.log('In der Gruppenzeile ' + j + ' Strenge Nummern : ' + strNumberString);
-                }
-
                 if (strongNumbersInRowInsideGroup.size > 0) {
                     // In 2 Reihen der Gruppe die strong nummern inadmissible setzen
                     let row1 = 0;
@@ -2514,7 +2482,6 @@ class SudokuGrid {
                             row2 = 1;
                         }
                     }
-                    
                     inAdmissiblesAdded = inAdmissiblesAdded || 
                         this.cellOverlapInRowReduce(i, row1, tmpRow, strongNumbersInRowInsideGroup);
                     inAdmissiblesAdded = inAdmissiblesAdded || 
@@ -2523,10 +2490,7 @@ class SudokuGrid {
             }
             // Iteriere über die Spalten der Gruppe
             for (let j = 0; j < 3; j++) {
-
                 let colIndex = this.groupCol2MatrixCol(i, j);
-
-                //        console.log('   Spalte: ' + colIndex);
                 let numbersInColOutsideGroup = new SudokuSet();
                 let numbersInColInsideGroup = new SudokuSet();
                 let strongNumbersInColInsideGroup = new SudokuSet();
@@ -2535,29 +2499,15 @@ class SudokuGrid {
                 for (let k = 0; k < 9; k++) {
                     if (tmpCol.myCells[k].getValue() == '0') {
                         if (this.groupIndex_MatrixRow_2_GroupRow(k, i) >= 0 && this.groupIndex_MatrixRow_2_GroupRow(k, i) < 3) {
-                            // k ist Index in Gruppe
-                            //                    console.log('      Zelle ' + k + ' in der Gruppe');
                             numbersInColInsideGroup = numbersInColInsideGroup.union(tmpCol.myCells[k].getTotalAdmissibles());
                         } else {
-                            //                  console.log('      Zelle ' + k + ' außerhalb der Gruppe')
                             numbersInColOutsideGroup = numbersInColOutsideGroup.union(tmpCol.myCells[k].getTotalAdmissibles());
                         }
-                    } else {
-                        //                console.log('      Zelle ' + k + ' belegt');
                     }
                     strongNumbersInColInsideGroup = numbersInColInsideGroup.difference(numbersInColOutsideGroup);
                 }
                 // Die Gruppenzellen um die strengen Nummern reduzieren
-                let strNumberString = '';
-                strongNumbersInColInsideGroup.forEach(nr => {
-                    strNumberString = strNumberString + nr + ', ';
-                });
-                if (strNumberString !== '') {
-                    console.log('In der Gruppenspalte ' + j + ' Strenge Nummern : ' + strNumberString);
-                }
-
                 if (strongNumbersInColInsideGroup.size > 0) {
-
                     // In 2 Spalten der Gruppe die strong NUmmern inadmissible setzen
                     let col1 = 0;
                     let col2 = 0;
@@ -2599,8 +2549,11 @@ class SudokuGrid {
 
     deselect() {
         if (this.isCellSelected()) {
-            // Deselektiere die Zelle selbst
-            this.selectedCell.deselect();
+            // Deselektiere alle Zellen
+            // Notwendig, weil die Überschneidung Selektionen zurücklässt
+            for (let i = 0; i < 81; i++) {
+                this.sudoCells[i].deselect();
+            }    
             // Lösche die Selektionsinformation der Tabelle
             this.selectedCell = undefined;
             this.indexSelected = -1;
@@ -3398,7 +3351,7 @@ class SudokuCell {
             this.myCellNode.classList.remove('selected');
             this.unsetSelected();
             sudoApp.suGrid.displayTechnique('<Selektiere Zelle mit roten Nummern>');
-            this.myInfluencers.forEach(e => e.unsetSelected());
+         //   this.myInfluencers.forEach(e => e.unsetSelected());
         }
     }
     unsetSelected() {
