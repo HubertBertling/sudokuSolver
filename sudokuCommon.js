@@ -3296,7 +3296,7 @@ class SudokuCell {
                     pairInfo.pairCell1.setRedSelected();
                     pairInfo.pairCell2.setRedSelected();
                 })
-                sudoApp.suGrid.displayTechnique('(Normales) Paar')
+                sudoApp.suGrid.displayTechnique('Nacktes Paar');
             }
 
 
