@@ -9,7 +9,7 @@
 
     --delete-btn-bg-color: #e91e63;
     --delete-btn-color: white;
-    --standard-btn-height: 37px;
+    --standard-btn-height: 34px;
     --help-color: #4e67c8;
 
     /* Cell colors */
@@ -217,7 +217,7 @@ html {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     place-items: center;
-    font-size: 1.0rem;
+    font-size: 0.9rem;
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-color);
     border: 0.1rem solid #0050ff
@@ -236,7 +236,7 @@ html {
     padding-right: 0.4rem;
 
     border-radius: 0.3rem;
-    font-size: 1.2rem;
+    font-size: 1.0rem;
     background-color: #56c7aa;
     color: #0d1117;
     border: 0.1rem solid white;
