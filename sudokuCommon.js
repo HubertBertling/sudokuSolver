@@ -2184,190 +2184,287 @@ class SudokuGrid {
         return inAdmissiblesAdded;
     }
 
+    // Funktionen für die Überschneidungstechnik
+
+
+    groupIndex_MatrixRow_2_GroupRow(matrixRow, groupIndex) {
+        // GruppenIndex Matrixreihe auf Gruppenreihe
+        switch (groupIndex) {
+            case 0:
+            case 1:
+            case 2: {
+                switch (matrixRow) {
+                    case 0: return 0;
+                    case 1: return 1;
+                    case 2: return 2;
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8: return -1;
+                }
+            }
+            case 3:
+            case 4:
+            case 5: {
+                switch (matrixRow) {
+                    case 0:
+                    case 1:
+                    case 2: return -1;
+                    case 3: return 0;
+                    case 4: return 1;
+                    case 5: return 2;
+                    case 6:
+                    case 7:
+                    case 8: return -1;
+                }
+            }
+            case 6:
+            case 7:
+            case 8: {
+                switch (matrixRow) {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5: return -1;
+                    case 6: return 0;
+                    case 7: return 1;
+                    case 8: return 2;
+                }
+            }
+        }
+    }
+
+    groupIndex_MatrixCol_2_GroupCol(matrixCol, groupIndex) {
+        // GruppenIndex Matrixreihe auf Gruppenreihe
+        switch (groupIndex) {
+            case 0:
+            case 3:
+            case 6: {
+                switch (matrixCol) {
+                    case 0: return 0;
+                    case 1: return 1;
+                    case 2: return 2;
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8: return -1;
+                }
+            }
+            case 1:
+            case 4:
+            case 7: {
+                switch (matrixCol) {
+                    case 0:
+                    case 1:
+                    case 2: return -1;
+                    case 3: return 0;
+                    case 4: return 1;
+                    case 5: return 2;
+                    case 6:
+                    case 7:
+                    case 8: return -1;
+                }
+            }
+            case 2:
+            case 5:
+            case 8: {
+                switch (matrixCol) {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5: return -1;
+                    case 6: return 0;
+                    case 7: return 1;
+                    case 8: return 2;
+                }
+            }
+        }
+    }
+
+
+    groupRow2MatrixRow(groupIndex, groupRow) {
+        // Berechne für die aktuelle Gruppenzeile
+        // die Matrixzeile
+        switch (groupIndex) {
+            case 0:
+            case 1:
+            case 2: {
+                switch (groupRow) {
+                    case 0: return 0;
+                    case 1: return 1;
+                    case 2: return 2;
+                }
+            }
+            case 3:
+            case 4:
+            case 5: {
+                switch (groupRow) {
+                    case 0: return 3;
+                    case 1: return 4;
+                    case 2: return 5;
+                }
+            }
+            case 6:
+            case 7:
+            case 8: {
+                switch (groupRow) {
+                    case 0: return 6;
+                    case 1: return 7;
+                    case 2: return 8;
+                }
+            }
+        }
+    }
+
+    groupCol2MatrixCol(groupIndex, groupCol) {
+        // Berechne für die Spalte in der aktuellen Gruppe
+        // die Matrixspalte
+        switch (groupIndex) {
+            case 0:
+            case 3:
+            case 6: {
+                switch (groupCol) {
+                    case 0: return 0;
+                    case 1: return 1;
+                    case 2: return 2;
+                }
+            }
+            case 1:
+            case 4:
+            case 7: {
+                switch (groupCol) {
+                    case 0: return 3;
+                    case 1: return 4;
+                    case 2: return 5;
+                }
+            }
+            case 2:
+            case 5:
+            case 8: {
+                switch (groupCol) {
+                    case 0: return 6;
+                    case 1: return 7;
+                    case 2: return 8;
+                }
+            }
+        }
+    }
+
+    cellOverlapInRowReduce(i, row, strongRow, strongNumbers) {
+        let inAdmissiblesAdded = false;
+        let matrixRow = this.groupRow2MatrixRow(i, row);
+        for (let k = 0; k < 3; k++) {
+            let colIndex = this.groupCol2MatrixCol(i, k);
+            let tmpRow = this.sudoRows[matrixRow];
+            let tmpCell = tmpRow.myCells[colIndex];
+
+            if (tmpCell.getValue() == '0') {
+                let oldInAdmissibles = new SudokuSet(tmpCell.myLevel_gt0_inAdmissibles);
+                let tmpAdmissibles = tmpCell.getTotalAdmissibles();
+                let inAdmissiblesFromOverlap = tmpAdmissibles.intersection(strongNumbers);
+
+                if (inAdmissiblesFromOverlap.size > 0) {
+                    tmpCell.myLevel_gt0_inAdmissibles =
+                        tmpCell.myLevel_gt0_inAdmissibles.union(inAdmissiblesFromOverlap);
+                    let localAdded = !oldInAdmissibles.equals(tmpCell.myLevel_gt0_inAdmissibles);
+                    inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
+                    if (localAdded) {
+                        let newInAdmissibles =
+                            tmpCell.myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
+                        // Die Liste der indirekt unzulässigen verursacht von overlap wird gesetzt
+
+                     //   let strNumberString = '';
+                     //   newInAdmissibles.forEach(nr => {
+                     //       strNumberString = strNumberString + nr + ', ';
+                     //   });
+                     //   console.log('         Neue unzulässige in der Gruppe: ' + strNumberString);
+                     //   console.log('');
+
+                        tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping = newInAdmissibles;
+                        let overlapInfo = {
+                            group: this.sudoGroups[i],
+                            rowCol: strongRow
+                        }
+                        tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo = overlapInfo;
+                    }
+                }
+            }
+        }
+        return inAdmissiblesAdded;
+    }
+
+
+
+
+
+    cellOverlapInColReduce(i, col, strongCol, strongNumbers) {
+        let inAdmissiblesAdded = false;
+        let matrixCol = this.groupCol2MatrixCol(i, col);
+        for (let k = 0; k < 3; k++) {
+            let rowIndex = this.groupRow2MatrixRow(i, k);
+            let tmpCol = this.sudoCols[matrixCol];
+            let tmpCell = tmpCol.myCells[rowIndex];
+
+            if (tmpCell.getValue() == '0') {
+                let oldInAdmissibles = new SudokuSet(tmpCell.myLevel_gt0_inAdmissibles);
+                let tmpAdmissibles = tmpCell.getTotalAdmissibles();
+                let inAdmissiblesFromOverlap = tmpAdmissibles.intersection(strongNumbers);
+
+                if (inAdmissiblesFromOverlap.size > 0) {
+
+                    tmpCell.myLevel_gt0_inAdmissibles =
+                        tmpCell.myLevel_gt0_inAdmissibles.union(inAdmissiblesFromOverlap);
+                    let localAdded = !oldInAdmissibles.equals(tmpCell.myLevel_gt0_inAdmissibles);
+                    inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
+                    if (localAdded) {
+                        let newInAdmissibles =
+                            tmpCell.myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
+                        // Die Liste der indirekt unzulässigen verursacht von overlap wird gesetzt
+
+                    //    let strNumberString = '';
+                    //    newInAdmissibles.forEach(nr => {
+                    //        strNumberString = strNumberString + nr + ', ';
+                    //    });
+                    //    console.log('         Neue unzulässige in der Gruppe: ' + strNumberString);
+                    //    console.log('');
+
+                        tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping = newInAdmissibles;
+                        let overlapInfo = {
+                            group: this.sudoGroups[i],
+                            rowCol: strongCol
+                        };
+                        tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo = overlapInfo;
+                    }
+                }
+            }
+        }
+        return inAdmissiblesAdded;
+    }
+
+
+
     derive_inAdmissiblesFromOverlapping() {
-        function groupIndex_MatrixRow_2_GroupRow(matrixRow, groupIndex) {
-            // GruppenIndex Matrixreihe auf Gruppenreihe
-            switch (groupIndex) {
-                case 0:
-                case 1:
-                case 2: {
-                    switch (matrixRow) {
-                        case 0: return 0;
-                        case 1: return 1;
-                        case 2: return 2;
-                        case 3:
-                        case 4:
-                        case 5:
-                        case 6:
-                        case 7:
-                        case 8: return -1;
-                    }
-                }
-                case 3:
-                case 4:
-                case 5: {
-                    switch (matrixRow) {
-                        case 0:
-                        case 1:
-                        case 2: return -1;
-                        case 3: return 0;
-                        case 4: return 1;
-                        case 5: return 2;
-                        case 6:
-                        case 7:
-                        case 8: return -1;
-                    }
-                }
-                case 6:
-                case 7:
-                case 8: {
-                    switch (matrixRow) {
-                        case 0:
-                        case 1:
-                        case 2:
-                        case 3:
-                        case 4:
-                        case 5: return -1;
-                        case 6: return 0;
-                        case 7: return 1;
-                        case 8: return 2;
-                    }
-                }
-            }
-        }
-
-        function groupIndex_MatrixCol_2_GroupCol(matrixCol, groupIndex) {
-            // GruppenIndex Matrixreihe auf Gruppenreihe
-            switch (groupIndex) {
-                case 0:
-                case 3:
-                case 6: {
-                    switch (matrixCol) {
-                        case 0: return 0;
-                        case 1: return 1;
-                        case 2: return 2;
-                        case 3:
-                        case 4:
-                        case 5:
-                        case 6:
-                        case 7:
-                        case 8: return -1;
-                    }
-                }
-                case 1:
-                case 4:
-                case 7: {
-                    switch (matrixCol) {
-                        case 0:
-                        case 1:
-                        case 2: return -1;
-                        case 3: return 0;
-                        case 4: return 1;
-                        case 5: return 2;
-                        case 6:
-                        case 7:
-                        case 8: return -1;
-                    }
-                }
-                case 2:
-                case 5:
-                case 8: {
-                    switch (matrixCol) {
-                        case 0:
-                        case 1:
-                        case 2:
-                        case 3:
-                        case 4:
-                        case 5: return -1;
-                        case 6: return 0;
-                        case 7: return 1;
-                        case 8: return 2;
-                    }
-                }
-            }
-        }
-
-
-        function groupRow2MatrixRow(groupIndex, groupRow) {
-            // Berechne für die aktuelle Gruppenzeile
-            // die Matrixzeile
-            switch (groupIndex) {
-                case 0:
-                case 1:
-                case 2: {
-                    switch (groupRow) {
-                        case 0: return 0;
-                        case 1: return 1;
-                        case 2: return 2;
-                    }
-                }
-                case 3:
-                case 4:
-                case 5: {
-                    switch (groupRow) {
-                        case 0: return 3;
-                        case 1: return 4;
-                        case 2: return 5;
-                    }
-                }
-                case 6:
-                case 7:
-                case 8: {
-                    switch (groupRow) {
-                        case 0: return 6;
-                        case 1: return 7;
-                        case 2: return 8;
-                    }
-                }
-            }
-        }
-
-        function groupCol2MatrixCol(groupIndex, groupCol) {
-            // Berechne für die Spalte in der aktuellen Gruppe
-            // die Matrixspalte
-            switch (groupIndex) {
-                case 0:
-                case 3:
-                case 6: {
-                    switch (groupCol) {
-                        case 0: return 0;
-                        case 1: return 1;
-                        case 2: return 2;
-                    }
-                }
-                case 1:
-                case 4:
-                case 7: {
-                    switch (groupCol) {
-                        case 0: return 3;
-                        case 1: return 4;
-                        case 2: return 5;
-                    }
-                }
-                case 2:
-                case 5:
-                case 8: {
-                    switch (groupCol) {
-                        case 0: return 6;
-                        case 1: return 7;
-                        case 2: return 8;
-                    }
-                }
-            }
-        }
-
         // Iteriere über die Gruppen
         let tmpGroup = null;
         let tmpRow = null;
         let tmpCol = null;
         let inAdmissiblesAdded = false;
+
         for (let i = 0; i < 9; i++) {
             tmpGroup = this.sudoGroups[i];
             console.log('Gruppe: ' + i);
             // Iteriere über die Zeilen der Gruppe
             for (let j = 0; j < 3; j++) {
-                let z = groupRow2MatrixRow(i, j);
-                console.log('   Zeile: ' + z);
+                let z = this.groupRow2MatrixRow(i, j);
+                //               console.log('   Zeile: ' + z);
                 let numbersInRowOutsideGroup = new SudokuSet();
                 let numbersInRowInsideGroup = new SudokuSet();
                 let strongNumbersInRowInsideGroup = new SudokuSet();
@@ -2375,16 +2472,16 @@ class SudokuGrid {
                 tmpRow = this.sudoRows[z];
                 for (let k = 0; k < 9; k++) {
                     if (tmpRow.myCells[k].getValue() == '0') {
-                        if (groupIndex_MatrixCol_2_GroupCol(k, i) >= 0 && groupIndex_MatrixCol_2_GroupCol(k, i) < 3) {
+                        if (this.groupIndex_MatrixCol_2_GroupCol(k, i) >= 0 && this.groupIndex_MatrixCol_2_GroupCol(k, i) < 3) {
                             // k ist Index in Gruppe
-                            console.log('      Zelle ' + k + ' in der Gruppe');
+                            //                         console.log('      Zelle ' + k + ' in der Gruppe');
                             numbersInRowInsideGroup = numbersInRowInsideGroup.union(tmpRow.myCells[k].getTotalAdmissibles());
                         } else {
-                            console.log('      Zelle ' + k + ' außerhalb der Gruppe')
+                            //                         console.log('      Zelle ' + k + ' außerhalb der Gruppe')
                             numbersInRowOutsideGroup = numbersInRowOutsideGroup.union(tmpRow.myCells[k].getTotalAdmissibles());
                         }
                     } else {
-                        console.log('      Zelle ' + k + ' belegt');
+                        //                     console.log('      Zelle ' + k + ' belegt');
                     }
                     strongNumbersInRowInsideGroup = numbersInRowInsideGroup.difference(numbersInRowOutsideGroup);
                 }
@@ -2393,55 +2490,43 @@ class SudokuGrid {
                 strongNumbersInRowInsideGroup.forEach(nr => {
                     strNumberString = strNumberString + nr + ', ';
                 });
-                console.log('         Strenge Nummern in der Gruppe: ' + strNumberString);
-                // Iteriere über die Zellen der Reihe
+                if (strNumberString !== '') {
+                    console.log('In der Gruppenzeile ' + j + ' Strenge Nummern : ' + strNumberString);
+                }
+
                 if (strongNumbersInRowInsideGroup.size > 0) {
-                    for (let k = 0; k < 9; k++) {
-                        if (!(groupIndex_MatrixCol_2_GroupCol(k, i) >= 0 && groupIndex_MatrixCol_2_GroupCol(k, i) < 3)) {
-                            if (tmpRow.myCells[k].getValue() == '0') {
-                                // k ist nicht in der Gruppe und
-                                // k ist unbelegtes Feld
-                                let oldInAdmissibles = new SudokuSet(tmpRow.myCells[k].myLevel_gt0_inAdmissibles);
-                                // Die indirekt unzulässigen werden neu gesetzt
-                                // Nur zulässige können neu unzulässig werden.
-                                let tmpAdmissibles = tmpRow.myCells[k].getTotalAdmissibles();
-                                let inAdmissiblesFromOverlap = tmpAdmissibles.intersection(strongNumbersInRowInsideGroup);
-
-                                tmpRow.myCells[k].myLevel_gt0_inAdmissibles =
-                                    tmpRow.myCells[k].myLevel_gt0_inAdmissibles.union(inAdmissiblesFromOverlap);
-                                let localAdded = !oldInAdmissibles.equals(tmpRow.myCells[k].myLevel_gt0_inAdmissibles);
-                                inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
-                                if (localAdded) {
-                                    let newInAdmissibles =
-                                        tmpRow.myCells[k].myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
-                                    // Die Liste der indirekt unzulässigen verursacht von overlap wird gesetzt
-
-                                    strNumberString = '';
-                                    newInAdmissibles.forEach(nr => {
-                                        strNumberString = strNumberString + nr + ', ';
-                                    });
-                                    console.log('         Neue unzulässige in der Gruppe: ' + strNumberString);
-                                    console.log('');
-
-                                    tmpRow.myCells[k].myLevel_gt0_inAdmissiblesFromOverlap = newInAdmissibles;
-                                    let overlapInfo = {
-                                        group: tmpGroup,
-                                        rowCol: tmpRow
-                                    }
-                                    tmpRow.myCells[k].myLevel_gt0_inAdmissiblesFromOverlapInfo = overlapInfo;
-                                }
-                            }
+                    // In 2 Reihen der Gruppe die strong nummern inadmissible setzen
+                    let row1 = 0;
+                    let row2 = 0;
+                    switch (j) {
+                        case 0: {
+                            row1 = 1;
+                            row2 = 2;
+                            break;
+                        }
+                        case 1: {
+                            row1 = 0;
+                            row2 = 2;
+                            break;
+                        }
+                        case 2: {
+                            row1 = 0;
+                            row2 = 1;
                         }
                     }
+                    
+                    inAdmissiblesAdded = inAdmissiblesAdded || 
+                        this.cellOverlapInRowReduce(i, row1, tmpRow, strongNumbersInRowInsideGroup);
+                    inAdmissiblesAdded = inAdmissiblesAdded || 
+                        this.cellOverlapInRowReduce(i, row2, tmpRow, strongNumbersInRowInsideGroup);
                 }
             }
-
             // Iteriere über die Spalten der Gruppe
             for (let j = 0; j < 3; j++) {
 
-                let colIndex = groupCol2MatrixCol(i, j);
+                let colIndex = this.groupCol2MatrixCol(i, j);
 
-                console.log('   Spalte: ' + colIndex);
+                //        console.log('   Spalte: ' + colIndex);
                 let numbersInColOutsideGroup = new SudokuSet();
                 let numbersInColInsideGroup = new SudokuSet();
                 let strongNumbersInColInsideGroup = new SudokuSet();
@@ -2449,16 +2534,16 @@ class SudokuGrid {
                 tmpCol = this.sudoCols[colIndex];
                 for (let k = 0; k < 9; k++) {
                     if (tmpCol.myCells[k].getValue() == '0') {
-                        if (groupIndex_MatrixRow_2_GroupRow(k, i) >= 0 && groupIndex_MatrixRow_2_GroupRow(k, i) < 3) {
+                        if (this.groupIndex_MatrixRow_2_GroupRow(k, i) >= 0 && this.groupIndex_MatrixRow_2_GroupRow(k, i) < 3) {
                             // k ist Index in Gruppe
-                            console.log('      Zelle ' + k + ' in der Gruppe');
+                            //                    console.log('      Zelle ' + k + ' in der Gruppe');
                             numbersInColInsideGroup = numbersInColInsideGroup.union(tmpCol.myCells[k].getTotalAdmissibles());
                         } else {
-                            console.log('      Zelle ' + k + ' außerhalb der Gruppe')
+                            //                  console.log('      Zelle ' + k + ' außerhalb der Gruppe')
                             numbersInColOutsideGroup = numbersInColOutsideGroup.union(tmpCol.myCells[k].getTotalAdmissibles());
                         }
                     } else {
-                        console.log('      Zelle ' + k + ' belegt');
+                        //                console.log('      Zelle ' + k + ' belegt');
                     }
                     strongNumbersInColInsideGroup = numbersInColInsideGroup.difference(numbersInColOutsideGroup);
                 }
@@ -2467,47 +2552,37 @@ class SudokuGrid {
                 strongNumbersInColInsideGroup.forEach(nr => {
                     strNumberString = strNumberString + nr + ', ';
                 });
-                console.log('         Strenge Nummern in der Gruppe: ' + strNumberString);
-                // Iteriere über die Zellen der Reihe
+                if (strNumberString !== '') {
+                    console.log('In der Gruppenspalte ' + j + ' Strenge Nummern : ' + strNumberString);
+                }
+
                 if (strongNumbersInColInsideGroup.size > 0) {
-                    for (let k = 0; k < 9; k++) {
-                        if (!(groupIndex_MatrixRow_2_GroupRow(k, i) >= 0 && groupIndex_MatrixRow_2_GroupRow(k, i) < 3)) {
-                            console.log('      Index k: ' + k);
-                            if (tmpCol.myCells[k].getValue() == '0') {
-                                // k ist nicht in der Gruppe und
-                                // k ist unbelegtes Feld
-                                let oldInAdmissibles = new SudokuSet(tmpCol.myCells[k].myLevel_gt0_inAdmissibles);
-                                // Die indirekt unzulässigen werden neu gesetzt
-                                // Nur zulässige können neu unzulässig werden.
-                                let tmpAdmissibles = tmpCol.myCells[k].getTotalAdmissibles();
-                                let inAdmissiblesFromOverlap = tmpAdmissibles.intersection(strongNumbersInColInsideGroup);
 
-                                tmpCol.myCells[k].myLevel_gt0_inAdmissibles =
-                                    tmpCol.myCells[k].myLevel_gt0_inAdmissibles.union(inAdmissiblesFromOverlap);
-                                let localAdded = !oldInAdmissibles.equals(tmpCol.myCells[k].myLevel_gt0_inAdmissibles);
-                                inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
-                                if (localAdded) {
-                                    let newInAdmissibles =
-                                        tmpCol.myCells[k].myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
-                                    // Die Liste der indirekt unzulässigen verursacht von overlap wird gesetzt
-
-                                    strNumberString = '';
-                                    newInAdmissibles.forEach(nr => {
-                                        strNumberString = strNumberString + nr + ', ';
-                                    });
-                                    console.log('         Neue unzulässige in der Gruppe: ' + strNumberString);
-                                    console.log('');
-
-                                    tmpCol.myCells[k].myLevel_gt0_inAdmissiblesFromOverlap = newInAdmissibles;
-                                    let overlapInfo = {
-                                        group: tmpGroup,
-                                        rowCol: tmpCol
-                                    }
-                                    tmpCol.myCells[k].myLevel_gt0_inAdmissiblesFromOverlapInfo = overlapInfo;
-                                }
-                            }
+                    // In 2 Spalten der Gruppe die strong NUmmern inadmissible setzen
+                    let col1 = 0;
+                    let col2 = 0;
+                    //
+                    switch (j) {
+                        case 0: {
+                            col1 = 1;
+                            col2 = 2;
+                            break;
+                        }
+                        case 1: {
+                            col1 = 0;
+                            col2 = 2;
+                            break;
+                        }
+                        case 2: {
+                            col1 = 0;
+                            col2 = 1;
                         }
                     }
+                    // col1 bereinigen
+                    inAdmissiblesAdded = inAdmissiblesAdded || 
+                        this.cellOverlapInColReduce(i, col1, tmpCol, strongNumbersInColInsideGroup);
+                    inAdmissiblesAdded = inAdmissiblesAdded || 
+                        this.cellOverlapInColReduce(i, col2, tmpCol, strongNumbersInColInsideGroup)
                 }
             }
         }
@@ -2754,7 +2829,7 @@ class SudokuCell {
         this.myLevel_gt0_inAdmissiblesFromPairs = new Map();
         this.myLevel_gt0_inAdmissiblesFromHiddenPairs = new Map();
         this.myLevel_gt0_inAdmissiblesFromOverlapping = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesFromOverlapInfo = null;
+        this.myLevel_gt0_inAdmissiblesFromOverlappingInfo = null;
 
         this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
@@ -2798,7 +2873,7 @@ class SudokuCell {
         this.myLevel_gt0_inAdmissiblesFromPairs = new Map();
         this.myLevel_gt0_inAdmissiblesFromHiddenPairs = new Map();
         this.myLevel_gt0_inAdmissiblesFromOverlapping = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesFromOverlapInfo = null;
+        this.myLevel_gt0_inAdmissiblesFromOverlappingInfo = null;
         this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
 
@@ -2921,9 +2996,9 @@ class SudokuCell {
         for (let i = 0; i < admissibleNodes.length; i++) {
             if (this.myIndirectNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
                 admissibleNodes[i].classList.add('indirect-neccessary');
-
+ 
             }
-
+ 
         }
     }
     */
@@ -3285,15 +3360,15 @@ class SudokuCell {
             }
 
             if (this.myLevel_gt0_inAdmissibles.size > 0 &&
-                this.myLevel_gt0_inAdmissiblesFromOverlap.size > 0) {
+                this.myLevel_gt0_inAdmissiblesFromOverlapping.size > 0) {
 
-                this.myLevel_gt0_inAdmissiblesFromOverlapInfo.group.myCells.forEach(cell => {
+                this.myLevel_gt0_inAdmissiblesFromOverlappingInfo.group.myCells.forEach(cell => {
                     cell.setSelected();
                 });
-                this.myLevel_gt0_inAdmissiblesFromOverlapInfo.rowCol.myCells.forEach(cell => {
+                this.myLevel_gt0_inAdmissiblesFromOverlappingInfo.rowCol.myCells.forEach(cell => {
                     cell.setSelected();
                 });
-                    
+
                 sudoApp.suGrid.displayTechnique('Überschneidung');
 
             }
