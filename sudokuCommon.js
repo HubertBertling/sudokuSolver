@@ -1704,9 +1704,10 @@ class SudokuGrid {
                 this.deleteSelected('define', false);
                 // Werte die verbliebene Matrix strikt aus.
                 this.evaluateGridStrict();
-                let neccessaryCondition = (this.sudoCells[k].getNecessarys().size == 1);
+                let necessaryCondition = (this.sudoCells[k].getNecessarys().size == 1);
+                let indirectNecessaryCondition = (this.sudoCells[k].getIndirectNecessarys().size == 1);
                 let totalAdmissibleCondition = (this.sudoCells[k].getTotalAdmissibles().size == 1);
-                if (neccessaryCondition || totalAdmissibleCondition) {
+                if (necessaryCondition || indirectNecessaryCondition || totalAdmissibleCondition) {
                     // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer,
                     // Entweder eine notwendige Nummer oder eine Single-Nummer-
                     // D.h. die gelöschte Nummer ist eindeutig wiederherstellbar.
