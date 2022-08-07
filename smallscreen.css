@@ -261,7 +261,9 @@ html {
     font-size: 1.0rem;
     color: Crimson;
 }
-
+.nested.err>div.inAdmissible {
+    background-color: white;
+}
 .sudoku-grid-cell.hover {
     border: 3px solid var(--selected-cell-border-color);
 }

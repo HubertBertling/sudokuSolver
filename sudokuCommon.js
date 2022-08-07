@@ -821,32 +821,7 @@ class StepperOnGrid {
     }
 
     deadlockReached() {
-        // Deadlock ist erreicht, wenn es eine unlösbare Zelle gibt
-        for (let i = 0; i < 81; i++) {
-            if (this.suGrid.sudoCells[i].isInsolvable()) {
-                return true;
-            }
-        }
-        // Oder wenn es eine unlösbare Gruppe gibt
-        for (let i = 0; i < 9; i++) {
-            if (this.suGrid.sudoGroups[i].isInsolvable()) {
-                return true;
-            }
-        }
-        // Oder wenn es eine unlösbare Reihe gibt
-        for (let i = 0; i < 9; i++) {
-            if (this.suGrid.sudoRows[i].isInsolvable()) {
-                return true;
-            }
-        }
-
-        // Oder wenn es eine unlösbare Spalte gibt
-        for (let i = 0; i < 9; i++) {
-            if (this.suGrid.sudoCols[i].isInsolvable()) {
-                return true;
-            }
-        }
-        return false;
+        return this.suGrid.isInsolvable();
     }
 }
 
@@ -1062,35 +1037,44 @@ class NineCellCollection {
             let newInAdmissibles1 = tmpAdmissibles1.difference(new SudokuSet([hiddenPair.nr1, hiddenPair.nr2]));
 
             if (newInAdmissibles1.size > 0) {
+                let oldInAdmissibles = new SudokuSet(cell1.myLevel_gt0_inAdmissibles);
                 cell1.myLevel_gt0_inAdmissibles =
                     cell1.myLevel_gt0_inAdmissibles.union(newInAdmissibles1);
-                newInAdmissibles1.forEach(inAdNr => {
-                    let inAdmissibleSubPairInfo = {
-                        collection: this,
-                        subPairCell1: this.myCells[hiddenPair.pos1],
-                        subPairCell2: this.myCells[hiddenPair.pos2]
-                    }
-                    cell1.myLevel_gt0_inAdmissiblesFromHiddenPairs.set(inAdNr, inAdmissibleSubPairInfo)
-                })
-                inAdmissiblesAdded = true;
+                let localAdded = !oldInAdmissibles.equals(cell1.myLevel_gt0_inAdmissibles);
+                if (localAdded) {
+                    newInAdmissibles1.forEach(inAdNr => {
+                        let inAdmissibleSubPairInfo = {
+                            collection: this,
+                            subPairCell1: this.myCells[hiddenPair.pos1],
+                            subPairCell2: this.myCells[hiddenPair.pos2]
+                        }
+                        cell1.myLevel_gt0_inAdmissiblesFromHiddenPairs.set(inAdNr, inAdmissibleSubPairInfo)
+                    })
+                    inAdmissiblesAdded = true;
+                }
             }
 
             // Zweite Paar-Zelle bereinigen
             let cell2 = this.myCells[hiddenPair.pos2];
             let tmpAdmissibles2 = cell2.getTotalAdmissibles();
             let newInAdmissibles2 = tmpAdmissibles2.difference(new SudokuSet([hiddenPair.nr1, hiddenPair.nr2]));
+
             if (newInAdmissibles2.size > 0) {
+                let oldInAdmissibles = new SudokuSet(cell2.myLevel_gt0_inAdmissibles);
                 cell2.myLevel_gt0_inAdmissibles =
                     cell2.myLevel_gt0_inAdmissibles.union(newInAdmissibles2);
-                newInAdmissibles2.forEach(inAdNr => {
-                    let inAdmissibleSubPairInfo = {
-                        collection: this,
-                        subPairCell1: this.myCells[hiddenPair.pos1],
-                        subPairCell2: this.myCells[hiddenPair.pos2]
-                    }
-                    cell2.myLevel_gt0_inAdmissiblesFromHiddenPairs.set(inAdNr, inAdmissibleSubPairInfo)
-                })
-                inAdmissiblesAdded = true;
+                let localAdded = !oldInAdmissibles.equals(cell2.myLevel_gt0_inAdmissibles);
+                if (localAdded) {
+                    newInAdmissibles2.forEach(inAdNr => {
+                        let inAdmissibleSubPairInfo = {
+                            collection: this,
+                            subPairCell1: this.myCells[hiddenPair.pos1],
+                            subPairCell2: this.myCells[hiddenPair.pos2]
+                        }
+                        cell2.myLevel_gt0_inAdmissiblesFromHiddenPairs.set(inAdNr, inAdmissibleSubPairInfo)
+                    })
+                    inAdmissiblesAdded = true;
+                }
             }
         }
         return inAdmissiblesAdded;
@@ -1574,6 +1558,30 @@ class SudokuGrid {
         }
     }
 
+    isInsolvable() {
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].isInsolvable()) {
+                return true;
+            }
+        }
+        for (let i = 0; i < 9; i++) {
+            if (this.sudoGroups[i].isInsolvable()) {
+                return true;
+            }
+        }
+        for (let i = 0; i < 9; i++) {
+            if (this.sudoRows[i].isInsolvable()) {
+                return true;
+            }
+        }
+        for (let i = 0; i < 9; i++) {
+            if (this.sudoCols[i].isInsolvable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     setEvalType(et) {
         this.evalType = et;
         this.evaluateMatrix();
@@ -2018,11 +2026,11 @@ class SudokuGrid {
         let inAdmissiblesAdded = c1 || c2 || c3 || c4 || c5;
 
         while (inAdmissiblesAdded) {
-            let c1 = this.derive_inAdmissiblesFromNecessarys();
-            let c2 = this.derive_inAdmissiblesFromSingles();
-            let c3 = this.derive_inAdmissiblesFromHiddenPairs();
-            let c4 = this.derive_inAdmissiblesFromEqualPairs();
-            let c5 = this.derive_inAdmissiblesFromOverlapping();
+            c1 = this.derive_inAdmissiblesFromNecessarys();
+            c2 = this.derive_inAdmissiblesFromSingles();
+            c3 = this.derive_inAdmissiblesFromHiddenPairs();
+            c4 = this.derive_inAdmissiblesFromEqualPairs();
+            c5 = this.derive_inAdmissiblesFromOverlapping();
             inAdmissiblesAdded = c1 || c2 || c3 || c4 || c5;
         }
     }
@@ -2393,10 +2401,6 @@ class SudokuGrid {
         return inAdmissiblesAdded;
     }
 
-
-
-
-
     cellOverlapInColReduce(i, col, strongCol, strongNumbers) {
         let inAdmissiblesAdded = false;
         let matrixCol = this.groupCol2MatrixCol(i, col);
@@ -2482,10 +2486,11 @@ class SudokuGrid {
                             row2 = 1;
                         }
                     }
-                    inAdmissiblesAdded = inAdmissiblesAdded || 
-                        this.cellOverlapInRowReduce(i, row1, tmpRow, strongNumbersInRowInsideGroup);
-                    inAdmissiblesAdded = inAdmissiblesAdded || 
-                        this.cellOverlapInRowReduce(i, row2, tmpRow, strongNumbersInRowInsideGroup);
+                    let newInAdmissiblesAdded1 = this.cellOverlapInRowReduce(i, row1, tmpRow, strongNumbersInRowInsideGroup);
+                    inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded1;
+
+                    let newInAdmissiblesAdded2 = this.cellOverlapInRowReduce(i, row2, tmpRow, strongNumbersInRowInsideGroup);
+                    inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded2;
                 }
             }
             // Iteriere über die Spalten der Gruppe
@@ -2528,11 +2533,12 @@ class SudokuGrid {
                             col2 = 1;
                         }
                     }
-                    // col1 bereinigen
-                    inAdmissiblesAdded = inAdmissiblesAdded || 
-                        this.cellOverlapInColReduce(i, col1, tmpCol, strongNumbersInColInsideGroup);
-                    inAdmissiblesAdded = inAdmissiblesAdded || 
-                        this.cellOverlapInColReduce(i, col2, tmpCol, strongNumbersInColInsideGroup)
+                    // col1 bereinigen            
+                    let newInAdmissiblesAdded1 = this.cellOverlapInColReduce(i, col1, tmpCol, strongNumbersInColInsideGroup);
+                    inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded1;
+
+                    let newInAdmissiblesAdded2 = this.cellOverlapInColReduce(i, col2, tmpCol, strongNumbersInColInsideGroup);
+                    inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded2;
                 }
             }
         }
@@ -2554,7 +2560,7 @@ class SudokuGrid {
             // Notwendig, weil die Überschneidung Selektionen zurücklässt
             for (let i = 0; i < 81; i++) {
                 this.sudoCells[i].deselect();
-            }    
+            }
             this.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
             // Lösche die Selektionsinformation der Tabelle
             this.selectedCell = undefined;
@@ -3233,7 +3239,7 @@ class SudokuCell {
             // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
             // wird die verursachende collection angezeigt.
             sudoApp.suGrid.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
-     
+
             if (this.myNecessarys.size > 0) {
                 let collection = this.myNecessaryCollections.get(Array.from(this.myNecessarys)[0]);
                 collection.myCells.forEach(e => {
@@ -3353,7 +3359,7 @@ class SudokuCell {
         if (inMainApp) {
             this.myCellNode.classList.remove('selected');
             this.unsetSelected();
-         //   this.myInfluencers.forEach(e => e.unsetSelected());
+            //   this.myInfluencers.forEach(e => e.unsetSelected());
         }
     }
     unsetSelected() {
