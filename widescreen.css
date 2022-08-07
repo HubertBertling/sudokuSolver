@@ -309,6 +309,13 @@ html {
 .nested.err>div.inAdmissible {
     background-color: white;
 }
+.nested.err>div.neccessary.inAdmissible {
+    background-color: #56c7aa;
+}
+
+
+
+
 .sudoku-grid-cell.hover {
     border: 2px solid var(--selected-cell-border-color);
 }

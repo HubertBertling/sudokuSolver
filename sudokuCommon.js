@@ -1429,25 +1429,17 @@ class SudokuGroup extends NineCellCollection {
         this.myCells.forEach(sudoCell => {
             sudoCell.display(groupNode);
         })
-        let cellError = false;
-        this.myCells.every(sudoCell => {
-            if (sudoCell.isInsolvable()) {
-                cellError = true;
-                return false;
-            }
-            return true;
-        });
+    }
+
+
+    displayInsolvability() {
         // Der Gruppen-Error wird angezeigt
         // Aber nur, wenn die Zellen selbst keinen Fehler aufweisen.      
-        if (this.isInsolvable() && !cellError) {
-            this.myGroupNode.classList.add('err');
-            this.myGroupNode.classList.add('cell-err');
-            setTimeout(() => {
-                this.myGroupNode.classList.remove('cell-err');
-            }, 500);
-        } else {
-            this.myGroupNode.classList.remove('err');
-        }
+        this.myGroupNode.classList.add('err');
+        this.myGroupNode.classList.add('cell-err');
+        setTimeout(() => {
+            this.myGroupNode.classList.remove('cell-err');
+        }, 500);
     }
 
     clearEvaluations() {
@@ -1479,45 +1471,22 @@ class SudokuRow extends NineCellCollection {
         sudoCell.setRow(this);
     }
 
-    display() {
-        // Der Zeilen-Error wird in den Zellen angezeigt
-        // Aber nur, wenn die Zellen selbst keinen Fehler aufweisen.
-        let cellError = false;
-        this.myCells.every(sudoCell => {
-            if (sudoCell.isInsolvable()) {
-                cellError = true;
-                return false;
-            }
-            return true;
-        });
+       
+    displayInsolvability() {
         this.myCells.forEach(sudoCell => {
-            if (!cellError) {
                 sudoCell.displayRowError(this.isInsolvable());
-            }
-        })
+        })   
     }
 }
-
 class SudokuCol extends NineCellCollection {
     addCell(sudoCell) {
         this.myCells.push(sudoCell);
         sudoCell.setCol(this);
     }
-    display() {
-        // Der Spalten-Error wid in den Zellen angezeigt
-        // Aber nur, wenn die Zellen selbst keinen Fehler aufweisen.
-        let cellError = false;
-        this.myCells.every(sudoCell => {
-            if (sudoCell.isInsolvable()) {
-                cellError = true;
-                return false;
-            }
-            return true;
-        });
+    
+    displayInsolvability() {
         this.myCells.forEach(sudoCell => {
-            if (!cellError) {
                 sudoCell.displayColError(this.isInsolvable());
-            }
         })
     }
 }
@@ -1914,13 +1883,39 @@ class SudokuGrid {
         this.sudoGroups.forEach(sudoGroup => {
             sudoGroup.display(new_domGridNode);
         });
-        this.sudoRows.forEach(sudoRow => {
-            sudoRow.display();
-        });
-        this.sudoCols.forEach(sudoCol => {
-            sudoCol.display();
-        });
+        // Unlösbarkeit anzeigen.
+        if (this.isInsolvable()) {
+            this.displayInsolvability();
+        }
     }
+
+    displayInsolvability() {
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].isInsolvable()) {
+                this.sudoCells[i].displayInsolvability();
+                return;
+            }
+        }
+        for (let i = 0; i < 9; i++) {
+            if (this.sudoGroups[i].isInsolvable()) {
+                this.sudoGroups[i].displayInsolvability();
+                return;
+            }
+        }
+        for (let i = 0; i < 9; i++) {
+            if (this.sudoRows[i].isInsolvable()) {
+                this.sudoRows[i].displayInsolvability();
+                return;
+            }
+        }
+        for (let i = 0; i < 9; i++) {
+            if (this.sudoCols[i].isInsolvable()) {
+                this.sudoCols[i].displayInsolvability();
+                return;
+            }
+        }
+    }
+
 
     initCurrentSelection() {
         this.deselect();
@@ -2951,19 +2946,6 @@ class SudokuCell {
         }
     }
 
-    /*
-    displayIndirectNecessary() {
-        let admissibleNodes = this.myCellNode.children;
-        for (let i = 0; i < admissibleNodes.length; i++) {
-            if (this.myIndirectNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
-                admissibleNodes[i].classList.add('indirect-neccessary');
- 
-            }
- 
-        }
-    }
-    */
-
     displayLevel_gt0_inAdmissibles() {
         let admissibleNodes = this.myCellNode.children;
         for (let i = 0; i < admissibleNodes.length; i++) {
@@ -3150,7 +3132,6 @@ class SudokuCell {
                 this.displayManualValue();
             }
         }
-        return this.displayError();
     }
 
 
@@ -3177,17 +3158,13 @@ class SudokuCell {
     }
 
 
-    displayError() {
+    displayInsolvability() {
         if (this.isInsolvable()) {
             this.myCellNode.classList.add('err');
             this.myCellNode.classList.add('cell-err');
             setTimeout(() => {
                 this.myCellNode.classList.remove('cell-err');
             }, 500);
-            return true;
-        } else {
-            this.myCellNode.classList.remove('err');
-            return false;
         }
     }
 
@@ -3452,14 +3429,14 @@ class SudokuCell {
 
     isInsolvable() {
         return (
+            // Die Nummer der gesetzten Zelle ist direkt unzulässig.
+            (this.getValue() !== '0' && this.myLevel_0_inAdmissibles.has(this.getValue()))) ||
             // Für die nicht gesetzte Zelle ist die Anzahl notwendiger Nummern größer 1
             (this.getValue() == '0' && this.myNecessarys.size > 1) ||
             // Eine notwendige Nummer ist gleichzeitig unzulässig      
-            // this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0 ||
+            (this.getValue() == '0' && this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0) ||
             // Für die Zelle gibt es keine total zulässige Nummer mehr.
-            this.getTotalAdmissibles().size == 0 ||
-            // Die Nummer der gesetzten Zelle ist nicht zulässig.
-            (this.getValue() !== '0' && this.myLevel_0_inAdmissibles.has(this.getValue())));
+            (this.getValue() == '0' && this.getTotalAdmissibles().size == 0);
     }
 
     getIndex() {
