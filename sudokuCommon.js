@@ -846,6 +846,30 @@ class NineCellCollection {
         this.myPairInfos = [];
     }
 
+    displayInsolvability() {
+        if (this.withConflictingSingles()) {
+            this.displayError();
+            sudoApp.suGrid.displayReasonInsolvability('Zwei gleiche Singles.');
+            return true;
+        }
+        if (this.withPairConflict()) {
+            this.displayError();
+            sudoApp.suGrid.displayReasonInsolvability('Nacktes Paar Konflikt.');
+            return true;
+        }
+        if (this.withConflictingNecessaryNumbers()) {
+            this.displayError();
+            sudoApp.suGrid.displayReasonInsolvability('Zwei gleiche notwendige Nummern.');
+            return true;
+        }
+        if (this.withMissingNumber()) {
+            this.displayError();
+            sudoApp.suGrid.displayReasonInsolvability('Fehlende Nummer.');
+            return true;
+        }
+        return false;
+    }
+
     isInsolvable() {
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
         // Wenn es eine Collection mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
@@ -1431,10 +1455,7 @@ class SudokuGroup extends NineCellCollection {
         })
     }
 
-
-    displayInsolvability() {
-        // Der Gruppen-Error wird angezeigt
-        // Aber nur, wenn die Zellen selbst keinen Fehler aufweisen.      
+    displayError() {
         this.myGroupNode.classList.add('err');
         this.myGroupNode.classList.add('cell-err');
         setTimeout(() => {
@@ -1471,11 +1492,11 @@ class SudokuRow extends NineCellCollection {
         sudoCell.setRow(this);
     }
 
-       
-    displayInsolvability() {
+
+    displayError() {
         this.myCells.forEach(sudoCell => {
-                sudoCell.displayRowError(this.isInsolvable());
-        })   
+            sudoCell.displayRowError();
+        })
     }
 }
 class SudokuCol extends NineCellCollection {
@@ -1483,10 +1504,10 @@ class SudokuCol extends NineCellCollection {
         this.myCells.push(sudoCell);
         sudoCell.setCol(this);
     }
-    
-    displayInsolvability() {
+
+    displayError() {
         this.myCells.forEach(sudoCell => {
-                sudoCell.displayColError(this.isInsolvable());
+            sudoCell.displayColError();
         })
     }
 }
@@ -1525,30 +1546,6 @@ class SudokuGrid {
             this.display();
             this.displayPuzzle('', '');
         }
-    }
-
-    isInsolvable() {
-        for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].isInsolvable()) {
-                return true;
-            }
-        }
-        for (let i = 0; i < 9; i++) {
-            if (this.sudoGroups[i].isInsolvable()) {
-                return true;
-            }
-        }
-        for (let i = 0; i < 9; i++) {
-            if (this.sudoRows[i].isInsolvable()) {
-                return true;
-            }
-        }
-        for (let i = 0; i < 9; i++) {
-            if (this.sudoCols[i].isInsolvable()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     setEvalType(et) {
@@ -1695,6 +1692,14 @@ class SudokuGrid {
                     this.sudoCells[k].manualSetValue(tmpNr, 'define');
                 }
             }
+        }
+    }
+
+    displayReasonInsolvability(reason) {
+        if (inMainApp) {
+            let evalNode = document.getElementById("technique");
+            evalNode.innerHTML =
+                '<b>Widerspruch:</b> &nbsp' + reason;
         }
     }
 
@@ -1869,6 +1874,30 @@ class SudokuGrid {
             + '<b>Puzzle-Name:</b> &nbsp' + name;
     }
 
+    isInsolvable() {
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].isInsolvable()) {
+                return true;
+            }
+        }
+        for (let i = 0; i < 9; i++) {
+            if (this.sudoGroups[i].isInsolvable()) {
+                return true;
+            }
+        }
+        for (let i = 0; i < 9; i++) {
+            if (this.sudoRows[i].isInsolvable()) {
+                return true;
+            }
+        }
+        for (let i = 0; i < 9; i++) {
+            if (this.sudoCols[i].isInsolvable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     display() {
         // Das bisherige DOM-Modell löschen
         let domInputAreaNode = document.getElementById("gridArea");
@@ -1884,35 +1913,24 @@ class SudokuGrid {
             sudoGroup.display(new_domGridNode);
         });
         // Unlösbarkeit anzeigen.
-        if (this.isInsolvable()) {
-            this.displayInsolvability();
-        }
+        this.displayInsolvability();
     }
 
     displayInsolvability() {
+        // Nur ein Widerspruch zeigen.
+        // Tatsächlich weist ein widerspruchsvolles Sudoku viele
+        // Widersprüche gleichzeitig auf.
         for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].isInsolvable()) {
-                this.sudoCells[i].displayInsolvability();
-                return;
-            }
+            if (this.sudoCells[i].displayInsolvability()) return;
         }
         for (let i = 0; i < 9; i++) {
-            if (this.sudoGroups[i].isInsolvable()) {
-                this.sudoGroups[i].displayInsolvability();
-                return;
-            }
+            if (this.sudoGroups[i].displayInsolvability()) return;
         }
         for (let i = 0; i < 9; i++) {
-            if (this.sudoRows[i].isInsolvable()) {
-                this.sudoRows[i].displayInsolvability();
-                return;
-            }
+            if (this.sudoRows[i].displayInsolvability()) return;
         }
         for (let i = 0; i < 9; i++) {
-            if (this.sudoCols[i].isInsolvable()) {
-                this.sudoCols[i].displayInsolvability();
-                return;
-            }
+            if (this.sudoCols[i].displayInsolvability()) return;
         }
     }
 
@@ -2556,7 +2574,7 @@ class SudokuGrid {
             for (let i = 0; i < 81; i++) {
                 this.sudoCells[i].deselect();
             }
-            this.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
+            // this.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
             // Lösche die Selektionsinformation der Tabelle
             this.selectedCell = undefined;
             this.indexSelected = -1;
@@ -3158,46 +3176,29 @@ class SudokuCell {
     }
 
 
-    displayInsolvability() {
-        if (this.isInsolvable()) {
-            this.myCellNode.classList.add('err');
-            this.myCellNode.classList.add('cell-err');
-            setTimeout(() => {
-                this.myCellNode.classList.remove('cell-err');
-            }, 500);
-        }
+    displayCellError() {
+        this.myCellNode.classList.add('err');
+        this.myCellNode.classList.add('cell-err');
+        setTimeout(() => {
+            this.myCellNode.classList.remove('cell-err');
+        }, 500);
     }
 
-    displayRowError(errorStatus) {
-        if (errorStatus) {
-            if (this.myGroup.myGroupNode.classList.contains('err')) {
-                // Dann wird der Row-error nicht angezeigt.
-            } else {
-                this.myCellNode.classList.add('row-err');
-                this.myCellNode.classList.add('cell-err');
-                setTimeout(() => {
-                    this.myCellNode.classList.remove('cell-err');
-                }, 500);
-            }
-        } else {
-            this.myCellNode.classList.remove('row-err');
-        }
+    displayRowError() {
+        this.myCellNode.classList.add('row-err');
+        this.myCellNode.classList.add('cell-err');
+        setTimeout(() => {
+            this.myCellNode.classList.remove('cell-err');
+        }, 500);
+
     }
 
-    displayColError(errorStatus) {
-        if (errorStatus) {
-            if (this.myGroup.myGroupNode.classList.contains('err')) {
-                // Dann wird der Row-error nicht angezeigt.
-            } else {
-                this.myCellNode.classList.add('col-err');
-                this.myCellNode.classList.add('cell-err');
-                setTimeout(() => {
-                    this.myCellNode.classList.remove('cell-err');
-                }, 500);
-            }
-        } else {
-            this.myCellNode.classList.remove('col-err');
-        }
+    displayColError() {
+        this.myCellNode.classList.add('col-err');
+        this.myCellNode.classList.add('cell-err');
+        setTimeout(() => {
+            this.myCellNode.classList.remove('cell-err');
+        }, 500);
     }
 
     getPhase() {
@@ -3429,14 +3430,40 @@ class SudokuCell {
 
     isInsolvable() {
         return (
-            // Die Nummer der gesetzten Zelle ist direkt unzulässig.
-            (this.getValue() !== '0' && this.myLevel_0_inAdmissibles.has(this.getValue()))) ||
-            // Für die nicht gesetzte Zelle ist die Anzahl notwendiger Nummern größer 1
-            (this.getValue() == '0' && this.myNecessarys.size > 1) ||
-            // Eine notwendige Nummer ist gleichzeitig unzulässig      
-            (this.getValue() == '0' && this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0) ||
-            // Für die Zelle gibt es keine total zulässige Nummer mehr.
-            (this.getValue() == '0' && this.getTotalAdmissibles().size == 0);
+            // Die Nummer ist bereits einmal gesetzt.
+            (this.getValue() !== '0' && this.myLevel_0_inAdmissibles.has(this.getValue())) ||
+            // Gleichzeitig verschiedene notwendige Nummern
+            (this.getValue() == '0' && this.myNecessarys.union(this.myIndirectNecessarys).size > 1) ||
+            // Eine notwendige Nummer ist gleichzeitig unzulässig       
+            (this.getValue() == '0' &&
+                this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0) ||
+            // Überhaupt keine zulässige Nummer
+            (this.getValue() == '0' && this.getTotalAdmissibles().size == 0));
+    }
+
+    displayInsolvability() {
+        if (this.getValue() !== '0' && this.myLevel_0_inAdmissibles.has(this.getValue())) {
+            this.displayCellError();
+            this.myGrid.displayReasonInsolvability('Die Nummer ist bereits einmal gesetzt.');
+            return true;
+        }
+        if (this.getValue() == '0' && this.myNecessarys.union(this.myIndirectNecessarys).size > 1) {
+            this.displayCellError();
+            this.myGrid.displayReasonInsolvability('Gleichzeitig verschiedene notwendige Nummern.');
+            return true;
+        }
+        if (this.getValue() == '0' &&
+            this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0) {
+            this.displayCellError();
+            this.myGrid.displayReasonInsolvability('Eine notwendige Nummer ist gleichzeitig unzulässig');
+            return true;
+        }
+        if (this.getValue() == '0' && this.getTotalAdmissibles().size == 0) {
+            this.displayCellError();
+            this.myGrid.displayReasonInsolvability('Überhaupt keine zulässige Nummer.');
+            return true;
+        }
+        return false;
     }
 
     getIndex() {
