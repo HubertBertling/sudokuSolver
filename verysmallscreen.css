@@ -1,0 +1,690 @@
+:root {
+    /* app colors */
+    /*    --screen-bg-color: white; */
+    --screen-bg-color: #F2E2F2;
+    --screen-color: #0d1117;
+
+    --standard-btn-bg-color: rgba(0, 0, 0, .25);
+    --standard-btn-color: black;
+
+    --delete-btn-bg-color: #e91e63;
+    --delete-btn-color: white;
+    --standard-btn-height: 34px;
+    --help-color: #4e67c8;
+
+    /* Cell colors */
+    --defined-cell-bg-color: #7986CB;
+    --defined-cell-color: #FFF9C4;
+
+    --played-cell-bg-color: #4DB6AC;
+    --played-cell-color: #0d1117;
+
+    --nested-cell-bg-color: #ebdaa4;
+    --nested-cell-color: black;
+
+    --selected-cell-bg-color: black;
+    --selected-cell-color: white;
+    --selected-cell-border-color: black;
+
+    --error-cell-bg-color: #e91e63;
+    --error-cell-color: white;
+
+    /* Other definitions */
+    --sudoku-cell-size: 3.9rem;
+    --border-radius: 0.5rem;
+    --space-y: 2rem;
+    --gap: 0.5rem;
+    --font-size-btn: 1.2rem;
+    --font-size-sm: 0.7rem;
+    --font-size: 1.0rem;
+    --font-size-lg: 1.8rem;
+    --font-size-xl: 2.4rem;
+
+    /* Setting the global font size */
+    /* Prozent von der Browser Font-Einstellung */
+    font-size: 62.5%;
+    /* Effekt: 1rem = 10px; */
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    /* padding and border are included in the width and height */
+    box-sizing: border-box;
+}
+
+
+
+/* Set height of body and the document to 100% */
+body,
+html {
+    font-family: 'Open Sans', sans-serif;
+    width: 100%;
+    background-color: var(--screen-bg-color);
+}
+
+.app-content {
+    display:grid;
+}
+
+
+/* Style tab links */
+.tablink {
+    display: none;
+    background-color: #555;
+    color: white;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    /* font-size: 17px; */
+    font-size: 1.8rem;
+    font-weight: bold;
+    width: 25%;
+}
+
+
+
+
+.tabdatabase, .tabhelp {
+    display: none;
+}
+
+
+
+.tabsolver {
+  /*  max-width: fit-content;
+    min-width:fit-content; */ 
+    color: black;
+    padding: 0.5rem;
+}
+
+
+/*======================================*/
+/* Sudoku grid block */
+/*======================================*/
+
+.gridArea {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(1, auto);  
+}
+
+
+.main-sudoku-grid {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+}
+
+.sudoku-group {
+    margin: 0.2rem;
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    border-radius: var(--border-radius);
+    place-items: center;
+}
+
+.sudoku-grid-cell {
+    position: relative;
+    height: 9.5vw;
+    width: 9.5vw;
+    border-radius: var(--border-radius);
+    display: grid;
+    font-size: var(--font-size-btn);
+    place-items: center;
+    margin: 0.1rem;
+}
+
+.sudoku-grid-cell.define {
+    background-color: var(--defined-cell-bg-color);
+    color: var(--defined-cell-color);
+}
+
+.sudoku-grid-cell.play {
+    background-color: var(--played-cell-bg-color);
+    color: var(--played-cell-color);
+}
+
+
+
+
+.auto-step-number {
+    grid-area: step;
+}
+
+.auto-value-number {
+    grid-area: value;
+}
+
+.auto-value-option1 {
+    grid-area: option1;
+}
+
+.auto-value-option2 {
+    grid-area: option2;
+}
+
+.auto-value-option3 {
+    grid-area: option3;
+}
+
+.auto-value-cell {
+    display: grid;
+    grid-template-areas:
+        'step value value value'
+        'step option1 option2 option3';
+    gap: 0.1rem;
+    background-color: grey;
+    color: var(--played-cell-color);
+}
+
+.auto-value-cell>div {
+    text-align: center;
+    background-color: var(--played-cell-bg-color);
+    padding: 0.2rem 0.1rem;
+}
+
+.auto-value-cell>div.auto-step-number {
+    background-color: darkgrey;
+    color: black;
+    font-size: 0.8rem;
+    width: 1rem;
+}
+
+.auto-value-cell>div.auto-value-number {
+    font-size: 1.0rem;
+}
+
+.auto-value-cell>div.auto-value-option1 {
+    font-size: 0.8rem;
+}
+
+.auto-value-cell>div.auto-value-option2 {
+    font-size: 0.8rem;
+}
+
+.auto-value-cell>div.auto-value-option3 {
+    font-size: 0.8rem;
+}
+
+.auto-value-cell>div.open {
+    font-size: 1.0rem;
+    background-color: var(--nested-cell-bg-color);
+}
+
+.sudoku-grid-cell.nested {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    place-items: center;
+    font-size: 0.9rem;
+    background-color: var(--nested-cell-bg-color);
+    color: var(--nested-cell-color);
+    border: 0.1rem solid #0050ff
+}
+
+.sudoku-grid-cell.selected {
+    background-color: var(--selected-cell-bg-color);
+    color: var(--selected-cell-color);
+    border: 2px solid var(--selected-cell-bg-color);
+}
+
+.nested>div.neccessary {
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+
+    border-radius: 0.3rem;
+    font-size: 1.0rem;
+    background-color: #56c7aa;
+    color: #0d1117;
+    border: 0.1rem solid white;
+}
+
+.nested>div.indirect-neccessary {
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+
+    border-radius: 0.3rem;
+    font-size: 1.0rem;
+    background-color: #56c7aa;
+    color: #0d1117;
+    border: 0.1rem solid white;
+}
+
+
+.nested>div.inAdmissible {
+    font-weight: bold;
+    font-size: 1.0rem;
+    color: Crimson;
+}
+.nested.err>div.inAdmissible {
+    background-color: white;
+}
+.sudoku-grid-cell.hover {
+    border: 3px solid var(--selected-cell-border-color);
+}
+
+.sudoku-grid-cell.hover-red {
+    border: 3px dashed Crimson;
+}
+
+.sudoku-grid-cell.hover-green {
+    border: 3px dashed darkgreen;
+}
+
+.sudoku-group.err {
+    background-color: var(--error-cell-bg-color);
+    color: var(--error-cell-color);
+}
+
+
+.sudoku-grid-cell.row-err,
+.sudoku-grid-cell.col-err {
+    border: 3px solid var(--error-cell-bg-color);
+}
+
+.sudoku-grid-cell.col-err {
+    border-top: 5px solid var(--error-cell-bg-color);
+    border-bottom: 5px solid var(--error-cell-bg-color);
+}
+
+.sudoku-grid-cell.row-err {
+    border-left: 5px solid var(--error-cell-bg-color);
+    border-right: 5px solid var(--error-cell-bg-color);
+}
+
+
+.sudoku-grid-cell.err {
+    background-color: var(--error-cell-bg-color);
+    color: var(--error-cell-color);
+    border: 1px solid #0050ff;
+}
+
+
+.sudoku-grid-cell.err.selected {
+    background-color: black;
+}
+
+
+
+.evaluations {
+    font-size: 1.2rem;
+    display: flex;
+    padding-top: 0.5rem;
+    padding-left: 0.5rem;
+
+}
+
+
+.technique {
+    display:none;
+    font-size: 1.2rem;
+    display: flex;
+    padding-top: 0.5rem;
+    padding-left: 0.5rem;
+    color: Crimson;
+}
+
+
+.sudoku-header {
+    color: var(--screen-color);
+    text-align: center;
+    font-weight: bold;
+
+}
+
+.sudoku-title {
+    padding-top: 20px;
+    padding-bottom: 10px;
+    font-size: 2.4rem;
+
+}
+
+/*======================================*/
+/* Button block                  */
+/*======================================*/
+.game-col2 {
+    display:
+        none;
+}
+
+
+.mobile-grid-container {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    font-size: 1.4rem;
+}
+
+
+.mobile-evaluation {
+    margin-left: 1rem;
+}
+
+
+.mobile-btn {
+    background-color: var(--standard-btn-bg-color);
+    text-align: center;
+
+    height: var(--standard-btn-height);
+    border-radius: 0.3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}
+
+.btn-define {
+    background-color: var(--defined-cell-bg-color);
+    color: var(--defined-cell-color);
+}
+
+.btn-play {
+    background-color: var(--played-cell-bg-color);
+}
+
+.btn-define.pressed {
+    /* transform: translate(2px, 2px); */
+    border: 3px solid darkblue;
+}
+
+.btn-play.pressed {
+    border: 3px solid darkgreen;
+}
+
+
+.mobile-btn:active {
+    transform: translate(2px, 2px);
+}
+
+.btn-delete-cell {
+    background-color: var(--delete-btn-bg-color);
+    color: var(--delete-btn-color);
+}
+
+.mobile-evaluation {
+    place-items: center;
+    grid-column: 1 / span 2;
+    display: flex;
+}
+
+
+label {
+    margin-left: 0.5rem;
+    margin-right: 1.0rem;
+    float: right;
+    font-size: 1.2rem;
+}
+
+.btn-image {
+    width: 1.8rem;
+    height: 1.6rem;
+    margin-right: 1rem;
+}
+
+
+/*======================================*/
+/* Progress block */
+/*======================================*/
+
+.progress-group {
+    margin-top: 5px;
+    margin-right: 5px;
+    line-height: 20px;
+    display: grid;
+    grid-template-columns: 0.3fr 0.1fr 1fr;
+    gap: 2px;
+}
+
+.mobile-help {
+    border-left: darkgrey dashed 3px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 1.4rem;
+}
+
+.last-row {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 5px;
+    border-top: darkgrey dashed 3px;
+    display: grid;
+    grid-template-columns: 6.6fr 0.3fr;
+    gap: 2px;
+    border-bottom: darkgrey dashed 3px;
+}
+
+.evaluation {
+    padding-left: 20px;
+    font-size: 1.2rem;
+}
+
+.checkbox {
+    margin-left: 3px;
+    background-color: var(--screen-bg-color);
+}
+
+.step-count {
+    font-size: 1.2rem;
+    margin-left: 5px;
+}
+
+.step-count-box {
+    line-height: 20px;
+    height: 20px;
+    display: flex;
+    width: 80px;
+}
+
+.forward-backward-image {
+    width: 18px;
+    height: 18px;
+}
+
+.forward,
+.backward {
+    height: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.autoMode-radio-btns {
+    place-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background-color: var(--screen-bg-color);
+    font-size: 1.0rem;
+}
+
+.forward.checked,
+.backward.checked {
+    background-color: var(--played-cell-bg-color);
+}
+
+#myProgress {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    font-size: 1.2rem;
+    text-align: right;
+    background-color: var(--nested-cell-bg-color);
+}
+
+#myBarDef,
+#myBarPlay {
+    position: absolute;
+    width: 20%;
+    height: 20px;
+    line-height: 20px;
+}
+
+#myBarDef {
+    z-index: 2;
+    background-color: var(--defined-cell-bg-color);
+    color: white;
+    text-align: center;
+}
+
+#myBarPlay {
+    z-index: 1;
+    background-color: var(--played-cell-bg-color);
+    color: black;
+    text-align: right;
+    padding-right: 5px;
+}
+
+.total-bar-value {
+    line-height: 20px;
+    vertical-align: center;
+}
+
+
+.textInDlgs {
+    font-size: 1.6rem;
+    float: left;
+    width: 49%;
+    margin-right: 1%;
+    padding: 2px;
+    box-sizing: border-box;
+}
+
+.textInDlgs:last-child {
+    margin-right: 0px;
+}
+
+.input-row {
+    font-size: 1.6rem;
+    margin: 10px;
+}
+
+.ok-cancel-btns {
+    margin-top: 5px;
+    margin-left: 30px;
+    margin-right: 15px;
+}
+
+.successForm,
+.dlg-form {
+    margin-left: 5px;
+    margin-top: 10px;
+    font-size: 1rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100px;
+}
+
+.further-row {
+    display: flex;
+}
+
+.successImg {
+    margin-left: 10px;
+    height: 150px;
+    width: 100px;
+}
+
+.okCancelBtn {
+    padding: 1px 30px;
+}
+
+/*=======================================*/
+/* WinBox 
+/*=======================================*/
+.wb-full {
+    display: none
+}
+
+.wb-title {
+    font-size: 1.6rem
+}
+
+.wb-body {
+    /* the width of window frame border: */
+    margin: 4px;
+}
+
+.status-line {
+    display: none;
+}
+
+#loader {
+    display: none;
+    position: absolute;
+    left: 25%;
+    top: 10%;
+    z-index: 2;
+    width: 200px;
+    height: 200px;
+    border: 48px solid #fbf9f900;
+    border-radius: 50%;
+    border-top: 48px solid var(--defined-cell-bg-color);
+    border-bottom: 48px solid black;
+    border-right: 48px solid var(--played-cell-bg-color);
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/*======================================*/
+/* Global block */
+/*======================================*/
+.zoom-in {
+    animation: zoom-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes zoom-in {
+    0% {
+        transform: scale(3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.cell-err {
+    animation: zoom-out-shake 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes zoom-out-shake {
+    0% {
+        transform: scale(2);
+    }
+
+    25% {
+        transform: scale(2) rotate(30deg);
+    }
+
+    50% {
+        transform: scale(2) rotate(-30deg);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
