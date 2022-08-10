@@ -457,14 +457,14 @@ class SudokuApp {
     }
 
     displayOnOffStatus() {
-       /* let manualGroup = document.getElementById("manual-btn-group");
-        let autoGroup = document.getElementById("auto-exec-btns");
+       /* let manualBlock = document.getElementById("manual-btn-group");
+        let autoBlock = document.getElementById("auto-exec-btns");
         if (this.autoExecOn) {
-            manualGroup.classList.remove('on');
-            autoGroup.classList.add('on');
+            manualBlock.classList.remove('on');
+            autoBlock.classList.add('on');
         } else {
-            autoGroup.classList.remove('on');
-            manualGroup.classList.add('on');
+            autoBlock.classList.remove('on');
+            manualBlock.classList.add('on');
         }
         */
     }

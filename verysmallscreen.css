@@ -117,7 +117,7 @@ html {
     grid-template-columns: repeat(3, auto);
 }
 
-.sudoku-group {
+.sudoku-block {
     margin: 0.2rem;
     display: grid;
     grid-template-columns: repeat(3, auto);
@@ -276,7 +276,7 @@ html {
     border: 3px dashed darkgreen;
 }
 
-.sudoku-group.err {
+.sudoku-block.err {
     background-color: var(--error-cell-bg-color);
     color: var(--error-cell-color);
 }
@@ -430,7 +430,7 @@ label {
 /* Progress block */
 /*======================================*/
 
-.progress-group {
+.progress-block {
     margin-top: 5px;
     margin-right: 5px;
     line-height: 20px;

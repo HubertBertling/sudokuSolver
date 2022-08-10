@@ -159,7 +159,7 @@ html {
     grid-template-columns: repeat(3, auto);
 }
 
-.sudoku-group {
+.sudoku-block {
     margin: 3px;
     display: grid;
     grid-template-columns: repeat(3, auto);
@@ -328,7 +328,7 @@ html {
     border: 3px dashed darkgreen;
 }
 
-.sudoku-group.err {
+.sudoku-block.err {
     background-color: var(--error-cell-bg-color);
     color: var(--error-cell-color);
 }
@@ -434,17 +434,17 @@ html {
     transform: translate(3px, 3px);
 }
 
-.mode-btn-group p {
+.mode-btn-block p {
     font-weight: bold;
     font-size: 1.0rem;
 }
 
 
-.manual-btn-group {
+.manual-btn-block {
   margin-top: 10px;
 }
 
-.manual-btn-group p {
+.manual-btn-block p {
     font-weight: bold;
     font-size: 1.2rem;
 }
@@ -498,10 +498,10 @@ html {
     /*  cursor: pointer; */
 }
 
-.automatic-btn-group {
+.automatic-btn-block {
     margin-top: 10px;
 }
-.automatic-btn-group p {
+.automatic-btn-block p {
     font-weight: bold;
     font-size: 1.2rem;
 }
@@ -512,7 +512,7 @@ html {
     gap: 10px;
 }
 
-.btn-auto-group {
+.btn-auto-block {
     margin-top: 5px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -524,10 +524,10 @@ html {
     height: 16px;
 }
 
-.puzzle-btn-group {
+.puzzle-btn-block {
     margin-top: 10px;
 }
-.puzzle-btn-group p {
+.puzzle-btn-block p {
     font-weight: bold;
     font-size: 1.2rem;
 }
@@ -562,11 +562,11 @@ html {
 }
 
 
-.eval-btn-group {
+.eval-btn-block {
     margin-top: 10px;
 
 }
-.eval-btn-group p {
+.eval-btn-block p {
     font-weight: bold;
     font-size: 1.2rem;
 }
@@ -592,7 +592,7 @@ label {
     font-size: 1.0rem;
 }
 
-.progress-group {
+.progress-block {
     margin-top: 5px;
     line-height: 16px;
     display: grid;

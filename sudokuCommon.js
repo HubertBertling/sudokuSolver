@@ -825,15 +825,15 @@ class StepperOnGrid {
     }
 }
 
-class NineCellCollection {
+class Group {
     // Abstrakte Klasse, deren konkrete Instanzen
-    // eine Gruppe, Spalte oder Zeile der Matrix sind
+    // ein Block, eine Spalte oder Reihe der Tabelle sind
     constructor(suTable) {
         // Die Collection kennt ihre Tabelle
         this.myGrid = suTable;
         this.myCells = [];
-        // In jeder Gruppe, Spalte und Zeile müssen alle Zahlen 1..9 einmal vorkommen.
-        // Für eine konkrete Gruppe, Spalte oder Zeile sind MissingNumbers Zahlen,
+        // In jedem Block, jeder Spalte und Reihe müssen alle Zahlen 1..9 einmal vorkommen.
+        // Für eine konkreten Block, eine Spalte oder Reihe sind MissingNumbers Zahlen,
         // die nicht in ihr vorkommen.
         this.myPairInfos = [];
     }
@@ -1152,10 +1152,10 @@ class NineCellCollection {
         let inAdmissiblesAdded = false;
         for (let i = 0; i < this.myPairInfos.length; i++) {
             if (this.myPairInfos[i].pairIndices.length == 2 &&
-                  sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myGroup !== 
-                  sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myGroup) {
+                  sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myBlock !== 
+                  sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myBlock) {
                 // Ein Paar, das zweimal in der Collection vorkommt
-                // Das Paar muss in verschieden Gruppen sein
+                // Das Paar muss in verschieden Blockn sein
 
                 // Jetzt die SenkrechtCollections bestimmen
                 let senkrecht1 = null;
@@ -1253,9 +1253,9 @@ class NineCellCollection {
 
 
     calculateNecessaryForNextStep() {
-        // Berechne für die NineCellCollection alle notwendigen Nummern.
+        // Berechne für die Group alle notwendigen Nummern.
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
-        // die in der Gruppe, Reihe oder Spalte der Zelle genau einmal vorkommen.
+        // die in der Block, Reihe oder Spalte der Zelle genau einmal vorkommen.
         let added = false;
         for (let i = 1; i < 10; i++) {
             let cellIndex = this.occursOnce(i);
@@ -1272,7 +1272,7 @@ class NineCellCollection {
 
     calculateNecessarys() {
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
-        // die in der Gruppe, Reihe oder Spalte der Zelle genau einmal vorkommen.
+        // die in der Block, Reihe oder Spalte der Zelle genau einmal vorkommen.
         for (let i = 1; i < 10; i++) {
             let cellIndex = this.occursOnce(i);
             // Wenn die Nummer i genau einmal in der Collection vorkommt
@@ -1284,9 +1284,9 @@ class NineCellCollection {
     }
 
     calculateIndirectNecessaryForNextStep() {
-        // Berechne für die NineCellCollection alle notwendigen Nummern.
+        // Berechne für die Group alle notwendigen Nummern.
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
-        // die in der Gruppe, Reihe oder Spalte der Zelle genau einmal vorkommen.
+        // die in der Block, Reihe oder Spalte der Zelle genau einmal vorkommen.
         let added = false;
         for (let i = 1; i < 10; i++) {
             let cellIndex = this.occursOnceInTotalAdmissibles(i);
@@ -1303,7 +1303,7 @@ class NineCellCollection {
 
     calculateIndirectNecessarys() {
         // Indirekt notwendige Nummern sind zulässige Nummern einer Zelle,
-        // die in der Gruppe, Reihe oder Spalte der Zelle total genau einmal vorkommen.
+        // die in der Block, Reihe oder Spalte der Zelle total genau einmal vorkommen.
         // Also unter Berücksichtigung der indirekt unzulässigen Nummern.
         for (let i = 1; i < 10; i++) {
             let cellIndex = this.occursOnceInTotalAdmissibles(i);
@@ -1434,32 +1434,32 @@ class NineCellCollection {
 
 }
 
-class SudokuGroup extends NineCellCollection {
-    constructor(suTable, groupIndex) {
-        // Die Gruppe kennt ihre Tabelle und ihren Index
+class SudokuBlock extends Group {
+    constructor(suTable, blockIndex) {
+        // Der Block kennt seine Tabelle und seinen Index
         super(suTable);
-        this.myIndex = groupIndex;
-        this.myGroupNode = null;
+        this.myIndex = blockIndex;
+        this.myBlockNode = null;
     }
 
     display(domGridNode) {
-        let groupNode = document.createElement("div");
-        groupNode.setAttribute("class", "sudoku-group");
-        //Neue Gruppe in den Baum einhängen
-        domGridNode.appendChild(groupNode);
-        this.myGroupNode = groupNode;
+        let blockNode = document.createElement("div");
+        blockNode.setAttribute("class", "sudoku-block");
+        //Neuen Block in den Baum einhängen
+        domGridNode.appendChild(blockNode);
+        this.myBlockNode = blockNode;
 
-        // Die Zellen der Gruppe werden angezeigt
+        // Die Zellen des Blocks werden angezeigt
         this.myCells.forEach(sudoCell => {
-            sudoCell.display(groupNode);
+            sudoCell.display(blockNode);
         })
     }
 
     displayError() {
-        this.myGroupNode.classList.add('err');
-        this.myGroupNode.classList.add('cell-err');
+        this.myBlockNode.classList.add('err');
+        this.myBlockNode.classList.add('cell-err');
         setTimeout(() => {
-            this.myGroupNode.classList.remove('cell-err');
+            this.myBlockNode.classList.remove('cell-err');
         }, 500);
     }
 
@@ -1477,16 +1477,16 @@ class SudokuGroup extends NineCellCollection {
         })
     }
 
-    setNode(groupNode) {
-        this.myGroupNode = groupNode;
+    setNode(blockNode) {
+        this.myBlockNode = blockNode;
     }
 
     addCell(sudoCell) {
         this.myCells.push(sudoCell);
-        sudoCell.setGroup(this);
+        sudoCell.setBlock(this);
     }
 }
-class SudokuRow extends NineCellCollection {
+class SudokuRow extends Group {
     addCell(sudoCell) {
         this.myCells.push(sudoCell);
         sudoCell.setRow(this);
@@ -1499,7 +1499,7 @@ class SudokuRow extends NineCellCollection {
         })
     }
 }
-class SudokuCol extends NineCellCollection {
+class SudokuCol extends Group {
     addCell(sudoCell) {
         this.myCells.push(sudoCell);
         sudoCell.setCol(this);
@@ -1523,7 +1523,7 @@ class SudokuGrid {
         this.steps = 0;
         this.backTracks = 0;
         this.sudoCells = [];
-        this.sudoGroups = [];
+        this.sudoBlocks = [];
         this.sudoRows = [];
         this.sudoCols = [];
         this.evalType = 'lazy';
@@ -1820,23 +1820,23 @@ class SudokuGrid {
             }
         }
         this.sudoCells = [];
-        this.sudoGroups = [];
+        this.sudoBlocks = [];
         this.sudoRows = [];
         this.sudoCols = [];
-        // Die 9 Gruppen anlegen
+        // Die 9 Blockn anlegen
         for (let i = 0; i < 9; i++) {
-            this.sudoGroups.push(new SudokuGroup(this, i));
+            this.sudoBlocks.push(new SudokuBlock(this, i));
         }
-        // Die 81 Zellen anlegen und in ihre jeweilige Gruppe einfügen
+        // Die 81 Zellen anlegen und in ihre jeweilige Block einfügen
         for (let i = 0; i < 81; i++) {
             let row = Math.floor(i / 9);
             let col = i % 9;
-            let groupRow = Math.floor(row / 3);
-            let groupCol = Math.floor(col / 3);
-            let tmpGroupIndex = calcIndex(groupRow, groupCol);
+            let blockRow = Math.floor(row / 3);
+            let blockCol = Math.floor(col / 3);
+            let tmpBlockIndex = calcIndex(blockRow, blockCol);
             let tmpSudoCell = new SudokuCell(this, i);
             this.sudoCells.push(tmpSudoCell);
-            this.sudoGroups[tmpGroupIndex].addCell(tmpSudoCell);
+            this.sudoBlocks[tmpBlockIndex].addCell(tmpSudoCell);
         }
         // Influencers in den Zellen setzen
         // Das geschieht nur einmal bei der Initialisierung
@@ -1881,7 +1881,7 @@ class SudokuGrid {
             }
         }
         for (let i = 0; i < 9; i++) {
-            if (this.sudoGroups[i].isInsolvable()) {
+            if (this.sudoBlocks[i].isInsolvable()) {
                 return true;
             }
         }
@@ -1908,9 +1908,9 @@ class SudokuGrid {
         new_domGridNode.classList.add('main-sudoku-grid');
         domInputAreaNode.replaceChild(new_domGridNode, old_domGridNode);
 
-        // Die 9 Gruppen anzeigen
-        this.sudoGroups.forEach(sudoGroup => {
-            sudoGroup.display(new_domGridNode);
+        // Die 9 Blockn anzeigen
+        this.sudoBlocks.forEach(sudoBlock => {
+            sudoBlock.display(new_domGridNode);
         });
         // Unlösbarkeit anzeigen.
         this.displayInsolvability();
@@ -1924,7 +1924,7 @@ class SudokuGrid {
             if (this.sudoCells[i].displayInsolvability()) return;
         }
         for (let i = 0; i < 9; i++) {
-            if (this.sudoGroups[i].displayInsolvability()) return;
+            if (this.sudoBlocks[i].displayInsolvability()) return;
         }
         for (let i = 0; i < 9; i++) {
             if (this.sudoRows[i].displayInsolvability()) return;
@@ -2049,10 +2049,10 @@ class SudokuGrid {
     }
 
     clearEvaluations() {
-        // Iteriere über die Gruppen
+        // Iteriere über die Blockn
         for (let i = 0; i < 9; i++) {
-            let tmpGroup = this.sudoGroups[i];
-            tmpGroup.clearEvaluations();
+            let tmpBlock = this.sudoBlocks[i];
+            tmpBlock.clearEvaluations();
         }
         // Iteriere über die Reihen
         for (let i = 0; i < 9; i++) {
@@ -2133,7 +2133,7 @@ class SudokuGrid {
                 let oldInAdmissibles = new SudokuSet(this.sudoCells[i].myLevel_gt0_inAdmissibles);
                 let mySingle = this.sudoCells[i].getTotalSingles();
                 if (mySingle.size == 1 && singlesInContext.isSuperset(mySingle)) {
-                    // Das ist die Situation: Dieselbe Single zweimal in einer Gruppe, Spalte oder Reihe.
+                    // Das ist die Situation: Dieselbe Single zweimal in einer Block, Spalte oder Reihe.
                     // Also eine unlösbares Sudoku.
                     // Das weitere Ausrechnen bringt nichts, da die Unlösbarkeit
                     // bereits auf der Collection-Ebene festgestellt werden kann.
@@ -2163,10 +2163,10 @@ class SudokuGrid {
         let c1 = false;
         let c2 = false;
         let c3 = false;
-        // Iteriere über die Gruppen
+        // Iteriere über die Blockn
         for (let i = 0; i < 9; i++) {
-            let tmpGroup = this.sudoGroups[i];
-            c1 = c1 || tmpGroup.derive_inAdmissiblesFromEqualPairs();
+            let tmpBlock = this.sudoBlocks[i];
+            c1 = c1 || tmpBlock.derive_inAdmissiblesFromEqualPairs();
         }
         // Iteriere über die Reihen
         for (let i = 0; i < 9; i++) {
@@ -2186,10 +2186,10 @@ class SudokuGrid {
         let c1 = false;
         let c2 = false;
         let c3 = false;
-        // Iteriere über die Gruppen
+        // Iteriere über die Blockn
         for (let i = 0; i < 9; i++) {
-            let tmpGroup = this.sudoGroups[i];
-            c1 = c1 || tmpGroup.derive_inAdmissiblesFromHiddenPairs();
+            let tmpBlock = this.sudoBlocks[i];
+            c1 = c1 || tmpBlock.derive_inAdmissiblesFromHiddenPairs();
         }
         // Iteriere über die Reihen
         for (let i = 0; i < 9; i++) {
@@ -2208,9 +2208,9 @@ class SudokuGrid {
     // Funktionen für die Überschneidungstechnik
 
 
-    groupIndex_MatrixRow_2_GroupRow(matrixRow, groupIndex) {
-        // GruppenIndex Matrixreihe auf Gruppenreihe
-        switch (groupIndex) {
+    blockIndex_MatrixRow_2_BlockRow(matrixRow, blockIndex) {
+        // BlocknIndex Matrixreihe auf Blocknreihe
+        switch (blockIndex) {
             case 0:
             case 1:
             case 2: {
@@ -2259,9 +2259,9 @@ class SudokuGrid {
         }
     }
 
-    groupIndex_MatrixCol_2_GroupCol(matrixCol, groupIndex) {
-        // GruppenIndex Matrixreihe auf Gruppenreihe
-        switch (groupIndex) {
+    blockIndex_MatrixCol_2_BlockCol(matrixCol, blockIndex) {
+        // BlocknIndex Matrixreihe auf Blocknreihe
+        switch (blockIndex) {
             case 0:
             case 3:
             case 6: {
@@ -2311,14 +2311,14 @@ class SudokuGrid {
     }
 
 
-    groupRow2MatrixRow(groupIndex, groupRow) {
-        // Berechne für die aktuelle Gruppenzeile
+    blockRow2MatrixRow(blockIndex, blockRow) {
+        // Berechne für die aktuelle Blocknzeile
         // die Matrixzeile
-        switch (groupIndex) {
+        switch (blockIndex) {
             case 0:
             case 1:
             case 2: {
-                switch (groupRow) {
+                switch (blockRow) {
                     case 0: return 0;
                     case 1: return 1;
                     case 2: return 2;
@@ -2327,7 +2327,7 @@ class SudokuGrid {
             case 3:
             case 4:
             case 5: {
-                switch (groupRow) {
+                switch (blockRow) {
                     case 0: return 3;
                     case 1: return 4;
                     case 2: return 5;
@@ -2336,7 +2336,7 @@ class SudokuGrid {
             case 6:
             case 7:
             case 8: {
-                switch (groupRow) {
+                switch (blockRow) {
                     case 0: return 6;
                     case 1: return 7;
                     case 2: return 8;
@@ -2345,14 +2345,14 @@ class SudokuGrid {
         }
     }
 
-    groupCol2MatrixCol(groupIndex, groupCol) {
-        // Berechne für die Spalte in der aktuellen Gruppe
+    blockCol2MatrixCol(blockIndex, blockCol) {
+        // Berechne für die Spalte in der aktuellen Block
         // die Matrixspalte
-        switch (groupIndex) {
+        switch (blockIndex) {
             case 0:
             case 3:
             case 6: {
-                switch (groupCol) {
+                switch (blockCol) {
                     case 0: return 0;
                     case 1: return 1;
                     case 2: return 2;
@@ -2361,7 +2361,7 @@ class SudokuGrid {
             case 1:
             case 4:
             case 7: {
-                switch (groupCol) {
+                switch (blockCol) {
                     case 0: return 3;
                     case 1: return 4;
                     case 2: return 5;
@@ -2370,7 +2370,7 @@ class SudokuGrid {
             case 2:
             case 5:
             case 8: {
-                switch (groupCol) {
+                switch (blockCol) {
                     case 0: return 6;
                     case 1: return 7;
                     case 2: return 8;
@@ -2381,9 +2381,9 @@ class SudokuGrid {
 
     cellOverlapInRowReduce(i, row, strongRow, strongNumbers) {
         let inAdmissiblesAdded = false;
-        let matrixRow = this.groupRow2MatrixRow(i, row);
+        let matrixRow = this.blockRow2MatrixRow(i, row);
         for (let k = 0; k < 3; k++) {
-            let colIndex = this.groupCol2MatrixCol(i, k);
+            let colIndex = this.blockCol2MatrixCol(i, k);
             let tmpRow = this.sudoRows[matrixRow];
             let tmpCell = tmpRow.myCells[colIndex];
 
@@ -2403,7 +2403,7 @@ class SudokuGrid {
                         // Die Liste der indirekt unzulässigen verursacht von overlap wird gesetzt
                         tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping = newInAdmissibles;
                         let overlapInfo = {
-                            group: this.sudoGroups[i],
+                            block: this.sudoBlocks[i],
                             rowCol: strongRow
                         }
                         tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo = overlapInfo;
@@ -2416,9 +2416,9 @@ class SudokuGrid {
 
     cellOverlapInColReduce(i, col, strongCol, strongNumbers) {
         let inAdmissiblesAdded = false;
-        let matrixCol = this.groupCol2MatrixCol(i, col);
+        let matrixCol = this.blockCol2MatrixCol(i, col);
         for (let k = 0; k < 3; k++) {
-            let rowIndex = this.groupRow2MatrixRow(i, k);
+            let rowIndex = this.blockRow2MatrixRow(i, k);
             let tmpCol = this.sudoCols[matrixCol];
             let tmpCell = tmpCol.myCells[rowIndex];
 
@@ -2438,7 +2438,7 @@ class SudokuGrid {
                             tmpCell.myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
                         tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping = newInAdmissibles;
                         let overlapInfo = {
-                            group: this.sudoGroups[i],
+                            block: this.sudoBlocks[i],
                             rowCol: strongCol
                         };
                         tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo = overlapInfo;
@@ -2452,35 +2452,35 @@ class SudokuGrid {
 
 
     derive_inAdmissiblesFromOverlapping() {
-        // Iteriere über die Gruppen
-        let tmpGroup = null;
+        // Iteriere über die Blockn
+        let tmpBlock = null;
         let tmpRow = null;
         let tmpCol = null;
         let inAdmissiblesAdded = false;
 
         for (let i = 0; i < 9; i++) {
-            tmpGroup = this.sudoGroups[i];
-            // Iteriere über die Zeilen der Gruppe
+            tmpBlock = this.sudoBlocks[i];
+            // Iteriere über die Zeilen der Block
             for (let j = 0; j < 3; j++) {
-                let z = this.groupRow2MatrixRow(i, j);
-                let numbersInRowOutsideGroup = new SudokuSet();
-                let numbersInRowInsideGroup = new SudokuSet();
-                let strongNumbersInRowInsideGroup = new SudokuSet();
+                let z = this.blockRow2MatrixRow(i, j);
+                let numbersInRowOutsideBlock = new SudokuSet();
+                let numbersInRowInsideBlock = new SudokuSet();
+                let strongNumbersInRowInsideBlock = new SudokuSet();
                 // Iteriere über die Zellen der Reihe
                 tmpRow = this.sudoRows[z];
                 for (let k = 0; k < 9; k++) {
                     if (tmpRow.myCells[k].getValue() == '0') {
-                        if (this.groupIndex_MatrixCol_2_GroupCol(k, i) >= 0 && this.groupIndex_MatrixCol_2_GroupCol(k, i) < 3) {
-                            numbersInRowInsideGroup = numbersInRowInsideGroup.union(tmpRow.myCells[k].getTotalAdmissibles());
+                        if (this.blockIndex_MatrixCol_2_BlockCol(k, i) >= 0 && this.blockIndex_MatrixCol_2_BlockCol(k, i) < 3) {
+                            numbersInRowInsideBlock = numbersInRowInsideBlock.union(tmpRow.myCells[k].getTotalAdmissibles());
                         } else {
-                            numbersInRowOutsideGroup = numbersInRowOutsideGroup.union(tmpRow.myCells[k].getTotalAdmissibles());
+                            numbersInRowOutsideBlock = numbersInRowOutsideBlock.union(tmpRow.myCells[k].getTotalAdmissibles());
                         }
                     }
-                    strongNumbersInRowInsideGroup = numbersInRowInsideGroup.difference(numbersInRowOutsideGroup);
+                    strongNumbersInRowInsideBlock = numbersInRowInsideBlock.difference(numbersInRowOutsideBlock);
                 }
-                // Die Gruppenzellen um die strengen Nummern reduzieren
-                if (strongNumbersInRowInsideGroup.size > 0) {
-                    // In 2 Reihen der Gruppe die strong nummern inadmissible setzen
+                // Die Blocknzellen um die strengen Nummern reduzieren
+                if (strongNumbersInRowInsideBlock.size > 0) {
+                    // In 2 Reihen der Block die strong nummern inadmissible setzen
                     let row1 = 0;
                     let row2 = 0;
                     switch (j) {
@@ -2499,34 +2499,34 @@ class SudokuGrid {
                             row2 = 1;
                         }
                     }
-                    let newInAdmissiblesAdded1 = this.cellOverlapInRowReduce(i, row1, tmpRow, strongNumbersInRowInsideGroup);
+                    let newInAdmissiblesAdded1 = this.cellOverlapInRowReduce(i, row1, tmpRow, strongNumbersInRowInsideBlock);
                     inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded1;
 
-                    let newInAdmissiblesAdded2 = this.cellOverlapInRowReduce(i, row2, tmpRow, strongNumbersInRowInsideGroup);
+                    let newInAdmissiblesAdded2 = this.cellOverlapInRowReduce(i, row2, tmpRow, strongNumbersInRowInsideBlock);
                     inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded2;
                 }
             }
-            // Iteriere über die Spalten der Gruppe
+            // Iteriere über die Spalten der Block
             for (let j = 0; j < 3; j++) {
-                let colIndex = this.groupCol2MatrixCol(i, j);
-                let numbersInColOutsideGroup = new SudokuSet();
-                let numbersInColInsideGroup = new SudokuSet();
-                let strongNumbersInColInsideGroup = new SudokuSet();
+                let colIndex = this.blockCol2MatrixCol(i, j);
+                let numbersInColOutsideBlock = new SudokuSet();
+                let numbersInColInsideBlock = new SudokuSet();
+                let strongNumbersInColInsideBlock = new SudokuSet();
                 // Iteriere über die Zellen der Reihe
                 tmpCol = this.sudoCols[colIndex];
                 for (let k = 0; k < 9; k++) {
                     if (tmpCol.myCells[k].getValue() == '0') {
-                        if (this.groupIndex_MatrixRow_2_GroupRow(k, i) >= 0 && this.groupIndex_MatrixRow_2_GroupRow(k, i) < 3) {
-                            numbersInColInsideGroup = numbersInColInsideGroup.union(tmpCol.myCells[k].getTotalAdmissibles());
+                        if (this.blockIndex_MatrixRow_2_BlockRow(k, i) >= 0 && this.blockIndex_MatrixRow_2_BlockRow(k, i) < 3) {
+                            numbersInColInsideBlock = numbersInColInsideBlock.union(tmpCol.myCells[k].getTotalAdmissibles());
                         } else {
-                            numbersInColOutsideGroup = numbersInColOutsideGroup.union(tmpCol.myCells[k].getTotalAdmissibles());
+                            numbersInColOutsideBlock = numbersInColOutsideBlock.union(tmpCol.myCells[k].getTotalAdmissibles());
                         }
                     }
-                    strongNumbersInColInsideGroup = numbersInColInsideGroup.difference(numbersInColOutsideGroup);
+                    strongNumbersInColInsideBlock = numbersInColInsideBlock.difference(numbersInColOutsideBlock);
                 }
-                // Die Gruppenzellen um die strengen Nummern reduzieren
-                if (strongNumbersInColInsideGroup.size > 0) {
-                    // In 2 Spalten der Gruppe die strong NUmmern inadmissible setzen
+                // Die Blocknzellen um die strengen Nummern reduzieren
+                if (strongNumbersInColInsideBlock.size > 0) {
+                    // In 2 Spalten der Block die strong NUmmern inadmissible setzen
                     let col1 = 0;
                     let col2 = 0;
                     //
@@ -2547,10 +2547,10 @@ class SudokuGrid {
                         }
                     }
                     // col1 bereinigen            
-                    let newInAdmissiblesAdded1 = this.cellOverlapInColReduce(i, col1, tmpCol, strongNumbersInColInsideGroup);
+                    let newInAdmissiblesAdded1 = this.cellOverlapInColReduce(i, col1, tmpCol, strongNumbersInColInsideBlock);
                     inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded1;
 
-                    let newInAdmissiblesAdded2 = this.cellOverlapInColReduce(i, col2, tmpCol, strongNumbersInColInsideGroup);
+                    let newInAdmissiblesAdded2 = this.cellOverlapInColReduce(i, col2, tmpCol, strongNumbersInColInsideBlock);
                     inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded2;
                 }
             }
@@ -2595,11 +2595,11 @@ class SudokuGrid {
         // in der Menge ihrer möglichen Nummern die
         // notwendigen Nummern.
 
-        // Iteriere über die Gruppen
+        // Iteriere über die Blockn
         let added = false;
         for (let i = 0; i < 9; i++) {
-            let tmpGroup = this.sudoGroups[i];
-            if (tmpGroup.calculateNecessaryForNextStep()) {
+            let tmpBlock = this.sudoBlocks[i];
+            if (tmpBlock.calculateNecessaryForNextStep()) {
                 added = true;
                 //      return added;
             }
@@ -2629,11 +2629,11 @@ class SudokuGrid {
         // in der Menge ihrer indirekt
         // notwendigen Nummern.
 
-        // Iteriere über die Gruppen
+        // Iteriere über die Blockn
         let added = false;
         for (let i = 0; i < 9; i++) {
-            let tmpGroup = this.sudoGroups[i];
-            if (tmpGroup.calculateIndirectNecessaryForNextStep()) {
+            let tmpBlock = this.sudoBlocks[i];
+            if (tmpBlock.calculateIndirectNecessaryForNextStep()) {
                 added = true;
                 //      return added;
             }
@@ -2662,10 +2662,10 @@ class SudokuGrid {
         // Berechne und setze für jede nicht gesetzte Zelle
         // in der Menge ihrer möglichen Nummern die
         // notwendigen Nummern
-        // Iteriere über die Gruppen
+        // Iteriere über die Blockn
         for (let i = 0; i < 9; i++) {
-            let tmpGroup = this.sudoGroups[i];
-            tmpGroup.calculateNecessarys();
+            let tmpBlock = this.sudoBlocks[i];
+            tmpBlock.calculateNecessarys();
         }
         // Iteriere über die Reihen
         for (let i = 0; i < 9; i++) {
@@ -2684,10 +2684,10 @@ class SudokuGrid {
         // Berechne und setze für jede nicht gesetzte Zelle
         // in der Menge ihrer möglichen Nummern die
         // notwendigen Nummern
-        // Iteriere über die Gruppen
+        // Iteriere über die Blockn
         for (let i = 0; i < 9; i++) {
-            let tmpGroup = this.sudoGroups[i];
-            tmpGroup.calculateIndirectNecessarys();
+            let tmpBlock = this.sudoBlocks[i];
+            tmpBlock.calculateIndirectNecessarys();
         }
         // Iteriere über die Reihen
         for (let i = 0; i < 9; i++) {
@@ -2785,7 +2785,7 @@ class SudokuCell {
         // Speichert die Phase, die beim Setzen einer Nummer
         // in der Zelle aktuell war.
         this.myGamePhase = '';
-        this.myGroup;
+        this.myBlock;
         this.myRow;
         this.myCol;
         this.myCellNode;
@@ -2821,8 +2821,8 @@ class SudokuCell {
         this.myInfluencers = influencers;
     }
 
-    setGroup(group) {
-        this.myGroup = group;
+    setBlock(block) {
+        this.myBlock = block;
     }
     setRow(row) {
         this.myRow = row;
@@ -2855,7 +2855,7 @@ class SudokuCell {
 
     calculate_level_0_inAdmissibles() {
         // Level 0 unzulässige Nummern dieser Zelle sind Nummern,
-        // die an anderer Stelle in der Gruppe, Zeile oder Spalte dieser Zelle
+        // die an anderer Stelle in der Block, Zeile oder Spalte dieser Zelle
         // gesetzt sind.Sie werden in der Zelle nicht mehr angezeigt
         this.myInfluencers.forEach(influenceCell => {
             if (influenceCell.getValue() !== '0') {
@@ -3120,12 +3120,12 @@ class SudokuCell {
         this.displayMainValueNode();
     }
 
-    display(groupNode) {
+    display(blockNode) {
         // Die DOM-Version der Zelle wird erzeugt
         let cellNode = document.createElement("div");
         cellNode.setAttribute("class", "sudoku-grid-cell");
-        // Neue Zelle in ihre Gruppe einhängen
-        groupNode.appendChild(cellNode);
+        // Neue Zelle in ihre Block einhängen
+        blockNode.appendChild(cellNode);
         this.myCellNode = cellNode;
         this.myCellNode.addEventListener('click', () => {
             sudoApp.sudokuCellPressed(this, this.myIndex);
@@ -3271,7 +3271,7 @@ class SudokuCell {
                 // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
                 // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
                 // verursacht werden.
-                // Die Gruppe, Spalte oder Zeile des Paares wird markiert.
+                // Die Block, Spalte oder Zeile des Paares wird markiert.
                 this.myLevel_gt0_inAdmissiblesFromPairs.forEach(pairInfo => {
                     pairInfo.collection.myCells.forEach(cell => {
                         if (cell !== this) {
@@ -3303,7 +3303,7 @@ class SudokuCell {
             if (this.myLevel_gt0_inAdmissibles.size > 0 &&
                 this.myLevel_gt0_inAdmissiblesFromOverlapping.size > 0) {
 
-                this.myLevel_gt0_inAdmissiblesFromOverlappingInfo.group.myCells.forEach(cell => {
+                this.myLevel_gt0_inAdmissiblesFromOverlappingInfo.block.myCells.forEach(cell => {
                     cell.setSelected();
                 });
                 this.myLevel_gt0_inAdmissiblesFromOverlappingInfo.rowCol.myCells.forEach(cell => {
