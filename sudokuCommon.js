@@ -1,10 +1,4 @@
 
-let inMainApp = true;
-let sudoApp;
-const start = () => {
-    sudoApp = new SudokuApp();
-    sudoApp.init();
-}
 
 
 class SudokuTabView {
@@ -290,6 +284,7 @@ class SudokuSolverController {
             this.mySolver.myGrid.deselect();
         }
         this.mySolver.myGrid.select(cell, index);
+        this.mySolver.notify()
     }
 
     defineBtnPressed() {
@@ -402,6 +397,13 @@ class SudokuSolverController {
         this.puzzleSaveDialog.close()
     }
 
+    successDlgOKPressed() {
+        this.mySuccessDialog.close();
+        if (this.mySuccessDialog.further()) {
+            this.mySolver.myStepper.setAutoDirection('backward');
+            this.mySolver.myStepper.startTimerControlledLoop();
+        }
+    }
 }
 
 
@@ -502,6 +504,7 @@ class SudokuSolverView extends SudokuView {
                         throw new Error('Unknown aspectValue: ' + aspectValue);
                     }
                 }
+                break;
             }
             default: {
                 throw new Error('Unknown aspect: ' + aspect);
@@ -601,7 +604,6 @@ class SudokuGenerator extends SudokuModel {
         super();
         // Die Matrix des Sudoku-Generators
         this.myGrid = new SudokuGrid();
-        this.myGrid.setMyParent(this);
         //Die App kennt zwei Betriebs-Phasen 'play' or 'define'
         this.currentPhase = 'play';
         // Die App kennt zwei Ausführungsmodi: 
@@ -677,9 +679,7 @@ class SudokuSolver extends SudokuModel {
         this.myGrid = new SudokuGrid();
         this.myGridView = new SudokuGridView(this.myGrid);
         this.myGrid.setMyView(this.myGridView);
-        if (inMainApp) {
-            this.myGrid.attach(this.myGridView);
-        }
+        this.myGrid.attach(this.myGridView);
         this.myGrid.init();
         //Die App kennt zwei Betriebs-Phasen 'play' or 'define'
         this.currentPhase = 'play';
@@ -832,57 +832,7 @@ class SudokuSolver extends SudokuModel {
 
 
 }
-class SudokuApp {
-    // Die Darstellung der ganzen App
-    constructor() {
-        // ==============================================================
-        // Komponenten der App
-        // ==============================================================
-        this.mySolver = new SudokuSolver();
-        this.mySolverView = new SudokuSolverView(this.mySolver);
-        this.mySolverController = new SudokuSolverController(this.mySolver);
-        // Ein echtes MVC-Pattern gibt es nur für den Solver
-        // Die übrigen Model- und View-Klassen sind nur Subkomponenten
-        // der Solver-Klassen. Sie verwirklichen keine eigene
-        // Observer-Beziehung
-        this.mySolver.attach(this.mySolverView);
-        this.mySolver.setMyView(this.mySolverView);
 
-        this.myPuzzleDB = new SudokuPuzzleDB();
-        this.myPuzzleDBController = new SudokuPuzzleDBController(this.myPuzzleDB);
-        // Die Reiteransicht
-        this.myTabView = new SudokuTabView();
-    }
-
-    init() {
-        this.mySolver.init();
-        this.myPuzzleDB.init();
-        this.myTabView.init();
-    }
-
-
-    helpFunktion() {
-        window.open('./help.html');
-    }
-    // ==============================================
-    // App events
-    // ==============================================
-
-
-    successDlgOKPressed() {
-        this.mySuccessDialog.close();
-        if (sudoApp.mySuccessDialog.further()) {
-            this.mySolver.myStepper.setAutoDirection('backward');
-            this.mySolver.myStepper.startTimerControlledLoop();
-        }
-    }
-
-    successDlgCancelPressed() {
-        this.mySuccessDialog.close();
-    }
-
-
-}
 class ProgressBar {
     constructor() {
         this.elemPlay = document.getElementById("myBarPlay");
@@ -985,7 +935,7 @@ class SuccessDialog {
         this.okNode = document.getElementById("btn-successOK");
         this.checkBoxNode = document.getElementById("further");
         this.okNode.addEventListener('click', () => {
-            sudoApp.successDlgOKPressed();
+            sudoApp.mySolverController.successDlgOKPressed();
         });
     }
     open() {
@@ -1448,11 +1398,9 @@ class StepperOnGrid {
     }
 
     stopTimerControlledLoop() {
-        if (inMainApp) {
             // Die automatische Ausführung
             window.clearInterval(this.timer);
             this.timer = false;
-        }
     }
 
     stepperLoop() {
@@ -1472,9 +1420,7 @@ class StepperOnGrid {
                 this.myGrid.difficulty = this.levelOfDifficulty;
                 this.myGrid.backTracks = this.countBackwards;
                 this.myGrid.steps = this.goneSteps;
-                if (inMainApp) {
                     sudoApp.mySuccessDialog.open();
-                }
                 break;
             }
             case 'fail': {
@@ -3826,7 +3772,6 @@ class SudokuCellView extends SudokuView {
         myBlockNode.appendChild(tmpCellNode);
         tmpCellNode.addEventListener('click', () => {
             sudoApp.mySolver.sudokuCellPressed(myCell, myCell.getMyIndex());
-            sudoApp.mySolver.notify();
         });
         this.upDateCellContent();
     }
@@ -4072,28 +4017,20 @@ class SudokuCellView extends SudokuView {
 
 
     setBorderSelected() {
-        if (inMainApp) {
             this.myNode.classList.add('hover');
-        }
     }
     setBorderRedSelected() {
-        if (inMainApp) {
             this.myNode.classList.add('hover-red');
-        }
     }
 
     setBorderGreenSelected() {
-        if (inMainApp) {
             this.myNode.classList.add('hover-green');
-        }
     }
 
     unsetBorderSelected() {
-        if (inMainApp) {
             this.myNode.classList.remove('hover');
             this.myNode.classList.remove('hover-red');
             this.myNode.classList.remove('hover-green');
-        }
     }
 
     setSelectStatus() {
@@ -4567,17 +4504,16 @@ class SudokuPuzzleDBController {
             this.myPuzzleDB.sort('date');
         });
 
- 
-    document.getElementById('pz-btn-load').addEventListener('click', () => {
-        this.loadBtnPressed();
-    });
 
-    document.getElementById('btn-restore-mobile').addEventListener('click', () => {
-        this.mobileRestoreBtnPressed();
+        document.getElementById('pz-btn-load').addEventListener('click', () => {
+            this.loadBtnPressed();
+        });
 
-    });
+        document.getElementById('btn-restore-mobile').addEventListener('click', () => {
+            this.mobileRestoreBtnPressed();
 
-}
+        });
+    }
 
     // ===============================================================
     // DB-Event handler
@@ -4588,7 +4524,7 @@ class SudokuPuzzleDBController {
         let uid = this.myPuzzleDB.getSelectedUid();
         sudoApp.mySolver.myGrid.loadPuzzle(uid, puzzle);
         sudoApp.mySolver.setGamePhase('play');
-        sudoApp.mySolver.notify();       
+        sudoApp.mySolver.notify();
         sudoApp.myTabView.openGrid();
     }
 
@@ -4624,7 +4560,7 @@ class SudokuPuzzleDBController {
     deleteBtnPressed() {
         this.myPuzzleDB.deleteSelected();
     }
-    
+
 }
 class SudokuPuzzleDB {
     constructor() {
@@ -5152,5 +5088,3 @@ class SudokuPuzzle {
     }
 }
 
-// Starte und initialisiere die App
-start();
