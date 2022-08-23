@@ -246,14 +246,14 @@
                 </section>
                 <div class="puzzle-btns ">
                     <!--Die 4 buttons unterhalb der Puzzle-Datenbanktabelle -->
-                    <button class="pc-btn noprint" id="pz-btn-load" onclick="sudoApp.loadCurrentPuzzle()">Laden
+                    <button class="pc-btn noprint" id="pz-btn-load">Laden
                     </button>
-                    <button class="pc-btn noprint" id="pz-btn-previous" onclick="sudoApp.previousPuzzle()"><img
+                    <button class="pc-btn noprint" id="pz-btn-previous" onclick="sudoApp.myPuzzleDBController.previousBtnPressed()"><img
                             src="images/pfeilrueckwaerts.png" class="forward-backward-image"></button>
-                    <button class="pc-btn noprint" id="pz-btn-next" onclick="sudoApp.nextPuzzle()"><img
+                    <button class="pc-btn noprint" id="pz-btn-next" onclick="sudoApp.myPuzzleDBController.nextBtnPressed()"><img
                             src="images/pfeilvorwaerts.png" class="forward-backward-image"></button>
                     <button class="pc-btn noprint" id="pz-btn-delete"
-                        onclick="sudoApp.deleteCurrentPuzzle()">Löschen</button>
+                        onclick="sudoApp.myPuzzleDBController.deleteBtnPressed()">Löschen</button>
                 </div>
                 <div class="puzzle-header">
                     <!--Die Überschrift zum aktuell geladenen Puzzle-->
@@ -280,7 +280,7 @@
                     </div>
                 </div>
                 <!--In der Druckausgabe wird der Druck-Button unterdrückt-->
-                <button class="pc-btn noprint" id="pz-btn-print" onclick="sudoApp.printCurrentPuzzle()">Drucken</button>
+                <button class="pc-btn noprint" id="pz-btn-print" onclick="sudoApp.myPuzzleDBController.printBtnPressed()">Drucken</button>
             </div>
             <!--Der Inhalt des Reiters Hilfe-->
             <div id="help" class="tabcontent tabhelp">

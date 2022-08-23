@@ -1,3 +1,1029 @@
+
+let inMainApp = true;
+let sudoApp;
+const start = () => {
+    sudoApp = new SudokuApp();
+    sudoApp.init();
+}
+
+
+class SudokuTabView {
+    // Die Software der Reiteransicht
+    constructor() {
+        this.myPages = [];
+        // 1. Der Reiter "Sudoku-Solver"
+        this.myPages.push(new SudokuGridPage("sudoku-grid-tab", "sudoku-solver"));
+        // 2. Der Reiter "Puzzle-Datenbank"
+        this.myPages.push(new SudokuDatabasePage("puzzle-db-tab", "puzzle-db"));
+        // 3. Der Reiter "Hilfe"
+        this.myPages.push(new SudokuHelpPage("puzzle-help-tab", "help"));
+    }
+    open(pageToOpen) {
+        // Alle Seiten schließen.
+        this.myPages.forEach(page => {
+            page.close();
+        })
+        pageToOpen.open();
+    }
+    openGrid() {
+        // Alle Seiten schließen.
+        this.myPages.forEach(page => {
+            page.close();
+        })
+        // Die Grid-Seite öffnen (Die Grid-Seite ist die erste Seite)
+        this.myPages[0].open();
+    }
+    init() {
+        this.openGrid();
+    }
+}
+class SudokuPage {
+    // Abstrakte Klasse für den Reiter
+    constructor(linkNodeId, contentNodeId) {
+        this.myLinkNode = document.getElementById(linkNodeId);
+        this.myContentNode = document.getElementById(contentNodeId);
+        this.myLinkNode.addEventListener('click', () => {
+            sudoApp.myTabView.open(this);
+        })
+        this.close();
+    }
+    close() {
+        this.myContentNode.style.display = "none";
+        this.myLinkNode.style.backgroundColor = "";
+        this.myLinkNode.style.color = "";
+    }
+    open() {
+        this.myContentNode.style.display = "block";
+        this.myLinkNode.style.backgroundColor = '#F2E2F2';
+        this.myLinkNode.style.color = 'black';
+    }
+}
+class SudokuGridPage extends SudokuPage {
+    // Reiter der Matrix
+    constructor(tabId, contentId) {
+        super(tabId, contentId);
+    }
+    open() {
+        super.open();
+        // Der angezeigte Inhalt der Seite 
+        // braucht bei der Selektion des Reiters
+        // nicht aktualisiert zu werden. Es wird der Inhalt angezeigt,
+        // der bei Verlassen der Seite vorlag.
+    }
+} class SudokuDatabasePage extends SudokuPage {
+    // Reiter der Datenbank
+    constructor(tabId, contentId) {
+        super(tabId, contentId);
+    }
+    open() {
+        super.open();
+        sudoApp.myPuzzleDB.display();
+    }
+}
+class SudokuHelpPage extends SudokuPage {
+    // Reiter der Hilfeseite
+    constructor(tabId, contentId) {
+        super(tabId, contentId);
+    }
+    open() {
+        super.open();
+    }
+}
+
+class SudokuSolverController {
+    constructor(solver) {
+        this.mySolver = solver;
+        this.mySuccessDialog = new SuccessDialog();
+        this.myPuzzleSaveDialog = new PuzzleSaveDialog();
+
+
+        // Die Events des Solvers werden gesetzt
+        // Click-Event für die Nummern-Buttons setzen
+        this.number_inputs = document.querySelectorAll('.number');
+        this.number_inputs.forEach((e, index) => {
+            e.addEventListener('click', () => {
+                // Hinweis: index + 1 = number on button
+                let btnNumber = (index + 1).toString();
+                this.handleNumberPressed(btnNumber);
+            })
+        });
+        this.number_inputs = document.querySelectorAll('.mobile-number');
+        this.number_inputs.forEach((e, index) => {
+            e.addEventListener('click', () => {
+                // Hinweis: index + 1 = number on button
+                let btnNumber = (index + 1).toString();
+                this.handleNumberPressed(btnNumber);
+            })
+        });
+
+        //Click-Event für den Delete-Button setzen
+        this.btns = document.querySelectorAll('.btn-delete-cell');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.handleDeletePressed();
+            })
+        });
+
+        window.addEventListener("keydown", (event) => {
+            switch (event.key) {
+                case "1":
+                case "2":
+                case "3":
+                case "4":
+                case "5":
+                case "6":
+                case "7":
+                case "8":
+                case "9":
+                    this.handleNumberPressed(event.key);
+                    break;
+                case "Delete":
+                case "Backspace":
+                    this.handleDeletePressed();
+                    break;
+                default:
+                    return;
+            }
+        });
+
+        // Die beiden Phase-Button 
+        this.btns = document.querySelectorAll('.btn-define');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.defineBtnPressed();
+            })
+        });
+
+        this.btns = document.querySelectorAll('.btn-play');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.playBtnPressed();
+            })
+        });
+
+        // Automatische Ausführung: schrittweise
+        this.btns = document.querySelectorAll('.btn-autoStep');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.autoStepBtnPressed();
+            })
+        });
+
+        // Automatische Ausführung: starten bzw. fortsetzen
+        this.btns = document.querySelectorAll('.btn-run');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.startBtnPressed();
+            })
+        });
+
+
+        // Automatische Ausführung pausieren
+        this.btns = document.querySelectorAll('.btn-pause');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.pauseBtnPressed();
+            })
+        });
+
+        // Automatische Ausführung beenden
+        this.btns = document.querySelectorAll('.btn-stop');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.stopBtnPressed();
+            })
+        });
+
+        // Der Initialisieren-Button: Initialisiert die Tabelle
+        this.btns = document.querySelectorAll('.btn-init');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.initBtnPressed();
+            })
+        });
+        // Der Zurücksetzen-Button: Setzt die Tabelle zurück auf die Definition.
+        // Alle Zellen bis auf die, die zur Definition gehören, werden gelöscht
+        this.btns = document.querySelectorAll('.btn-reset');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.resetBtnPressed();
+            })
+        });
+        // Der Generieren-Button: generiert ein neues Puzzle
+        this.btns = document.querySelectorAll('.btn-generate');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.generateBtnPressed();
+            })
+        });
+
+
+        // Der Speichern-Button: Das aktuelle Puzzle wird unter einem Namen 
+        // in der Puzzle-DB gespeichert.
+        document.querySelector('#btn-save').addEventListener('click', () => {
+            this.saveBtnPressed();
+        });
+
+        document.querySelector('#btn-statistic').addEventListener('click', () => {
+            this.statisticBtnPressed();
+        });
+
+        document.getElementById('btn-save-mobile').addEventListener('click', () => {
+            this.mySolver.myStepper.stopTimerControlledLoop();
+            sudoApp.mySuccessDialog.close();
+            this.mySolver.savePuzzleMobile();
+        });
+
+        // Radio-Button Auswertungstyp: Lazy, Strikt+ oder Strikt-
+        let radioEvalNodes = document.querySelectorAll('.eval-type');
+        radioEvalNodes.forEach(radioNode => {
+            radioNode.addEventListener('click', () => {
+                this.evalTypeSelected();
+            })
+        });
+        // Radio-Button Auswertungstyp: Lazy, Strikt+ oder Strikt-
+        let mobileRadioEvalNodes = document.querySelectorAll('.mobile-eval-type');
+        mobileRadioEvalNodes.forEach(radioNode => {
+            radioNode.addEventListener('click', () => {
+                this.evalTypeSelected();
+            })
+        });
+    }
+
+    // ===============================================================
+    // Solver-Event handler
+    // ===============================================================
+
+    handleNumberPressed(nr) {
+        if (this.mySolver.autoExecOn) {
+            // Während der automatischen Ausführung Nummer gedrückt
+            // Der Stepper wird angehalten und beendet
+            this.mySolver.myStepper.stopTimer();
+            this.mySolver.myStepper.init();
+            this.mySolver.setAutoExecOff();
+        } else {
+            this.mySolver.myGrid.atCurrentSelectionSetNumber(nr, this.mySolver.currentPhase, false);
+            this.mySolver.evaluateMatrix();
+        }
+        this.mySolver.notify();
+    }
+
+    handleDeletePressed() {
+        if (this.mySolver.autoExecOn) {
+            // Während der automatischen Ausführung Delete-Taste gedrückt
+            // Der Stepper wird angehalten und beendet
+            this.mySolver.myStepper.stopTimer();
+            this.mySolver.myStepper.init();
+            sudoApp.mySuccessDialog.close();
+            this.mySolver.setAutoExecOff();
+            this.mySolver.myGrid.deselect();
+        } else {
+            this.mySolver.myGrid.deleteSelected(this.mySolver.currentPhase, false);
+        };
+        this.mySolver.notify()
+    }
+
+    sudokuCellPressed(cell, index) {
+        if (this.mySolver.autoExecOn) {
+            this.mySolver.myStepper.stopTimerControlledLoop();
+            this.mySolver.setAutoExecOff();
+            this.mySolver.myGrid.deselect();
+        }
+        this.mySolver.myGrid.select(cell, index);
+    }
+
+    defineBtnPressed() {
+        this.mySolver.setGamePhase('define')
+        this.mySolver.myGrid.deselect();
+        this.mySolver.notify();
+
+    }
+
+    playBtnPressed() {
+        this.mySolver.setGamePhase('play')
+        this.mySolver.myGrid.deselect();
+        this.mySolver.notify();
+    }
+
+    autoStepBtnPressed() {
+        if (this.mySolver.autoExecOn) {
+            this.mySolver.myStepper.triggerAutoStep();
+        } else {
+            if (this.mySolver.myStepper.deadlockReached()) {
+                alert("Keine (weitere) Lösung gefunden!");
+            } else {
+                this.mySolver.setGamePhase('play');
+                this.mySolver.setAutoExecOn();
+                this.mySolver.myGrid.deselect();
+                this.mySolver.myStepper.triggerAutoStep();
+            }
+        }
+        this.mySolver.notify();
+    }
+
+    startBtnPressed() {
+        this.mySolver.autoExecRunTimerControlled();
+    }
+
+    pauseBtnPressed() {
+        this.mySolver.myStepper.stopTimerControlledLoop();
+    }
+
+    stopBtnPressed() {
+        this.mySolver.setAutoExecOff();
+        this.mySolver.notify();
+    }
+
+    initBtnPressed() {
+        this.mySolver.init();
+        this.mySolver.notify()
+    }
+
+    resetBtnPressed() {
+        this.mySuccessDialog.close();
+        this.mySolver.setAutoExecOff();
+        this.mySolver.myGrid.deselect();
+        this.mySolver.myGrid.reset();
+        this.mySolver.notify();
+    }
+
+    generateBtnPressed() {
+        this.mySolver.startPuzzleGenerator();
+    }
+
+    saveBtnPressed() {
+        this.mySolver.myStepper.stopTimerControlledLoop();
+        this.successDialog.close();
+        let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+        this.myPuzzleSaveDialog.open(newPuzzelId, '');
+    }
+
+    statisticBtnPressed() {
+        this.mySolver.myStepper.stopTimerControlledLoop();
+        this.mySuccessDialog.close();
+        let playedPuzzleDbElement = this.mySolver.myGrid.getPlayedPuzzleDbElement();
+
+        let puzzleId = this.mySolver.myGrid.loadedPuzzleId;
+        if (puzzleId == '' || puzzleId == '-') {
+            let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+            this.myPuzzleSaveDialog.open(newPuzzelId, '');
+        } else {
+            sudoApp.sudokuPuzzleDB.mergePlayedPuzzle(puzzleId, playedPuzzleDbElement);
+            // Wechsle in den DB-Reiter
+            document.getElementById("puzzle-db-tab").click();
+        }
+    }
+
+    evalTypeSelected() {
+        this.mySolver.myGrid.deselect();
+        this.mySolver.myGrid.setEvalType(radioNode.value);
+        this.mySolver.notify();
+    }
+
+    savePuzzleDlgOKPressed() {
+        this.puzzleSaveDialog.close();
+        // Der Name unter dem der aktuelle Zustand gespeichert werden soll
+        let puzzleId = this.puzzleSaveDialog.getPuzzleId();
+        let puzzleName = this.puzzleSaveDialog.getPuzzleName();
+        let playedPuzzleDbElement = this.mySolver.myGrid.getPlayedPuzzleDbElement();
+        //Speichere den named Zustand
+        sudoApp.myPuzzleDB.saveNamedPuzzle(puzzleId, puzzleName, playedPuzzleDbElement);
+        // Wechsle in den DB-Reiter
+        document.getElementById("puzzle-db-tab").click();
+    }
+
+    savePuzzleMobile() {
+        let playedPuzzleDbElement = this.mySolver.myGrid.getPlayedPuzzleDbElement();
+        //Speichere den named Zustand
+        sudoApp.myPuzzleDB.saveMobilePuzzle(playedPuzzleDbElement);
+    }
+
+    savePuzzleDlgCancelPressed() {
+        this.puzzleSaveDialog.close()
+    }
+
+}
+
+
+class SudokuView {
+    constructor(model) {
+        this.myModel = model;
+        this.myNode = null;
+    }
+
+    getMyModel() {
+        return this.myModel;
+    }
+    setMyNode(node) {
+        this.myNode = node;
+    }
+    getMyNode() {
+        return this.myNode;
+    }
+    upDate() {
+        throw new Error('You have to implement the method upDate()!');
+    }
+    upDateAspect(aspect, aspectValue) {
+        throw new Error('You have to implement the method upDateAspect(aspect, aspectValue)!');
+    }
+
+}
+class SudokuModel {
+    constructor() {
+        this.myObservers = [];
+        // Dies ist eine Sondersituation. In dieser Anwendung
+        // besitzt jedes Model eine View.
+        this.myView = null;
+        this.parentModel = null;
+    }
+    attach(view) {
+        // Die View kann ein Beobachter des Models sein.
+        // Aber nicht in jedem Fall.
+        // Im Puzzle-Generator sind die Views abgeschaltet,
+        // sie sind nicht als Beobachter eingetragen.
+        this.myObservers.push(view);
+    }
+    setMyView(view) {
+        this.myView = view;
+    }
+    getMyView() {
+        return this.myView;
+    }
+
+    notify() {
+        // Die eigene View anzeigen
+        this.myObservers.forEach(observer => {
+            observer.upDate();
+        });
+    }
+
+    notifyAspect(aspect, aspectValue) {
+        // Die eigene View anzeigen
+        this.myObservers.forEach(observer => {
+            observer.upDateAspect(aspect, aspectValue);
+        });
+    }
+}
+
+class SudokuSolverView extends SudokuView {
+    constructor(solver) {
+        super(solver);
+        this.progressBar = new ProgressBar();
+    }
+
+    upDate() {
+        // Den kompletten Solver neu anzeigen
+        let myGrid = this.getMyModel().getMyGrid();
+        let myStepper = this.getMyModel().getMyStepper();
+
+        myGrid.getMyView().upDate();
+        this.displayGamePhase();
+        this.displayBenchmark(myGrid.difficulty, myGrid.backTracks);
+        this.displayGoneSteps(myStepper.getGoneSteps());
+        this.displayAutoDirection(myStepper.getAutoDirection());
+        this.displayProgress();
+        this.displayPuzzle('', '');
+    }
+
+
+    upDateAspect(aspect, aspectValue) {
+        switch (aspect) {
+            case 'puzzleGenerator': {
+                switch (aspectValue) {
+                    case 'started': {
+                        this.startLoaderAnimation();
+                        break;
+                    }
+                    case 'finished': {
+                        this.stopLoaderAnimation();
+                        break;
+                    }
+                    default: {
+                        throw new Error('Unknown aspectValue: ' + aspectValue);
+                    }
+                }
+            }
+            default: {
+                throw new Error('Unknown aspect: ' + aspect);
+            }
+        }
+    }
+
+    displayGamePhase() {
+        let gamePhase = this.getMyModel().getGamePhase();
+        if (gamePhase == 'play') {
+            this.btns = document.querySelectorAll('.btn-define');
+            this.btns.forEach(btn => {
+                btn.classList.remove('pressed');
+            });
+            this.btns = document.querySelectorAll('.btn-play');
+            this.btns.forEach(btn => {
+                btn.classList.add('pressed');
+            });
+        } else if (gamePhase == 'define') {
+            this.btns = document.querySelectorAll('.btn-define');
+            this.btns.forEach(btn => {
+                btn.classList.add('pressed');
+            });
+            this.btns = document.querySelectorAll('.btn-play');
+            this.btns.forEach(btn => {
+                btn.classList.remove('pressed');
+            });
+        }
+    }
+
+    displayGoneSteps(goneSteps) {
+        let goneStepsNode = document.getElementById("step-count");
+        goneStepsNode.innerHTML = '<b>Schritte:</b> &nbsp' + goneSteps;
+    }
+
+    displayAutoDirection(autoDirection) {
+        let forwardNode = document.getElementById("radio-forward");
+        let backwardNode = document.getElementById("radio-backward");
+        if (autoDirection == 'forward') {
+            forwardNode.classList.add('checked');
+            backwardNode.classList.remove('checked');
+        } else {
+            forwardNode.classList.remove('checked');
+            backwardNode.classList.add('checked');
+        }
+    }
+
+    displayProgress() {
+        let myGrid = this.getMyModel().myGrid;
+        let countDef = myGrid.numberOfGivens();
+        let countTotal = myGrid.numberOfSolvedCells();
+        this.progressBar.setValue(countDef, countTotal);
+    }
+
+    displayReasonInsolvability(reason) {
+        let evalNode = document.getElementById("technique");
+        evalNode.innerHTML =
+            '<b>Widerspruch:</b> &nbsp' + reason;
+    }
+
+    displayTechnique(tech) {
+        let evalNode = document.getElementById("technique");
+        evalNode.innerHTML =
+            '<b>Angewandte Technik:</b> &nbsp' + tech;
+    }
+
+
+    displayBenchmark(levelOfDifficulty, countBackwards) {
+        let evalNode = document.getElementById("evaluations");
+        evalNode.innerHTML =
+            '<b>Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+            + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
+    }
+
+
+    startLoaderAnimation() {
+        // Der sich drehende Loader wird angezeigt
+        document.getElementById("loader").style.display = "block";
+    }
+    stopLoaderAnimation() {
+        document.getElementById("loader").style.display = "none";
+    }
+
+    displayPuzzle(uid, name) {
+        if (uid == '') uid = ' - ';
+        if (name == '') name = ' - ';
+        let statusLineNode = document.getElementById('status-line');
+        statusLineNode.innerHTML =
+            '<b>Puzzle-Id:</b> &nbsp' + uid + '; &nbsp'
+            + '<b>Puzzle-Name:</b> &nbsp' + name;
+    }
+
+}
+
+class SudokuGenerator extends SudokuModel {
+    constructor() {
+        super();
+        // Die Matrix des Sudoku-Generators
+        this.myGrid = new SudokuGrid();
+        this.myGrid.setMyParent(this);
+        //Die App kennt zwei Betriebs-Phasen 'play' or 'define'
+        this.currentPhase = 'play';
+        // Die App kennt zwei Ausführungsmodi: 
+        // manuelle oder automatische Ausführung
+        this.autoExecOn = false;
+        // Für eine automatische Lösungssuche legt die App
+        // einen Stepper an. Für jede Ausführung einen neuen.
+        this.myStepper = new StepperOnGrid(this.myGrid);
+    }
+
+    init() {
+        this.myGrid.init();
+        // Die App kann in verschiedenen Ausführungsmodi sein
+        // 'automatic' 'manual'
+        this.setGamePhase('define');
+        this.setAutoExecOff();
+        // Ein neuer Stepper wird angelegt und initialisert
+        this.myStepper = new StepperOnGrid(this.myGrid);
+        this.myStepper.init();
+    }
+
+    generatePuzzle() {
+        this.init();
+        // Setze in zufälliger Zelle eine zufällige Nummer
+        let randomCellIndex = getRandomIntInclusive(0, 80);
+        this.myGrid.indexSelect(randomCellIndex);
+
+        let randomCellContent = getRandomIntInclusive(1, 9).toString();
+        this.myGrid.atCurrentSelectionSetNumber(randomCellContent, this.myGrid.getPhase());
+
+        // Löse dieses Sudoku
+        this.autoExecRun();
+
+        // Mache die gelösten Zellen zu Givens
+        this.myGrid.setSolvedToGiven();
+
+        // Setze das Puzzle in den Define-Mode
+        this.myGrid.setGamePhase('define')
+        // Lösche in der Lösung Nummern, solange
+        // wie das verbleibende Puzzle backtrack-frei bleibt.
+        this.myGrid.reduceSolvedCells();
+
+        // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
+        this.autoExecRun();
+    }
+
+    autoExecRun() {
+        // Der Stepper des generators wird automatisch ausgeführt
+        if (this.autoExecOn) {
+            // Im automatischen Ausführungsmodus
+            // muss lediglich die Loop gestartet werden.
+            this.myStepper.stepperLoop();
+        } else {
+            if (this.myStepper.deadlockReached()) {
+                // Der Solver braucht gar nicht in den Auto-Modus gesetzt werden
+                alert("Keine (weitere) Lösung gefunden!");
+            } else {
+                // Der Solver wird in den Auto-Modus gesetzt
+                // und die Loop wird gestartet.
+                this.setGamePhase('play');
+                this.setAutoExecOn();
+                this.myGrid.deselect();
+                this.myStepper.init();
+                this.myStepper.stepperLoop();
+            }
+        }
+    }
+}
+class SudokuSolver extends SudokuModel {
+    constructor() {
+        super();
+        // Die Matrix des Sudoku-Solver
+        this.myGrid = new SudokuGrid();
+        this.myGridView = new SudokuGridView(this.myGrid);
+        this.myGrid.setMyView(this.myGridView);
+        if (inMainApp) {
+            this.myGrid.attach(this.myGridView);
+        }
+        this.myGrid.init();
+        //Die App kennt zwei Betriebs-Phasen 'play' or 'define'
+        this.currentPhase = 'play';
+        // Die App kennt zwei Ausführungsmodi: 
+        // manuelle oder automatische Ausführung
+        this.autoExecOn = false;
+
+        // Für eine automatische Lösungssuche legt die App
+        // einen Stepper an. Für jede Ausführung einen neuen.
+        this.myStepper = new StepperOnGrid(this.myGrid);
+    }
+
+    init() {
+        // Die App kann in verschiedenen Ausführungsmodi sein
+        // 'automatic' 'manual'
+        this.setGamePhase('define');
+        this.setAutoExecOff();
+        this.myGrid.init();
+        // Ein neuer Stepper wird angelegt und initialisert
+        this.myStepper = new StepperOnGrid(this.myGrid);
+        this.myStepper.init();
+        this.notify();
+    }
+
+    // =================================================
+    // Getter
+    // =================================================
+
+    getMyGrid() {
+        return this.myGrid;
+    }
+    getMyStepper() {
+        return this.myStepper;
+    }
+
+    autoExecIsOn() {
+        return this.autoExecOn;
+    }
+
+    getGamePhase() {
+        return this.currentPhase;
+    }
+
+    // =================================================
+    // Setter
+    // =================================================
+
+    setAutoExecOn() {
+        if (!this.autoExecOn) {
+            this.myGrid.clearAutoExecCellInfos();
+            this.autoExecOn = true;
+            this.myStepper.init();
+        }
+    }
+
+    setAutoExecOff() {
+        this.myStepper.stopTimerControlledLoop();
+        this.autoExecOn = false;
+        this.myGrid.clearAutoExecCellInfos();
+    }
+
+    setGamePhase(gamePhase) {
+        this.currentPhase = gamePhase;
+    }
+    // =================================================
+    // Other Methods
+    // =================================================
+
+    startPuzzleGenerator() {
+        this.notifyAspect('puzzleGenerator', 'started');
+        // Ein neuer Web Worker, der die Generierung durchführt, 
+        // wird erzeugt.
+        let webworkerPuzzleGenerator = new Worker("sudokuGen.js");
+        // Dem Web Worker wird ein Message handler mitgegeben. Der Web Worker
+        // sendet eine Nachricht, die das generierte Puzzle als String erhält
+        webworkerPuzzleGenerator.onmessage = function (e) {
+            // Das Puzzle aus dem gelieferten String erzeugen
+            let puzzle = JSON.parse(e.data);
+            // Initialisierungen vor dem Laden
+            this.init();
+            // Das Puzzle wird in das Grid geladen    
+            this.myGrid.loadPuzzle('-', puzzle);
+            // Anzeigen des generierten Puzzles
+            this.setGamePhase('play');
+            this.notify();
+            sudoApp.myTabView.openGrid();
+            // Der sich drehende Loader wird gestoppt    
+            this.notifyAspect('puzzleGenerator', 'finished');
+        }
+        // Dem neuen Web Worker wird die Nachricht Run geschickt,
+        // wodurch die Generierung des neuen Puzzles gestartet wird.
+        webworkerPuzzleGenerator.postMessage('Run');
+    }
+
+
+    // ==================================================================
+    // Others
+    // ==================================================================
+    autoExecRun() {
+        // Der Stepper des Solvers wird ungetacktet automatisch ausgeführt
+        if (this.autoExecOn) {
+            // Im automatischen Ausführungsmodus
+            // muss lediglich die ungetacktete Loop gestartet werden.
+            this.myStepper.stepperLoop();
+        } else {
+            if (this.myStepper.deadlockReached()) {
+                // Der Solver braucht gar nicht in den Auto-Modus gesetzt werden
+                alert("Keine (weitere) Lösung gefunden!");
+            } else {
+                // Der Solver wird in den Auto-Modus gesetzt
+                // und die ungetacktete Loop wird gestartet.
+                this.setGamePhase('play');
+                this.setAutoExecOn();
+                this.myGrid.deselect();
+                this.myStepper.init();
+                this.myStepper.stepperLoop();
+            }
+        }
+    }
+
+    autoExecRunTimerControlled() {
+        // Der Stepper des Solvers wird zeitgetacktet automatisch ausgeführt
+        if (this.autoExecOn) {
+            // Im automatischen Ausführungsmodus
+            // muss lediglich die zeitgetacktete Loop gestartet werden.
+            this.myStepper.startTimerControlledLoop();
+        } else {
+            if (this.myStepper.deadlockReached()) {
+                // Der Solver braucht gar nicht in den Auto-Modus gesetzt werden
+                alert("Keine (weitere) Lösung gefunden!");
+            } else {
+                // Der Solver wird in den Auto-Modus gesetzt
+                // und die zeitgetacktete Loop wird gestartet.
+                this.setGamePhase('play');
+                this.setAutoExecOn();
+                this.myGrid.deselect();
+                this.myStepper.init();
+                sudoApp.mySuccessDialog.close();
+                this.myStepper.startTimerControlledLoop();
+            }
+        }
+    }
+
+    autoExecStop() {
+        this.myStepper.stopTimerControlledLoop();
+        this.setAutoExecOff();
+
+    }
+
+
+
+}
+class SudokuApp {
+    // Die Darstellung der ganzen App
+    constructor() {
+        // ==============================================================
+        // Komponenten der App
+        // ==============================================================
+        this.mySolver = new SudokuSolver();
+        this.mySolverView = new SudokuSolverView(this.mySolver);
+        this.mySolverController = new SudokuSolverController(this.mySolver);
+        // Ein echtes MVC-Pattern gibt es nur für den Solver
+        // Die übrigen Model- und View-Klassen sind nur Subkomponenten
+        // der Solver-Klassen. Sie verwirklichen keine eigene
+        // Observer-Beziehung
+        this.mySolver.attach(this.mySolverView);
+        this.mySolver.setMyView(this.mySolverView);
+
+        this.myPuzzleDB = new SudokuPuzzleDB();
+        this.myPuzzleDBController = new SudokuPuzzleDBController(this.myPuzzleDB);
+        // Die Reiteransicht
+        this.myTabView = new SudokuTabView();
+    }
+
+    init() {
+        this.mySolver.init();
+        this.myPuzzleDB.init();
+        this.myTabView.init();
+    }
+
+
+    helpFunktion() {
+        window.open('./help.html');
+    }
+    // ==============================================
+    // App events
+    // ==============================================
+
+
+    successDlgOKPressed() {
+        this.mySuccessDialog.close();
+        if (sudoApp.mySuccessDialog.further()) {
+            this.mySolver.myStepper.setAutoDirection('backward');
+            this.mySolver.myStepper.startTimerControlledLoop();
+        }
+    }
+
+    successDlgCancelPressed() {
+        this.mySuccessDialog.close();
+    }
+
+
+}
+class ProgressBar {
+    constructor() {
+        this.elemPlay = document.getElementById("myBarPlay");
+        this.elemDef = document.getElementById("myBarDef");
+        this.elemUnset = document.getElementById("total-bar-value");
+    }
+    init() {
+        this.elemPlay.style.width = "10%"
+        this.elemDef.style.width = "10%"
+    }
+    setValue(defCount, totalCount) {
+        let playCount = totalCount - defCount;
+        let defCountProzent = Math.floor(defCount / 81 * 100);
+        let playCountProzent = Math.floor(totalCount / 81 * 100);
+
+        this.elemDef.style.width = defCountProzent + "%";
+        this.elemPlay.style.width = playCountProzent + "%";
+        if (defCount < 10) {
+            this.elemDef.innerHTML = '';
+        } else {
+            this.elemDef.innerHTML = defCount;
+        }
+        if (playCount < 2) {
+            this.elemPlay.innerHTML = '';
+            this.elemPlay.style.paddingRight = "0px"
+
+        } else {
+            this.elemPlay.innerHTML = playCount;
+            this.elemPlay.style.paddingRight = "5px"
+        }
+        this.elemUnset.innerHTML = 81 - totalCount;
+    }
+}
+
+
+class PuzzleSaveDialog {
+    constructor() {
+        this.winBox;
+        this.myOpen = false;
+
+        this.myPuzzleNameNode = document.getElementById("puzzle-name");
+        this.myPuzzleIdNode = document.getElementById("save-dlg-puzzle-id");
+        this.okNode = document.getElementById("btn-saveStorageOK");
+        this.cancelNode = document.getElementById("btn-saveStorageCancel");
+        // Mit der Erzeugung des Wrappers werden 
+        // auch der Eventhandler OK und Abbrechen gesetzt
+        this.okNode.addEventListener('click', () => {
+            sudoApp.savePuzzleDlgOKPressed();
+        });
+        this.cancelNode.addEventListener('click', () => {
+            sudoApp.savePuzzleDlgCancelPressed();
+        });
+    }
+    open(uid, name) {
+        if (window.screen.availWidth < 421) {
+            this.winBox = new WinBox("Puzzle speichern unter ...", {
+                x: "center",
+                y: "center",
+                width: "400px",
+                height: "300px",
+                mount: document.getElementById("contentSaveDlg")
+            });
+        } else {
+            this.winBox = new WinBox("Puzzle speichern unter ...", {
+                x: "center",
+                y: "center",
+                width: "300px",
+                height: "240px",
+                mount: document.getElementById("contentSaveDlg")
+            });
+        }
+
+        this.myOpen = true;
+        this.myPuzzleIdNode.removeAttribute("readonly");
+        this.myPuzzleIdNode.value = uid;
+        this.myPuzzleIdNode.setAttribute("readonly", true);
+        this.myPuzzleNameNode.value = name;
+    }
+
+    close() {
+        if (this.myOpen) {
+            this.winBox.close();
+            this.myOpen = false;
+        }
+    }
+    getPuzzleId() {
+        return this.myPuzzleIdNode.value;
+    }
+    getPuzzleName() {
+        return this.myPuzzleNameNode.value;
+    }
+}
+
+class SuccessDialog {
+    constructor() {
+        this.myWidth = 240;
+        this.myHeight = 390;
+        this.winBox;
+        this.myOpen = false;
+        this.okNode = document.getElementById("btn-successOK");
+        this.checkBoxNode = document.getElementById("further");
+        this.okNode.addEventListener('click', () => {
+            sudoApp.successDlgOKPressed();
+        });
+    }
+    open() {
+        if (window.screen.availWidth < 421) {
+            this.winBox = new WinBox("Lösung gefunden", {
+                x: "center",
+                y: "center",
+                width: "150px",
+                height: "270px",
+                mount: document.getElementById("contentSuccessDlg")
+            });
+        } else {
+            this.winBox = new WinBox("Lösung gefunden", {
+                x: "center",
+                y: "center",
+                width: "255px",
+                height: "400px",
+                mount: document.getElementById("contentSuccessDlg")
+            });
+        }
+        this.checkBoxNode.checked = false;
+        this.myOpen = true;
+    }
+    close() {
+        if (this.myOpen) {
+            this.winBox.close();
+            this.myOpen = false;
+        }
+    }
+    init() {
+        this.checkBoxNode.checked = false;
+    }
+    further() {
+        return this.checkBoxNode.checked;
+    }
+}
+
+
 function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -363,7 +1389,7 @@ class StepperOnGrid {
 
     constructor(suGrid) {
         this.myResult = '';
-        this.suGrid = suGrid;
+        this.myGrid = suGrid;
         this.myBackTracker;
         this.timer = false;
         this.execSpeed = 75;
@@ -371,9 +1397,6 @@ class StepperOnGrid {
         this.goneSteps = 0;
         this.levelOfDifficulty = 'Keine Angabe';
         this.countBackwards = 0;
-        if (inMainApp) {
-            this.progressBar = new ProgressBar();
-        }
         this.autoDirection = 'forward';
         this.init();
     }
@@ -386,66 +1409,45 @@ class StepperOnGrid {
         this.levelOfDifficulty = 'Keine Angabe';
         // Der Stepper hat immer einen aktuellen BackTracker
         this.myBackTracker = new BackTracker();
-        if (inMainApp) {
-            this.displayStatus();
-        }
-    }
-
-    displayStatus() {
-        this.suGrid.displayBenchmark(this.countBackwards, this.levelOfDifficulty);
-        this.displayAutoDirection();
-        this.displayProgress();
-        this.displayGoneSteps();
-    }
-
-    displayGoneSteps() {
-        let goneStepsNode = document.getElementById("step-count");
-        goneStepsNode.innerHTML = '<b>Schritte:</b> &nbsp' + this.goneSteps;
-    }
-
-    displayAutoDirection() {
-        let forwardNode = document.getElementById("radio-forward");
-        let backwardNode = document.getElementById("radio-backward");
-        if (this.autoDirection == 'forward') {
-            forwardNode.classList.add('checked');
-            backwardNode.classList.remove('checked');
-        } else {
-            forwardNode.classList.remove('checked');
-            backwardNode.classList.add('checked');
-        }
     }
 
 
-    displayProgress() {
-        let countDef = this.suGrid.countDefSteps();
-        let countTotal = this.suGrid.countSolvedSteps();
-        this.progressBar.setValue(countDef, countTotal);
-    }
-
-
-    setAutoDirection(direction) {
-        this.autoDirection = direction;
-        if (inMainApp) {
-            this.displayAutoDirection();
-        }
+    // =============================================================
+    // Getter
+    // =============================================================
+    getGoneSteps() {
+        return this.goneSteps;
     }
 
     getAutoDirection() {
         return this.autoDirection;
     }
 
-    isRunning() {
+    isRunningTimerControlled() {
         // Trickprogrammierung:
         return this.timer !== false;
     }
 
-    startTimerLoop() {
-        if (!this.isRunning()) {
-            this.timer = window.setInterval(() => { sudoApp.stepper.triggerAutoStep('user'); }, this.execSpeed);
+
+    // =============================================================
+    // Setter
+    // =============================================================
+
+    setAutoDirection(direction) {
+        this.autoDirection = direction;
+    }
+
+    // =============================================================
+    // Other methods
+    // =============================================================
+
+    startTimerControlledLoop() {
+        if (!this.isRunningTimerControlled()) {
+            this.timer = window.setInterval(() => { this.triggerAutoStep(); }, this.execSpeed);
         }
     }
 
-    stopTimer() {
+    stopTimerControlledLoop() {
         if (inMainApp) {
             // Die automatische Ausführung
             window.clearInterval(this.timer);
@@ -453,33 +1455,43 @@ class StepperOnGrid {
         }
     }
 
-    solverLoop() {
+    stepperLoop() {
         while (this.myResult == '' || this.myResult == 'inProgress') {
-            sudoApp.stepper.triggerAutoStep('system');
+            this.triggerAutoStep();
         }
     }
 
     triggerAutoStep() {
         this.myResult = this.autoStep();
-        if (inMainApp) {
-            this.displayStatus();
-        }
-        if (this.myResult == 'success') {
-            if (this.isRunning()) {
-                this.stopTimer();
+        sudoApp.mySolver.notify();
+        switch (this.myResult) {
+            case 'success': {
+                if (this.isRunningTimerControlled()) {
+                    this.stopTimerControlledLoop();
+                }
+                this.myGrid.difficulty = this.levelOfDifficulty;
+                this.myGrid.backTracks = this.countBackwards;
+                this.myGrid.steps = this.goneSteps;
+                if (inMainApp) {
+                    sudoApp.mySuccessDialog.open();
+                }
+                break;
             }
-            this.suGrid.difficulty = this.levelOfDifficulty;
-            this.suGrid.backTracks = this.countBackwards;
-            this.suGrid.steps = this.goneSteps;
-            if (inMainApp) {
-                sudoApp.successDialog.open();
+            case 'fail': {
+                if (this.isRunningTimerControlled()) {
+                    this.stopTimerControlledLoop();
+                }
+                alert("Keine (weitere) Lösung gefunden!");
+                break;
             }
-        } else if (this.myResult == 'fail') {
-            this.stopTimer();
-            alert("Keine (weitere) Lösung gefunden!");
-        } else {
-            // 'inProgress'
-            // Keine Aktion
+            case '':
+            case 'inProgress': {
+                // Proceed looping
+                break;
+            }
+            default: {
+                throw new Error('Unknown autoStep result: ' + this.myResult);
+            }
         }
     }
 
@@ -495,7 +1507,7 @@ class StepperOnGrid {
 
     stepForward() {
         let currentStep = this.myBackTracker.getCurrentStep();
-        if (this.suGrid.indexSelected == -1) {
+        if (this.myGrid.indexSelected == -1) {
             // Annahmen:
             // a) Noch keine nächste Zelle für eine Nummernsetzung selektiert.
             // b) Noch keine dazu passende zu setzende Nummer im aktuellen Realstep gespeichert
@@ -513,7 +1525,7 @@ class StepperOnGrid {
                 // Lege einen neuen Step an mit der Nummer der nächsten Option
                 let realStep = this.myBackTracker.getNextBackTrackRealStep();
                 // Selektiere die Zelle des Optionsteps, deren Index auch im neuen Realstep gespeichert ist
-                this.suGrid.indexSelect(realStep.getCellIndex());
+                this.myGrid.indexSelect(realStep.getCellIndex());
                 return 'inProgress';
             }
             // ====================================================================================
@@ -526,7 +1538,7 @@ class StepperOnGrid {
             } else {
                 // ================================================================================
                 // Die ermittelte Selektion wird gesetzt
-                this.suGrid.indexSelect(tmpSelection.index);
+                this.myGrid.indexSelect(tmpSelection.index);
                 // ================================================================================
                 // Jetzt muss für diese Selektion eine Nummer bestimmt werden.
                 // Ergebnis wird sein: realStep mit Nummer
@@ -556,7 +1568,7 @@ class StepperOnGrid {
             // b) Die zu setzende Nummer ist im aktuellen Realstep gespeichert
             // Aktion:
             // Setze die eindeutige Nummer
-            this.suGrid.atCurrentSelectionSetAutoNumber(currentStep);
+            this.myGrid.atCurrentSelectionSetAutoNumber(currentStep);
             this.goneSteps++;
             // Falls die Nummernsetzung zur Unlösbarkeit führt
             // muss der Solver zurückgehen
@@ -590,9 +1602,9 @@ class StepperOnGrid {
                 return this.stepForward();
             }
         } else if (currentStep instanceof BackTrackRealStep) {
-            if (this.suGrid.indexSelected !== currentStep.getCellIndex()) {
+            if (this.myGrid.indexSelected !== currentStep.getCellIndex()) {
                 // Fall 1: Keine oder eine falsch selektierte Zelle
-                this.suGrid.indexSelect(currentStep.getCellIndex());
+                this.myGrid.indexSelect(currentStep.getCellIndex());
                 // In der Matrix ist die Zelle des aktuellen Schrittes selektiert
                 return 'inProgress';
             }
@@ -600,9 +1612,9 @@ class StepperOnGrid {
             // Startzustand
             // a) In der Matrix ist die Zelle des aktuellen Schrittes selektiert
             // b) Die selektierte Zelle ist noch nicht gelöscht
-            if (this.suGrid.sudoCells[currentStep.getCellIndex()].getValue() !== '0') {
+            if (this.myGrid.sudoCells[currentStep.getCellIndex()].getValue() !== '0') {
                 this.goneSteps++;
-                this.suGrid.deleteSelected('play', false);
+                this.myGrid.deleteSelected('play', false);
                 // Nach Löschen der Zelle den neuen aktuellen Schritt bestimmen
                 let prevStep = this.myBackTracker.previousStep();
                 return 'inProgress'
@@ -617,12 +1629,12 @@ class StepperOnGrid {
         // In der Regel sind das Zellen mit 2 Optionsnummern.
         let maxSelection = selectionList[0];
         let maxIndex = maxSelection.index;
-        let maxWeight = this.suGrid.sudoCells[maxIndex].countMyInfluencersWeight();
+        let maxWeight = this.myGrid.sudoCells[maxIndex].countMyInfluencersWeight();
         // Kontexte mit einem größeren Entscheidungsgrad, also mit weniger zulässigen Nummern, zählen mehr.
         for (let i = 1; i < selectionList.length; i++) {
             let currentSelection = selectionList[i];
             let currentIndex = currentSelection.index;
-            let currentWeight = this.suGrid.sudoCells[currentIndex].countMyInfluencersWeight();
+            let currentWeight = this.myGrid.sudoCells[currentIndex].countMyInfluencersWeight();
             if (currentWeight > maxWeight) {
                 maxSelection = currentSelection;
                 maxIndex = currentIndex;
@@ -709,13 +1721,13 @@ class StepperOnGrid {
     getOptionalSelections() {
         let selectionList = [];
         for (let i = 0; i < 81; i++) {
-            if (this.suGrid.sudoCells[i].getValue() == '0') {
+            if (this.myGrid.sudoCells[i].getValue() == '0') {
                 let selection = {
                     index: i,
-                    options: Array.from(this.suGrid.sudoCells[i].getTotalAdmissibles()),
-                    indirectNecessaryOnes: Array.from(this.suGrid.sudoCells[i].getIndirectNecessarys()),
-                    necessaryOnes: Array.from(this.suGrid.sudoCells[i].getNecessarys()),
-                    level_0_singles: Array.from(this.suGrid.sudoCells[i].getSingles())
+                    options: Array.from(this.myGrid.sudoCells[i].getTotalAdmissibles()),
+                    indirectNecessaryOnes: Array.from(this.myGrid.sudoCells[i].getIndirectNecessarys()),
+                    necessaryOnes: Array.from(this.myGrid.sudoCells[i].getNecessarys()),
+                    level_0_singles: Array.from(this.myGrid.sudoCells[i].getSingles())
                 }
                 selectionList.push(selection);
             }
@@ -821,14 +1833,54 @@ class StepperOnGrid {
     }
 
     deadlockReached() {
-        return this.suGrid.isInsolvable();
+        return this.myGrid.isInsolvable();
     }
 }
 
-class Group {
+class GroupView extends SudokuView {
+    constructor(group) {
+        super(group);
+    }
+    getMyGroup() {
+        return this.myModel;
+    }
+    displayInsolvability() {
+        if (this.getMyGroup().withConflictingSingles()) {
+            this.displayError();
+            sudoApp.mySolver.getMyView().displayReasonInsolvability('Zwei gleiche Singles.');
+            return true;
+        }
+        if (this.getMyGroup().withPairConflict()) {
+            this.displayError();
+            sudoApp.mySolver.getMyView().displayReasonInsolvability('Nacktes Paar Konflikt.');
+            return true;
+        }
+        if (this.getMyGroup().withConflictingNecessaryNumbers()) {
+            this.displayError();
+            sudoApp.mySolver.getMyView().displayReasonInsolvability('Zwei gleiche notwendige Nummern.');
+            return true;
+        }
+        if (this.getMyGroup().withMissingNumber()) {
+            this.displayError();
+            sudoApp.mySolver.getMyView().displayReasonInsolvability('Fehlende Nummer.');
+            return true;
+        }
+        return false;
+    }
+
+    displayError() {
+        this.myNode.classList.add('err');
+        this.myNode.classList.add('cell-err');
+        setTimeout(() => {
+            this.myNode.classList.remove('cell-err');
+        }, 500);
+    }
+}
+class Group extends SudokuModel {
     // Abstrakte Klasse, deren konkrete Instanzen
     // ein Block, eine Spalte oder Reihe der Tabelle sind
     constructor(suTable) {
+        super();
         // Die Collection kennt ihre Tabelle
         this.myGrid = suTable;
         this.myCells = [];
@@ -846,29 +1898,6 @@ class Group {
         this.myPairInfos = [];
     }
 
-    displayInsolvability() {
-        if (this.withConflictingSingles()) {
-            this.displayError();
-            sudoApp.suGrid.displayReasonInsolvability('Zwei gleiche Singles.');
-            return true;
-        }
-        if (this.withPairConflict()) {
-            this.displayError();
-            sudoApp.suGrid.displayReasonInsolvability('Nacktes Paar Konflikt.');
-            return true;
-        }
-        if (this.withConflictingNecessaryNumbers()) {
-            this.displayError();
-            sudoApp.suGrid.displayReasonInsolvability('Zwei gleiche notwendige Nummern.');
-            return true;
-        }
-        if (this.withMissingNumber()) {
-            this.displayError();
-            sudoApp.suGrid.displayReasonInsolvability('Fehlende Nummer.');
-            return true;
-        }
-        return false;
-    }
 
     isInsolvable() {
         // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
@@ -1131,8 +2160,8 @@ class Group {
                                 newInAdmissibles.forEach(inAdNr => {
                                     let inAdmissiblePairInfo = {
                                         collection: this,
-                                        pairCell1: sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[0]],
-                                        pairCell2: sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[1]]
+                                        pairCell1: sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[0]],
+                                        pairCell2: sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[1]]
                                     }
                                     this.myCells[j].myLevel_gt0_inAdmissiblesFromPairs.set(inAdNr, inAdmissiblePairInfo);
                                 })
@@ -1152,8 +2181,8 @@ class Group {
         let inAdmissiblesAdded = false;
         for (let i = 0; i < this.myPairInfos.length; i++) {
             if (this.myPairInfos[i].pairIndices.length == 2 &&
-                  sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myBlock !== 
-                  sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myBlock) {
+                  sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myBlock !== 
+                  sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myBlock) {
                 // Ein Paar, das zweimal in der Collection vorkommt
                 // Das Paar muss in verschieden Blockn sein
 
@@ -1165,13 +2194,13 @@ class Group {
                 let senkrecht2PairWingCell = null;
                 let pairWingNr = -1;
 
-                if (sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myRow == this) {
-                    senkrecht1 = sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myCol;
+                if (sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myRow == this) {
+                    senkrecht1 = sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myCol;
                 } else {
                     senkrecht1 = this;
                 }
-                if (sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myRow == this) {
-                    senkrecht2 = sudoApp.suGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myCol;
+                if (sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myRow == this) {
+                    senkrecht2 = sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myCol;
                 } else {
                     senkrecht2 = this;
                 }
@@ -1434,33 +2463,40 @@ class Group {
 
 }
 
+class SudokuBlockView extends GroupView {
+    constructor(block) {
+        super(block);
+
+    }
+    upDate() {
+        let block = this.getMyModel();
+        let grid = block.myGrid;
+        let gridView = grid.getMyView();
+        let gridNode = gridView.getMyNode();
+
+        // Neuer Blockknoten
+        let blockNode = document.createElement("div");
+        blockNode.setAttribute("class", "sudoku-block");
+        // Knoten in dieser View speichern
+        this.setMyNode(blockNode);
+        //Neuen Blockknoten in den Baum einhängen
+        gridNode.appendChild(blockNode);
+        // Die Zellen des Blocks anzeigen
+        block.myCells.forEach(cell => {
+            // Jede Zelle des Blocks anzeigen.
+            let cellView = cell.getMyView();
+            cellView.upDate();
+        })
+    }
+
+
+
+}
 class SudokuBlock extends Group {
     constructor(suTable, blockIndex) {
         // Der Block kennt seine Tabelle und seinen Index
         super(suTable);
         this.myIndex = blockIndex;
-        this.myBlockNode = null;
-    }
-
-    display(domGridNode) {
-        let blockNode = document.createElement("div");
-        blockNode.setAttribute("class", "sudoku-block");
-        //Neuen Block in den Baum einhängen
-        domGridNode.appendChild(blockNode);
-        this.myBlockNode = blockNode;
-
-        // Die Zellen des Blocks werden angezeigt
-        this.myCells.forEach(sudoCell => {
-            sudoCell.display(blockNode);
-        })
-    }
-
-    displayError() {
-        this.myBlockNode.classList.add('err');
-        this.myBlockNode.classList.add('cell-err');
-        setTimeout(() => {
-            this.myBlockNode.classList.remove('cell-err');
-        }, 500);
     }
 
     clearEvaluations() {
@@ -1486,7 +2522,24 @@ class SudokuBlock extends Group {
         sudoCell.setBlock(this);
     }
 }
+
+class SudokuRowView extends GroupView {
+    constructor(row) {
+        super(row);
+    }
+
+    displayError() {
+        this.myRow.myCells.forEach(sudoCell => {
+            sudoCell.myView.displayRowError();
+        })
+    }
+}
 class SudokuRow extends Group {
+    constructor(suGrid, index) {
+        super(suGrid);
+        this.myIndex = index;
+    }
+
     addCell(sudoCell) {
         this.myCells.push(sudoCell);
         sudoCell.setRow(this);
@@ -1499,22 +2552,96 @@ class SudokuRow extends Group {
         })
     }
 }
+
+class SudokuColView extends GroupView {
+    constructor(col) {
+        super(col);
+    }
+
+    displayError() {
+        this.myCol.myCells.forEach(sudoCell => {
+            sudoCell.myView.displayColError();
+        })
+    }
+}
 class SudokuCol extends Group {
+    constructor(suGrid, index) {
+        super(suGrid);
+        this.myIndex = index;
+    }
     addCell(sudoCell) {
         this.myCells.push(sudoCell);
         sudoCell.setCol(this);
     }
 
-    displayError() {
-        this.myCells.forEach(sudoCell => {
-            sudoCell.displayColError();
-        })
+}
+class SudokuGridView extends SudokuView {
+    constructor(suGrid) {
+        super(suGrid);
+        // Das bisherige DOM-Modell löschen
+        this.domInputAreaNode = document.getElementById("gridArea");
+    }
+    upDate() {
+        // Das bisherige DOM-Modell löschen
+        let old_Node = document.getElementById("main-sudoku-grid");
+        // Das neue DOM-Modell erzeugen
+        let new_Node = document.createElement('div');
+        new_Node.setAttribute('id', 'main-sudoku-grid');
+        new_Node.classList.add('main-sudoku-grid');
+        this.domInputAreaNode.replaceChild(new_Node, old_Node);
+        this.setMyNode(new_Node);
+
+        // Die 9 Blöcke anzeigen
+        let grid = this.getMyModel();
+        grid.sudoBlocks.forEach(sudoBlock => {
+            // Jeden Block anzeigen.
+            let tmpBlockView = sudoBlock.getMyView();
+            tmpBlockView.upDate();
+            // Dem Block seine View geben
+        });
+        // Unlösbarkeit anzeigen.
+        this.displayInsolvability();
+        this.displaySelection();
+    }
+
+    displaySelection() {
+        let grid = this.getMyModel();
+        if (grid.indexSelected !== -1) {
+            let selectedCell = grid.sudoCells[grid.indexSelected];
+            let selectedCellView = selectedCell.getMyView();
+            selectedCellView.unsetSelectStatus();
+            selectedCellView.setSelectStatus();
+
+        }
+    }
+
+    getMyNode() {
+        return this.myNode;
+    }
+    displayInsolvability() {
+        let myGrid = this.getMyModel();
+        // Nur einen Widerspruch zeigen.
+        // Tatsächlich weist ein widerspruchsvolles Sudoku viele
+        // Widersprüche gleichzeitig auf.
+        for (let i = 0; i < 81; i++) {
+            if (myGrid.sudoCells[i].getMyView().displayInsolvability()) return;
+        }
+        for (let i = 0; i < 9; i++) {
+            if (myGrid.sudoBlocks[i].getMyView().displayInsolvability()) return;
+        }
+        for (let i = 0; i < 9; i++) {
+            if (myGrid.sudoRows[i].getMyView().displayInsolvability()) return;
+        }
+        for (let i = 0; i < 9; i++) {
+            if (myGrid.sudoCols[i].getMyView().displayInsolvability()) return;
+        }
     }
 }
 
-class SudokuGrid {
+class SudokuGrid extends SudokuModel {
     // Speichert die Sudokuzellen in der Wrapper-Version
     constructor() {
+        super();
         // Neue Puzzles sind noch nicht geladen, weil sie sich
         // noch nicht in der DB befinden. 
         // Sie besitzen daher auch noch keine Id.
@@ -1522,12 +2649,14 @@ class SudokuGrid {
         this.difficulty = 'Keine Angabe';
         this.steps = 0;
         this.backTracks = 0;
+
         this.sudoCells = [];
         this.sudoBlocks = [];
         this.sudoRows = [];
         this.sudoCols = [];
+
         this.evalType = 'lazy';
-        this.init();
+        // this.init();
     }
 
     init() {
@@ -1541,37 +2670,35 @@ class SudokuGrid {
         // Erzeuge die interne Tabelle
         this.createSudoGrid();
         this.evaluateMatrix();
-        // Erzeuge den dazugehörigen DOM-Tree
-        if (inMainApp) {
-            this.display();
-            this.displayPuzzle('', '');
-        }
     }
 
+    // ========================================================
+    // Setter
+    // ========================================================
     setEvalType(et) {
         this.evalType = et;
         this.evaluateMatrix();
-        // Erzeuge den dazugehörigen DOM-Tree
-        if (inMainApp) {
-            this.display();
-        }
     }
 
-    evaluateMatrix() {
-        if (this.evalType == 'lazy') this.evaluateGridLazy();
-        if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') this.evaluateGridStrict();
-    }
-
-    removeAutoExecCellInfos() {
+    setSolvedToGiven() {
+        // Vom Generator verwendete Funktion
+        // Alle gelöste Zellen werden in Givens umgewandelt
+        this.initCurrentSelection();
         for (let i = 0; i < 81; i++) {
-            this.sudoCells[i].clearAutoExecInfo();
+            if (this.sudoCells[i].getValue() !== '0') {
+                if (this.sudoCells[i].getPhase() == 'play') {
+                    this.sudoCells[i].clearAutoExecInfo();
+                    this.sudoCells[i].setPhase('define');
+                }
+            }
         }
-        if (inMainApp) {
-            this.display();
-        }
+        this.evaluateMatrix();
     }
 
-    solved() {
+    // ========================================================
+    // Getter
+    // ========================================================
+    puzzleSolved() {
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() == '0') {
                 return false;
@@ -1579,7 +2706,7 @@ class SudokuGrid {
         }
         return true;
     }
-    countSolvedSteps() {
+    numberOfSolvedCells() {
         let tmp = 0;
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() !== '0') {
@@ -1588,8 +2715,7 @@ class SudokuGrid {
         }
         return tmp;
     }
-
-    countDefSteps() {
+    numberOfGivens() {
         let tmp = 0;
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() !== '0') {
@@ -1599,124 +2725,6 @@ class SudokuGrid {
             }
         }
         return tmp;
-    }
-
-    reset() {
-        // Alle in der Phase 'play' gesetzten Zahlen werden gelöscht
-        // Die Zellen der Aufgabenstellung bleiben erhalten
-        // Schritt 1: Die aktuelle Selektion wird zurückgesetzt
-        this.initCurrentSelection();
-        // Schritt 2: Die aktuellen Zellinhalte werden gelöscht
-        for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].getValue() !== '0') {
-                if (this.sudoCells[i].getPhase() == 'play') {
-                    this.sudoCells[i].clear();
-                }
-            }
-        }
-        this.refresh();
-    }
-
-    set() {
-        // Alle in der Phase 'play' gesetzten Zahlen werden zur Definition
-        // hinzugefügt.
-        // Schritt 1: Die aktuelle Selektion wird zurückgesetzt
-        this.initCurrentSelection();
-        // Schritt 2: Play in define umwandeln und Ausführungs-Infos löschen.
-        for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].getValue() !== '0') {
-                if (this.sudoCells[i].getPhase() == 'play') {
-                    this.sudoCells[i].clearAutoExecInfo();
-                    this.sudoCells[i].setPhase('define');
-                }
-            }
-        }
-        this.refresh();
-    }
-
-    generatePuzzle() {
-        // Initialisiere Tabelle
-        sudoApp.stepper.stopTimer()
-        sudoApp.stepper.init();
-        sudoApp.setAutoExecOff();
-        sudoApp.suGrid.deselect();
-        sudoApp.suGrid.init();
-        sudoApp.setGamePhase('define');
-
-        // Setze in zufälliger Zelle eine zufällige Nummer
-        let randomCellIndex = getRandomIntInclusive(0, 80);
-        sudoApp.sudokuCellPressed(this.sudoCells[randomCellIndex], randomCellIndex);
-        let randomCellContent = getRandomIntInclusive(1, 9).toString();
-        sudoApp.handleNumberPressed(randomCellContent);
-
-        // Löse dieses Sudoku
-        sudoApp.autoExecRun();
-        // Mache die gelösten Zellen define-Zellen
-        this.set();
-        // Setze das Puzzle in den Define-Mode
-        sudoApp.setGamePhase('define')
-        // Lösche in der Lösung Nummern, solange
-        // wie das verbleibende Puzzle backtrack-frei bleibt.
-        this.reduce();
-        // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
-        sudoApp.stepper.init();
-        sudoApp.setAutoExecOff();
-        sudoApp.suGrid.deselect();
-        sudoApp.autoExecRun();
-    }
-
-    reduce() {
-        let randomCellOrder = getRandomNumbers(81, 0, 81);
-        for (let i = 0; i < 81; i++) {
-            let k = randomCellOrder[i];
-            if (this.sudoCells[k].getValue() !== '0') {
-                // Selektiere Zelle mit gesetzter Nummer
-                this.select(this.sudoCells[k], k);
-                // Notiere die gesetzte Nummer
-                let tmpNr = this.sudoCells[k].getValue();
-                // Lösche die gesetzte Nummer
-                this.deleteSelected('define', false);
-                // Werte die verbliebene Matrix strikt aus.
-                this.evaluateGridStrict();
-                let necessaryCondition = (this.sudoCells[k].getNecessarys().size == 1);
-                let indirectNecessaryCondition = (this.sudoCells[k].getIndirectNecessarys().size == 1);
-                let totalAdmissibleCondition = (this.sudoCells[k].getTotalAdmissibles().size == 1);
-                if (necessaryCondition || indirectNecessaryCondition || totalAdmissibleCondition) {
-                    // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer,
-                    // Entweder eine notwendige Nummer oder eine Single-Nummer-
-                    // D.h. die gelöschte Nummer ist eindeutig wiederherstellbar.
-                } else {
-                    // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
-                    // Dann wird die Löschung zurückgenommen.
-                    this.select(this.sudoCells[k], k);
-                    this.sudoCells[k].manualSetValue(tmpNr, 'define');
-                }
-            }
-        }
-    }
-
-    displayReasonInsolvability(reason) {
-        if (inMainApp) {
-            let evalNode = document.getElementById("technique");
-            evalNode.innerHTML =
-                '<b>Widerspruch:</b> &nbsp' + reason;
-        }
-    }
-
-    displayTechnique(tech) {
-        if (inMainApp) {
-            let evalNode = document.getElementById("technique");
-            evalNode.innerHTML =
-                '<b>Angewandte Technik:</b> &nbsp' + tech;
-        }
-    }
-
-
-    displayBenchmark(countBackwards, levelOfDifficulty) {
-        let evalNode = document.getElementById("evaluations");
-        evalNode.innerHTML =
-            '<b>Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
-            + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
     }
 
     getPlayedPuzzleDbElement() {
@@ -1780,6 +2788,95 @@ class SudokuGrid {
         return puzzleDbElement;
     }
 
+    isInsolvable() {
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].isInsolvable()) {
+                return true;
+            }
+        }
+        for (let i = 0; i < 9; i++) {
+            if (this.sudoBlocks[i].isInsolvable()) {
+                return true;
+            }
+        }
+        for (let i = 0; i < 9; i++) {
+            if (this.sudoRows[i].isInsolvable()) {
+                return true;
+            }
+        }
+        for (let i = 0; i < 9; i++) {
+            if (this.sudoCols[i].isInsolvable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // ========================================================
+    // Other methods
+    // ========================================================
+    evaluateMatrix() {
+        if (this.evalType == 'lazy') this.evaluateGridLazy();
+        if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') this.evaluateGridStrict();
+    }
+
+    clearAutoExecCellInfos() {
+        for (let i = 0; i < 81; i++) {
+            this.sudoCells[i].clearAutoExecInfo();
+        }
+    }
+
+    reset() {
+        // Alle in der Phase 'play' gesetzten Zahlen werden gelöscht
+        // Die Zellen der Aufgabenstellung bleiben erhalten
+        // Schritt 1: Die aktuelle Selektion wird zurückgesetzt
+        this.initCurrentSelection();
+        // Schritt 2: Die aktuellen Zellinhalte werden gelöscht
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].getValue() !== '0') {
+                if (this.sudoCells[i].getPhase() == 'play') {
+                    this.sudoCells[i].clear();
+                }
+            }
+        }
+        this.evaluateMatrix();
+    }
+
+
+    reduceSolvedCells() {
+        // Vom Generator verwendete Funktion
+        // Löscht solange gelöste Zellen, wie das Grid 
+        // eine eindeutige Lösung behält.
+        let randomCellOrder = getRandomNumbers(81, 0, 81);
+        for (let i = 0; i < 81; i++) {
+            let k = randomCellOrder[i];
+            if (this.sudoCells[k].getValue() !== '0') {
+                // Selektiere Zelle mit gesetzter Nummer
+                this.select(this.sudoCells[k], k);
+                // Notiere die gesetzte Nummer, um sie eventuell wiederherstellen zu können
+                let tmpNr = this.sudoCells[k].getValue();
+                // Lösche die gesetzte Nummer
+                this.deleteSelected('define', false);
+                // Werte die verbliebene Matrix strikt aus.
+                this.evaluateGridStrict();
+                let necessaryCondition = (this.sudoCells[k].getNecessarys().size == 1);
+                let indirectNecessaryCondition = (this.sudoCells[k].getIndirectNecessarys().size == 1);
+                let totalAdmissibleCondition = (this.sudoCells[k].getTotalAdmissibles().size == 1);
+                if (necessaryCondition || indirectNecessaryCondition || totalAdmissibleCondition) {
+                    // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer,
+                    // Entweder eine notwendige Nummer oder eine Single-Nummer-
+                    // D.h. die gelöschte Nummer ist eindeutig wiederherstellbar.
+                } else {
+                    // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
+                    // Dann wird die Löschung zurückgenommen.
+                    this.select(this.sudoCells[k], k);
+                    this.sudoCells[k].manualSetValue(tmpNr, 'define');
+                }
+            }
+        }
+    }
+
+
     loadPuzzle(uid, puzzleDbElement) {
         this.loadedPuzzleId = uid;
         this.difficulty = puzzleDbElement.level;
@@ -1791,9 +2888,7 @@ class SudokuGrid {
                 this.sudoCells[i].manualSetValue(puzzle[i], 'define');
             }
         }
-        this.displayBenchmark(0, this.difficulty);
-        this.displayPuzzle(uid, puzzleDbElement.name);
-        this.refresh();
+        this.evaluateMatrix();
     }
 
     createSudoGrid() {
@@ -1823,20 +2918,29 @@ class SudokuGrid {
         this.sudoBlocks = [];
         this.sudoRows = [];
         this.sudoCols = [];
-        // Die 9 Blockn anlegen
+
+        // Die 9 Blöcke anlegen
         for (let i = 0; i < 9; i++) {
-            this.sudoBlocks.push(new SudokuBlock(this, i));
+            let block = new SudokuBlock(this, i);
+            let blockView = new SudokuBlockView(block);
+
+            block.setMyView(blockView);
+            this.sudoBlocks.push(block);
         }
-        // Die 81 Zellen anlegen und in ihre jeweilige Block einfügen
+        // Die 81 Zellen anlegen und in ihren jeweiligen Block einfügen
         for (let i = 0; i < 81; i++) {
             let row = Math.floor(i / 9);
             let col = i % 9;
             let blockRow = Math.floor(row / 3);
             let blockCol = Math.floor(col / 3);
             let tmpBlockIndex = calcIndex(blockRow, blockCol);
-            let tmpSudoCell = new SudokuCell(this, i);
-            this.sudoCells.push(tmpSudoCell);
-            this.sudoBlocks[tmpBlockIndex].addCell(tmpSudoCell);
+
+            let cell = new SudokuCell(this, i);
+            cell.setBlock(this.sudoBlocks[tmpBlockIndex]);
+            let cellView = new SudokuCellView(cell);
+            cell.setMyView(cellView);
+            this.sudoCells.push(cell);
+            this.sudoBlocks[tmpBlockIndex].addCell(cell);
         }
         // Influencers in den Zellen setzen
         // Das geschieht nur einmal bei der Initialisierung
@@ -1848,12 +2952,16 @@ class SudokuGrid {
         let currentIndex = 0;
         // Die Col-Vektoren werden angelegt, zunächst leer
         for (let i = 0; i < 9; i++) {
-            let col = new SudokuCol();
+            let col = new SudokuCol(this, i);
+            let colView = new SudokuColView(col);
+            col.setMyView(colView);
             this.sudoCols.push(col);
         }
         for (let i = 0; i < 9; i++) {
             // Ein Row-Vektor wird angelegt
-            let row = new SudokuRow();
+            let row = new SudokuRow(this, i);
+            let rowView = new SudokuRowView(row);
+            row.setMyView(rowView);
             for (let j = 0; j < 9; j++) {
                 let currentCell = this.sudoCells[currentIndex];
                 // Die aktuelle Zelle wird der aktuellen Reihe hinzugefügt
@@ -1865,74 +2973,8 @@ class SudokuGrid {
             this.sudoRows.push(row);
         }
     }
-    displayPuzzle(uid, name) {
-        if (uid == '') uid = ' - ';
-        if (name == '') name = ' - ';
-        let statusLineNode = document.getElementById('status-line');
-        statusLineNode.innerHTML =
-            '<b>Puzzle-Id:</b> &nbsp' + uid + '; &nbsp'
-            + '<b>Puzzle-Name:</b> &nbsp' + name;
-    }
 
-    isInsolvable() {
-        for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].isInsolvable()) {
-                return true;
-            }
-        }
-        for (let i = 0; i < 9; i++) {
-            if (this.sudoBlocks[i].isInsolvable()) {
-                return true;
-            }
-        }
-        for (let i = 0; i < 9; i++) {
-            if (this.sudoRows[i].isInsolvable()) {
-                return true;
-            }
-        }
-        for (let i = 0; i < 9; i++) {
-            if (this.sudoCols[i].isInsolvable()) {
-                return true;
-            }
-        }
-        return false;
-    }
 
-    display() {
-        // Das bisherige DOM-Modell löschen
-        let domInputAreaNode = document.getElementById("gridArea");
-        let old_domGridNode = document.getElementById("main-sudoku-grid");
-        // Das neue DOM-Modell erzeugen
-        let new_domGridNode = document.createElement('div');
-        new_domGridNode.setAttribute('id', 'main-sudoku-grid');
-        new_domGridNode.classList.add('main-sudoku-grid');
-        domInputAreaNode.replaceChild(new_domGridNode, old_domGridNode);
-
-        // Die 9 Blockn anzeigen
-        this.sudoBlocks.forEach(sudoBlock => {
-            sudoBlock.display(new_domGridNode);
-        });
-        // Unlösbarkeit anzeigen.
-        this.displayInsolvability();
-    }
-
-    displayInsolvability() {
-        // Nur ein Widerspruch zeigen.
-        // Tatsächlich weist ein widerspruchsvolles Sudoku viele
-        // Widersprüche gleichzeitig auf.
-        for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].displayInsolvability()) return;
-        }
-        for (let i = 0; i < 9; i++) {
-            if (this.sudoBlocks[i].displayInsolvability()) return;
-        }
-        for (let i = 0; i < 9; i++) {
-            if (this.sudoRows[i].displayInsolvability()) return;
-        }
-        for (let i = 0; i < 9; i++) {
-            if (this.sudoCols[i].displayInsolvability()) return;
-        }
-    }
 
 
     initCurrentSelection() {
@@ -1958,8 +3000,8 @@ class SudokuGrid {
                 (this.selectedCell.getPhase() == currentPhase)
             ) {
                 this.selectedCell.manualSetValue(btnNumber, currentPhase);
-                this.refresh();
                 this.deselect();
+                this.evaluateMatrix();
             }
         }
     }
@@ -1975,8 +3017,8 @@ class SudokuGrid {
                 (this.selectedCell.getPhase() == 'play')
             ) {
                 this.selectedCell.autoSetValue(currentStep);
-                this.refresh();
                 this.deselect();
+                this.evaluateMatrix();
             }
         }
     }
@@ -1988,8 +3030,8 @@ class SudokuGrid {
             // eine Neusetzung erfolgen
             if (this.selectedCell.getPhase() == currentPhase) {
                 this.selectedCell.clear();
-                this.refresh();
                 this.deselect();
+                this.evaluateMatrix();
             }
         }
     }
@@ -2524,7 +3566,7 @@ class SudokuGrid {
                     }
                     strongNumbersInColInsideBlock = numbersInColInsideBlock.difference(numbersInColOutsideBlock);
                 }
-                // Die Blocknzellen um die strengen Nummern reduzieren
+                // Die Blockzellen um die strengen Nummern reduzieren
                 if (strongNumbersInColInsideBlock.size > 0) {
                     // In 2 Spalten der Block die strong NUmmern inadmissible setzen
                     let col1 = 0;
@@ -2558,21 +3600,12 @@ class SudokuGrid {
         return inAdmissiblesAdded;
     }
 
-
-    refresh() {
-        this.evaluateMatrix();
-        if (inMainApp) {
-            this.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
-            this.display();
-        }
-    }
-
     deselect() {
         if (this.isCellSelected()) {
             // Deselektiere alle Zellen
             // Notwendig, weil die Überschneidung Selektionen zurücklässt
             for (let i = 0; i < 81; i++) {
-                this.sudoCells[i].deselect();
+                this.sudoCells[i].unsetSelected();
             }
             // this.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
             // Lösche die Selektionsinformation der Tabelle
@@ -2706,12 +3739,15 @@ class SudokuGrid {
         // Parameter:
         //      cell: Wrapper der Zelle
         //      index: index der Zelle
+        let oldIndex = this.indexSelected;
         // 1. Lösche eine möglche alte Selektion
         this.deselect();
-        // 2. Setze die neue Selektion in der slektierten Zelle
-        sudoCell.select();
-        // 3.Setze die information in der Tabelle 
-        this.setCurrentSelection(sudoCell, index);
+        if (oldIndex !== index) {
+            // 2. Setze die neue Selektion in der slektierten Zelle
+            sudoCell.setSelected();
+            // 3.Setze die information in der Tabelle 
+            this.setCurrentSelection(sudoCell, index);
+        }
     }
 
     indexSelect(index) {
@@ -2772,14 +3808,446 @@ class SudokuGrid {
         return tmpInfluencers;
     }
 }
+class SudokuCellView extends SudokuView {
+    constructor(cell) {
+        super(cell);
 
-class SudokuCell {
+    }
+    upDate() {
+        let tmpCellNode = document.createElement("div");
+        tmpCellNode.setAttribute("class", "sudoku-grid-cell");
+        this.setMyNode(tmpCellNode);
+        // Neue Zelle in ihre Block einhängen
+        let myCell = this.getMyModel();
+        let myBlock = myCell.myBlock;
+        let myBlockView = myBlock.getMyView();
+        let myBlockNode = myBlockView.getMyNode();
+
+        myBlockNode.appendChild(tmpCellNode);
+        tmpCellNode.addEventListener('click', () => {
+            sudoApp.mySolver.sudokuCellPressed(myCell, myCell.getMyIndex());
+            sudoApp.mySolver.notify();
+        });
+        this.upDateCellContent();
+    }
+
+    upDateCellContent() {
+        let cell = this.getMyModel();
+        if (cell.myValue == '0') {
+            // Die Zelle ist noch nicht gesetzt
+            this.displayAdmissibles();
+            this.displayNecessary(cell.myNecessarys, cell.myIndirectNecessarys);
+            // this.displayIndirectNecessary();
+            this.displayLevel_gt0_inAdmissibles(cell.myLevel_gt0_inAdmissibles);
+        } else {
+            // Die Zelle ist mit einer Nummer belegt
+            // Setze die Klassifizierung in der DOM-Zelle
+            this.displayGamePhase(cell.myGamePhase);
+            if (cell.myValueType == 'auto') {
+                this.displayAutoValue(cell.myValue);
+            } else {
+                this.displayMainValueNode(cell.myValue);
+            }
+        }
+    }
+
+    displayAdmissibles() {
+        let cell = this.getMyModel();
+        let inAdmissiblesVisible = (sudoApp.mySolver.myGrid.evalType == 'lazy' || sudoApp.mySolver.myGrid.evalType == 'strict-plus');
+        if (inAdmissiblesVisible) {
+            this.displayAdmissiblesInDetail(cell.getAdmissibles());
+        } else {
+            // Angezeigte inAdmissibles sind zunächst einmal Zulässige
+            // und dürfen jetzt nicht mehr angezeigt werden
+            this.displayAdmissiblesInDetail(cell.getTotalAdmissibles());
+        }
+    }
+
+    displayAdmissiblesInDetail(admissibles) {
+        this.myNode.classList.add('nested');
+        // Übertrage die berechneten Möglchen in das DOM
+        admissibles.forEach(e => {
+            let admissibleNrElement = document.createElement('div');
+            admissibleNrElement.setAttribute('data-value', e);
+            admissibleNrElement.innerHTML = e;
+            this.getMyNode().appendChild(admissibleNrElement);
+        });
+    }
+
+    displayNecessary(myNecessarys, myIndirectNecessarys) {
+        let admissibleNodes = this.myNode.children;
+        for (let i = 0; i < admissibleNodes.length; i++) {
+            if (myNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
+                admissibleNodes[i].classList.add('neccessary');
+            } else if (myIndirectNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
+                // Jede direkt notwendige Nummer ist
+                // auch eine indirekt notwendige Nummer
+                // Nur wenn die notwendige Nummer echt indirekt notwendig ist,
+                // folgt die folgende Zeile.
+                admissibleNodes[i].classList.add('indirect-neccessary');
+            }
+        }
+    }
+
+    displayLevel_gt0_inAdmissibles(myLevel_gt0_inAdmissibles) {
+        let admissibleNodes = this.myNode.children;
+        for (let i = 0; i < admissibleNodes.length; i++) {
+            if (myLevel_gt0_inAdmissibles.has(admissibleNodes[i].getAttribute('data-value'))) {
+                admissibleNodes[i].classList.add('inAdmissible');
+            }
+        }
+    }
+
+    displayGamePhase(gamePhase) {
+        if (gamePhase == 'define') {
+            this.myNode.classList.add('define');
+            this.myNode.classList.remove('play');
+        } else {
+            this.myNode.classList.add('play');
+            this.myNode.classList.remove('define');
+        }
+    }
+
+    displayMainValueNode(value) {
+        this.myNode.setAttribute('data-value', value);
+        this.myNode.innerHTML = value;
+    }
+
+    displayAutoStepNumber(autoValueCellNode) {
+        // Die step-Nummer, also die wievielte Nummer wird gesetzt
+        let autoStepNumberElement = document.createElement('div');
+        autoStepNumberElement.setAttribute('class', 'auto-step-number');
+        autoStepNumberElement.innerHTML = this.getMyModel().myAutoStepNumber;
+        autoValueCellNode.appendChild(autoStepNumberElement);
+    }
+
+    displaySubValueNode(autoValueCellNode) {
+        // Die gesetzte Nummer im Tripel
+        let cellNumberElement = document.createElement('div');
+        cellNumberElement.setAttribute('class', 'auto-value-number');
+        cellNumberElement.innerHTML = this.getMyModel().myValue;
+        autoValueCellNode.appendChild(cellNumberElement);
+    }
+
+    displayOptions(autoValueCellNode) {
+        // Die optionalen Elemente dieser Zelle
+        let options = this.getMyModel().myOptions;
+        let optionLength = options.length;
+
+        if (optionLength > 2) {
+            // 3 Optionen werden optisch dargestellt
+            // Die erste Option
+            let option = options[0];
+            let optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option1');
+            if (option.open) {
+                optionNumberElement.classList.add('open');
+            }
+            optionNumberElement.innerHTML = option.value;
+            autoValueCellNode.appendChild(optionNumberElement);
+
+            // Die zweite Option
+            option = options[1];
+            optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option2');
+            if (option.open) {
+                optionNumberElement.classList.add('open');
+            }
+            optionNumberElement.innerHTML = option.value;
+            autoValueCellNode.appendChild(optionNumberElement);
+
+            // Die dritte Option
+            // option = this.myOptions[1];
+            optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option3');
+            optionNumberElement.classList.add('open');
+            optionNumberElement.innerHTML = '*';
+            autoValueCellNode.appendChild(optionNumberElement);
+        } else if (optionLength == 2) {
+            // 2 Optionen werden optisch dargestellt
+            // Die erste Option
+            let option = options[0];
+            let optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option1');
+            if (option.open) {
+                optionNumberElement.classList.add('open');
+            }
+            optionNumberElement.innerHTML = option.value;
+            autoValueCellNode.appendChild(optionNumberElement);
+
+            // Die zweite Option
+            option = options[1];
+            optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option2');
+            if (option.open) {
+                optionNumberElement.classList.add('open');
+            }
+            optionNumberElement.innerHTML = option.value;
+            autoValueCellNode.appendChild(optionNumberElement);
+
+            // Die dritte Option
+            // option = this.myOptions[1];
+            optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option3');
+            optionNumberElement.innerHTML = '-';
+            autoValueCellNode.appendChild(optionNumberElement);
+
+        } else {
+            // Es gibt nur eine Option
+            // Die erste Option
+            let option = options[0];
+            let optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option1');
+            if (option.open) {
+                optionNumberElement.classList.add('open');
+            }
+            optionNumberElement.innerHTML = option.value;
+            autoValueCellNode.appendChild(optionNumberElement);
+
+            // Die zweite Option
+            optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option2');
+            optionNumberElement.innerHTML = '-';
+            autoValueCellNode.appendChild(optionNumberElement);
+
+            // Die dritte Option
+            // option = this.myOptions[1];
+            optionNumberElement = document.createElement('div');
+            optionNumberElement.classList.add('auto-value-option3');
+            optionNumberElement.innerHTML = '-';
+            autoValueCellNode.appendChild(optionNumberElement);
+        }
+
+    }
+    displayAutoValue() {
+        //Setze das data-value Attribut der Zelle
+        this.myNode.setAttribute('data-value', this.myValue);
+        // Automatisch gesetzte Nummer
+        this.myNode.classList.add('auto-value');
+
+        // Neuer Knotentyp für aut.values
+        let autoValueCellNode = document.createElement("div");
+        autoValueCellNode.setAttribute("class", "auto-value-cell");
+        this.myNode.appendChild(autoValueCellNode);
+        // Die Schrittnummer setzen
+        this.displayAutoStepNumber(autoValueCellNode);
+        // Die automatische Nummer setzen
+        this.displaySubValueNode(autoValueCellNode);
+        // Die Optionen
+        this.displayOptions(autoValueCellNode);
+    }
+
+    displayCellError() {
+        this.myNode.classList.add('err');
+        this.myNode.classList.add('cell-err');
+        setTimeout(() => {
+            this.myNode.classList.remove('cell-err');
+        }, 500);
+    }
+
+    displayRowError() {
+        this.myNode.classList.add('row-err');
+        this.myNode.classList.add('cell-err');
+        setTimeout(() => {
+            this.myNode.classList.remove('cell-err');
+        }, 500);
+
+    }
+
+    displayColError() {
+        this.myNode.classList.add('col-err');
+        this.myNode.classList.add('cell-err');
+        setTimeout(() => {
+            this.myNode.classList.remove('cell-err');
+        }, 500);
+    }
+
+    setSelected() {
+        this.myNode.classList.add('selected');
+    }
+
+    unsetSelected() {
+        this.myNode.classList.remove('selected');
+    }
+
+
+    setBorderSelected() {
+        if (inMainApp) {
+            this.myNode.classList.add('hover');
+        }
+    }
+    setBorderRedSelected() {
+        if (inMainApp) {
+            this.myNode.classList.add('hover-red');
+        }
+    }
+
+    setBorderGreenSelected() {
+        if (inMainApp) {
+            this.myNode.classList.add('hover-green');
+        }
+    }
+
+    unsetBorderSelected() {
+        if (inMainApp) {
+            this.myNode.classList.remove('hover');
+            this.myNode.classList.remove('hover-red');
+            this.myNode.classList.remove('hover-green');
+        }
+    }
+
+    setSelectStatus() {
+        let tmpCell = this.getMyModel();
+        this.setSelected();
+        if (sudoApp.mySolver.myGrid.evalType == 'lazy') {
+            // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
+            // wird die verursachende collection angezeigt.
+            sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
+
+            if (tmpCell.myNecessarys.size > 0) {
+                let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
+                collection.myCells.forEach(e => {
+                    if (e !== tmpCell) {
+                        e.myView.setBorderGreenSelected()
+                    }
+                });
+                return;
+            }
+            if (tmpCell.myIndirectNecessarys.size > 0) {
+                let collection = tmpCell.myIndirectNecessaryCollections.get(Array.from(tmpCell.myIndirectNecessarys)[0]);
+                collection.myCells.forEach(e => {
+                    if (e !== tmpCell) {
+                        e.myView.setBorderGreenSelected()
+                    }
+                });
+                return;
+            }
+
+            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+                tmpCell.myLevel_gt0_inAdmissiblesFromNecessarys.size > 0) {
+                // Wenn die selektierte Zelle eine rote Nummer enthält, die durch eine notwendige
+                // Nummer verursacht ist, wird dies angezeigt.
+                tmpCell.myLevel_gt0_inAdmissiblesFromNecessarys.forEach(nr => {
+                    tmpCell.myInfluencers.forEach(cell => {
+                        cell.myView.setBorderSelected();
+                        if (cell.getNecessarys().has(nr)) {
+                            cell.myView.setBorderRedSelected();
+                        }
+                    })
+                })
+            }
+
+            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+                tmpCell.myLevel_gt0_inAdmissiblesFromSingles.size > 0) {
+                // Wenn die selektierte Zelle eine rote Nummer enthält, die durch eine Single
+                // verursacht ist, wird dies angezeigt.
+                tmpCell.myLevel_gt0_inAdmissiblesFromSingles.forEach(nr => {
+                    tmpCell.myInfluencers.forEach(cell => {
+                        cell.myView.setBorderSelected();
+                        if (cell.getTotalSingles().has(nr)) {
+                            cell.myView.setBorderRedSelected();
+                        }
+                    })
+                })
+            }
+
+
+            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+                tmpCell.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
+                // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
+                // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
+                // verursacht werden.
+                // Die Block, Spalte oder Zeile des Paares wird markiert.
+                tmpCell.myLevel_gt0_inAdmissiblesFromPairs.forEach(pairInfo => {
+                    pairInfo.collection.myCells.forEach(cell => {
+                        if (cell !== tmpCell) {
+                            cell.myView.setBorderSelected();
+                        }
+                    });
+                    pairInfo.pairCell1.myView.setBorderRedSelected();
+                    pairInfo.pairCell2.myView.setBorderRedSelected();
+                })
+                sudoApp.mySolver.myView.displayTechnique('Nacktes Paar');
+            }
+
+
+            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+                tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.size > 0) {
+                // Für ein Subpaar muss nicht jede einzelne Nummer geprüft werden.
+                // 
+                const [pairInfo] = tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
+                pairInfo.collection.myCells.forEach(cell => {
+                    if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
+                        cell.myView.setBorderRedSelected();
+                    } else {
+                        cell.myView.setBorderSelected();
+                    }
+                });
+                sudoApp.mySolver.myView.displayTechnique('Verstecktes Paar')
+            }
+
+            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+                tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping.size > 0) {
+
+                tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo.block.myCells.forEach(cell => {
+                    cell.myView.setBorderSelected();
+                });
+                tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo.rowCol.myCells.forEach(cell => {
+                    cell.myView.setBorderSelected();
+                });
+
+                sudoApp.mySolver.myView.displayTechnique('Überschneidung');
+
+            }
+        }
+    }
+
+
+    unsetSelectStatus() {
+        this.unsetSelected();
+        this.unsetBorderSelected();
+    }
+
+
+
+
+    displayInsolvability() {
+        let cell = this.getMyModel();
+        let mySolverView = sudoApp.mySolver.getMyView();
+        if (cell.getValue() !== '0' && cell.myLevel_0_inAdmissibles.has(cell.getValue())) {
+            this.displayCellError();
+            mySolverView.displayReasonInsolvability('Die Nummer ist bereits einmal gesetzt.');
+            return true;
+        }
+        if (cell.getValue() == '0' && cell.myNecessarys.union(cell.myIndirectNecessarys).size > 1) {
+            this.displayCellError();
+            mySolverView.displayReasonInsolvability('Gleichzeitig verschiedene notwendige Nummern.');
+            return true;
+        }
+        if (cell.getValue() == '0' &&
+            cell.myLevel_0_inAdmissibles.union(cell.myLevel_gt0_inAdmissibles).intersection(cell.myNecessarys).size > 0) {
+            this.displayCellError();
+            mySolverView.displayReasonInsolvability('Eine notwendige Nummer ist gleichzeitig unzulässig');
+            return true;
+        }
+        if (cell.getValue() == '0' && cell.getTotalAdmissibles().size == 0) {
+            this.displayCellError();
+            mySolverView.displayReasonInsolvability('Überhaupt keine zulässige Nummer.');
+            return true;
+        }
+        return false;
+    }
+
+
+}
+
+class SudokuCell extends SudokuModel {
     constructor(suTable, index) {
+        super();
         // Die Zelle kennt ihre Tabelle und ihren Index
         this.myGrid = suTable;
         this.myIndex = index;
         // Die Zelle kennt ihre DOM-Version
-        this.myCellNode = null;
         // Mit der Erzeugung des Wrappers wird
         // auch der Eventhandler der Zelle gesetzt
         // Speichert die Phase, die beim Setzen einer Nummer
@@ -2788,15 +4256,19 @@ class SudokuCell {
         this.myBlock;
         this.myRow;
         this.myCol;
-        this.myCellNode;
         // Speichert ein für alle mal bei der Initialisierung
         // die beeinflussenden Zellen dieser Zelle
         this.myInfluencers = [];
         // Die gesetzte Nummer dieser Zelle. 
         // Die Nummer '0' bedeutet ungesetzte Nummer.
         this.myValue = '0';
+        this.myOptions = [];
+        this.myAutoStepNumber = -1;
+
+        this.isSelected = false;
         // 'manual' oder 'auto'
         this.myValueType = 'manual';
+        this.myGamePhase = 'play';
         // Speichert die aktuell unzulässigen Zahlen für diese Zelle
         this.myLevel_0_inAdmissibles = new SudokuSet();
         this.myLevel_gt0_inAdmissibles = new SudokuSet();
@@ -2817,10 +4289,78 @@ class SudokuCell {
         this.myIndirectNecessaryCollections = new Map();
     }
 
+    // ===================================================================
+    // Getter
+    // ===================================================================
+    getMyIndex() {
+        return this.myIndex;
+    }
+    getIsSelected() {
+        return this.isSelected;
+    }
+
+    getTotalInAdmissibles() {
+        let totalInAdmissibles = this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles);
+        // In widerspruchsvollen Sudokus können notwendige Nummern gleichzeitig unzulässig sein.
+        // Aus pragmatischen Gründen zählen wir solche Nummern nicht zu den inAdmissibles.
+        // Dann werden sie auch angezeigt, wenn die Anzeige von inAdmissibles abgeschaltet ist.
+        // Semantisch ist das kein Problem, da bekanntlich in widerspruchsvollen Mengen beliebiges 
+        // gefolgert werden kann.
+        return totalInAdmissibles.difference(this.getNecessarys());
+    }
+
+    getAdmissibles() {
+        // Die zulässigen Zahlen einer Zelle sind das Komplement der unzulässigen Zahlen
+        return new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
+            this.myLevel_0_inAdmissibles);
+    }
+    getTotalAdmissibles() {
+        // Die zulässigen Zahlen einer Zelle sind das Komplement der unzulässigen Zahlen
+        return new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
+            this.getTotalInAdmissibles());
+    }
+
+    getNecessarys() {
+        return new SudokuSet(this.myNecessarys);
+    }
+    getIndirectNecessarys() {
+        return new SudokuSet(this.myIndirectNecessarys);
+    }
+    getTotalSingles() {
+        let singles = this.getTotalAdmissibles();
+        if (singles.size == 1) {
+            return singles;
+        } else {
+            return new SudokuSet();
+        }
+    }
+    getSingles() {
+        let singles = this.getAdmissibles();
+        if (singles.size == 1) {
+            return singles;
+        } else {
+            return new SudokuSet();
+        }
+    }
+
+    getPhase() {
+        return this.myGamePhase;
+    }
+
+    getValue() {
+        return this.myValue;
+    }
+
+    getIndex() {
+        return this.myIndex;
+    }
+
+    // ===================================================================
+    // Setter
+    // ===================================================================
     setInfluencers(influencers) {
         this.myInfluencers = influencers;
     }
-
     setBlock(block) {
         this.myBlock = block;
     }
@@ -2831,6 +4371,38 @@ class SudokuCell {
         this.myCol = col;
     }
 
+    setSelected() {
+        this.isSelected = true;
+    }
+
+    unsetSelected() {
+        this.isSelected = false;
+    }
+
+    manualSetValue(nr, gamePhase) {
+        this.myValue = nr;
+        this.myValueType = 'manual';
+        this.myGamePhase = gamePhase;
+        this.myAutoStepNumber = this.myGrid.numberOfSolvedCells() - this.myGrid.numberOfGivens();
+    }
+
+    autoSetValue(currentStep) {
+        let nr = currentStep.getValue();
+        this.myValue = nr;
+        this.myValueType = 'auto';
+        this.myGamePhase = 'play';
+        this.myAutoStepNumber = this.myGrid.numberOfSolvedCells() - this.myGrid.numberOfGivens();
+        this.myOptions = currentStep.options();
+    }
+
+    setPhase(phase) {
+        this.myGamePhase = phase;
+    }
+
+
+    // ===================================================================
+    // Methods
+    // ===================================================================
     clear() {
         // Lösche Inhalt der Zelle
         this.myValue = '0';
@@ -2866,308 +4438,6 @@ class SudokuCell {
         return this.myLevel_0_inAdmissibles;
     }
 
-    getTotalInAdmissibles() {
-        let totalInAdmissibles = this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles);
-        // In widerspruchsvollen Sudokus können notwendige Nummern gleichzeitig unzulässig sein.
-        // Aus pragmatischen Gründen zählen wir solche Nummern nicht zu den inAdmissibles.
-        // Dann werden sie auch angezeigt, wenn die Anzeige von inAdmissibles abgeschaltet ist.
-        // Semantisch ist das kein Problem, da bekanntlich in widerspruchsvollen Mengen beliebiges 
-        // gefolgert werden kann.
-        return totalInAdmissibles.difference(this.getNecessarys());
-    }
-
-    getAdmissibles() {
-        // Die zulässigen Zahlen einer Zelle sind das Komplement der unzulässigen Zahlen
-        return new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
-            this.myLevel_0_inAdmissibles);
-    }
-    getTotalAdmissibles() {
-        // Die zulässigen Zahlen einer Zelle sind das Komplement der unzulässigen Zahlen
-        return new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
-            this.getTotalInAdmissibles());
-    }
-
-    getNecessarys() {
-        return new SudokuSet(this.myNecessarys);
-    }
-    getIndirectNecessarys() {
-        return new SudokuSet(this.myIndirectNecessarys);
-    }
-    containsNecessaryNr() {
-        return this.myNecessarys.size == 1;
-    }
-    containsIndirectNecessaryNr() {
-        return this.myIndirectNecessarys.size == 1;
-    }
-    containsDirectSingle() {
-        return this.myLevel_0_inAdmissibles.size == 8;
-    }
-    containsIndirectSingle() {
-        return this.getTotalInAdmissibles().size == 8 &&
-            !this.containsDirectSingle();
-    }
-    getTotalSingles() {
-        let singles = this.getTotalAdmissibles();
-        if (singles.size == 1) {
-            return singles;
-        } else {
-            return new SudokuSet();
-        }
-    }
-    getSingles() {
-        let singles = this.getAdmissibles();
-        if (singles.size == 1) {
-            return singles;
-        } else {
-            return new SudokuSet();
-        }
-    }
-    displayAdmissibles() {
-        let inAdmissiblesVisible = (this.myGrid.evalType == 'lazy' || this.myGrid.evalType == 'strict-plus');
-        if (inAdmissiblesVisible) {
-            this.myCellNode.classList.add('nested');
-            // Übertrage die berechneten Möglchen in das DOM
-            this.getAdmissibles().forEach(e => {
-                let admissibleNrElement = document.createElement('div');
-                admissibleNrElement.setAttribute('data-value', e);
-                admissibleNrElement.innerHTML = e;
-                this.myCellNode.appendChild(admissibleNrElement);
-            });
-        } else {
-            // Angezeigte inAdmissibles sind zunächst einmal Zulässige
-            // und dürfen jetzt nicht mehr angezeigt werden
-            this.myCellNode.classList.add('nested');
-            // Übertrage die berechneten Möglichen in das DOM
-            // In widerspruchsvollen Sudokus kann eine Nummer gleichzeitig
-            // notwendig und unzulässig sein. Solche Nummern sollen sichtbar bleiben.
-            this.getTotalAdmissibles().forEach(e => {
-                let admissibleNrElement = document.createElement('div');
-                admissibleNrElement.setAttribute('data-value', e);
-                admissibleNrElement.innerHTML = e;
-                this.myCellNode.appendChild(admissibleNrElement);
-            });
-        }
-    }
-
-    displayNecessary() {
-        let admissibleNodes = this.myCellNode.children;
-        for (let i = 0; i < admissibleNodes.length; i++) {
-            if (this.myNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
-                admissibleNodes[i].classList.add('neccessary');
-            } else if (this.myIndirectNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
-                // Jede direkt notwendige Nummer ist
-                // auch eine indirekt notwendige Nummer
-                // Nur wenn die notwendige Nummer echt indirekt notwendig ist,
-                // folgt die folgende Zeile.
-                admissibleNodes[i].classList.add('indirect-neccessary');
-            }
-        }
-    }
-
-    displayLevel_gt0_inAdmissibles() {
-        let admissibleNodes = this.myCellNode.children;
-        for (let i = 0; i < admissibleNodes.length; i++) {
-            if (this.myLevel_gt0_inAdmissibles.has(admissibleNodes[i].getAttribute('data-value'))) {
-                admissibleNodes[i].classList.add('inAdmissible');
-            }
-        }
-    }
-
-    displayGamePhase() {
-        if (this.myGamePhase == 'define') {
-            this.myCellNode.classList.add('define');
-            this.myCellNode.classList.remove('play');
-        } else {
-            this.myCellNode.classList.add('play');
-            this.myCellNode.classList.remove('define');
-        }
-    }
-
-    displayMainValueNode() {
-        this.myCellNode.setAttribute('data-value', this.myValue);
-        this.myCellNode.innerHTML = this.myValue;
-    }
-
-    displayAutoStepNumber(autoValueCellNode) {
-        // Die step-Nummer, also die wievielte Nummer wird gesetzt
-        let autoStepNumberElement = document.createElement('div');
-        autoStepNumberElement.setAttribute('class', 'auto-step-number');
-        autoStepNumberElement.innerHTML = this.myAutoStepNumber;
-        autoValueCellNode.appendChild(autoStepNumberElement);
-    }
-
-    displaySubValueNode(autoValueCellNode) {
-        // Die gesetzte Nummer im Tripel
-        let cellNumberElement = document.createElement('div');
-        cellNumberElement.setAttribute('class', 'auto-value-number');
-        cellNumberElement.innerHTML = this.myValue;
-        autoValueCellNode.appendChild(cellNumberElement);
-    }
-
-    displayOptions(autoValueCellNode) {
-        // Die optionalen Elemente dieser Zelle
-
-        //    let optionNode = document.createElement('div');
-        //    optionNode.setAttribute('class', 'value-options');
-
-        let optionLength = this.myOptions.length;
-
-        if (optionLength > 2) {
-            // 3 Optionen werden optisch dargestellt
-            // Die erste Option
-            let option = this.myOptions[0];
-            let optionNumberElement = document.createElement('div');
-            optionNumberElement.classList.add('auto-value-option1');
-            if (option.open) {
-                optionNumberElement.classList.add('open');
-            }
-            optionNumberElement.innerHTML = option.value;
-            autoValueCellNode.appendChild(optionNumberElement);
-
-            // Die zweite Option
-            option = this.myOptions[1];
-            optionNumberElement = document.createElement('div');
-            optionNumberElement.classList.add('auto-value-option2');
-            if (option.open) {
-                optionNumberElement.classList.add('open');
-            }
-            optionNumberElement.innerHTML = option.value;
-            autoValueCellNode.appendChild(optionNumberElement);
-
-            // Die dritte Option
-            // option = this.myOptions[1];
-            optionNumberElement = document.createElement('div');
-            optionNumberElement.classList.add('auto-value-option3');
-            optionNumberElement.classList.add('open');
-            optionNumberElement.innerHTML = '*';
-            autoValueCellNode.appendChild(optionNumberElement);
-        } else if (optionLength == 2) {
-            // 2 Optionen werden optisch dargestellt
-            // Die erste Option
-            let option = this.myOptions[0];
-            let optionNumberElement = document.createElement('div');
-            optionNumberElement.classList.add('auto-value-option1');
-            if (option.open) {
-                optionNumberElement.classList.add('open');
-            }
-            optionNumberElement.innerHTML = option.value;
-            autoValueCellNode.appendChild(optionNumberElement);
-
-            // Die zweite Option
-            option = this.myOptions[1];
-            optionNumberElement = document.createElement('div');
-            optionNumberElement.classList.add('auto-value-option2');
-            if (option.open) {
-                optionNumberElement.classList.add('open');
-            }
-            optionNumberElement.innerHTML = option.value;
-            autoValueCellNode.appendChild(optionNumberElement);
-
-            // Die dritte Option
-            // option = this.myOptions[1];
-            optionNumberElement = document.createElement('div');
-            optionNumberElement.classList.add('auto-value-option3');
-            optionNumberElement.innerHTML = '-';
-            autoValueCellNode.appendChild(optionNumberElement);
-
-        } else {
-            // Es gibt nur eine Option
-            // Die erste Option
-            let option = this.myOptions[0];
-            let optionNumberElement = document.createElement('div');
-            optionNumberElement.classList.add('auto-value-option1');
-            if (option.open) {
-                optionNumberElement.classList.add('open');
-            }
-            optionNumberElement.innerHTML = option.value;
-            autoValueCellNode.appendChild(optionNumberElement);
-
-            // Die zweite Option
-            optionNumberElement = document.createElement('div');
-            optionNumberElement.classList.add('auto-value-option2');
-            optionNumberElement.innerHTML = '-';
-            autoValueCellNode.appendChild(optionNumberElement);
-
-            // Die dritte Option
-            // option = this.myOptions[1];
-            optionNumberElement = document.createElement('div');
-            optionNumberElement.classList.add('auto-value-option3');
-            optionNumberElement.innerHTML = '-';
-            autoValueCellNode.appendChild(optionNumberElement);
-        }
-
-    }
-
-    displayAutoValue() {
-        //Setze das data-value Attribut der Zelle
-        this.myCellNode.setAttribute('data-value', this.myValue);
-        // Automatisch gesetzte Nummer
-        this.myCellNode.classList.add('auto-value');
-
-        // Neuer Knotentyp für aut.values
-        let autoValueCellNode = document.createElement("div");
-        autoValueCellNode.setAttribute("class", "auto-value-cell");
-        this.myCellNode.appendChild(autoValueCellNode);
-        // Die Schrittnummer setzen
-        this.displayAutoStepNumber(autoValueCellNode);
-        // Die automatische Nummer setzen
-        this.displaySubValueNode(autoValueCellNode);
-        // Die Optionen
-        this.displayOptions(autoValueCellNode);
-    }
-
-    displayManualValue() {
-        this.displayMainValueNode();
-    }
-
-    display(blockNode) {
-        // Die DOM-Version der Zelle wird erzeugt
-        let cellNode = document.createElement("div");
-        cellNode.setAttribute("class", "sudoku-grid-cell");
-        // Neue Zelle in ihre Block einhängen
-        blockNode.appendChild(cellNode);
-        this.myCellNode = cellNode;
-        this.myCellNode.addEventListener('click', () => {
-            sudoApp.sudokuCellPressed(this, this.myIndex);
-        });
-        return this.displayCellContent();
-    }
-
-    displayCellContent() {
-        if (this.myValue == '0') {
-            // Die Zelle ist noch nicht gesetzt
-            this.displayAdmissibles();
-            this.displayNecessary();
-            // this.displayIndirectNecessary();
-            this.displayLevel_gt0_inAdmissibles();
-        } else {
-            // Die Zelle ist mit einer Nummer belegt
-            // Setze die Klassifizierung in der DOM-Zelle
-            this.displayGamePhase();
-            if (this.myValueType == 'auto') {
-                this.displayAutoValue();
-            } else {
-                this.displayManualValue();
-            }
-        }
-    }
-
-
-    manualSetValue(nr, gamePhase) {
-        this.myValue = nr;
-        this.myValueType = 'manual';
-        this.myGamePhase = gamePhase;
-        this.myAutoStepNumber = this.myGrid.countSolvedSteps() - this.myGrid.countDefSteps();
-    }
-
-    autoSetValue(currentStep) {
-        let nr = currentStep.getValue();
-        this.myValue = nr;
-        this.myValueType = 'auto';
-        this.myGamePhase = 'play';
-        this.myAutoStepNumber = this.myGrid.countSolvedSteps() - this.myGrid.countDefSteps();
-        this.myOptions = currentStep.options();
-    }
 
     clearAutoExecInfo() {
         this.myValueType = 'manual';
@@ -3175,185 +4445,6 @@ class SudokuCell {
         this.myOptions = [];
     }
 
-
-    displayCellError() {
-        this.myCellNode.classList.add('err');
-        this.myCellNode.classList.add('cell-err');
-        setTimeout(() => {
-            this.myCellNode.classList.remove('cell-err');
-        }, 500);
-    }
-
-    displayRowError() {
-        this.myCellNode.classList.add('row-err');
-        this.myCellNode.classList.add('cell-err');
-        setTimeout(() => {
-            this.myCellNode.classList.remove('cell-err');
-        }, 500);
-
-    }
-
-    displayColError() {
-        this.myCellNode.classList.add('col-err');
-        this.myCellNode.classList.add('cell-err');
-        setTimeout(() => {
-            this.myCellNode.classList.remove('cell-err');
-        }, 500);
-    }
-
-    getPhase() {
-        return this.myGamePhase;
-    }
-
-    setPhase(phase) {
-        this.myGamePhase = phase;
-    }
-
-    select() {
-        if (inMainApp) {
-            this.myCellNode.classList.add('selected');
-        }
-        if (sudoApp.suGrid.evalType == 'lazy') {
-            // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
-            // wird die verursachende collection angezeigt.
-            sudoApp.suGrid.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
-
-            if (this.myNecessarys.size > 0) {
-                let collection = this.myNecessaryCollections.get(Array.from(this.myNecessarys)[0]);
-                collection.myCells.forEach(e => {
-                    if (e !== this) {
-                        e.setGreenSelected()
-                    }
-                });
-                return;
-            }
-            if (this.myIndirectNecessarys.size > 0) {
-                let collection = this.myIndirectNecessaryCollections.get(Array.from(this.myIndirectNecessarys)[0]);
-                collection.myCells.forEach(e => {
-                    if (e !== this) {
-                        e.setGreenSelected()
-                    }
-                });
-                return;
-            }
-
-            if (this.myLevel_gt0_inAdmissibles.size > 0 &&
-                this.myLevel_gt0_inAdmissiblesFromNecessarys.size > 0) {
-                // Wenn die selektierte Zelle eine rote Nummer enthält, die durch eine notwendige
-                // Nummer verursacht ist, wird dies angezeigt.
-                this.myLevel_gt0_inAdmissiblesFromNecessarys.forEach(nr => {
-                    this.myInfluencers.forEach(cell => {
-                        cell.setSelected();
-                        if (cell.getNecessarys().has(nr)) {
-                            cell.setRedSelected();
-                        }
-                    })
-                })
-            }
-
-            if (this.myLevel_gt0_inAdmissibles.size > 0 &&
-                this.myLevel_gt0_inAdmissiblesFromSingles.size > 0) {
-                // Wenn die selektierte Zelle eine rote Nummer enthält, die durch eine Single
-                // verursacht ist, wird dies angezeigt.
-                this.myLevel_gt0_inAdmissiblesFromSingles.forEach(nr => {
-                    this.myInfluencers.forEach(cell => {
-                        cell.setSelected();
-                        if (cell.getTotalSingles().has(nr)) {
-                            cell.setRedSelected();
-                        }
-                    })
-                })
-            }
-
-
-            if (this.myLevel_gt0_inAdmissibles.size > 0 &&
-                this.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
-                // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
-                // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
-                // verursacht werden.
-                // Die Block, Spalte oder Zeile des Paares wird markiert.
-                this.myLevel_gt0_inAdmissiblesFromPairs.forEach(pairInfo => {
-                    pairInfo.collection.myCells.forEach(cell => {
-                        if (cell !== this) {
-                            cell.setSelected();
-                        }
-                    });
-                    pairInfo.pairCell1.setRedSelected();
-                    pairInfo.pairCell2.setRedSelected();
-                })
-                sudoApp.suGrid.displayTechnique('Nacktes Paar');
-            }
-
-
-            if (this.myLevel_gt0_inAdmissibles.size > 0 &&
-                this.myLevel_gt0_inAdmissiblesFromHiddenPairs.size > 0) {
-                // Für ein Subpaar muss nicht jede einzelne Nummer geprüft werden.
-                // 
-                const [pairInfo] = this.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
-                pairInfo.collection.myCells.forEach(cell => {
-                    if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
-                        cell.setRedSelected();
-                    } else {
-                        cell.setSelected();
-                    }
-                });
-                sudoApp.suGrid.displayTechnique('Verstecktes Paar')
-            }
-
-            if (this.myLevel_gt0_inAdmissibles.size > 0 &&
-                this.myLevel_gt0_inAdmissiblesFromOverlapping.size > 0) {
-
-                this.myLevel_gt0_inAdmissiblesFromOverlappingInfo.block.myCells.forEach(cell => {
-                    cell.setSelected();
-                });
-                this.myLevel_gt0_inAdmissiblesFromOverlappingInfo.rowCol.myCells.forEach(cell => {
-                    cell.setSelected();
-                });
-
-                sudoApp.suGrid.displayTechnique('Überschneidung');
-
-            }
-        }
-    }
-
-    setSelected() {
-        if (inMainApp) {
-            this.myCellNode.classList.add('hover');
-        }
-    }
-    setRedSelected() {
-        if (inMainApp) {
-            this.myCellNode.classList.add('hover-red');
-        }
-    }
-
-    setGreenSelected() {
-        if (inMainApp) {
-            this.myCellNode.classList.add('hover-green');
-        }
-    }
-
-    deselect() {
-        if (inMainApp) {
-            this.myCellNode.classList.remove('selected');
-            this.unsetSelected();
-            //   this.myInfluencers.forEach(e => e.unsetSelected());
-        }
-    }
-    unsetSelected() {
-        if (inMainApp) {
-            this.myCellNode.classList.remove('hover');
-            this.myCellNode.classList.remove('hover-red');
-            this.myCellNode.classList.remove('hover-green');
-        }
-    }
-    getValue() {
-        return this.myValue;
-    }
-
-    getCellNode() {
-        return this.myCellNode;
-    }
 
 
     countMyAdmissibles() {
@@ -3440,35 +4531,100 @@ class SudokuCell {
             // Überhaupt keine zulässige Nummer
             (this.getValue() == '0' && this.getTotalAdmissibles().size == 0));
     }
+    init() {
+        this.myPuzzleSaveDialog.close();
+    }
+}
 
-    displayInsolvability() {
-        if (this.getValue() !== '0' && this.myLevel_0_inAdmissibles.has(this.getValue())) {
-            this.displayCellError();
-            this.myGrid.displayReasonInsolvability('Die Nummer ist bereits einmal gesetzt.');
-            return true;
-        }
-        if (this.getValue() == '0' && this.myNecessarys.union(this.myIndirectNecessarys).size > 1) {
-            this.displayCellError();
-            this.myGrid.displayReasonInsolvability('Gleichzeitig verschiedene notwendige Nummern.');
-            return true;
-        }
-        if (this.getValue() == '0' &&
-            this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0) {
-            this.displayCellError();
-            this.myGrid.displayReasonInsolvability('Eine notwendige Nummer ist gleichzeitig unzulässig');
-            return true;
-        }
-        if (this.getValue() == '0' && this.getTotalAdmissibles().size == 0) {
-            this.displayCellError();
-            this.myGrid.displayReasonInsolvability('Überhaupt keine zulässige Nummer.');
-            return true;
-        }
-        return false;
+class SudokuPuzzleDBController {
+    constructor(puzzleDb) {
+        // Der Save-Dialog
+        this.myPuzzleDB = puzzleDb;
+
+        //Click-Event für die Spaltenköpfe
+        document.getElementById('col-name').addEventListener('click', () => {
+            this.myPuzzleDB.sort('name');
+        });
+        document.getElementById('col-defCount').addEventListener('click', () => {
+            this.myPuzzleDB.sort('defCount');
+        });
+        document.getElementById('col-status').addEventListener('click', () => {
+            this.myPuzzleDB.sort('status');
+        });
+        document.getElementById('col-steps-lazy').addEventListener('click', () => {
+            this.myPuzzleDB.sort('steps-lazy');
+        });
+        document.getElementById('col-steps-strict').addEventListener('click', () => {
+            this.myPuzzleDB.sort('steps-strict');
+        });
+        document.getElementById('col-level').addEventListener('click', () => {
+            this.myPuzzleDB.sort('level');
+        });
+        document.getElementById('col-backTracks').addEventListener('click', () => {
+            this.myPuzzleDB.sort('backTracks');
+        });
+        document.getElementById('col-date').addEventListener('click', () => {
+            this.myPuzzleDB.sort('date');
+        });
+
+ 
+    document.getElementById('pz-btn-load').addEventListener('click', () => {
+        this.loadBtnPressed();
+    });
+
+    document.getElementById('btn-restore-mobile').addEventListener('click', () => {
+        this.mobileRestoreBtnPressed();
+
+    });
+
+}
+
+    // ===============================================================
+    // DB-Event handler
+    // ===============================================================
+
+    loadBtnPressed() {
+        let puzzle = this.myPuzzleDB.getSelectedPuzzle();
+        let uid = this.myPuzzleDB.getSelectedUid();
+        sudoApp.mySolver.myGrid.loadPuzzle(uid, puzzle);
+        sudoApp.mySolver.setGamePhase('play');
+        sudoApp.mySolver.notify();       
+        sudoApp.myTabView.openGrid();
     }
 
-    getIndex() {
-        return this.myIndex;
+    mobileRestoreBtnPressed() {
+        sudoApp.mySolver.setAutoExecOff();
+        let uid = 'l2rcvi2mobile8h05azkg';
+        if (!sudoApp.myPuzzleDB.has(uid)) {
+            uid = this.myPuzzleDB.getSelectedUid();
+        }
+        let puzzle = this.myPuzzleDB.getPuzzle(uid);
+        sudoApp.mySolver.myGrid.loadPuzzle(uid, puzzle);
+        sudoApp.mySolver.setGamePhase('play');
+        sudoApp.mySolver.notify();
     }
+
+    printBtnPressed() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        let key = Array.from(puzzleMap.keys())[sudoApp.myPuzzleDB.selectedIndex];
+        let selectedPZ = puzzleMap.get(key);
+        this.myPuzzleDB.displayTablePrint('print-puzzle', selectedPZ.puzzle);
+        window.print();
+    }
+
+    nextBtnPressed() {
+        this.myPuzzleDB.nextPZ();
+    }
+    previousBtnPressed() {
+        // Select previous Puzzle
+        this.myPuzzleDB.previousPZ();
+    }
+
+    deleteBtnPressed() {
+        this.myPuzzleDB.deleteSelected();
+    }
+    
 }
 class SudokuPuzzleDB {
     constructor() {
@@ -3531,33 +4687,11 @@ class SudokuPuzzleDB {
             ['date', 'desc']
         ]);
 
-        //Click-Event für die Spaltenköpfe
-        document.getElementById('col-name').addEventListener('click', () => {
-            this.sort('name');
-        });
-        document.getElementById('col-defCount').addEventListener('click', () => {
-            this.sort('defCount');
-        });
-        document.getElementById('col-status').addEventListener('click', () => {
-            this.sort('status');
-        });
-        document.getElementById('col-steps-lazy').addEventListener('click', () => {
-            this.sort('steps-lazy');
-        });
-        document.getElementById('col-steps-strict').addEventListener('click', () => {
-            this.sort('steps-strict');
-        });
-        document.getElementById('col-level').addEventListener('click', () => {
-            this.sort('level');
-        });
-        document.getElementById('col-backTracks').addEventListener('click', () => {
-            this.sort('backTracks');
-        });
-        document.getElementById('col-date').addEventListener('click', () => {
-            this.sort('date');
-        });
-    }
 
+    }
+    init() {
+        // Bisher nichts
+    }
     sort(col) {
         // Hole den Speicher als ein Objekt
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
@@ -3822,7 +4956,7 @@ class SudokuPuzzleDB {
         let selectedTr = null;
         for (let [key, pz] of puzzleMap) {
             let tr = document.createElement('tr');
-            tr.setAttribute("onClick", "sudoApp.sudokuPuzzleDB.setSelected(this)");
+            tr.setAttribute("onClick", "sudoApp.myPuzzleDB.setSelected(this)");
             tr.setAttribute("style", "cursor:pointer");
             tr.classList.add('item')
             if (i == this.selectedIndex) {
@@ -4017,3 +5151,6 @@ class SudokuPuzzle {
         this.solution = solution;
     }
 }
+
+// Starte und initialisiere die App
+start();
