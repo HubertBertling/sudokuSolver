@@ -482,6 +482,9 @@ class SudokuSolverView extends SudokuView {
         let myStepper = this.getMyModel().getMyStepper();
 
         myGrid.getMyView().upDate();
+        if ( !myGrid.isCellSelected()) {
+            sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
+        }
         this.displayGamePhase();
         this.displayBenchmark(myGrid.difficulty, myGrid.backTracks);
         this.displayGoneSteps(myStepper.getGoneSteps());
@@ -490,8 +493,7 @@ class SudokuSolverView extends SudokuView {
         this.displayPuzzle(myGrid.loadedPuzzleId, myGrid.loadedPuzzleName);
     }
 
-
-    upDateAspect(aspect, aspectValue) {
+      upDateAspect(aspect, aspectValue) {
         switch (aspect) {
             case 'puzzleGenerator': {
                 switch (aspectValue) {
@@ -509,7 +511,7 @@ class SudokuSolverView extends SudokuView {
                 }
                 break;
             }
-            default: {
+             default: {
                 throw new Error('Unknown aspect: ' + aspect);
             }
         }
@@ -604,14 +606,14 @@ class SudokuSolverView extends SudokuView {
 
 
 class SudokuCalculator extends SudokuModel {
-    // SudokuCalculator ist Oberklaase für den Solver und Generator.
+    // SudokuCalculator ist abstrakte Oberklaase für den Solver und Generator.
     // Der Generator und der Solver verwenden dieselben
     // Grid-Operationen.
 
     constructor() {
         super();
-        // Die Matrix des Sudoku-Solver
-        this.myGrid = new SudokuGrid();
+        // Die Matrix des Sudoku-Calculators
+        this.myGrid = new SudokuGrid(this);
         //Die App kennt zwei Betriebs-Phasen 'play' or 'define'
         this.currentPhase = 'play';
         // Die App kennt zwei Ausführungsmodi: 
@@ -627,12 +629,11 @@ class SudokuCalculator extends SudokuModel {
     init() {
         // Die App kann in verschiedenen Ausführungsmodi sein
         // 'automatic' 'manual'
+        this.myStepper.stopTimerControlledLoop();
         this.myGrid.init();
-        this.setGamePhase('define');
-        this.setAutoExecOff();
-        // Ein neuer Stepper wird angelegt und initialisert
         this.myStepper = new StepperOnGrid(this.myGrid);
         this.myStepper.init();
+        // Ein neuer Stepper wird angelegt und initialisert
     }
 
     // =================================================
@@ -709,7 +710,7 @@ class SudokuCalculator extends SudokuModel {
 }
 
 class SudokuGenerator extends SudokuCalculator {
-    // Der Generator erweitert den Sudokukalkulator lediglich
+    // Der Generator erweitert den SudokuCalculator lediglich
     // um eine Methode, die Generierungsmethode.
     constructor() {
         super();
@@ -752,19 +753,17 @@ class SudokuSolver extends SudokuCalculator {
         // Die Matrix des Sudoku-Solver
         this.myGridView = new SudokuGridView(this.myGrid);
         this.myGrid.setMyView(this.myGridView);
-        this.myGrid.attach(this.myGridView);
     }
 
     init() {
         super.init();
-        this.notify();
     }
 
     startPuzzleGenerator() {
         this.notifyAspect('puzzleGenerator', 'started');
         // Ein neuer Web Worker, der die Generierung durchführt, 
         // wird erzeugt.
-        let webworkerPuzzleGenerator = new Worker("generatorApp.js");
+        let webworkerPuzzleGenerator = new Worker("./generatorApp.js");
         // Dem Web Worker wird ein Message handler mitgegeben. Der Web Worker
         // sendet eine Nachricht, die das generierte Puzzle als String erhält
         webworkerPuzzleGenerator.onmessage = function (e) {
@@ -1431,7 +1430,6 @@ class StepperOnGrid {
                 this.myGrid.difficulty = this.levelOfDifficulty;
                 this.myGrid.backTracks = this.countBackwards;
                 this.myGrid.steps = this.goneSteps;
-                sudoApp.mySolver.notify();
                 sudoApp.mySolverController.mySuccessDialog.open();
                 break;
             }
@@ -2594,12 +2592,14 @@ class SudokuGridView extends SudokuView {
 
 class SudokuGrid extends SudokuModel {
     // Speichert die Sudokuzellen in der Wrapper-Version
-    constructor() {
+    constructor(calculator) {
         super();
         // Neue Puzzles sind noch nicht geladen, weil sie sich
         // noch nicht in der DB befinden. 
         // Sie besitzen daher auch noch keine Id.
   
+        this.myCalculator = calculator;
+
         this.selectedCell = undefined;
         this.indexSelected = -1;
 
@@ -4539,6 +4539,7 @@ class SudokuPuzzleDBController {
     loadBtnPressed() {
         let puzzle = this.myPuzzleDB.getSelectedPuzzle();
         let uid = this.myPuzzleDB.getSelectedUid();
+        sudoApp.mySolver.init();
         sudoApp.mySolver.myGrid.loadPuzzle(uid, puzzle);
         sudoApp.mySolver.setGamePhase('play');
         sudoApp.mySolver.notify();
@@ -4546,17 +4547,16 @@ class SudokuPuzzleDBController {
     }
 
     mobileRestoreBtnPressed() {
-        sudoApp.mySolver.stopTimerControlledLoop();
-        sudoApp.mySolver.setAutoExecOff();
         let uid = 'l2rcvi2mobile8h05azkg';
         if (!sudoApp.myPuzzleDB.has(uid)) {
             uid = this.myPuzzleDB.getSelectedUid();
         }
         let puzzle = this.myPuzzleDB.getPuzzle(uid);
+        sudoApp.mySolver.init();
         sudoApp.mySolver.myGrid.loadPuzzle(uid, puzzle);
         sudoApp.mySolver.setGamePhase('play');
         sudoApp.mySolver.notify();
-    }
+     }
 
     printBtnPressed() {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");

@@ -28,6 +28,7 @@ class SudokuApp {
 
     init() {
         this.mySolver.init();
+        this.mySolver.notify();
         this.myPuzzleDB.init();
         this.myTabView.init();
     }
