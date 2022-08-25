@@ -252,9 +252,7 @@ class SudokuSolverController {
         if (this.mySolver.autoExecOn) {
             // Während der automatischen Ausführung Nummer gedrückt
             // Der Stepper wird angehalten und beendet
-            this.mySolver.myStepper.stopTimerControlledLoop();
-            this.mySolver.myStepper.init();
-            this.mySolver.setAutoExecOff();
+            this.mySolver.autoExecStop();
         } else {
             this.mySolver.myGrid.atCurrentSelectionSetNumber(nr, this.mySolver.currentPhase, false);
             this.mySolver.myGrid.evaluateMatrix();
@@ -266,11 +264,7 @@ class SudokuSolverController {
         if (this.mySolver.autoExecOn) {
             // Während der automatischen Ausführung Delete-Taste gedrückt
             // Der Stepper wird angehalten und beendet
-            this.mySolver.myStepper.stopTimerControlledLoop();
-            this.mySolver.myStepper.init();
-            sudoApp.mySuccessDialog.close();
-            this.mySolver.setAutoExecOff();
-            this.mySolver.myGrid.deselect();
+            this.mySolver.autoExecStop();
         } else {
             this.mySolver.myGrid.deleteSelected(this.mySolver.currentPhase, false);
         };
@@ -279,9 +273,7 @@ class SudokuSolverController {
 
     sudokuCellPressed(cell, index) {
         if (this.mySolver.autoExecOn) {
-            this.mySolver.myStepper.stopTimerControlledLoop();
-            this.mySolver.setAutoExecOff();
-            this.mySolver.myGrid.deselect();
+            this.mySolver.autoExecStop();
         }
         this.mySolver.myGrid.select(cell, index);
         this.mySolver.notify()
@@ -301,33 +293,20 @@ class SudokuSolverController {
     }
 
     autoStepBtnPressed() {
-        if (this.mySolver.autoExecOn) {
-            this.mySolver.myStepper.triggerLoggedAutoStep();
-        } else {
-            if (this.mySolver.myStepper.deadlockReached()) {
-                alert("Keine (weitere) Lösung gefunden!");
-            } else {
-                this.mySolver.setGamePhase('play');
-                this.mySolver.setAutoExecOn();
-                this.mySolver.myGrid.deselect();
-                this.mySolver.myStepper.init();
-                this.mySolver.myStepper.triggerLoggedAutoStep();
-            }
-        }
+        this.mySolver.autoExecStep();
         this.mySolver.notify();
     }
 
     startBtnPressed() {
-        this.mySolver.autoExecRunTimerControlled();
+        this.mySolver.autoExecStart('timedLoop');
     }
 
     pauseBtnPressed() {
-        this.mySolver.myStepper.stopTimerControlledLoop();
+        this.mySolver.autoExecPause();
     }
 
     stopBtnPressed() {
-        this.mySolver.myStepper.stopTimerControlledLoop();
-        this.mySolver.setAutoExecOff();
+        this.mySolver.autoExecStop();
         this.mySolver.notify();
     }
 
@@ -337,11 +316,8 @@ class SudokuSolverController {
     }
 
     resetBtnPressed() {
-        this.mySuccessDialog.close();
-        this.mySolver.myStepper.stopTimerControlledLoop();
-        this.mySolver.setAutoExecOff();
-        this.mySolver.myGrid.deselect();
-        this.mySolver.myGrid.reset();
+        this.mySolver.autoExecStop();
+        this.mySolver.reset();
         this.mySolver.notify();
     }
 
@@ -351,7 +327,7 @@ class SudokuSolverController {
 
     saveBtnPressed() {
         this.mySolver.myStepper.stopTimerControlledLoop();
-        this.successDialog.close();
+        this.mySuccessDialog.close();
         let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
         this.myPuzzleSaveDialog.open(newPuzzelId, '');
     }
@@ -366,7 +342,7 @@ class SudokuSolverController {
             let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
             this.myPuzzleSaveDialog.open(newPuzzelId, '');
         } else {
-            sudoApp.sudokuPuzzleDB.mergePlayedPuzzle(puzzleId, playedPuzzleDbElement);
+            sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, playedPuzzleDbElement);
             // Wechsle in den DB-Reiter
             document.getElementById("puzzle-db-tab").click();
         }
@@ -379,10 +355,10 @@ class SudokuSolverController {
     }
 
     savePuzzleDlgOKPressed() {
-        this.puzzleSaveDialog.close();
+        this.myPuzzleSaveDialog.close();
         // Der Name unter dem der aktuelle Zustand gespeichert werden soll
-        let puzzleId = this.puzzleSaveDialog.getPuzzleId();
-        let puzzleName = this.puzzleSaveDialog.getPuzzleName();
+        let puzzleId = this.myPuzzleSaveDialog.getPuzzleId();
+        let puzzleName = this.myPuzzleSaveDialog.getPuzzleName();
         let playedPuzzleDbElement = this.mySolver.myGrid.getPlayedPuzzleDbElement();
         //Speichere den named Zustand
         sudoApp.myPuzzleDB.saveNamedPuzzle(puzzleId, puzzleName, playedPuzzleDbElement);
@@ -397,14 +373,14 @@ class SudokuSolverController {
     }
 
     savePuzzleDlgCancelPressed() {
-        this.puzzleSaveDialog.close()
+        this.myPuzzleSaveDialog.close()
     }
 
     successDlgOKPressed() {
         this.mySuccessDialog.close();
         if (this.mySuccessDialog.further()) {
             this.mySolver.myStepper.setAutoDirection('backward');
-            this.mySolver.myStepper.startTimerControlledLoop();
+            this.mySolver.autoExecProceed();
         }
     }
 }
@@ -482,18 +458,19 @@ class SudokuSolverView extends SudokuView {
         let myStepper = this.getMyModel().getMyStepper();
 
         myGrid.getMyView().upDate();
-        if ( !myGrid.isCellSelected()) {
+        if (!myGrid.isCellSelected()) {
             sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
         }
         this.displayGamePhase();
-        this.displayBenchmark(myGrid.difficulty, myGrid.backTracks);
+        this.displayLoadedBenchmark(myGrid.difficulty, myGrid.backTracks);
+        this.displayBenchmark(myStepper.levelOfDifficulty, myStepper.countBackwards);
         this.displayGoneSteps(myStepper.getGoneSteps());
         this.displayAutoDirection(myStepper.getAutoDirection());
         this.displayProgress();
         this.displayPuzzle(myGrid.loadedPuzzleId, myGrid.loadedPuzzleName);
     }
 
-      upDateAspect(aspect, aspectValue) {
+    upDateAspect(aspect, aspectValue) {
         switch (aspect) {
             case 'puzzleGenerator': {
                 switch (aspectValue) {
@@ -511,7 +488,7 @@ class SudokuSolverView extends SudokuView {
                 }
                 break;
             }
-             default: {
+            default: {
                 throw new Error('Unknown aspect: ' + aspect);
             }
         }
@@ -576,11 +553,17 @@ class SudokuSolverView extends SudokuView {
             '<b>Angewandte Technik:</b> &nbsp' + tech;
     }
 
+    displayLoadedBenchmark(levelOfDifficulty, countBackwards) {
+        let evalNode = document.getElementById("loaded-evaluations");
+        evalNode.innerHTML =
+            '<span style="background-color:#7986CB ; color:white ; width: 7rem"> &nbsp Geladen:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+            + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
+    }
 
     displayBenchmark(levelOfDifficulty, countBackwards) {
         let evalNode = document.getElementById("evaluations");
         evalNode.innerHTML =
-            '<b>Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+            '<span style="background-color:#4DB6AC; width: 7rem"> &nbsp Berechnet:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
             + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
     }
 
@@ -614,11 +597,12 @@ class SudokuCalculator extends SudokuModel {
         super();
         // Die Matrix des Sudoku-Calculators
         this.myGrid = new SudokuGrid(this);
-        //Die App kennt zwei Betriebs-Phasen 'play' or 'define'
+        //Die Calculator kennt zwei Betriebs-Phasen 'play' or 'define'
         this.currentPhase = 'play';
-        // Die App kennt zwei Ausführungsmodi: 
+        // Der Calculator kennt zwei Ausführungsmodi: 
         // manuelle oder automatische Ausführung
         this.autoExecOn = false;
+        this.myCurrentTrigger = 'noTriggerSet';
 
         // Für eine automatische Lösungssuche legt die App
         // einen Stepper an. Für jede Ausführung einen neuen.
@@ -630,10 +614,141 @@ class SudokuCalculator extends SudokuModel {
         // Die App kann in verschiedenen Ausführungsmodi sein
         // 'automatic' 'manual'
         this.myStepper.stopTimerControlledLoop();
+        this.currentPhase = 'play';
+        this.autoExecOn = false;
+        this.myCurrentTrigger = 'noTriggerSet';
         this.myGrid.init();
         this.myStepper = new StepperOnGrid(this.myGrid);
         this.myStepper.init();
         // Ein neuer Stepper wird angelegt und initialisert
+    }
+    reset() {
+        // Die App kann in verschiedenen Ausführungsmodi sein
+        // 'automatic' 'manual'
+        this.myStepper.stopTimerControlledLoop();
+        this.currentPhase = 'play';
+        this.autoExecOn = false;
+        this.myCurrentTrigger = 'noTriggerSet';
+        this.myGrid.reset();
+        this.myStepper = new StepperOnGrid(this.myGrid);
+        this.myStepper.init();
+        // Ein neuer Stepper wird angelegt und initialisert
+    }
+    // =================================================
+    // Other Methods
+    // =================================================
+
+    autoExecStart(trigger) {
+        // Der Calculator wird automatisch ausgeführt.
+        // Der Trigger gibt an, wie die Schritte der automatischen Ausführung
+        // angestoßen werden.
+        // loop: Die Schritte werden ungetakted unmittelbar aufgerufen.
+        // timedLoop: Die Schritte werden durch einen Taktgeber aufgerufen.
+        // manualLoop: Die Schritte werden manuell angestoßen.
+        if (this.autoExecOn) {
+            // Im automatischen Ausführungsmodus
+            // muss lediglich die Loop gestartet werden.
+            this.myGrid.deselect();
+            this.myStepper.init();
+            this.myCurrentTrigger = trigger;
+            switch (trigger) {
+                case 'loop': {
+                    this.myStepper.stepperLoop();
+                    break;
+                }
+                case 'timedLoop': {
+                    this.myStepper.startTimerControlledLoop();
+                    break;
+                }
+                case 'manualLoop': {
+                    break;
+                }
+                case 'noTriggerSet': {
+                    throw new Error('Invalid trigger: ' + this.myCurrentTrigger);
+                }
+                default: {
+                    throw new Error('Unknown trigger: ' + this.myCurrentTrigger);
+                }
+            }
+        } else {
+            if (this.myStepper.deadlockReached()) {
+                // Der Solver braucht gar nicht in den Auto-Modus gesetzt werden
+                alert("Keine (weitere) Lösung gefunden!");
+            } else {
+                // Der Solver wird in den Auto-Modus gesetzt
+                // und die ungetacktete Loop wird gestartet.
+                this.setGamePhase('play');
+                this.setAutoExecOn();
+                this.myGrid.deselect();
+                this.myStepper.init();
+                switch (trigger) {
+                    case 'loop': {
+                        this.myStepper.stepperLoop();
+                        break;
+                    }
+                    case 'timedLoop': {
+                        this.myStepper.startTimerControlledLoop();
+                        break;
+                    }
+                    case 'manualLoop': {
+                        break;
+                    }
+                    case 'noTriggerSet': {
+                        throw new Error('Invalid trigger: ' + this.myCurrentTrigger);
+                    }
+                    default: {
+                        throw new Error('Unknown trigger: ' + this.myCurrentTrigger);
+                    }
+                }
+            }
+        }
+    }
+
+    autoExecStep() {
+        if (this.autoExecOn) {
+            this.myCurrentTrigger = 'manualLoop';
+            this.myStepper.triggerLoggedAutoStep();
+        } else {
+            if (this.myStepper.deadlockReached()) {
+                alert("Keine (weitere) Lösung gefunden!");
+            } else {
+                this.autoExecStart('manualLoop');
+                this.myStepper.triggerLoggedAutoStep();
+            }
+        }
+    }
+    autoExecPause() {
+        this.myCurrentTrigger = 'manualLoop';
+        this.myStepper.stopTimerControlledLoop();
+    }
+
+    autoExecProceed() {
+        this.myCurrentTrigger = 'timedLoop';
+        this.myStepper.startTimerControlledLoop();
+
+    }
+
+    autoExecStop() {
+        // Die automatische Ausführung des Calculators wird gestoppt.
+        this.myGrid.deselect();
+        this.myGrid.clearAutoExecCellInfos();
+        this.myStepper.init();
+        switch (this.myCurrentTrigger) {
+            case 'timedLoop': {
+                this.myStepper.stopTimerControlledLoop();
+                break;
+            }
+            case 'loop':
+            case 'manualLoop': 
+            case 'noTriggerSet': {    
+                // Für diese Trigger ist nichts zu tun.
+                break;
+            }
+            default: {
+                throw new Error('Unknown trigger: ' + this.myCurrentTrigger);
+            }
+        }
+        this.autoExecOn = false;
     }
 
     // =================================================
@@ -658,7 +773,7 @@ class SudokuCalculator extends SudokuModel {
     // =================================================
     // Setter
     // =================================================
-    setMyStepper(stepper){
+    setMyStepper(stepper) {
         this.myStepper = stepper;
     }
     setAutoExecOn() {
@@ -676,37 +791,7 @@ class SudokuCalculator extends SudokuModel {
     setGamePhase(gamePhase) {
         this.currentPhase = gamePhase;
     }
-    // =================================================
-    // Other Methods
-    // =================================================
 
-    autoExecRun() {
-        // Der Stepper des Solvers wird ungetacktet automatisch ausgeführt
-        if (this.autoExecOn) {
-            // Im automatischen Ausführungsmodus
-            // muss lediglich die ungetacktete Loop gestartet werden.
-            this.myGrid.deselect();
-            this.myStepper.init();
-            this.myStepper.stepperLoop();
-        } else {
-            if (this.myStepper.deadlockReached()) {
-                // Der Solver braucht gar nicht in den Auto-Modus gesetzt werden
-                alert("Keine (weitere) Lösung gefunden!");
-            } else {
-                // Der Solver wird in den Auto-Modus gesetzt
-                // und die ungetacktete Loop wird gestartet.
-                this.setGamePhase('play');
-                this.setAutoExecOn();
-                this.myGrid.deselect();
-                this.myStepper.init();
-                this.myStepper.stepperLoop();
-            }
-        }
-    }
-
-    autoExecStop() {
-        this.setAutoExecOff();
-    }
 }
 
 class SudokuGenerator extends SudokuCalculator {
@@ -727,7 +812,7 @@ class SudokuGenerator extends SudokuCalculator {
         this.myGrid.atCurrentSelectionSetNumber(randomCellContent, this.getGamePhase());
 
         // Löse dieses Sudoku
-        this.autoExecRun();
+        this.autoExecStart('loop');
 
         // Mache die gelösten Zellen zu Givens
         this.myGrid.setSolvedToGiven();
@@ -739,7 +824,7 @@ class SudokuGenerator extends SudokuCalculator {
         this.myGrid.reduceSolvedCells();
 
         // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
-        this.autoExecRun();
+        this.autoExecStart('loop');
     }
 }
 
@@ -861,10 +946,10 @@ class PuzzleSaveDialog {
         // Mit der Erzeugung des Wrappers werden 
         // auch der Eventhandler OK und Abbrechen gesetzt
         this.okNode.addEventListener('click', () => {
-            sudoApp.savePuzzleDlgOKPressed();
+            sudoApp.mySolverController.savePuzzleDlgOKPressed();
         });
         this.cancelNode.addEventListener('click', () => {
-            sudoApp.savePuzzleDlgCancelPressed();
+            sudoApp.mySolverController.savePuzzleDlgCancelPressed();
         });
     }
     open(uid, name) {
@@ -1356,10 +1441,20 @@ class StepperOnGrid {
     }
 
     isRunningTimerControlled() {
-        // Trickprogrammierung:
-        return this.timer !== false;
-    }
+        // Der Timer kann nur vom Solver gestartet werden.
+        // D.h. wenn der Owner des Steppers der Generator ist,
+        // dann läuft der Timer nicht.
 
+        let myCalculator = this.myGrid.myCalculator;
+        if (myCalculator instanceof SudokuSolver) {
+            // Trickprogrammierung:
+            // Der timer ist ungleich false, wenn er läuft.
+            return this.timer !== false;
+        } else {
+            return false;
+        }
+
+    }
 
     // =============================================================
     // Setter
@@ -1382,9 +1477,11 @@ class StepperOnGrid {
     }
 
     stopTimerControlledLoop() {
-        // Die automatische Ausführung
-        window.clearInterval(this.timer);
-        this.timer = false;
+        if (this.isRunningTimerControlled()) {
+            // Die automatische Ausführung
+            window.clearInterval(this.timer);
+            this.timer = false;
+        }
     }
 
     stepperLoop() {
@@ -2597,7 +2694,7 @@ class SudokuGrid extends SudokuModel {
         // Neue Puzzles sind noch nicht geladen, weil sie sich
         // noch nicht in der DB befinden. 
         // Sie besitzen daher auch noch keine Id.
-  
+
         this.myCalculator = calculator;
 
         this.selectedCell = undefined;
@@ -2609,7 +2706,7 @@ class SudokuGrid extends SudokuModel {
         this.difficulty = 'Keine Angabe';
         this.steps = 0;
         this.backTracks = 0;
-  
+
         this.sudoCells = [];
         this.sudoBlocks = [];
         this.sudoRows = [];
@@ -2623,10 +2720,10 @@ class SudokuGrid extends SudokuModel {
         // Speichert die aktuell selektierte Zelle und ihren Index
         this.selectedCell = undefined;
         this.indexSelected = -1;
-  
+
         this.loadedPuzzleId = '';
         this.loadedPuzzleName = '';
-  
+
         this.difficulty = 'Keine Angabe';
         this.steps = 0;
         this.backTracks = 0;
@@ -2842,8 +2939,9 @@ class SudokuGrid extends SudokuModel {
 
     loadPuzzle(uid, puzzleDbElement) {
         this.loadedPuzzleId = uid;
-        this.loadedPuzzleName = puzzleDbElement.name;   
+        this.loadedPuzzleName = puzzleDbElement.name;
         this.difficulty = puzzleDbElement.level;
+        this.backTracks = puzzleDbElement.backTracks;
         let puzzle = puzzleDbElement.puzzle;
         for (let i = 0; i < 81; i++) {
             if (puzzle[i] == '0') {
@@ -4556,7 +4654,7 @@ class SudokuPuzzleDBController {
         sudoApp.mySolver.myGrid.loadPuzzle(uid, puzzle);
         sudoApp.mySolver.setGamePhase('play');
         sudoApp.mySolver.notify();
-     }
+    }
 
     printBtnPressed() {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");

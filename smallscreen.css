@@ -309,7 +309,7 @@ html {
     background-color: black;
 }
 
-
+/*
 
 .evaluations {
     font-size: 1.2rem;
@@ -327,6 +327,24 @@ html {
     padding-left: 0.5rem;
     color: Crimson;
 }
+
+*/
+
+
+.evaluations, .loaded-evaluations {
+    font-size: 1.0rem;
+    display: flex;
+    padding-top: 5px;
+}
+
+.technique {
+    font-size: 1.0rem;
+    display: flex;
+    padding-top: 5px;
+    color: Crimson;
+}
+
+
 
 
 .sudoku-header {
