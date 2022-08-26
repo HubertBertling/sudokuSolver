@@ -337,7 +337,7 @@ html {
     padding-top: 5px;
 }
 
-.technique {
+.technique, .reasonInsolvability {
     font-size: 1.0rem;
     display: flex;
     padding-top: 5px;
