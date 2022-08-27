@@ -1996,9 +1996,10 @@ class GroupView extends SudokuView {
         return this.myModel;
     }
     displayInsolvability() {
-        if (this.getMyGroup().withConflictingSingles()) {
+        let intSingle = this.getMyGroup().withConflictingSingles(); 
+        if (intSingle > 0) {
             this.displayError();
-            sudoApp.mySolver.getMyView().displayReasonInsolvability('Zwei gleiche Singles.');
+            sudoApp.mySolver.getMyView().displayReasonInsolvability('Zwei gleiche Singles: ' + intSingle);
             return true;
         }
         if (this.getMyGroup().withPairConflict()) {
@@ -2006,14 +2007,17 @@ class GroupView extends SudokuView {
             sudoApp.mySolver.getMyView().displayReasonInsolvability('Nacktes Paar Konflikt.');
             return true;
         }
-        if (this.getMyGroup().withConflictingNecessaryNumbers()) {
+        let intNecessary = this.getMyGroup().withConflictingNecessaryNumbers();
+        if (intNecessary > 0) {
             this.displayError();
-            sudoApp.mySolver.getMyView().displayReasonInsolvability('Zwei gleiche notwendige Nummern.');
+            sudoApp.mySolver.getMyView().displayReasonInsolvability('Zwei gleiche notwendige Nummern: ' + intNecessary);
             return true;
         }
-        if (this.getMyGroup().withMissingNumber()) {
+        let missingNumbers = this.getMyGroup().withMissingNumber();
+        if (missingNumbers.size > 0) {
             this.displayError();
-            sudoApp.mySolver.getMyView().displayReasonInsolvability('Fehlende Nummer.');
+            const [missingNr] = missingNumbers;
+            sudoApp.mySolver.getMyView().displayReasonInsolvability('Fehlende Nummer: ' + missingNr);
             return true;
         }
         return false;
@@ -2056,24 +2060,25 @@ class Group extends SudokuModel {
         // Wenn es eine Collection gibt, in der nicht mehr alle Nummern vorkommen.
         // Wenn es eine Collection gibt, in der dieselbe Nummer mehrmals notwendig ist.
         return (
-            this.withConflictingSingles() ||
+            this.withConflictingSingles() > 0 ||
             this.withPairConflict() ||
-            this.withConflictingNecessaryNumbers() ||
-            this.withMissingNumber());
+            this.withConflictingNecessaryNumbers() > 0 ||
+            this.withMissingNumber().size > 0);
     }
 
     withConflictingNecessaryNumbers() {
         let numberCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         let found = false;
+        let intNecessary = -1;
         for (let i = 0; i < 9; i++) {
             if (this.myCells[i].getValue() == '0') {
                 // Wir betrachten nur offene Zellen
                 let necessarys = this.myCells[i].getNecessarys();
                 if (necessarys.size == 1) {
                     necessarys.forEach(nr => {
-                        let iNr = parseInt(nr);
-                        numberCounts[iNr - 1]++;
-                        if (numberCounts[iNr - 1] > 1) {
+                        intNecessary = parseInt(nr);
+                        numberCounts[intNecessary - 1]++;
+                        if (numberCounts[intNecessary - 1] > 1) {
                             found = true;
                         };
                     });
@@ -2081,9 +2086,9 @@ class Group extends SudokuModel {
             }
             // Wenn wir den ersten Konflikt gefunden haben, können wir die Suche
             // abbrechen. 
-            if (found) return true;
+            if (found) return intNecessary;
         }
-        return false;
+        return -1;
     }
 
     withMissingNumber() {
@@ -2095,7 +2100,8 @@ class Group extends SudokuModel {
                 myNumbers.add(cell.getValue());
             }
         })
-        return (myNumbers.size !== 9);
+        let missingNumbers = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(myNumbers);
+        return (missingNumbers);
     }
 
     calculateHiddenPairs() {
@@ -2545,10 +2551,10 @@ class Group extends SudokuModel {
 
     withConflictingSingles() {
         // Singles sind Zellen, die nur noch exakt eine zulässige Nummer haben.
-        // Conflicting singles sind zwei oder mehr singles in einer Collection, 
+        // Conflicting singles sind zwei oder mehr singles in einer Gruppe, 
         // die dieselbe eine zulässige Nummer haben. Sie fordern ja, dass dieselbe Nummer zweimal
-        // in der Collection vorkommen soll. Mit anderen Worten: 
-        // Wenn es eine Collection mit Conflicting Singles gibt, ist das Sudoku unlösbar.
+        // in der Gruppe vorkommen soll. Mit anderen Worten: 
+        // Wenn es eine Gruppe mit Conflicting Singles gibt, ist das Sudoku unlösbar.
 
         // Idee: Zähle für jede Nummer 1 .. 9 die Häufigkeit ihres Auftretens
         // numberCounts[0] = Häufigkeit der 1, 
@@ -2556,6 +2562,7 @@ class Group extends SudokuModel {
         // usw.
         let numberCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         let found = false;
+        let intSingle = -1;
         for (let i = 0; i < 9; i++) {
             if (this.myCells[i].getValue() == '0') {
                 // Wir betrachten nur offene Zellen
@@ -2565,9 +2572,9 @@ class Group extends SudokuModel {
                 let permNumbers = this.myCells[i].getTotalAdmissibles();
                 if (permNumbers.size == 1) {
                     permNumbers.forEach(nr => {
-                        let iNr = parseInt(nr);
-                        numberCounts[iNr - 1]++;
-                        if (numberCounts[iNr - 1] > 1) {
+                        intSingle = parseInt(nr);
+                        numberCounts[intSingle - 1]++;
+                        if (numberCounts[intSingle - 1] > 1) {
                             found = true;
                         };
                     });
@@ -2575,9 +2582,9 @@ class Group extends SudokuModel {
             }
             // Wenn wir den ersten Konflikt gefunden haben, können wir die Suche
             // abbrechen. 
-            if (found) return true;
+            if (found) return intSingle;
         }
-        return false;
+        return -1;
     }
 
     withPairConflict() {
@@ -2753,12 +2760,16 @@ class SudokuGridView extends SudokuView {
 
     displaySelection() {
         let grid = this.getMyModel();
-        if (grid.indexSelected !== -1) {
+        if (grid.indexSelected == -1) {
+            grid.sudoCells.forEach(cell => {
+                let cellView = cell.getMyView();
+                cellView.unsetSelectStatus();
+            })
+        } else {
             let selectedCell = grid.sudoCells[grid.indexSelected];
             let selectedCellView = selectedCell.getMyView();
             selectedCellView.unsetSelectStatus();
             selectedCellView.setSelectStatus();
-
         }
     }
 
@@ -3904,6 +3915,9 @@ class SudokuGrid extends SudokuModel {
         this.deselect();
         if (oldIndex !== index) {
             // 2. Setze die neue Selektion in der slektierten Zelle
+            // aber nur, wenn dies eine andere Zelle ist.
+            // Wenn eine bereits selektierte Zelle erneut selektiert wird,
+            // wird die Selektion zurückgenommen.
             sudoCell.setSelected();
             // 3.Setze die information in der Tabelle 
             this.setCurrentSelection(sudoCell, index);
@@ -4356,6 +4370,7 @@ class SudokuCellView extends SudokuView {
     unsetSelectStatus() {
         this.unsetSelected();
         this.unsetBorderSelected();
+        sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
     }
 
 

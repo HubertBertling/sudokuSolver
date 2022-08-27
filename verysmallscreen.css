@@ -311,17 +311,17 @@ html {
 
 
 
-.evaluations {
+.evaluations, .loaded-evaluations {
     font-size: 1.0rem;
-    display: flex;
+    display: none;
     padding-top: 0.5rem;
     padding-left: 0.5rem;
 
 }
 
 
-.technique {
-    font-size: 1.2rem;
+.technique, .reasonInsolvability  {
+    font-size: 1.0rem;
     display: none;
     padding-top: 0.5rem;
     padding-left: 0.5rem;
