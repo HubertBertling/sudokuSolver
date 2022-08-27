@@ -1,4 +1,16 @@
 
+function timerControlledLoop() {
+    sudoApp.mySolver.myStepper.startTimerControlledLoop();
+}
+
+function syncLoop() {
+    sudoApp.myGenerator.myStepper.startSyncLoop();
+}
+
+function manualLoop() {
+    sudoApp.mySolver.myStepper.startManualLoop();
+}
+
 // Der Web Worker wartet auf eine Nachricht von Main.
 self.onmessage = function (n) {
     if (n.data == "Run") {
@@ -298,6 +310,8 @@ class SudokuSolverController {
                 this.evalTypeSelected(radioNode.value);
             })
         });
+
+
     }
 
     // ===============================================================
@@ -349,12 +363,13 @@ class SudokuSolverController {
     }
 
     autoStepBtnPressed() {
-        this.mySolver.autoExecStep();
+        this.mySolver.autoExecStep(timerControlledLoop);
         this.mySolver.notify();
     }
 
     startBtnPressed() {
-        this.mySolver.autoExecStart('timedLoop');
+        // this.mySolver.autoExecStart('timedLoop');
+        this.mySolver.autoExecStart(timerControlledLoop);
     }
 
     pauseBtnPressed() {
@@ -600,7 +615,7 @@ class SudokuSolverView extends SudokuView {
 
     displayReasonInsolvability(reason) {
         let reasonNode = document.getElementById("reasonInsolvability");
-        let evalNode = document.getElementById("technique");       
+        let evalNode = document.getElementById("technique");
         if (reason == '') {
             reasonNode.style.display = "none";
             evalNode.style.display = "block";
@@ -700,7 +715,31 @@ class SudokuCalculator extends SudokuModel {
     // Other Methods
     // =================================================
 
-    autoExecStart(trigger) {
+    autoExecStart(loopFunction) {
+        // Der Calculator wird automatisch ausgeführt.
+        // Es gibt 3 verschiedene Loops.
+        // syncLoop: Die Schritte werden ungetakted synchron aufgerufen.
+        // timerControlledLoop: Die Schritte werden durch einen Taktgeber aufgerufen.
+        // manualLoop: Die Schritte werden manuell angestoßen.
+
+        if (this.autoExecOn) {
+            this.myGrid.deselect();
+            loopFunction();
+        } else {
+            if (this.myStepper.deadlockReached()) {
+                // Der Solver braucht gar nicht in den Auto-Modus gesetzt werden
+                alert("Keine (weitere) Lösung gefunden!");
+            } else {
+                // Der Solver wird in den Auto-Modus gesetzt
+                this.setGamePhase('play');
+                this.setAutoExecOn();
+                this.myGrid.deselect();
+                this.myStepper.init();
+                loopFunction();
+            }
+        }
+    }
+    autoExecStartAlt(trigger) {
         // Der Calculator wird automatisch ausgeführt.
         // Der Trigger gibt an, wie die Schritte der automatischen Ausführung
         // angestoßen werden.
@@ -714,7 +753,7 @@ class SudokuCalculator extends SudokuModel {
             this.myCurrentTrigger = trigger;
             switch (trigger) {
                 case 'loop': {
-                    this.myStepper.stepperLoop();
+                    this.myStepper.syncLoop();
                     break;
                 }
                 case 'timedLoop': {
@@ -744,7 +783,7 @@ class SudokuCalculator extends SudokuModel {
                 this.myCurrentTrigger = trigger;
                 switch (trigger) {
                     case 'loop': {
-                        this.myStepper.stepperLoop();
+                        this.myStepper.syncLoop();
                         break;
                     }
                     case 'timedLoop': {
@@ -767,17 +806,16 @@ class SudokuCalculator extends SudokuModel {
 
     autoExecStep() {
         if (this.autoExecOn) {
-            this.myCurrentTrigger = 'manualLoop';
-            this.myStepper.triggerLoggedAutoStep();
+            manualLoop();
         } else {
             if (this.myStepper.deadlockReached()) {
                 alert("Keine (weitere) Lösung gefunden!");
             } else {
-                this.autoExecStart('manualLoop');
-                this.myStepper.triggerLoggedAutoStep();
+                this.autoExecStart(manualLoop);
             }
         }
     }
+
     autoExecPause() {
         this.myStepper.pauseTimerControlledLoop();
     }
@@ -785,7 +823,6 @@ class SudokuCalculator extends SudokuModel {
     autoExecProceed() {
         this.myGrid.deselect();
         this.myStepper.startTimerControlledLoop();
-
     }
 
     autoExecStop() {
@@ -793,21 +830,7 @@ class SudokuCalculator extends SudokuModel {
         this.myGrid.deselect();
         this.myGrid.clearAutoExecCellInfos();
         this.myStepper.init();
-        switch (this.myCurrentTrigger) {
-            case 'timedLoop': {
-                this.myStepper.stopTimerControlledLoop();
-                break;
-            }
-            case 'loop':
-            case 'manualLoop':
-            case 'noTriggerSet': {
-                // Für diese Trigger ist nichts zu tun.
-                break;
-            }
-            default: {
-                throw new Error('Unknown trigger: ' + this.myCurrentTrigger);
-            }
-        }
+        this.myStepper.stopTimerControlledLoop();
         this.autoExecOn = false;
     }
 
@@ -1530,43 +1553,53 @@ class StepperOnGrid {
     // Other methods
     // =============================================================
 
-    startTimerControlledLoop() {
+    startTimerControlledLoop(callBack) {
         if (!this.isRunningTimerControlled()) {
-            this.myGrid.myCalculator.myCurrentTrigger = 'timedLoop';
             this.timer = window.setInterval(() => {
-                this.triggerLoggedAutoStep();
+                if (this.myResult == '' || this.myResult == 'inProgress') {
+                    this.triggerLoggedAutoStep();
+                } else {
+                    this.stopTimerControlledLoop();
+                    callBack();
+                }
             }, this.execSpeed);
         }
     }
 
-    pauseTimerControlledLoop() {
-        if (this.isRunningTimerControlled()) {
-            this.myGrid.myCalculator.myCurrentTrigger = 'manualLoop';
-            // Die automatische Ausführung
-            window.clearInterval(this.timer);
-            this.timer = false;
-        }
-    }
-
+  
     stopTimerControlledLoop() {
         if (this.isRunningTimerControlled()) {
-            this.myGrid.myCalculator.myCurrentTrigger = 'noTriggerSet';
             // Die automatische Ausführung
             window.clearInterval(this.timer);
             this.timer = false;
         }
     }
 
-    stepperLoop() {
-        console.log('MyResult: ' + this.myResult);
+    startStepperLoop(callBack) {
         while (this.myResult == '' || this.myResult == 'inProgress') {
-            console.log('stepperLoop - MyResult: ' + this.myResult + ' goneSteps: ' + this.getGoneSteps());
             this.triggerUnloggedAutoStep();
+        }
+        callBack();
+    }
+
+    startManualLoop(callBack) {
+        if (this.myResult == '' || this.myResult == 'inProgress') {
+            this.triggerLoggedAutoStep();
+        } else {
+            callBack();
         }
     }
 
     triggerUnloggedAutoStep() {
         this.myResult = this.autoStep();
+    }
+
+    triggerLoggedAutoStep() {
+        this.myResult = this.autoStep();
+        sudoApp.mySolver.notify();
+    }
+
+    loopCallBack() {
         switch (this.myResult) {
             case 'success': {
                 this.myGrid.difficulty = this.levelOfDifficulty;
@@ -1589,14 +1622,9 @@ class StepperOnGrid {
         }
     }
 
-    triggerLoggedAutoStep() {
-        this.myResult = this.autoStep();
-        sudoApp.mySolver.notify();
+    timeTriggeredLoopCallback() {
         switch (this.myResult) {
             case 'success': {
-                if (this.isRunningTimerControlled()) {
-                    this.stopTimerControlledLoop();
-                }
                 this.myGrid.difficulty = this.levelOfDifficulty;
                 this.myGrid.backTracks = this.countBackwards;
                 this.myGrid.steps = this.goneSteps;
@@ -1604,9 +1632,6 @@ class StepperOnGrid {
                 break;
             }
             case 'fail': {
-                if (this.isRunningTimerControlled()) {
-                    this.stopTimerControlledLoop();
-                }
                 alert("Keine (weitere) Lösung gefunden!");
                 break;
             }
@@ -1996,10 +2021,10 @@ class GroupView extends SudokuView {
 
     displayError() {
         this.myNode.classList.add('err');
-    /*    this.myNode.classList.add('cell-err');
-        setTimeout(() => {
-            this.myNode.classList.remove('cell-err');
-        }, 500); */
+        /*    this.myNode.classList.add('cell-err');
+            setTimeout(() => {
+                this.myNode.classList.remove('cell-err');
+            }, 500); */
     }
 }
 class Group extends SudokuModel {
@@ -4180,19 +4205,19 @@ class SudokuCellView extends SudokuView {
 
     displayRowError() {
         this.myNode.classList.add('row-err');
-    /*    this.myNode.classList.add('cell-err');
-        setTimeout(() => {
-            this.myNode.classList.remove('cell-err');
-        }, 500); */
+        /*    this.myNode.classList.add('cell-err');
+            setTimeout(() => {
+                this.myNode.classList.remove('cell-err');
+            }, 500); */
 
     }
 
     displayColError() {
         this.myNode.classList.add('col-err');
-    /*    this.myNode.classList.add('cell-err');
-        setTimeout(() => {
-            this.myNode.classList.remove('cell-err');
-        }, 500); */
+        /*    this.myNode.classList.add('cell-err');
+            setTimeout(() => {
+                this.myNode.classList.remove('cell-err');
+            }, 500); */
     }
 
     setSelected() {
