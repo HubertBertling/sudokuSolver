@@ -924,7 +924,7 @@ class SudokuSolver extends SudokuCalculator {
     }
 
     isInAutoExecution() {
-        super.isInAutoExecution();
+        return super.isInAutoExecution();
     }
     atCurrentSelectionSetNumber(number) {
         super.atCurrentSelectionSetNumber(number);
