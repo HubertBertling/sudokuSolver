@@ -860,7 +860,7 @@ class SudokuGenerator extends SudokuCalculator {
         this.setGamePhase('define')
         // Lösche in der Lösung Nummern, solange
         // wie das verbleibende Puzzle backtrack-frei bleibt.
-        this.myGrid.reduceSolvedCells();
+        this.myGrid.takeBackSolvedCells();
 
         // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
         this.autoExecStop();
@@ -896,7 +896,7 @@ class SudokuSolver extends SudokuCalculator {
         // wird erzeugt.
         let webworkerPuzzleGenerator = new Worker("./generatorApp.js");
         // Dem Web Worker wird ein Message handler mitgegeben. Der Web Worker
-        // sendet eine Nachricht, die das generierte Puzzle als String erhält
+        // sendet eine Nachricht, die das generierte Puzzle als String enthält.
         webworkerPuzzleGenerator.onmessage = function (e) {
             // Das Puzzle aus dem gelieferten String erzeugen
             let puzzle = JSON.parse(e.data);
@@ -2335,8 +2335,7 @@ class SudokuGroup extends SudokuModel {
         return inAdmissiblesAdded;
     }
 
-
-    /*
+    
     derive_inAdmissiblesFromPairWing() {
         this.calculateEqualPairs();
         let inAdmissiblesAdded = false;
@@ -2439,7 +2438,6 @@ class SudokuGroup extends SudokuModel {
         }
         return inAdmissiblesAdded;
     }
-*/
 
 
     calculateNecessaryForNextStep() {
@@ -3016,7 +3014,7 @@ class SudokuGrid extends SudokuModel {
     }
 
 
-    reduceSolvedCells() {
+    takeBackSolvedCells() {
         // Vom Generator verwendete Funktion
         // Löscht solange gelöste Zellen, wie das Grid 
         // eine eindeutige Lösung behält.
