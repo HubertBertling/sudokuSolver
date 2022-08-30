@@ -901,9 +901,7 @@ class SudokuSolver extends SudokuCalculator {
             // Das Puzzle aus dem gelieferten String erzeugen
             let puzzle = JSON.parse(e.data);
             // Initialisierungen vor dem Laden
-            sudoApp.mySolver.init();
-            sudoApp.mySolver.myGrid.loadPuzzle('-', puzzle);
-            // Anzeigen des generierten Puzzles
+            sudoApp.mySolver.loadPuzzle('-', puzzle);
             sudoApp.mySolver.notify();
             sudoApp.myTabView.openGrid();
             // Der sich drehende Loader wird gestoppt    
@@ -912,6 +910,12 @@ class SudokuSolver extends SudokuCalculator {
         // Dem neuen Web Worker wird die Nachricht Run geschickt,
         // wodurch die Generierung des neuen Puzzles gestartet wird.
         webworkerPuzzleGenerator.postMessage('Run');
+    }
+
+    loadPuzzle(uid, puzzle){
+        sudoApp.mySolver.init();
+        sudoApp.mySolver.myGrid.loadPuzzle(uid, puzzle);
+        sudoApp.mySolver.setGamePhase('play');
     }
 
     startSolverLoop() {
@@ -4755,9 +4759,7 @@ class SudokuPuzzleDBController {
     loadBtnPressed() {
         let puzzle = this.myPuzzleDB.getSelectedPuzzle();
         let uid = this.myPuzzleDB.getSelectedUid();
-        sudoApp.mySolver.init();
-        sudoApp.mySolver.myGrid.loadPuzzle(uid, puzzle);
-        sudoApp.mySolver.setGamePhase('play');
+        sudoApp.mySolver.loadPuzzle(uid, puzzle);
         sudoApp.mySolver.notify();
         sudoApp.myTabView.openGrid();
     }
