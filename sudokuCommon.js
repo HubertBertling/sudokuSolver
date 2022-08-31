@@ -15,7 +15,6 @@ self.onmessage = function (n) {
 };
 
 class SudokuWorkerApp {
-    // Die Darstellung der ganzen App
     constructor() {
         // Komponenten der WorkerApp
         this.myGenerator = new SudokuGenerator();
@@ -843,10 +842,10 @@ class SudokuGenerator extends SudokuCalculator {
     generatePuzzle() {
         this.init();
         // Setze in zufälliger Zelle eine zufällige Nummer
-        let randomCellIndex = getRandomIntInclusive(0, 80);
+        let randomCellIndex = Randomizer.getRandomIntInclusive(0, 80);
         this.myGrid.indexSelect(randomCellIndex);
 
-        let randomCellContent = getRandomIntInclusive(1, 9).toString();
+        let randomCellContent = Randomizer.getRandomIntInclusive(1, 9).toString();
         this.myGrid.atCurrentSelectionSetNumber(randomCellContent, this.getGamePhase());
 
         // Löse dieses Sudoku mit einer nicht getakteten
@@ -901,9 +900,7 @@ class SudokuSolver extends SudokuCalculator {
             // Das Puzzle aus dem gelieferten String erzeugen
             let puzzle = JSON.parse(e.data);
             // Initialisierungen vor dem Laden
-            sudoApp.mySolver.init();
-            sudoApp.mySolver.myGrid.loadPuzzle('-', puzzle);
-            // Anzeigen des generierten Puzzles
+            sudoApp.mySolver.loadPuzzle('-', puzzle);
             sudoApp.mySolver.notify();
             sudoApp.myTabView.openGrid();
             // Der sich drehende Loader wird gestoppt    
@@ -914,13 +911,19 @@ class SudokuSolver extends SudokuCalculator {
         webworkerPuzzleGenerator.postMessage('Run');
     }
 
+    loadPuzzle(uid, puzzle){
+        sudoApp.mySolver.init();
+        sudoApp.mySolver.myGrid.loadPuzzle(uid, puzzle);
+        sudoApp.mySolver.setGamePhase('play');
+    }
+
     startSolverLoop() {
         // Der Solver nutzt die asynchrone solution loop.
         super.startAsyncLoop();
     }
 
     isInAutoExecution() {
-        super.isInAutoExecution();
+        return super.isInAutoExecution();
     }
     atCurrentSelectionSetNumber(number) {
         super.atCurrentSelectionSetNumber(number);
@@ -1113,21 +1116,24 @@ class SuccessDialog {
 }
 
 
-function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-function getRandomNumbers(numberOfrandoms, min, max) {
-    let randoms = [];
-    let currentRandom = 0;
-    while (randoms.length < numberOfrandoms) {
-        currentRandom = getRandomIntInclusive(min, max);
-        if (currentRandom < max && !randoms.includes(currentRandom)) {
-            randoms.push(currentRandom);
-        }
+
+class Randomizer {
+    static getRandomIntInclusive(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-    return randoms;
+    static getRandomNumbers(numberOfrandoms, min, max) {
+        let randoms = [];
+        let currentRandom = 0;
+        while (randoms.length < numberOfrandoms) {
+            currentRandom = Randomizer.getRandomIntInclusive(min, max);
+            if (currentRandom < max && !randoms.includes(currentRandom)) {
+                randoms.push(currentRandom);
+            }
+        }
+        return randoms;
+    }    
 }
 
 class SudokuSet extends Set {
@@ -3018,7 +3024,7 @@ class SudokuGrid extends SudokuModel {
         // Vom Generator verwendete Funktion
         // Löscht solange gelöste Zellen, wie das Grid 
         // eine eindeutige Lösung behält.
-        let randomCellOrder = getRandomNumbers(81, 0, 81);
+        let randomCellOrder = Randomizer.getRandomNumbers(81, 0, 81);
         for (let i = 0; i < 81; i++) {
             let k = randomCellOrder[i];
             if (this.sudoCells[k].getValue() !== '0') {
@@ -4753,9 +4759,7 @@ class SudokuPuzzleDBController {
     loadBtnPressed() {
         let puzzle = this.myPuzzleDB.getSelectedPuzzle();
         let uid = this.myPuzzleDB.getSelectedUid();
-        sudoApp.mySolver.init();
-        sudoApp.mySolver.myGrid.loadPuzzle(uid, puzzle);
-        sudoApp.mySolver.setGamePhase('play');
+        sudoApp.mySolver.loadPuzzle(uid, puzzle);
         sudoApp.mySolver.notify();
         sudoApp.myTabView.openGrid();
     }
