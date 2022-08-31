@@ -853,13 +853,13 @@ class SudokuGenerator extends SudokuCalculator {
         this.startGeneratorSolutionLoop();
 
         // Mache die gelösten Zellen zu Givens
-        this.myGrid.setSolvedToGiven();
+        this.setSolvedToGiven();
 
         // Setze das Puzzle in den Define-Mode
         this.setGamePhase('define')
         // Lösche in der Lösung Nummern, solange
         // wie das verbleibende Puzzle backtrack-frei bleibt.
-        this.myGrid.takeBackSolvedCells();
+        this.takeBackSolvedCells();
 
         // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
         this.autoExecStop();
@@ -868,6 +868,12 @@ class SudokuGenerator extends SudokuCalculator {
 
     startGeneratorSolutionLoop() {
         super.startSyncLoop();
+    }
+    takeBackSolvedCells() {
+        this.myGrid.takeBackSolvedCells();
+    }
+    setSolvedToGiven() {
+        this.myGrid.setSolvedToGiven();
     }
 }
 
@@ -2341,7 +2347,7 @@ class SudokuGroup extends SudokuModel {
         return inAdmissiblesAdded;
     }
 
-    
+    /*
     derive_inAdmissiblesFromPairWing() {
         this.calculateEqualPairs();
         let inAdmissiblesAdded = false;
@@ -2444,7 +2450,7 @@ class SudokuGroup extends SudokuModel {
         }
         return inAdmissiblesAdded;
     }
-
+*/
 
     calculateNecessaryForNextStep() {
         // Berechne für die Group alle notwendigen Nummern.
