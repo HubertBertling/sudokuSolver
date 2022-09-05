@@ -594,7 +594,7 @@ class SudokuSolverView extends SudokuView {
     displayTechnique(tech) {
         let evalNode = document.getElementById("technique");
         evalNode.innerHTML =
-            '<b>Angewandte Technik:</b> &nbsp' + tech;
+            '<b>Erklärung:</b> &nbsp' + tech;
     }
 
     displayLoadedBenchmark(levelOfDifficulty, countBackwards) {
@@ -2341,6 +2341,7 @@ class SudokuGroup extends SudokuModel {
     }
 
     derive_inAdmissiblesFromNecessarys(necessaryCell, necessaryNr) {
+        let inAdmissiblesAdded = false;
         this.myCells.forEach(cell => {
             if (cell.getValue() == '0' && cell !== necessaryCell) {
                 let oldInAdmissibles = new SudokuSet(cell.myLevel_gt0_inAdmissibles);
@@ -2352,10 +2353,12 @@ class SudokuGroup extends SudokuModel {
                     if (localAdded) {
                         // Die Liste der indirekt unzulässigen verursacht von necessarys wird gesetzt
                         cell.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet().add(necessaryNr);
+                        inAdmissiblesAdded = true;
                     }
                 }
             }
         })
+        return inAdmissiblesAdded;
     }
 /*
     derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, necessaryNr) {
@@ -2521,7 +2524,7 @@ class SudokuGroup extends SudokuModel {
         return inAdmissiblesAdded;
     }
 */
-
+/*
     calculateNecessaryForNextStep() {
         // Berechne für die Group alle notwendigen Nummern.
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
@@ -2557,12 +2560,14 @@ class SudokuGroup extends SudokuModel {
         }
         return added;
     }
-
+*/
     calculateNecessarys() {
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
         // die in der Block, Reihe oder Spalte der Zelle genau einmal vorkommen.
+        let inAdmissiblesAdded = false;
         for (let i = 1; i < 10; i++) {
-            let cellIndex = this.occursOnceInTotalAdmissibles(i);
+            // let cellIndex = this.occursOnceInTotalAdmissibles(i);
+            let cellIndex = this.occursOnce(i);
             // Wenn die Nummer i genau einmal in der Gruppe vorkommt
             // trage sie ein in der Necessary-liste der Zelle
             if (cellIndex !== -1) {
@@ -2572,21 +2577,22 @@ class SudokuGroup extends SudokuModel {
                 if (this instanceof SudokuBlock) {
                     let tmpRow = necessaryCell.myRow;
                     let tmpCol = necessaryCell.myCol;
-                    tmpRow.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                    tmpCol.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
+                    inAdmissiblesAdded = inAdmissiblesAdded || tmpRow.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
+                    inAdmissiblesAdded = inAdmissiblesAdded || tmpCol.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
                 } else if (this instanceof SudokuRow) {
                     let tmpBlock = necessaryCell.myBlock;
                     let tmpCol = necessaryCell.myCol;
-                    tmpBlock.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                    tmpCol.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
+                    inAdmissiblesAdded = inAdmissiblesAdded || tmpBlock.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
+                    inAdmissiblesAdded = inAdmissiblesAdded || tmpCol.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
                 } else if (this instanceof SudokuCol) {
                     let tmpRow = necessaryCell.myRow;
                     let tmpBlock = necessaryCell.myBlock;
-                    tmpRow.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                    tmpBlock.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
+                    inAdmissiblesAdded = inAdmissiblesAdded || tmpRow.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
+                    inAdmissiblesAdded = inAdmissiblesAdded || tmpBlock.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
                 }
             }
         }
+        return inAdmissiblesAdded;
     }
 /*
     calculateIndirectNecessaryForNextStep() {
@@ -3364,6 +3370,7 @@ class SudokuGrid extends SudokuModel {
         }
     }
 
+ 
     evaluateGridLazy() {
         // Berechne das Grid nur soweit, 
         // dass der nächste eindeutige Schritt getan werden kann
@@ -3378,10 +3385,9 @@ class SudokuGrid extends SudokuModel {
         let inAdmissiblesAdded = true;
         while (inAdmissiblesAdded && !this.isInsolvable()) {
 
-            if (this.calculateNecessarysForNextStep()) return true;
-            if (this.calculateSinglesForNextStep()) return true;
-      //    if (this.calculateIndirectNecessarysForNextStep()) return true;
-
+            if (this.calculateNecessarys()) return true;
+            if (this.calculateSingles()) return true;
+    
             inAdmissiblesAdded = false;
 
             // inAdmissiblesFromNecessarys kann es nicht mehr geben, 
@@ -3400,6 +3406,30 @@ class SudokuGrid extends SudokuModel {
         }
     }
 
+/*    
+    evaluateGridStrict() {
+        this.clearEvaluations();
+        this.calculate_level_0_inAdmissibles();
+
+        let inAdmissiblesAdded = true;
+            while (inAdmissiblesAdded && !this.isInsolvable()) {
+            if (this.calculateNecessarys()) {
+                inAdmissiblesAdded = true;
+            } else if (this.derive_inAdmissiblesFromSingles()) {
+                inAdmissiblesAdded = true;
+            } else if (this.derive_inAdmissiblesFromHiddenPairs()) {
+                inAdmissiblesAdded = true;
+            } else if (this.derive_inAdmissiblesFromEqualPairs()) {
+                inAdmissiblesAdded = true;
+            } else if (this.derive_inAdmissiblesFromOverlapping()) {
+                inAdmissiblesAdded = true;
+            } else {
+                inAdmissiblesAdded = false;
+            }
+        }
+    }
+*/
+
     evaluateGridStrict() {
         this.clearEvaluations();
         this.calculate_level_0_inAdmissibles();
@@ -3412,12 +3442,12 @@ class SudokuGrid extends SudokuModel {
         let c2 = false;
         let c3 = false;
         let c4 = false;
-
+     
         while (inAdmissiblesAdded && !this.isInsolvable()) {
-            c4 = this.derive_inAdmissiblesFromSingles();
             c1 = this.derive_inAdmissiblesFromHiddenPairs();
             c2 = this.derive_inAdmissiblesFromEqualPairs();
             c3 = this.derive_inAdmissiblesFromOverlapping();
+            c4 = this.derive_inAdmissiblesFromSingles();
             inAdmissiblesAdded = c1 || c2 || c3 || c4;
         }
     }
@@ -3441,7 +3471,7 @@ class SudokuGrid extends SudokuModel {
     }
 
 
-    calculateSinglesForNextStep() {
+    calculateSingles() {
         let added = false;
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() == '0') {
@@ -4578,6 +4608,7 @@ class SudokuCell extends SudokuModel {
         this.myAutoStepNumber = -1;
 
         this.isSelected = false;
+        this.isSelected_myLevel_gt0_inAdmissible = '-1';
         // 'manual' oder 'auto'
         this.myValueType = 'manual';
         this.myGamePhase = 'play';
