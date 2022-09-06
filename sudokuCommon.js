@@ -594,7 +594,7 @@ class SudokuSolverView extends SudokuView {
     displayTechnique(tech) {
         let evalNode = document.getElementById("technique");
         evalNode.innerHTML =
-            '<b>Erläuterung:</b> &nbsp' +  tech;
+            '<b>Erläuterung:</b> &nbsp' + tech;
     }
 
     displayLoadedBenchmark(levelOfDifficulty, countBackwards) {
@@ -1861,7 +1861,7 @@ class StepperOnGrid {
         }
         return emptySelection;
     }
- 
+
     calculateLevel_0_SinglesSelectionFrom(selectionList) {
         // Berechnet Selektion von Zellen, die ein level_0_single enthalten.
         for (let i = 0; i < selectionList.length; i++) {
@@ -2325,7 +2325,7 @@ class SudokuGroup extends SudokuModel {
         })
         return inAdmissiblesAdded;
     }
-  
+
     derive_inAdmissiblesFromEqualPairs() {
         this.calculateEqualPairs();
         let inAdmissiblesAdded = false;
@@ -2400,7 +2400,7 @@ class SudokuGroup extends SudokuModel {
         }
         return inAdmissiblesAdded;
     }
-   
+
     occursOnce(permNr) {
         // Berechne, ob die Zahl permNr in möglichen Zahlen aller Zellen 
         // der Gruppe genau einmal vorkommt
@@ -3066,7 +3066,7 @@ class SudokuGrid extends SudokuModel {
             // Lösche die Selektionsinformation der Tabelle
             this.selectedCell = undefined;
             this.indexSelected = -1;
-            this.adMissibleIndexSelected = -1;    
+            this.adMissibleIndexSelected = -1;
         }
     }
 
@@ -3660,7 +3660,7 @@ class SudokuGrid extends SudokuModel {
         return inAdmissiblesAdded;
     }
 
-    
+
     calculate_level_0_inAdmissibles() {
         // Berechne für jede nicht gesetzte Zelle 
         // die noch möglichen Nummern
@@ -4031,11 +4031,10 @@ class SudokuCellView extends SudokuView {
     }
 
     displayCellError() {
-        this.myNode.classList.add('err');
-        this.myNode.classList.add('cell-err');
-        setTimeout(() => {
-            this.myNode.classList.remove('cell-err');
-        }, 500);
+           this.myNode.classList.add('err');
+        /*   setTimeout(() => {
+               this.myNode.classList.remove('cell-err');
+           }, 500); */
     }
 
     displayRowError() {
@@ -4113,30 +4112,30 @@ class SudokuCellView extends SudokuView {
                     // Wenn die selektierte Zelle eine rote Nummer enthält, die durch eine notwendige
                     // Nummer verursacht ist, wird dies angezeigt.
                     let necessaryCell = undefined;
-                        // Bestimme die Zelle der notwendigen Nummer
-                        tmpCell.myInfluencers.forEach(cell => {
-                            if (cell.getNecessarys().has(adMissibleNrSelected)) {
-                                necessaryCell = cell;
-                            }
-                        })
-                        // Bestimme die gemeinsame Gruppe der Zelle mit der roten Nummer
-                        // und der Zelle mit der notwendigen Nummer
-                        let tmpGroup = undefined;
-                        if (tmpCell.myBlock == necessaryCell.myBlock) {
-                            tmpGroup = tmpCell.myBlock;
-                        } else if (tmpCell.myRow == necessaryCell.myRow) {
-                            tmpGroup = tmpCell.myRow;
-                        } else if (tmpCell.myCol == necessaryCell.myCol) {
-                            tmpGroup = tmpCell.myCol;
+                    // Bestimme die Zelle der notwendigen Nummer
+                    tmpCell.myInfluencers.forEach(cell => {
+                        if (cell.getNecessarys().has(adMissibleNrSelected)) {
+                            necessaryCell = cell;
                         }
-                        // Gebe die Gruppe aus
-                        tmpGroup.myCells.forEach(cell => {
-                            cell.myView.setBorderSelected();
-                            if (cell.getNecessarys().has(adMissibleNrSelected)) {
-                                cell.myView.setBorderRedSelected();
-                            }
-                        })
-                        sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen notwendiger Nummer: ' + adMissibleNrSelected);
+                    })
+                    // Bestimme die gemeinsame Gruppe der Zelle mit der roten Nummer
+                    // und der Zelle mit der notwendigen Nummer
+                    let tmpGroup = undefined;
+                    if (tmpCell.myBlock == necessaryCell.myBlock) {
+                        tmpGroup = tmpCell.myBlock;
+                    } else if (tmpCell.myRow == necessaryCell.myRow) {
+                        tmpGroup = tmpCell.myRow;
+                    } else if (tmpCell.myCol == necessaryCell.myCol) {
+                        tmpGroup = tmpCell.myCol;
+                    }
+                    // Gebe die Gruppe aus
+                    tmpGroup.myCells.forEach(cell => {
+                        cell.myView.setBorderSelected();
+                        if (cell.getNecessarys().has(adMissibleNrSelected)) {
+                            cell.myView.setBorderRedSelected();
+                        }
+                    })
+                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen notwendiger Nummer: ' + adMissibleNrSelected);
                     return;
                 }
             }
@@ -4208,9 +4207,15 @@ class SudokuCellView extends SudokuView {
     displayInsolvability() {
         let cell = this.getMyModel();
         let mySolverView = sudoApp.mySolver.getMyView();
+
         if (cell.getValue() !== '0' && cell.myLevel_0_inAdmissibles.has(cell.getValue())) {
+            cell.myInfluencers.forEach(influencerCell => {
+                if (influencerCell.getValue() == cell.getValue()) {
+                    influencerCell.myView.displayCellError();
+                }
+            })
             this.displayCellError();
-            mySolverView.displayReasonInsolvability('Die Nummer ist bereits einmal gesetzt.');
+            mySolverView.displayReasonInsolvability('Die Nummer ' + cell.getValue() + ' ist bereits einmal gesetzt.');
             return true;
         }
         if (cell.getValue() == '0' && cell.myNecessarys.size > 1) {
