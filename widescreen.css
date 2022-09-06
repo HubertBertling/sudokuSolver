@@ -367,8 +367,12 @@ html {
 .technique, .reasonInsolvability {
     font-size: 1.0rem;
     display: flex;
-    padding-top: 5px;
-    color: Crimson;
+    padding-top: 2px;
+    padding-left: 2px;
+    padding-bottom: 2px;
+    border: 1px solid black;
+    background-color: lightgrey;
+    color: Crimson; 
 }
 
 
