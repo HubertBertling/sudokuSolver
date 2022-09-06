@@ -305,10 +305,11 @@ html {
     font-size: 1.0rem;
     color: Crimson;
 }
-
+/*
 .nested.err>div.inAdmissible {
     background-color: white;
 }
+*/
 .nested.err>div.neccessary.inAdmissible {
     background-color: #56c7aa;
 }
