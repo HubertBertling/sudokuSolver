@@ -784,7 +784,7 @@ class SudokuCalculator extends SudokuModel {
         this.myStepper.stopAsyncLoop();
         // 2. Der ExecMode des Calculators wird abgeschaltet.
         this.isInAutoExecMode = false;
-        this.myGrid.deselect();
+        // this.myGrid.deselect();
         this.myGrid.clearAutoExecCellInfos();
         this.myStepper.init();
     }
