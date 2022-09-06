@@ -1861,26 +1861,7 @@ class StepperOnGrid {
         }
         return emptySelection;
     }
-    /*
-        calculateIndirectNeccesarySelectionFrom(selectionList) {
-            // Berechnet Selektion von Zellen, die eine indirekt notwendige Nummer enthalten.
-            for (let i = 0; i < selectionList.length; i++) {
-                if (selectionList[i].indirectNecessaryOnes.length > 0) {
-                    return selectionList[i];
-                }
-            }
-            // Falls es keine Zellen mit notwendigen Nummern gibt
-            let emptySelection = {
-                index: -1,
-                options: [],
-                indirectNecessaryOnes: [],
-                necessaryOnes: [],
-                level_0_singles: []
-            }
-            return emptySelection;
-        }
-    */
-
+ 
     calculateLevel_0_SinglesSelectionFrom(selectionList) {
         // Berechnet Selektion von Zellen, die ein level_0_single enthalten.
         for (let i = 0; i < selectionList.length; i++) {
@@ -1978,23 +1959,7 @@ class StepperOnGrid {
             }
             return tmpLevel_0_single;
         }
-        /*       //Bestimmt die nächste Zelle mit indirekt notwendiger Nummer unter den zulässigen Nummern
-               let tmpIndirectNeccessary = this.calculateIndirectNeccesarySelectionFrom(optionList);
-               if (tmpIndirectNeccessary.index !== -1) {
-                   switch (this.levelOfDifficulty) {
-                       case 'Keine Angabe':
-                       case 'Leicht':
-                       case 'Mittel': {
-                           this.levelOfDifficulty = 'Schwer';
-                           break;
-                       }
-                       default: {
-                           // Schwierigkeitsgrad bleibt unverändert.
-                       }
-                   }
-                   return tmpIndirectNeccessary;
-               }
-          */
+
         // Bestimmt die nächste Zelle mit level > 0 single, d.h.
         // unter Verwendung von indirekt unzulässigen Nummern
         let oneOption = this.calculateOneOptionSelectionFrom(optionList);
@@ -2360,25 +2325,7 @@ class SudokuGroup extends SudokuModel {
         })
         return inAdmissiblesAdded;
     }
-    /*
-        derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, necessaryNr) {
-            this.myCells.forEach(cell => {
-                if (cell.getValue() == '0' && cell !== necessaryCell) {
-                    let oldInAdmissibles = new SudokuSet(cell.myLevel_gt0_inAdmissibles);
-                    if (cell.getAdmissibles().has(necessaryNr)) {
-                        // Nur zulässige können neu unzulässig werden.
-                        cell.myLevel_gt0_inAdmissibles =
-                            cell.myLevel_gt0_inAdmissibles.add(necessaryNr);
-                        let localAdded = !oldInAdmissibles.equals(cell.myLevel_gt0_inAdmissibles);
-                        if (localAdded) {
-                            // Die Liste der indirekt unzulässigen verursacht von necessarys wird gesetzt
-                            cell.myLevel_gt0_inAdmissiblesFromIndirectNecessarys = new SudokuSet().add(necessaryNr);
-                        }
-                    }
-                }
-            })
-        }
-    */
+  
     derive_inAdmissiblesFromEqualPairs() {
         this.calculateEqualPairs();
         let inAdmissiblesAdded = false;
@@ -2420,147 +2367,6 @@ class SudokuGroup extends SudokuModel {
         return inAdmissiblesAdded;
     }
 
-    /*
-    derive_inAdmissiblesFromPairWing() {
-        this.calculateEqualPairs();
-        let inAdmissiblesAdded = false;
-        for (let i = 0; i < this.myPairInfos.length; i++) {
-            if (this.myPairInfos[i].pairIndices.length == 2 &&
-                  sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myBlock !== 
-                  sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myBlock) {
-                // Ein Paar, das zweimal in der Gruppe vorkommt
-                // Das Paar muss in verschieden Blockn sein
-
-                // Jetzt die SenkrechtGruppes bestimmen
-                let senkrecht1 = null;
-                let senkrecht2 = null;
-                let waagerecht = null;
-                let senkrecht1PairWingCell = null;
-                let senkrecht2PairWingCell = null;
-                let pairWingNr = -1;
-
-                if (sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myRow == this) {
-                    senkrecht1 = sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[0]].myCol;
-                } else {
-                    senkrecht1 = this;
-                }
-                if (sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myRow == this) {
-                    senkrecht2 = sudoApp.mySolver.myGrid.sudoCells[this.myPairInfos[i].pairIndices[1]].myCol;
-                } else {
-                    senkrecht2 = this;
-                }
-
-                // In einer der beiden Senkrechten muss es eine Wing-Nummer geben
-                // Eine Wing-Nummer ist eine der beiden Paar-Nummern. 
-                // In der Senkrechten darf sie nur genau einmal vorkommen. Die Paar-Zelle ausgenommen.
-                // Die Wing-Senkrechte, Wing-Zelle und Wing-Nummer bestimmen
-
-                let pair = this.myPairInfos[i].pairSet;
-                let tmpWingCell = null;
-                let tmpWingCellCount = 0;
-                       
-                // Die Wing-Cell für senkrecht1 bestimmen
-                for (let j = 0; j < 9; j++) {
-                    if (senkrecht1.myCells[j].getValue() == '0') {
-                        if (senkrecht1.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[0] &&
-                            senkrecht1.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[1]) {
-                            // Zelle der Senkrechten, die nicht Paar-Zelle ist
-                            let tmpAdmissibles = this.myCells[j].getTotalAdmissibles();
-                            let tmpIntersection = tmpAdmissibles.intersection(pair);
-                            let tmpWingCell = null;
-                            if (tmpIntersection.size > 0) {
-                                // Kandidat WingCell
-                                tmpWingCell = this.myCells[j];
-                                tmpWingCellCount++;
-                            }
-                        }
-                    }
-                }
-                if (tmpWingCellCount == 1){
-                    senkrecht1PairWingCell = tmpWingCell;        
-                }
-                // Falls es keine WingCell für senkrecht1 gibt WingCell für senkrecht2 bestimmen
-                tmpWingCell = null;
-                tmpWingCellCount = 0;
-                
-                for (let j = 0; j < 9; j++) {
-                    if (senkrecht2.myCells[j].getValue() == '0') {
-                        if (senkrecht2.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[0] &&
-                            senkrecht2.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[1]) {
-                            // Zelle der Senkrechten, die nicht Paar-Zelle ist
-                            let tmpAdmissibles = this.myCells[j].getTotalAdmissibles();
-                            let tmpIntersection = tmpAdmissibles.intersection(pair);
-                            let tmpWingCell = null;
-                            if (tmpIntersection.size > 0) {
-                                // Kandidat WingCell
-                                tmpWingCell = this.myCells[j];
-                                tmpWingCellCount++;
-                            }
-                        }
-                    }
-                }
-                if (tmpWingCellCount == 1){
-                    senkrecht2PairWingCell = tmpWingCell;        
-                }
-                // Die Waagerechte der der WingCell bestimmen, falls es eine
-                // Wingcell gibt
-                if (senkrecht1PairWingCell !== null ) {
-                    if (senkrecht1PairWingCell.myRow == senkrecht1) {
-                        waagerecht = senkrecht1PairWingCell.myCol;
-                    } else {
-                        waagerecht = senkrecht1;
-                    }    
-                } else if (senkrecht2PairWingCell !== null) {
-                    if (senkrecht2PairWingCell.myRow == senkrecht2) {
-                        waagerecht = senkrecht2PairWingCell.myCol;
-                    } else {
-                        waagerecht = senkrecht2;
-                    }  
-                }
-
-                // Die Kreuzgruppe bestimmen
-            }
-        }
-        return inAdmissiblesAdded;
-    }
-*/
-    /*
-        calculateNecessaryForNextStep() {
-            // Berechne für die Group alle notwendigen Nummern.
-            // Notwendige Nummern sind zulässige Nummern einer Zelle,
-            // die in der Block, Reihe oder Spalte der Zelle genau einmal vorkommen.
-            let added = false;
-            for (let i = 1; i < 10; i++) {
-      //          let cellIndex = this.occursOnceInTotalAdmissibles(i);
-                let cellIndex = this.occursOnce(i);
-                // Wenn die Nummer i genau einmal in der Gruppe vorkommt
-                // trage sie ein in der Necessary-liste der Zelle
-                if (cellIndex !== -1) {
-                    this.myCells[cellIndex].addNecessary(i.toString(), this);
-                    added = true;
-    
-                    let necessaryCell = this.myCells[cellIndex];
-                    if (this instanceof SudokuBlock) {
-                        let tmpRow = necessaryCell.myRow;
-                        let tmpCol = necessaryCell.myCol;
-                        tmpRow.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                        tmpCol.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                    } else if (this instanceof SudokuRow) {
-                        let tmpBlock = necessaryCell.myBlock;
-                        let tmpCol = necessaryCell.myCol;
-                        tmpBlock.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                        tmpCol.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                    } else if (this instanceof SudokuCol) {
-                        let tmpRow = necessaryCell.myRow;
-                        let tmpBlock = necessaryCell.myBlock;
-                        tmpRow.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                        tmpBlock.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                    }
-                }
-            }
-            return added;
-        }
-    */
     calculateNecessarys() {
         // Notwendige Nummern sind zulässige Nummern einer Zelle,
         // die in der Block, Reihe oder Spalte der Zelle genau einmal vorkommen.
@@ -2594,76 +2400,7 @@ class SudokuGroup extends SudokuModel {
         }
         return inAdmissiblesAdded;
     }
-    /*
-        calculateIndirectNecessaryForNextStep() {
-            // Berechne für die Group alle notwendigen Nummern.
-            // Notwendige Nummern sind zulässige Nummern einer Zelle,
-            // die in der Block, Reihe oder Spalte der Zelle genau einmal vorkommen.
-            let added = false;
-            for (let i = 1; i < 10; i++) {
-                let cellIndex = this.occursOnceInTotalAdmissibles(i);
-                // Wenn die Nummer i genau einmal in der Gruppe vorkommt
-                // trage sie ein in der Necessary-liste der Zelle
-                if (cellIndex !== -1) {
-                    this.myCells[cellIndex].addIndirectNecessary(i.toString(), this);
-                    added = true;
-    
-                    let necessaryCell = this.myCells[cellIndex];
-                    if (this instanceof SudokuBlock) {
-                        let tmpRow = necessaryCell.myRow;
-                        let tmpCol = necessaryCell.myCol;
-                        tmpRow.derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, i.toString());
-                        tmpCol.derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, i.toString());
-                    } else if (this instanceof SudokuRow) {
-                        let tmpBlock = necessaryCell.myBlock;
-                        let tmpCol = necessaryCell.myCol;
-                        tmpBlock.derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, i.toString());
-                        tmpCol.derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, i.toString());
-                    } else if (this instanceof SudokuCol) {
-                        let tmpRow = necessaryCell.myRow;
-                        let tmpBlock = necessaryCell.myBlock;
-                        tmpRow.derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, i.toString());
-                        tmpBlock.derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, i.toString());
-                    }
-                }
-            }
-            return added;
-        }
-    
-        calculateIndirectNecessarys() {
-            // Indirekt notwendige Nummern sind zulässige Nummern einer Zelle,
-            // die in der Block, Reihe oder Spalte der Zelle total genau einmal vorkommen.
-            // Also unter Berücksichtigung der indirekt unzulässigen Nummern.
-            for (let i = 1; i < 10; i++) {
-                let cellIndex = this.occursOnceInTotalAdmissibles(i);
-                // Wenn die Nummer i genau einmal in der Gruppe vorkommt
-                // trage sie ein in der Necessary-liste der Zelle
-                if (cellIndex !== -1) {
-                    this.myCells[cellIndex].addIndirectNecessary(i.toString(), this);
-    
-                    let necessaryCell = this.myCells[cellIndex];
-                    if (this instanceof SudokuBlock) {
-                        let tmpRow = necessaryCell.myRow;
-                        let tmpCol = necessaryCell.myCol;
-                        tmpRow.derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, i.toString());
-                        tmpCol.derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, i.toString());
-                    } else if (this instanceof SudokuRow) {
-                        let tmpBlock = necessaryCell.myBlock;
-                        let tmpCol = necessaryCell.myCol;
-                        tmpBlock.derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, i.toString());
-                        tmpCol.derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, i.toString());
-                    } else if (this instanceof SudokuCol) {
-                        let tmpRow = necessaryCell.myRow;
-                        let tmpBlock = necessaryCell.myBlock;
-                        tmpRow.derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, i.toString());
-                        tmpBlock.derive_inAdmissiblesFromIndirectNecessarys(necessaryCell, i.toString());
-                    }
-    
-    
-                }
-            }
-        }
-    */
+   
     occursOnce(permNr) {
         // Berechne, ob die Zahl permNr in möglichen Zahlen aller Zellen 
         // der Gruppe genau einmal vorkommt
@@ -3320,8 +3057,6 @@ class SudokuGrid extends SudokuModel {
     }
 
 
-
-
     initCurrentSelection() {
         this.deselect();
     }
@@ -3334,8 +3069,6 @@ class SudokuGrid extends SudokuModel {
             this.adMissibleIndexSelected = -1;    
         }
     }
-
-
 
     setCurrentSelection(cell, index) {
         cell.setSelected();
@@ -3430,30 +3163,6 @@ class SudokuGrid extends SudokuModel {
             }
         }
     }
-
-    /*    
-        evaluateGridStrict() {
-            this.clearEvaluations();
-            this.calculate_level_0_inAdmissibles();
-    
-            let inAdmissiblesAdded = true;
-                while (inAdmissiblesAdded && !this.isInsolvable()) {
-                if (this.calculateNecessarys()) {
-                    inAdmissiblesAdded = true;
-                } else if (this.derive_inAdmissiblesFromSingles()) {
-                    inAdmissiblesAdded = true;
-                } else if (this.derive_inAdmissiblesFromHiddenPairs()) {
-                    inAdmissiblesAdded = true;
-                } else if (this.derive_inAdmissiblesFromEqualPairs()) {
-                    inAdmissiblesAdded = true;
-                } else if (this.derive_inAdmissiblesFromOverlapping()) {
-                    inAdmissiblesAdded = true;
-                } else {
-                    inAdmissiblesAdded = false;
-                }
-            }
-        }
-    */
 
     evaluateGridStrict() {
         this.clearEvaluations();
@@ -3991,42 +3700,6 @@ class SudokuGrid extends SudokuModel {
         return added;
     }
 
-    /*
-    calculateIndirectNecessarysForNextStep() {
-        // Berechne für jede nicht gesetzte Zelle
-        // in der Menge ihrer indirekt
-        // notwendigen Nummern.
-
-        // Iteriere über die Blockn
-        let added = false;
-        for (let i = 0; i < 9; i++) {
-            let tmpBlock = this.sudoBlocks[i];
-            if (tmpBlock.calculateIndirectNecessarys()) {
-                added = true;
-                //      return added;
-            }
-        }
-        // Iteriere über die Reihen
-        for (let i = 0; i < 9; i++) {
-            let tmpRow = this.sudoRows[i];
-            if (tmpRow.calculateIndirectNecessarys()) {
-                added = true;
-                //      return added;
-            }
-        }
-        // Iteriere über die Spalten
-        for (let i = 0; i < 9; i++) {
-            let tmpCol = this.sudoCols[i];
-            if (tmpCol.calculateIndirectNecessarys()) {
-                added = true;
-                //      return added;
-            }
-        }
-
-        return added;
-    }
-*/
-
     calculateNecessarys() {
         // Berechne und setze für jede nicht gesetzte Zelle
         // in der Menge ihrer möglichen Nummern die
@@ -4048,28 +3721,6 @@ class SudokuGrid extends SudokuModel {
         }
     }
 
-    /*
-        calculateIndirectNecessarys() {
-            // Berechne und setze für jede nicht gesetzte Zelle
-            // in der Menge ihrer möglichen Nummern die
-            // notwendigen Nummern
-            // Iteriere über die Blockn
-            for (let i = 0; i < 9; i++) {
-                let tmpBlock = this.sudoBlocks[i];
-                tmpBlock.calculateIndirectNecessarys();
-            }
-            // Iteriere über die Reihen
-            for (let i = 0; i < 9; i++) {
-                let tmpRow = this.sudoRows[i];
-                tmpRow.calculateIndirectNecessarys();
-            }
-            // Iteriere über die Spalten
-            for (let i = 0; i < 9; i++) {
-                let tmpCol = this.sudoCols[i];
-                tmpCol.calculateIndirectNecessarys();
-            }
-        }
-    */
     select(sudoCell, index) {
         // Selektiere in der Tabelle eine Zelle
         // Parameter:
@@ -4228,14 +3879,6 @@ class SudokuCellView extends SudokuView {
             if (myNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
                 admissibleNodes[i].classList.add('neccessary');
             }
-            /* else if (myIndirectNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
-                // Jede direkt notwendige Nummer ist
-                // auch eine indirekt notwendige Nummer
-                // Nur wenn die notwendige Nummer echt indirekt notwendig ist,
-                // folgt die folgende Zeile.
-                admissibleNodes[i].classList.add('indirect-neccessary');
-            }
-            */
         }
     }
 
@@ -4917,12 +4560,6 @@ class SudokuCell extends SudokuModel {
         this.myNecessarys.add(nr);
         this.myNecessaryCollections.set(nr, nineCellCollection);
     }
-    /*
-        addIndirectNecessary(nr, nineCellCollection) {
-            this.myIndirectNecessarys.add(nr);
-            this.myIndirectNecessaryCollections.set(nr, nineCellCollection);
-        }
-    */
 
     isInsolvable() {
         return (
