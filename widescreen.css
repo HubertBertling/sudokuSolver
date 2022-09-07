@@ -352,7 +352,7 @@ html {
 .sudoku-grid-cell.err {
     /* background-color: var(--error-cell-bg-color); 
     color: var(--error-cell-color); */
-    border: 4px dashed Crimson;
+    border: 4px solid Crimson;
 }
 
 .sudoku-grid-cell.err.selected {

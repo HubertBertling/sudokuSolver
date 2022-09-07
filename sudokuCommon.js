@@ -3670,41 +3670,11 @@ class SudokuGrid extends SudokuModel {
         }
     }
 
-    calculateNecessarysForNextStep() {
-        // Berechne für jede nicht gesetzte Zelle
-        // in der Menge ihrer möglichen Nummern die
-        // notwendigen Nummern.
-
-        // Iteriere über die Blockn
-        let added = false;
-        for (let i = 0; i < 9; i++) {
-            let tmpBlock = this.sudoBlocks[i];
-            if (tmpBlock.calculateNecessarys()) {
-                added = true;
-            }
-        }
-        // Iteriere über die Reihen
-        for (let i = 0; i < 9; i++) {
-            let tmpRow = this.sudoRows[i];
-            if (tmpRow.calculateNecessarys()) {
-                added = true;
-            }
-        }
-        // Iteriere über die Spalten
-        for (let i = 0; i < 9; i++) {
-            let tmpCol = this.sudoCols[i];
-            if (tmpCol.calculateNecessarys()) {
-                added = true;
-            }
-        }
-        return added;
-    }
-
     calculateNecessarys() {
         // Berechne und setze für jede nicht gesetzte Zelle
         // in der Menge ihrer möglichen Nummern die
         // notwendigen Nummern
-        // Iteriere über die Blockn
+        // Iteriere über die Blöcke
         for (let i = 0; i < 9; i++) {
             let tmpBlock = this.sudoBlocks[i];
             tmpBlock.calculateNecessarys();
@@ -3837,7 +3807,7 @@ class SudokuCellView extends SudokuView {
             // Die Zelle ist noch nicht gesetzt
             this.displayAdmissibles();
             this.displayNecessary(cell.myNecessarys);
-            this.displayLevel_gt0_inAdmissibles(cell.myLevel_gt0_inAdmissibles);
+            this.displayLevel_gt0_inAdmissibles(cell.myLevel_gt0_inAdmissibles, cell.myNecessarys);
         } else {
             // Die Zelle ist mit einer Nummer belegt
             // Setze die Klassifizierung in der DOM-Zelle
@@ -3882,11 +3852,18 @@ class SudokuCellView extends SudokuView {
         }
     }
 
-    displayLevel_gt0_inAdmissibles(myLevel_gt0_inAdmissibles) {
+    displayLevel_gt0_inAdmissibles(myLevel_gt0_inAdmissibles, myNecessarys) {
         let admissibleNodes = this.myNode.children;
         for (let i = 0; i < admissibleNodes.length; i++) {
             if (myLevel_gt0_inAdmissibles.has(admissibleNodes[i].getAttribute('data-value'))) {
-                admissibleNodes[i].classList.add('inAdmissible');
+                // In der Menge der unzulässigen Nummern gibt es die Knotennummer
+                if (!myNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
+                    // Die Knotennummer wird als unzulässig markiert, aber
+                    // nur, wenn die Nummer nicht gleichzeitig notwendig ist.
+                    // Diese widersprüchliche Situation wird schon an anderer Stelle
+                    // aufgefangen.
+                    admissibleNodes[i].classList.add('inAdmissible');
+                }
             }
         }
     }
@@ -4031,7 +4008,7 @@ class SudokuCellView extends SudokuView {
     }
 
     displayCellError() {
-           this.myNode.classList.add('err');
+        this.myNode.classList.add('err');
         /*   setTimeout(() => {
                this.myNode.classList.remove('cell-err');
            }, 500); */
@@ -4223,12 +4200,14 @@ class SudokuCellView extends SudokuView {
             mySolverView.displayReasonInsolvability('Gleichzeitig verschiedene notwendige Nummern.');
             return true;
         }
+        /*
         if (cell.getValue() == '0' &&
             cell.myLevel_0_inAdmissibles.union(cell.myLevel_gt0_inAdmissibles).intersection(cell.myNecessarys).size > 0) {
             this.displayCellError();
             mySolverView.displayReasonInsolvability('Eine notwendige Nummer ist gleichzeitig unzulässig');
             return true;
         }
+        */
         if (cell.getValue() == '0' && cell.getTotalAdmissibles().size == 0) {
             this.displayCellError();
             mySolverView.displayReasonInsolvability('Überhaupt keine zulässige Nummer.');
