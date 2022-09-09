@@ -166,23 +166,16 @@ Wir betrachten hier die abstrakte Gruppe. Eine konkrete Gruppe ist immer entwede
 So wie es widerspruchsvolle Zellen geben kann - erkennbar an ihrem roten Hintergrund - kann es auch widerspruchsvolle Gruppen geben. Eine Gruppe ist widerspruchsvoll, wenn eine der folgenden Bedingungen vorliegt:
 
 1. **Widerspruch - Zwei gleiche Singles:** Eine Nummer soll gleichzeitig in verschiedenen Zellen der Gruppe gesetzt werden wie die 4 im Beispiel.
-1. **Widerspruch - Nacktes Paar Konflikt:** Wegen des nackten Paares {2 9} im nachfolgenden Beispiel ist die einzelne 2 in dem Block widersprüchlich. Die 2 muss in einer der beiden Paarzellen gesetzt werden. Wenn sie zusätzlich noch einmal einzeln gesetzt würde, würde sie mehrfach erscheinen, ein Widerspruch. Im zweiten Beispiel kommt kommt das Paar {1 9} dreimal vor. Ebenfalls ein Widerspruch.
+
 1. **Widerspruch - Zwei gleiche notwendige Nummern:** In der Gruppe tritt dieselbe Nummer in verschiedenen Zellen als notwendig auf.
 1. **Widerspruch - Fehlende Nummer:** In der Gruppe kommt eine Nummer überhaupt nicht vor. Im ersten Beispiel eines Paar-Widerspruchs fehlt die 4 und im zweiten Beispiel die 3.
 
 Wir sehen, dass gleichzeitig mehrere Bedingungen für einen Gruppenwiderspruch vorliegen. Tritt während der automatischen Ausführung eine solche widerspruchsvolle Gruppe auf, schaltet der Solver in den Rückwärts-Modus um.
 
-Paar-Widerspruch:
-<img src="./images/insolvablegroup.png" width="200px" height="200px"/>
-
-Paar-Widerspruch:
-<img src="./images/insolvablegroup2.png" width="200px" height="200px"/>
-
-
-Widerspruch - Single mehrfach:
+Widerspruch - Single 8 mehrfach:
 ![Spaltenkonflikt](./images/colconflct.png)
 
-Widerspruch - Dieselbe notwendige Nummer zweimal:
+Widerspruch - Dieselbe notwendige Nummer 2 zweimal:
 ![Notwedig-Konflikt](./images/notwendigWiderspruch.png)
 
 ## Die Lösungssuche des Solvers

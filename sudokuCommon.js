@@ -599,7 +599,7 @@ class SudokuSolverView extends SudokuView {
             evalNode.style.color = 'Crimson';
         }
         evalNode.innerHTML = '<b>Erläuterung:</b> &nbsp' + tech;
-}
+    }
 
     displayLoadedBenchmark(levelOfDifficulty, countBackwards) {
         let evalNode = document.getElementById("loaded-evaluations");
@@ -2015,23 +2015,22 @@ class SudokuGroupView extends SudokuView {
         return this.myModel;
     }
     displayInsolvability() {
+        // Die Widersprüchlichkeit des Puzzles steht schon fest, wenn in einer Gruppe, also einem Block, 
+        // einer Reihe oder einer Spalte an verschiedenen Stellen das gleiche Single auftritt.
         let intSingle = this.getMyGroup().withConflictingSingles();
         if (intSingle > 0) {
             this.displayError();
             sudoApp.mySolver.getMyView().displayReasonInsolvability('Zwei gleiche Singles: ' + intSingle);
             return true;
         }
-        if (this.getMyGroup().withPairConflict()) {
-            this.displayError();
-            sudoApp.mySolver.getMyView().displayReasonInsolvability('Nacktes Paar Konflikt.');
-            return true;
-        }
+        // Analog die Widerspruchserkennung durch zwei gleiche notwendige Nummern in der Gruppe.
         let intNecessary = this.getMyGroup().withConflictingNecessaryNumbers();
         if (intNecessary > 0) {
             this.displayError();
             sudoApp.mySolver.getMyView().displayReasonInsolvability('Zwei gleiche notwendige Nummern: ' + intNecessary);
             return true;
         }
+        // Widerspruchserkennung durch eine fehlende Nummer in der Gruppe.
         let missingNumbers = this.getMyGroup().withMissingNumber();
         if (missingNumbers.size > 0) {
             this.displayError();
@@ -2040,6 +2039,16 @@ class SudokuGroupView extends SudokuView {
             return true;
         }
         return false;
+
+        // Das nachfolgende Kriterium wird abgeschaltet, weil es nicht wesentlich zur Früherkennung von 
+        // der Widersprüchlichkeit beiträgt.
+        /*
+        if (this.getMyGroup().withPairConflict()) {
+            this.displayError();
+            sudoApp.mySolver.getMyView().displayReasonInsolvability('Nacktes Paar Konflikt.');
+            return true;
+        }
+        */
     }
 
     displayError() {
@@ -2075,15 +2084,13 @@ class SudokuGroup extends SudokuModel {
 
     isInsolvable() {
         // Wenn es eine Gruppe mit Conflicting Singles gibt, ist das Sudoku unlösbar.
-        // Wenn es eine Gruppe mit Conflicting Pairs gibt, ist das Sudoku unlösbar.
         // Wenn es eine Gruppe gibt, in der nicht mehr alle Nummern vorkommen.
         // Wenn es eine Gruppe gibt, in der dieselbe Nummer mehrmals notwendig ist.
         return (
             this.withConflictingSingles() > 0 ||
-            this.withPairConflict() ||
             this.withConflictingNecessaryNumbers() > 0 ||
             this.withMissingNumber().size > 0);
-    }
+         }
 
     withConflictingNecessaryNumbers() {
         let numberCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -2871,6 +2878,11 @@ class SudokuGrid extends SudokuModel {
     }
 
     isInsolvable() {
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].isInsolvable()) {
+                return true;
+            }
+        }
         for (let i = 0; i < 9; i++) {
             if (this.sudoBlocks[i].isInsolvable()) {
                 return true;
@@ -2883,11 +2895,6 @@ class SudokuGrid extends SudokuModel {
         }
         for (let i = 0; i < 9; i++) {
             if (this.sudoCols[i].isInsolvable()) {
-                return true;
-            }
-        }
-        for (let i = 0; i < 81; i++) {
-            if (this.sudoCells[i].isInsolvable()) {
                 return true;
             }
         }
@@ -3173,8 +3180,7 @@ class SudokuGrid extends SudokuModel {
         this.calculate_level_0_inAdmissibles();
 
         this.calculateNecessarys();
-        // this.calculateIndirectNecessarys();
-
+    
         let inAdmissiblesAdded = true;
         let c1 = false;
         let c2 = false;
@@ -4137,7 +4143,7 @@ class SudokuCellView extends SudokuView {
                         pairInfo.pairCell1.myView.setBorderRedSelected();
                         pairInfo.pairCell2.myView.setBorderRedSelected();
                     })
-                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Nacktes Paar" ');
+                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Nacktem Paar" ');
                     return;
                 }
             }
@@ -4155,7 +4161,7 @@ class SudokuCellView extends SudokuView {
                             cell.myView.setBorderSelected();
                         }
                     });
-                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Verstecktes Paar"')
+                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Verstecktem Paar"')
                     return;
                 }
             }
@@ -4188,7 +4194,10 @@ class SudokuCellView extends SudokuView {
     displayInsolvability() {
         let cell = this.getMyModel();
         let mySolverView = sudoApp.mySolver.getMyView();
-
+        // 1) Nachfolgend wird der Basiswiderspruch des Sudokus definiert. Mit ihm allein würde der Solver
+        // erfolgreich durch Backtracking die Puzzles lösen. Allerdings müssten sehr viel mehr Zellen
+        // gesetzt werden, bis das ein vorhandener Widerspruch mit diesem Kriterium aufgedeckt würde.
+        // Alle weiteren Kriterien dienen lediglich der früheren Aufdeckung von Widersprüchen.
         if (cell.getValue() !== '0' && cell.myLevel_0_inAdmissibles.has(cell.getValue())) {
             cell.myInfluencers.forEach(influencerCell => {
                 if (influencerCell.getValue() == cell.getValue()) {
@@ -4199,11 +4208,22 @@ class SudokuCellView extends SudokuView {
             mySolverView.displayReasonInsolvability('Die Nummer ' + cell.getValue() + ' ist bereits einmal gesetzt.');
             return true;
         }
+        // 2) Die Widersprüchlichkeit steht schon fest, wenn es überhaupt keinen zulässigen Kandidaten 
+        // mehr gibt.
+        if (cell.getValue() == '0' && cell.getTotalAdmissibles().size == 0) {
+            this.displayCellError();
+            mySolverView.displayReasonInsolvability('Überhaupt keine zulässige Nummer.');
+            return true;
+        }
+        // 3) Ebenfalls steht die Widersprüchlichkeit schon fest, wenn in einer Zelle gleichzeitig
+        // zwei verschiedene notwendige Nummern gesetzt werden sollen.
         if (cell.getValue() == '0' && cell.myNecessarys.size > 1) {
             this.displayCellError();
             mySolverView.displayReasonInsolvability('Gleichzeitig verschiedene notwendige Nummern.');
             return true;
         }
+        // Das nachfolgende Widerspruchskriterium haben wir abgeschaltet, weil es schwerer zu visualisieren ist
+        // und nur unwesentlich zur einer früheren Erkennung der Widersprüchlichkeit führt.
         /*
         if (cell.getValue() == '0' &&
             cell.myLevel_0_inAdmissibles.union(cell.myLevel_gt0_inAdmissibles).intersection(cell.myNecessarys).size > 0) {
@@ -4212,11 +4232,6 @@ class SudokuCellView extends SudokuView {
             return true;
         }
         */
-        if (cell.getValue() == '0' && cell.getTotalAdmissibles().size == 0) {
-            this.displayCellError();
-            mySolverView.displayReasonInsolvability('Überhaupt keine zulässige Nummer.');
-            return true;
-        }
         mySolverView.displayReasonInsolvability('');
         return false;
     }
@@ -4549,15 +4564,17 @@ class SudokuCell extends SudokuModel {
 
     isInsolvable() {
         return (
-            // Die Nummer ist bereits einmal gesetzt.
+            // 1) Die Nummer ist bereits einmal gesetzt.
             (this.getValue() !== '0' && this.myLevel_0_inAdmissibles.has(this.getValue())) ||
-            // Gleichzeitig verschiedene notwendige Nummern
-            (this.getValue() == '0' && this.myNecessarys.size > 1) ||
-            // Eine notwendige Nummer ist gleichzeitig unzulässig       
-            (this.getValue() == '0' &&
-                this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0) ||
-            // Überhaupt keine zulässige Nummer
-            (this.getValue() == '0' && this.getTotalAdmissibles().size == 0));
+            // 2) Überhaupt keine zulässige Kandidaten mehr
+            (this.getValue() == '0' && this.getTotalAdmissibles().size == 0) ||
+            // 3) Gleichzeitig verschiedene notwendige Nummern
+            (this.getValue() == '0' && this.myNecessarys.size > 1));
+        // Das nachfolgende Kriterium ist nicht effektiv. Es kostet nur Laufzeit.
+        // 4) Eine notwendige Nummer ist gleichzeitig unzulässig       
+        /*    (this.getValue() == '0' &&
+                this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0));
+                */
     }
     init() {
         this.myPuzzleSaveDialog.close();
