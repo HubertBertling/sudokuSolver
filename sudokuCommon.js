@@ -486,7 +486,7 @@ class SudokuSolverView extends SudokuView {
     constructor(solver) {
         super(solver);
         this.progressBar = new ProgressBar();
-        this.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
+        this.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
 
     }
 
@@ -593,9 +593,13 @@ class SudokuSolverView extends SudokuView {
 
     displayTechnique(tech) {
         let evalNode = document.getElementById("technique");
-        evalNode.innerHTML =
-            '<b>Erläuterung:</b> &nbsp' + tech;
-    }
+        if (tech.includes('notwendig, weil')) {
+            evalNode.style.color = 'darkgreen';
+        } else {
+            evalNode.style.color = 'Crimson';
+        }
+        evalNode.innerHTML = '<b>Erläuterung:</b> &nbsp' + tech;
+}
 
     displayLoadedBenchmark(levelOfDifficulty, countBackwards) {
         let evalNode = document.getElementById("loaded-evaluations");
@@ -4066,7 +4070,7 @@ class SudokuCellView extends SudokuView {
             // wird die verursachende collection angezeigt.
 
             // Anzeige initialisieren
-            sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
+            sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
 
 
             if (tmpCell.myNecessarys.size > 0) {
@@ -4133,7 +4137,7 @@ class SudokuCellView extends SudokuView {
                         pairInfo.pairCell1.myView.setBorderRedSelected();
                         pairInfo.pairCell2.myView.setBorderRedSelected();
                     })
-                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wg. Nacktes Paar');
+                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Nacktes Paar" ');
                     return;
                 }
             }
@@ -4151,7 +4155,7 @@ class SudokuCellView extends SudokuView {
                             cell.myView.setBorderSelected();
                         }
                     });
-                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wg. Verstecktes Paar')
+                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Verstecktes Paar"')
                     return;
                 }
             }
@@ -4167,7 +4171,7 @@ class SudokuCellView extends SudokuView {
                         cell.myView.setBorderSelected();
                     });
 
-                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wg. Überschneidung');
+                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Überschneidung');
                     return;
                 }
             }
@@ -4178,7 +4182,7 @@ class SudokuCellView extends SudokuView {
     unsetSelectStatus() {
         this.unsetSelected();
         this.unsetBorderSelected();
-        sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit roten Nummern &gt');
+        sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
     }
 
     displayInsolvability() {
@@ -4259,7 +4263,6 @@ class SudokuCell extends SudokuModel {
         this.myLevel_gt0_inAdmissiblesFromOverlappingInfo = null;
 
         this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
-        //this.myLevel_gt0_inAdmissiblesFromIndirectNecessarys = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
 
         // Außer bei widerspruchsvollen Sudokus einelementig
@@ -4445,7 +4448,6 @@ class SudokuCell extends SudokuModel {
         this.myLevel_gt0_inAdmissiblesFromOverlappingInfo = null;
 
         this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesFromIndirectNecessarys = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
 
         // Außer bei widerspruchsvollen Sudokus einelementig

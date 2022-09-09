@@ -3,7 +3,8 @@
     /*    --screen-bg-color: white; */
     --screen-bg-color: #F2E2F2;
     --screen-color: #0d1117;
-    --standard-btn-bg-color: rgba(0, 0, 0, .25);
+    --standard-btn-bg-color:
+    rgba(0, 0, 0, .25);
     --standard-btn-color: black;
     --standard-btn-height: 20px;
     --delete-btn-bg-color: #e91e63;
@@ -373,6 +374,9 @@ html {
     padding-bottom: 2px;
     border: 1px solid black;
     background-color: lightgrey;
+}
+
+.reasonInsolvability {
     color: Crimson; 
 }
 
