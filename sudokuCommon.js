@@ -1453,7 +1453,6 @@ class BackTrackOptionPath {
     addBackTrackOptionStep(cellIndex, optionList) {
         // Der neue Optionstep wird in diesem Path angelegt
         this.myLastBackTrackOptionStep = new BackTrackOptionStep(this, cellIndex, optionList);
-        // console.log("Tiefe " + this.myLastBackTrackOptionStep.getDepth());
         // Damit ist dieser Pfad beendet. Es kann nur in seinen Subpfaden weitergehen
         return this.myLastBackTrackOptionStep;
     }
@@ -2284,7 +2283,7 @@ class SudokuGroup extends SudokuModel {
                             subPairCell1: this.myCells[hiddenPair.pos1],
                             subPairCell2: this.myCells[hiddenPair.pos2]
                         }
-                        cell1.myLevel_gt0_inAdmissiblesFromHiddenPairs.set(inAdNr, inAdmissibleSubPairInfo)
+                        cell1.myLevel_gt0_inAdmissiblesFromHiddenPairs.set(inAdNr, inAdmissibleSubPairInfo);
                     })
                     inAdmissiblesAdded = true;
                 }
@@ -2307,7 +2306,7 @@ class SudokuGroup extends SudokuModel {
                             subPairCell1: this.myCells[hiddenPair.pos1],
                             subPairCell2: this.myCells[hiddenPair.pos2]
                         }
-                        cell2.myLevel_gt0_inAdmissiblesFromHiddenPairs.set(inAdNr, inAdmissibleSubPairInfo)
+                        cell2.myLevel_gt0_inAdmissiblesFromHiddenPairs.set(inAdNr, inAdmissibleSubPairInfo);
                     })
                     inAdmissiblesAdded = true;
                 }
@@ -2383,8 +2382,8 @@ class SudokuGroup extends SudokuModel {
         // die in der Block, Reihe oder Spalte der Zelle genau einmal vorkommen.
         let inAdmissiblesAdded = false;
         for (let i = 1; i < 10; i++) {
-            // let cellIndex = this.occursOnceInTotalAdmissibles(i);
-            let cellIndex = this.occursOnce(i);
+            let cellIndex = this.occursOnceInTotalAdmissibles(i);
+            // let cellIndex = this.occursOnce(i);
             // Wenn die Nummer i genau einmal in der Gruppe vorkommt
             // trage sie ein in der Necessary-liste der Zelle
             if (cellIndex !== -1) {
@@ -3146,11 +3145,6 @@ class SudokuGrid extends SudokuModel {
         this.clearEvaluations();
         this.calculate_level_0_inAdmissibles();
 
-        // InAdmissibles von Necessarys sind überschaubar.
-        // Sie werden deshalb sofort ausgerechnet.
-        // this.calculateNecessarys();
-        // this.calculateIndirectNecessarys();
-
         let inAdmissiblesAdded = true;
         while (inAdmissiblesAdded && !this.isInsolvable()) {
 
@@ -3164,7 +3158,7 @@ class SudokuGrid extends SudokuModel {
 
             // derive_inAdmissiblesFromSingles kann es nicht mehr geben,
             // aus dem gleichen Grund.
-
+            
             if (this.derive_inAdmissiblesFromHiddenPairs()) {
                 inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromEqualPairs()) {
