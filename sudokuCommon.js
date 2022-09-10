@@ -276,9 +276,9 @@ class SudokuSolverController {
         });
 
         document.getElementById('btn-save-mobile').addEventListener('click', () => {
-            this.mySolver.myStepper.stopAsyncLoop();
-            sudoApp.mySuccessDialog.close();
-            this.mySolver.savePuzzleMobile();
+            sudoApp.mySolver.myStepper.stopAsyncLoop();
+            sudoApp.mySolverController.mySuccessDialog.close();
+            sudoApp.mySolverController.savePuzzleMobile();
         });
 
         // Radio-Button Auswertungstyp: Lazy, Strikt+ oder Strikt-
