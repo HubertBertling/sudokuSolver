@@ -2089,7 +2089,7 @@ class SudokuGroup extends SudokuModel {
             this.withConflictingSingles() > 0 ||
             this.withConflictingNecessaryNumbers() > 0 ||
             this.withMissingNumber().size > 0);
-         }
+    }
 
     withConflictingNecessaryNumbers() {
         let numberCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -2387,24 +2387,28 @@ class SudokuGroup extends SudokuModel {
             // Wenn die Nummer i genau einmal in der Gruppe vorkommt
             // trage sie ein in der Necessary-liste der Zelle
             if (cellIndex !== -1) {
-                this.myCells[cellIndex].addNecessary(i.toString(), this);
-
-                let necessaryCell = this.myCells[cellIndex];
-                if (this instanceof SudokuBlock) {
-                    let tmpRow = necessaryCell.myRow;
-                    let tmpCol = necessaryCell.myCol;
-                    inAdmissiblesAdded = inAdmissiblesAdded || tmpRow.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                    inAdmissiblesAdded = inAdmissiblesAdded || tmpCol.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                } else if (this instanceof SudokuRow) {
-                    let tmpBlock = necessaryCell.myBlock;
-                    let tmpCol = necessaryCell.myCol;
-                    inAdmissiblesAdded = inAdmissiblesAdded || tmpBlock.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                    inAdmissiblesAdded = inAdmissiblesAdded || tmpCol.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                } else if (this instanceof SudokuCol) {
-                    let tmpRow = necessaryCell.myRow;
-                    let tmpBlock = necessaryCell.myBlock;
-                    inAdmissiblesAdded = inAdmissiblesAdded || tmpRow.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
-                    inAdmissiblesAdded = inAdmissiblesAdded || tmpBlock.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
+                if (!this.myCells[cellIndex].myNecessarys.has(i.toString())) {
+                    // Kein Zirkelschluss: Die Zelle hat schon eine notwendige Nummer
+                    // und sie würde jetzt mit den von ihr abgeleiteten unzulässigen
+                    // Kandidaten begründet.
+                    this.myCells[cellIndex].addNecessary(i.toString(), this);
+                    let necessaryCell = this.myCells[cellIndex];
+                    if (this instanceof SudokuBlock) {
+                        let tmpRow = necessaryCell.myRow;
+                        let tmpCol = necessaryCell.myCol;
+                        inAdmissiblesAdded = inAdmissiblesAdded || tmpRow.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
+                        inAdmissiblesAdded = inAdmissiblesAdded || tmpCol.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
+                    } else if (this instanceof SudokuRow) {
+                        let tmpBlock = necessaryCell.myBlock;
+                        let tmpCol = necessaryCell.myCol;
+                        inAdmissiblesAdded = inAdmissiblesAdded || tmpBlock.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
+                        inAdmissiblesAdded = inAdmissiblesAdded || tmpCol.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
+                    } else if (this instanceof SudokuCol) {
+                        let tmpRow = necessaryCell.myRow;
+                        let tmpBlock = necessaryCell.myBlock;
+                        inAdmissiblesAdded = inAdmissiblesAdded || tmpRow.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
+                        inAdmissiblesAdded = inAdmissiblesAdded || tmpBlock.derive_inAdmissiblesFromNecessarys(necessaryCell, i.toString());
+                    }
                 }
             }
         }
@@ -3158,7 +3162,7 @@ class SudokuGrid extends SudokuModel {
 
             // derive_inAdmissiblesFromSingles kann es nicht mehr geben,
             // aus dem gleichen Grund.
-            
+
             if (this.derive_inAdmissiblesFromHiddenPairs()) {
                 inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromEqualPairs()) {
@@ -3174,7 +3178,7 @@ class SudokuGrid extends SudokuModel {
         this.calculate_level_0_inAdmissibles();
 
         this.calculateNecessarys();
-    
+
         let inAdmissiblesAdded = true;
         let c1 = false;
         let c2 = false;
@@ -3508,11 +3512,13 @@ class SudokuGrid extends SudokuModel {
                             tmpCell.myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
                         // Die Liste der indirekt unzulässigen verursacht von overlap wird gesetzt
                         tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping = newInAdmissibles;
-                        let overlapInfo = {
-                            block: this.sudoBlocks[i],
-                            rowCol: strongRow
-                        }
-                        tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo = overlapInfo;
+                        newInAdmissibles.forEach(inAdNr => {
+                            let overlapInfo = {
+                                block: this.sudoBlocks[i],
+                                rowCol: strongRow
+                            }
+                            tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo.set(inAdNr, overlapInfo);
+                        })
                     }
                 }
             }
@@ -3543,11 +3549,14 @@ class SudokuGrid extends SudokuModel {
                         let newInAdmissibles =
                             tmpCell.myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
                         tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping = newInAdmissibles;
-                        let overlapInfo = {
-                            block: this.sudoBlocks[i],
-                            rowCol: strongCol
-                        };
-                        tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo = overlapInfo;
+
+                        newInAdmissibles.forEach(inAdNr => {
+                            let overlapInfo = {
+                                block: this.sudoBlocks[i],
+                                rowCol: strongCol
+                            }
+                            tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo.set(inAdNr, overlapInfo);
+                        })
                     }
                 }
             }
@@ -3558,7 +3567,7 @@ class SudokuGrid extends SudokuModel {
 
 
     derive_inAdmissiblesFromOverlapping() {
-        // Iteriere über die Blockn
+        // Iteriere über die Blöcke
         let tmpBlock = null;
         let tmpRow = null;
         let tmpCol = null;
@@ -3566,7 +3575,7 @@ class SudokuGrid extends SudokuModel {
 
         for (let i = 0; i < 9; i++) {
             tmpBlock = this.sudoBlocks[i];
-            // Iteriere über die Zeilen der Block
+            // Iteriere über die Zeilen der Blöcke
             for (let j = 0; j < 3; j++) {
                 let z = this.blockRow2MatrixRow(i, j);
                 let numbersInRowOutsideBlock = new SudokuSet();
@@ -3584,7 +3593,7 @@ class SudokuGrid extends SudokuModel {
                     }
                     strongNumbersInRowInsideBlock = numbersInRowInsideBlock.difference(numbersInRowOutsideBlock);
                 }
-                // Die Blocknzellen um die strengen Nummern reduzieren
+                // Die Blockzellen um die strengen Nummern reduzieren
                 if (strongNumbersInRowInsideBlock.size > 0) {
                     // In 2 Reihen der Block die strong nummern inadmissible setzen
                     let row1 = 0;
@@ -4162,22 +4171,20 @@ class SudokuCellView extends SudokuView {
 
             if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
                 tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping.size > 0) {
-                if (tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping.has(adMissibleNrSelected)) {
 
-                    tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo.block.myCells.forEach(cell => {
-                        cell.myView.setBorderSelected();
-                    });
-                    tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo.rowCol.myCells.forEach(cell => {
-                        cell.myView.setBorderSelected();
-                    });
+                let info = tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo.get(adMissibleNrSelected);
+                info.block.myCells.forEach(cell => {
+                    cell.myView.setBorderSelected();
+                });
+                info.rowCol.myCells.forEach(cell => {
+                    cell.myView.setBorderSelected();
+                });
 
-                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Überschneidung');
-                    return;
-                }
+                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Überschneidung');
+                return;
             }
         }
     }
-
 
     unsetSelectStatus() {
         this.unsetSelected();
@@ -4269,7 +4276,7 @@ class SudokuCell extends SudokuModel {
         this.myLevel_gt0_inAdmissiblesFromPairs = new Map();
         this.myLevel_gt0_inAdmissiblesFromHiddenPairs = new Map();
         this.myLevel_gt0_inAdmissiblesFromOverlapping = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesFromOverlappingInfo = null;
+        this.myLevel_gt0_inAdmissiblesFromOverlappingInfo = new Map();
 
         this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
@@ -4454,7 +4461,7 @@ class SudokuCell extends SudokuModel {
         this.myLevel_gt0_inAdmissiblesFromPairs = new Map();
         this.myLevel_gt0_inAdmissiblesFromHiddenPairs = new Map();
         this.myLevel_gt0_inAdmissiblesFromOverlapping = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesFromOverlappingInfo = null;
+        this.myLevel_gt0_inAdmissiblesFromOverlappingInfo = new Map();
 
         this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
