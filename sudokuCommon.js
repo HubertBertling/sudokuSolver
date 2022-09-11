@@ -2336,7 +2336,7 @@ class SudokuGroup extends SudokuModel {
         return inAdmissiblesAdded;
     }
 
-    derive_inAdmissiblesFromEqualPairs() {
+    derive_inAdmissiblesFromNakedPairs() {
         this.calculateEqualPairs();
         let inAdmissiblesAdded = false;
         for (let i = 0; i < this.myPairInfos.length; i++) {
@@ -2388,9 +2388,13 @@ class SudokuGroup extends SudokuModel {
             // trage sie ein in der Necessary-liste der Zelle
             if (cellIndex !== -1) {
                 if (!this.myCells[cellIndex].myNecessarys.has(i.toString())) {
-                    // Kein Zirkelschluss: Die Zelle hat schon eine notwendige Nummer
-                    // und sie würde jetzt mit den von ihr abgeleiteten unzulässigen
-                    // Kandidaten begründet.
+                    // Die gefundene einzige Nummer ist schon notwendig in einer anderen Gruppe.
+                    // Ohne Prüfung würde die aktuelle Gruppe die die Notwendigkeit verursachende 
+                    // Gruppe werden und die tatsächliche bisherige Begründung ginge verloren. 
+                    // Das ergibt insgesamt einen Zirkelschluss:
+                    // Die aus der notwendigen Nummer abgeleiteten unzulässigen Nummern machen die notwendige
+                    // Nummer erneut notwendig. Die Prüfung verhindert, dass eine schon existierende notwendige Nummer 
+                    // eine neue, zirkuläre Neubegründung erhält.
                     this.myCells[cellIndex].addNecessary(i.toString(), this);
                     let necessaryCell = this.myCells[cellIndex];
                     if (this instanceof SudokuBlock) {
@@ -3165,7 +3169,7 @@ class SudokuGrid extends SudokuModel {
 
             if (this.derive_inAdmissiblesFromHiddenPairs()) {
                 inAdmissiblesAdded = true;
-            } else if (this.derive_inAdmissiblesFromEqualPairs()) {
+            } else if (this.derive_inAdmissiblesFromNakedPairs()) {
                 inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromOverlapping()) {
                 inAdmissiblesAdded = true;
@@ -3184,13 +3188,15 @@ class SudokuGrid extends SudokuModel {
         let c2 = false;
         let c3 = false;
         let c4 = false;
+        let c5 = false;
 
         while (inAdmissiblesAdded && !this.isInsolvable()) {
-            c1 = this.derive_inAdmissiblesFromHiddenPairs();
-            c2 = this.derive_inAdmissiblesFromEqualPairs();
-            c3 = this.derive_inAdmissiblesFromOverlapping();
             c4 = this.derive_inAdmissiblesFromSingles();
-            inAdmissiblesAdded = c1 || c2 || c3 || c4;
+            c1 = this.derive_inAdmissiblesFromHiddenPairs();
+            c2 = this.derive_inAdmissiblesFromNakedPairs();
+            c3 = this.derive_inAdmissiblesFromOverlapping();
+          //  c5 = this.calculateNecessarys();
+            inAdmissiblesAdded = c1 || c2 || c3 || c4 || c5;
         }
     }
 
@@ -3269,24 +3275,24 @@ class SudokuGrid extends SudokuModel {
         return inAdmissiblesAdded;
     }
 
-    derive_inAdmissiblesFromEqualPairs() {
+    derive_inAdmissiblesFromNakedPairs() {
         let c1 = false;
         let c2 = false;
         let c3 = false;
         // Iteriere über die Blockn
         for (let i = 0; i < 9; i++) {
             let tmpBlock = this.sudoBlocks[i];
-            c1 = c1 || tmpBlock.derive_inAdmissiblesFromEqualPairs();
+            c1 = c1 || tmpBlock.derive_inAdmissiblesFromNakedPairs();
         }
         // Iteriere über die Reihen
         for (let i = 0; i < 9; i++) {
             let tmpRow = this.sudoRows[i];
-            c2 = c2 || tmpRow.derive_inAdmissiblesFromEqualPairs();
+            c2 = c2 || tmpRow.derive_inAdmissiblesFromNakedPairs();
         }
         // Iteriere über die Spalten
         for (let i = 0; i < 9; i++) {
             let tmpCol = this.sudoCols[i];
-            c3 = c3 || tmpCol.derive_inAdmissiblesFromEqualPairs();
+            c3 = c3 || tmpCol.derive_inAdmissiblesFromNakedPairs();
         }
         let inAdmissiblesAdded = c1 || c2 || c3;
         return inAdmissiblesAdded;
