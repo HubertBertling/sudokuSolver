@@ -598,7 +598,7 @@ class SudokuSolverView extends SudokuView {
         } else {
             evalNode.style.color = 'Crimson';
         }
-        evalNode.innerHTML = '<b>Erläuterung:</b> &nbsp' + tech;
+        evalNode.innerHTML = '<b>Erläuterung (nur Lazy):</b> &nbsp' + tech;
     }
 
     displayLoadedBenchmark(levelOfDifficulty, countBackwards) {
