@@ -2382,19 +2382,12 @@ class SudokuGroup extends SudokuModel {
         // die in der Block, Reihe oder Spalte der Zelle genau einmal vorkommen.
         let inAdmissiblesAdded = false;
         for (let i = 1; i < 10; i++) {
-            let cellIndex = this.occursOnceInTotalAdmissibles(i);
-            // let cellIndex = this.occursOnce(i);
+            // let cellIndex = this.occursOnceInTotalAdmissibles(i);
+            let cellIndex = this.occursOnce(i);
             // Wenn die Nummer i genau einmal in der Gruppe vorkommt
             // trage sie ein in der Necessary-liste der Zelle
             if (cellIndex !== -1) {
                 if (!this.myCells[cellIndex].myNecessarys.has(i.toString())) {
-                    // Die gefundene einzige Nummer ist schon notwendig in einer anderen Gruppe.
-                    // Ohne Prüfung würde die aktuelle Gruppe die die Notwendigkeit verursachende 
-                    // Gruppe werden und die tatsächliche bisherige Begründung ginge verloren. 
-                    // Das ergibt insgesamt einen Zirkelschluss:
-                    // Die aus der notwendigen Nummer abgeleiteten unzulässigen Nummern machen die notwendige
-                    // Nummer erneut notwendig. Die Prüfung verhindert, dass eine schon existierende notwendige Nummer 
-                    // eine neue, zirkuläre Neubegründung erhält.
                     this.myCells[cellIndex].addNecessary(i.toString(), this);
                     let necessaryCell = this.myCells[cellIndex];
                     if (this instanceof SudokuBlock) {
@@ -2961,9 +2954,6 @@ class SudokuGrid extends SudokuModel {
                 } else if (this.sudoCells[k].getTotalAdmissibles().size == 1) {
                     // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
                     // totalAdmissibleCondition
-                    //  } else if (this.sudoCells[k].getIndirectNecessarys().size == 1){
-                    // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer
-                    // indirectNecessaryCondition
                 } else {
                     // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
                     // Dann wird die Löschung zurückgenommen.
