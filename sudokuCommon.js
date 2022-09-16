@@ -3185,7 +3185,7 @@ class SudokuGrid extends SudokuModel {
             c1 = this.derive_inAdmissiblesFromHiddenPairs();
             c2 = this.derive_inAdmissiblesFromNakedPairs();
             c3 = this.derive_inAdmissiblesFromOverlapping();
-          //  c5 = this.calculateNecessarys();
+            //  c5 = this.calculateNecessarys();
             inAdmissiblesAdded = c1 || c2 || c3 || c4 || c5;
         }
     }
@@ -4535,7 +4535,13 @@ class SudokuCell extends SudokuModel {
                         }
                     }
                 } else {
-                    summand = influencer.getTotalAdmissibles().size;
+                    let interSecSize = influenceAdmissible.intersection(tmpAdmissibles).size;
+                    // Das aktuelle Paar mit Schnitt in den Influenz-Zellen
+                    if (interSecSize > 0) {
+                    summand = Math.floor(9/interSecSize) + interSecSize;
+                    } else {
+                        summand = 1;
+                    }
                 }
                 tmpWeight = tmpWeight + summand;
             }
