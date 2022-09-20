@@ -2673,29 +2673,17 @@ class BlockVector {
     }
 
     getPointingNrs() {
-/*        console.log('getPointingNrs  Vektor: '
-            + this.myCells[0].getMyIndex()
-            + ' '
-            + this.myCells[1].getMyIndex()
-            + ' '
-            + this.myCells[2].getMyIndex());
-*/
         let pointingNrs = new SudokuSet();
+        // Nummern, die mindestens 2 mal auftauchen
         let pointingCandidates = this.getPointingNrCandidates();
-
-        pointingCandidates.logSet();
         let complement = this.cv1.getAdmissibles().union(this.cv2.getAdmissibles());
-//        complement.logSet();
-
-//        this.cv1.getAdmissibles().logSet();
-//        this.cv2.getAdmissibles().logSet();
-
         pointingCandidates.forEach(candidate => {
             if (!complement.has(candidate)) {
+                // Nummer nur im Pointing Vektor, 
+                // Nicht in den beiden anderen Vektoren des Blocks
                 pointingNrs.add(candidate);
             }
         })
-        pointingNrs.logSet();
         return pointingNrs;
     }
 
@@ -3306,64 +3294,8 @@ class SudokuGrid extends SudokuModel {
         for (let i = 0; i < 9; i++) {
             this.sudoBlocks[i].addBlockVectors();
         }
-        // Testen
 
-        console.log('==========================================================')
-        for (let i = 0; i < 9; i++) {
-            console.log('Block: ' + i);
-            let tmpBlock = this.sudoBlocks[i];
-            tmpBlock.myRowVectors.forEach(myRowVector => {
-                console.log('  Row-Vektor: '
-                    + myRowVector.myCells[0].getMyIndex()
-                    + ' '
-                    + myRowVector.myCells[1].getMyIndex()
-                    + ' '
-                    + myRowVector.myCells[2].getMyIndex());
-
-                let cv1 = myRowVector.cv1;
-                console.log('     Vektor cv1: '
-                    + cv1.myCells[0].getMyIndex()
-                    + ' '
-                    + cv1.myCells[1].getMyIndex()
-                    + ' '
-                    + cv1.myCells[2].getMyIndex());
-
-                let cv2 = myRowVector.cv2;
-                console.log('     Vektor cv2: '
-                    + cv2.myCells[0].getMyIndex()
-                    + ' '
-                    + cv2.myCells[1].getMyIndex()
-                    + ' '
-                    + cv2.myCells[2].getMyIndex());
-            });
-
-            tmpBlock.myColVectors.forEach(myColVector => {
-                console.log('  Col-Vektor: '
-                    + myColVector.myCells[0].getMyIndex()
-                    + ' '
-                    + myColVector.myCells[1].getMyIndex()
-                    + ' '
-                    + myColVector.myCells[2].getMyIndex());
-
-                let cv1 = myColVector.cv1;
-                console.log('     Vektor cv1: '
-                    + cv1.myCells[0].getMyIndex()
-                    + ' '
-                    + cv1.myCells[1].getMyIndex()
-                    + ' '
-                    + cv1.myCells[2].getMyIndex());
-
-                let cv2 = myColVector.cv2;
-                console.log('     Vektor cv2: '
-                    + cv2.myCells[0].getMyIndex()
-                    + ' '
-                    + cv2.myCells[1].getMyIndex()
-                    + ' '
-                    + cv2.myCells[2].getMyIndex());
-            })
-        }
     }
-
 
     initCurrentSelection() {
         this.deselect();
@@ -3457,7 +3389,6 @@ class SudokuGrid extends SudokuModel {
             // derive_inAdmissiblesFromSingles kann es nicht mehr geben,
             // aus dem gleichen Grund.
 
-            console.log('evaluateGridLazy()')
             if (this.derive_inAdmissiblesFromPointingPairs()) {
                 inAdmissiblesAdded = true;
             }
@@ -4555,18 +4486,7 @@ class SudokuCell extends SudokuModel {
         // this.myIndirectNecessarys = new SudokuSet();
         // this.myIndirectNecessaryCollections = new Map();
     }
-    // Testen
-    logCell() {
-        console.log('      Index: ' + this.myIndex);
-        if (this.getValue() == '0') {
-            console.log('      Admissibles: ')
-            this.getAdmissibles().forEach(adm => {
-                console.log('          adm: ' + adm);
-            })
-        } else {
-            console.log('      Value = ' + this.getValue());
-        }
-    }
+
     // ===================================================================
     // Getter
     // ===================================================================
