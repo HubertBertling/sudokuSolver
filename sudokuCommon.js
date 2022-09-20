@@ -1152,7 +1152,12 @@ class SudokuSet extends Set {
     constructor(arr) {
         super(arr);
     }
-
+    logSet() {
+        console.log('       ====  Set: ');
+        this.forEach(elem => {
+            console.log('                     ' + elem);
+        })
+    }
     isSuperset(subset) {
         for (var elem of subset) {
             if (!this.has(elem)) {
@@ -2570,6 +2575,131 @@ class SudokuBlockView extends SudokuGroupView {
 
 
 }
+
+class BlockVector {
+    constructor(block, vNr) {
+        this.myBlock = block;
+        this.myVectorNr = vNr;
+        this.myCells = [];
+        this.cv1 = undefined;
+        this.cv2 = undefined;
+        switch (vNr) {
+            case 0: {
+                let row = 0;
+                for (let col = 0; col < 3; col++) {
+                    this.myCells.push(this.myBlock.getBlockCellAt(row, col));
+                }
+                break;
+            }
+            case 1: {
+                let row = 1;
+                for (let col = 0; col < 3; col++) {
+                    this.myCells.push(this.myBlock.getBlockCellAt(row, col));
+                }
+                break;
+            }
+            case 2: {
+                let row = 2;
+                for (let col = 0; col < 3; col++) {
+                    this.myCells.push(this.myBlock.getBlockCellAt(row, col));
+                }
+                break;
+            }
+            case 3: {
+                let col = 0;
+                for (let row = 0; row < 3; row++) {
+                    this.myCells.push(this.myBlock.getBlockCellAt(row, col));
+                }
+                break;
+            }
+            case 4: {
+                let col = 1;
+                for (let row = 0; row < 3; row++) {
+                    this.myCells.push(this.myBlock.getBlockCellAt(row, col));
+                }
+                break;
+            }
+            case 5: {
+                let col = 2;
+                for (let row = 0; row < 3; row++) {
+                    this.myCells.push(this.myBlock.getBlockCellAt(row, col));
+                }
+                break;
+            }
+            default: { };
+        }
+    }
+
+    //Testen
+    logVector() {
+        this.myCells.forEach(cell => {
+            console.log('    Zelle:')
+            cell.logCell();
+        })
+    }
+
+    addComplementVectors(v1, v2) {
+        this.cv1 = v1;
+        this.cv2 = v2;
+    }
+
+    getAdmissibles() {
+        let tmpAdmissibles = new SudokuSet();
+        this.myCells.forEach(cell => {
+            tmpAdmissibles = tmpAdmissibles.union(cell.getTotalAdmissibles());
+        })
+        return tmpAdmissibles;
+    }
+
+    getPointingNrCandidates() {
+        let numberCount = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let tmpPointingNrs = new SudokuSet();
+        let intSingle = -1;
+        this.myCells.forEach(cell => {
+            if (cell.getValue() == '0') {
+                let tmpAdmissibles = cell.getTotalAdmissibles();
+                tmpAdmissibles.forEach(nr => {
+                    intSingle = parseInt(nr);
+                    numberCount[intSingle - 1]++;
+                });
+            }
+        })
+        for (let i = 0; i < 9; i++) {
+            if (numberCount[i] > 1) {
+                tmpPointingNrs.add((i + 1).toString());
+            }
+        }
+        return tmpPointingNrs;
+    }
+
+    getPointingNrs() {
+/*        console.log('getPointingNrs  Vektor: '
+            + this.myCells[0].getMyIndex()
+            + ' '
+            + this.myCells[1].getMyIndex()
+            + ' '
+            + this.myCells[2].getMyIndex());
+*/
+        let pointingNrs = new SudokuSet();
+        let pointingCandidates = this.getPointingNrCandidates();
+
+        pointingCandidates.logSet();
+        let complement = this.cv1.getAdmissibles().union(this.cv2.getAdmissibles());
+//        complement.logSet();
+
+//        this.cv1.getAdmissibles().logSet();
+//        this.cv2.getAdmissibles().logSet();
+
+        pointingCandidates.forEach(candidate => {
+            if (!complement.has(candidate)) {
+                pointingNrs.add(candidate);
+            }
+        })
+        pointingNrs.logSet();
+        return pointingNrs;
+    }
+
+}
 class SudokuBlock extends SudokuGroup {
     constructor(suTable, blockIndex) {
         // Der Block kennt seine Tabelle und seinen Index
@@ -2579,7 +2709,27 @@ class SudokuBlock extends SudokuGroup {
             row: -1,
             col: -1
         }
+        this.myRowVectors = [];
+        this.myColVectors = [];
         this.setBlockOrigin(blockIndex);
+    }
+
+    addBlockVectors() {
+        // 3 Reihen des Blocks
+        this.myRowVectors.push(new BlockVector(this, 0));
+        this.myRowVectors.push(new BlockVector(this, 1));
+        this.myRowVectors.push(new BlockVector(this, 2));
+        this.myRowVectors[0].addComplementVectors(this.myRowVectors[1], this.myRowVectors[2]);
+        this.myRowVectors[1].addComplementVectors(this.myRowVectors[0], this.myRowVectors[2]);
+        this.myRowVectors[2].addComplementVectors(this.myRowVectors[0], this.myRowVectors[1]);
+
+        // 3 Spalten des Blocks
+        this.myColVectors.push(new BlockVector(this, 3));
+        this.myColVectors.push(new BlockVector(this, 4));
+        this.myColVectors.push(new BlockVector(this, 5));
+        this.myColVectors[0].addComplementVectors(this.myColVectors[1], this.myColVectors[2]);
+        this.myColVectors[1].addComplementVectors(this.myColVectors[0], this.myColVectors[2]);
+        this.myColVectors[2].addComplementVectors(this.myColVectors[0], this.myColVectors[1]);
     }
 
     getBlockCellAt(row, col) {
@@ -3152,6 +3302,66 @@ class SudokuGrid extends SudokuModel {
             }
             this.sudoRows.push(row);
         }
+        // Row- und Col-Vektoren in den Blöcken anlegen
+        for (let i = 0; i < 9; i++) {
+            this.sudoBlocks[i].addBlockVectors();
+        }
+        // Testen
+
+        console.log('==========================================================')
+        for (let i = 0; i < 9; i++) {
+            console.log('Block: ' + i);
+            let tmpBlock = this.sudoBlocks[i];
+            tmpBlock.myRowVectors.forEach(myRowVector => {
+                console.log('  Row-Vektor: '
+                    + myRowVector.myCells[0].getMyIndex()
+                    + ' '
+                    + myRowVector.myCells[1].getMyIndex()
+                    + ' '
+                    + myRowVector.myCells[2].getMyIndex());
+
+                let cv1 = myRowVector.cv1;
+                console.log('     Vektor cv1: '
+                    + cv1.myCells[0].getMyIndex()
+                    + ' '
+                    + cv1.myCells[1].getMyIndex()
+                    + ' '
+                    + cv1.myCells[2].getMyIndex());
+
+                let cv2 = myRowVector.cv2;
+                console.log('     Vektor cv2: '
+                    + cv2.myCells[0].getMyIndex()
+                    + ' '
+                    + cv2.myCells[1].getMyIndex()
+                    + ' '
+                    + cv2.myCells[2].getMyIndex());
+            });
+
+            tmpBlock.myColVectors.forEach(myColVector => {
+                console.log('  Col-Vektor: '
+                    + myColVector.myCells[0].getMyIndex()
+                    + ' '
+                    + myColVector.myCells[1].getMyIndex()
+                    + ' '
+                    + myColVector.myCells[2].getMyIndex());
+
+                let cv1 = myColVector.cv1;
+                console.log('     Vektor cv1: '
+                    + cv1.myCells[0].getMyIndex()
+                    + ' '
+                    + cv1.myCells[1].getMyIndex()
+                    + ' '
+                    + cv1.myCells[2].getMyIndex());
+
+                let cv2 = myColVector.cv2;
+                console.log('     Vektor cv2: '
+                    + cv2.myCells[0].getMyIndex()
+                    + ' '
+                    + cv2.myCells[1].getMyIndex()
+                    + ' '
+                    + cv2.myCells[2].getMyIndex());
+            })
+        }
     }
 
 
@@ -3247,13 +3457,23 @@ class SudokuGrid extends SudokuModel {
             // derive_inAdmissiblesFromSingles kann es nicht mehr geben,
             // aus dem gleichen Grund.
 
+            console.log('evaluateGridLazy()')
+            if (this.derive_inAdmissiblesFromPointingPairs()) {
+                inAdmissiblesAdded = true;
+            }
+
+            /*
             if (this.derive_inAdmissiblesFromHiddenPairs()) {
                 inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromNakedPairs()) {
                 inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromOverlapping()) {
                 inAdmissiblesAdded = true;
+            } else if (this.derive_inAdmissiblesFromPointingPairs()) {
+                inAdmissiblesAdded = true;
             }
+    
+            */
         }
     }
 
@@ -3271,11 +3491,11 @@ class SudokuGrid extends SudokuModel {
         let c5 = false;
 
         while (inAdmissiblesAdded && !this.isInsolvable()) {
-            c4 = this.derive_inAdmissiblesFromSingles();
-            c1 = this.derive_inAdmissiblesFromHiddenPairs();
-            c2 = this.derive_inAdmissiblesFromNakedPairs();
-            c3 = this.derive_inAdmissiblesFromOverlapping();
-            //  c5 = this.calculateNecessarys();
+            /*    c4 = this.derive_inAdmissiblesFromSingles();
+                c1 = this.derive_inAdmissiblesFromHiddenPairs();
+                c2 = this.derive_inAdmissiblesFromNakedPairs();
+                c3 = this.derive_inAdmissiblesFromOverlapping(); */
+            c5 = this.derive_inAdmissiblesFromPointingPairs();
             inAdmissiblesAdded = c1 || c2 || c3 || c4 || c5;
         }
     }
@@ -3481,112 +3701,110 @@ class SudokuGrid extends SudokuModel {
 
     derive_inAdmissiblesFromPointingPairs() {
         let tmpBlock = null;
-        let tmpRow = null;
-        let tmpCol = null;
         let inAdmissiblesAdded = false;
 
-        // Iteriere über die Blöcke
+        // Iteriere über die 9 Blöcke der Matrix
         for (let i = 0; i < 9; i++) {
             tmpBlock = this.sudoBlocks[i];
 
-            // Iteriere über die Reihen der Blöcke
+            // Iteriere über die Reihenvektoren
             for (let row = 0; row < 3; row++) {
-
-                // Checke die Reihe auf Pointing Pair
-
-                let z = this.blockRow2MatrixRow(i, j);
-                let numbersInBlockOutsideRow = new SudokuSet();
-                let numbersInRowInsideBlock = new SudokuSet();
-                let strongNumbersInRowInsideBlock = new SudokuSet();
-
-                // Iteriere über die Zellen der Reihe
-                for (let col = 0; col < 3; col++) {
-                    let blockCell = tmpBlock.getBlockCellAt(row, col);
-                    if (blockCell.getValue() == '0') {
-                        numbersInRowInsideBlock = numbersInRowInsideBlock.union(blockCell.getTotalAdmissibles());
-                    }
-                }
-
-                // Die Blockzellen um die strengen Nummern reduzieren
-                if (strongNumbersInRowInsideBlock.size > 0) {
-                    // In 2 Reihen der Block die strong nummern inadmissible setzen
-                    let row1 = 0;
-                    let row2 = 0;
-                    switch (j) {
-                        case 0: {
-                            row1 = 1;
-                            row2 = 2;
-                            break;
-                        }
-                        case 1: {
-                            row1 = 0;
-                            row2 = 2;
-                            break;
-                        }
-                        case 2: {
-                            row1 = 0;
-                            row2 = 1;
-                        }
-                    }
-                    let newInAdmissiblesAdded1 = this.cellOverlapInRowEliminate(i, row1, tmpRow, strongNumbersInRowInsideBlock);
-                    inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded1;
-
-                    let newInAdmissiblesAdded2 = this.cellOverlapInRowEliminate(i, row2, tmpRow, strongNumbersInRowInsideBlock);
-                    inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded2;
-                }
+                let pointingNrs = tmpBlock.myRowVectors[row].getPointingNrs();
+                pointingNrs.forEach(pointingNr => {
+                    let newInAdmissiblesAdded = this.eliminatePointingNrInGridRow(pointingNr, tmpBlock.myRowVectors[row], tmpBlock.myOrigin.row + row);
+                    inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded;
+                })
             }
-            // Iteriere über die Spalten der Blöcke
-            for (let j = 0; j < 3; j++) {
-                let colIndex = this.blockCol2MatrixCol(i, j);
-                let numbersInColOutsideBlock = new SudokuSet();
-                let numbersInColInsideBlock = new SudokuSet();
-                let strongNumbersInColInsideBlock = new SudokuSet();
-                // Iteriere über die Zellen der Reihe
-                tmpCol = this.sudoCols[colIndex];
-                for (let k = 0; k < 9; k++) {
-                    if (tmpCol.myCells[k].getValue() == '0') {
-                        if (this.blockIndex_MatrixRow_2_BlockRow(k, i) >= 0 && this.blockIndex_MatrixRow_2_BlockRow(k, i) < 3) {
-                            numbersInColInsideBlock = numbersInColInsideBlock.union(tmpCol.myCells[k].getTotalAdmissibles());
-                        } else {
-                            numbersInColOutsideBlock = numbersInColOutsideBlock.union(tmpCol.myCells[k].getTotalAdmissibles());
-                        }
-                    }
-                    strongNumbersInColInsideBlock = numbersInColInsideBlock.difference(numbersInColOutsideBlock);
-                }
-                // Die Blockzellen um die strengen Nummern reduzieren
-                if (strongNumbersInColInsideBlock.size > 0) {
-                    // In 2 Spalten der Block die strong NUmmern inadmissible setzen
-                    let col1 = 0;
-                    let col2 = 0;
-                    //
-                    switch (j) {
-                        case 0: {
-                            col1 = 1;
-                            col2 = 2;
-                            break;
-                        }
-                        case 1: {
-                            col1 = 0;
-                            col2 = 2;
-                            break;
-                        }
-                        case 2: {
-                            col1 = 0;
-                            col2 = 1;
-                        }
-                    }
-                    // col1 bereinigen            
-                    let newInAdmissiblesAdded1 = this.cellOverlapInColEliminate(i, col1, tmpCol, strongNumbersInColInsideBlock);
-                    inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded1;
 
-                    let newInAdmissiblesAdded2 = this.cellOverlapInColEliminate(i, col2, tmpCol, strongNumbersInColInsideBlock);
-                    inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded2;
+            // Iteriere über die Spaltenvektoren
+            for (let col = 0; col < 3; col++) {
+                let pointingNrs = tmpBlock.myColVectors[col].getPointingNrs();
+                pointingNrs.forEach(pointingNr => {
+                    let newInAdmissiblesAdded = this.eliminatePointingNrInGridCol(pointingNr, tmpBlock.myColVectors[col], tmpBlock.myOrigin.col + col);
+                    inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded;
+                })
+            }
+        }
+        return inAdmissiblesAdded;
+    }
+
+    eliminatePointingNrInGridRow(pointingNr, pointingVector, rowIndex) {
+        // Eliminiere pointingNr in row mit Index rowIndex
+        let inAdmissiblesAdded = false;
+        let block = pointingVector.myBlock;
+        let blockOriginCol = block.myOrigin.col;
+
+        // Iteriere über die Zellen der Reihe
+        for (let col = 0; col < 9; col++) {
+            if (col < blockOriginCol || col > (blockOriginCol + 2)) {
+                // col nicht im Pointing Vector
+                let tmpCell = this.getCellAt(rowIndex, col);
+                if (tmpCell.getValue() == '0') {
+                    // Die Zelle ist ungesetzt
+                    let oldInAdmissibles = new SudokuSet(tmpCell.myLevel_gt0_inAdmissibles);
+                    let tmpAdmissibles = tmpCell.getTotalAdmissibles();
+
+                    if (tmpAdmissibles.has(pointingNr)) {
+                        tmpCell.myLevel_gt0_inAdmissibles.add(pointingNr);
+
+                        let localAdded = !oldInAdmissibles.equals(tmpCell.myLevel_gt0_inAdmissibles);
+                        inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
+
+                        if (localAdded) {
+                            tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairs.add(pointingNr);
+                            let pointingPairInfo = {
+                                pNr: pointingNr,
+                                pVector: pointingVector,
+                                rowCol: this.sudoRows[rowIndex]
+                            }
+                            tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairsInfo.set(pointingNr, pointingPairInfo);
+                        }
+                    }
                 }
             }
         }
         return inAdmissiblesAdded;
     }
 
+
+    eliminatePointingNrInGridCol(pointingNr, pointingVector, colIndex) {
+        // Eliminiere pointingNr in coö mit Index colIndex
+        let inAdmissiblesAdded = false;
+        let block = pointingVector.myBlock;
+        let blockOriginRow = block.myOrigin.row;
+
+        // Iteriere über die Zellen der Spalte
+        for (let row = 0; row < 9; row++) {
+            if (row < blockOriginRow || row > (blockOriginRow + 2)) {
+                // row nicht im Pointing Vector
+                let tmpCell = this.getCellAt(row, colIndex);
+
+                if (tmpCell.getValue() == '0') {
+                    // Die Zelle ist ungesetzt
+                    let oldInAdmissibles = new SudokuSet(tmpCell.myLevel_gt0_inAdmissibles);
+                    let tmpAdmissibles = tmpCell.getTotalAdmissibles();
+
+                    if (tmpAdmissibles.has(pointingNr)) {
+                        tmpCell.myLevel_gt0_inAdmissibles.add(pointingNr);
+
+                        let localAdded = !oldInAdmissibles.equals(tmpCell.myLevel_gt0_inAdmissibles);
+                        inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
+
+                        if (localAdded) {
+                            tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairs.add(pointingNr);
+                            let pointingPairInfo = {
+                                pNr: pointingNr,
+                                pVector: pointingVector,
+                                rowCol: this.sudoCols[colIndex]
+                            }
+                            tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairsInfo.set(pointingNr, pointingPairInfo);
+                        }
+                    }
+                }
+            }
+        }
+        return inAdmissiblesAdded;
+    }
 
     derive_inAdmissiblesFromOverlapping() {
         let tmpBlock = null;
@@ -4185,7 +4403,7 @@ class SudokuCellView extends SudokuView {
                     const [pairInfo] = tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
                     pairInfo.collection.myCells.forEach(cell => {
                         if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
-                            cell.myView.setBorderRedSelected();
+                            cell.myView.setBorderGreenSelected();
                         } else {
                             cell.myView.setBorderSelected();
                         }
@@ -4207,6 +4425,25 @@ class SudokuCellView extends SudokuView {
                 });
 
                 sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Überschneidung');
+                return;
+            }
+
+
+            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+                tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairs.size > 0) {
+
+                let info = tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairsInfo.get(adMissibleNrSelected);
+                info.rowCol.myCells.forEach(cell => {
+                    cell.myView.setBorderSelected();
+                });
+                info.pVector.myCells.forEach(cell => {
+                    if (cell.getValue() == '0' && cell.getTotalAdmissibles().has(adMissibleNrSelected)) {
+                        cell.myView.unsetSelected();
+                        cell.myView.setBorderGreenSelected();
+                    }
+                })
+
+                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Pointing Pair');
                 return;
             }
         }
@@ -4304,6 +4541,9 @@ class SudokuCell extends SudokuModel {
         this.myLevel_gt0_inAdmissiblesFromOverlapping = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromOverlappingInfo = new Map();
 
+        this.myLevel_gt0_inAdmissiblesFromPointingPairs = new SudokuSet();
+        this.myLevel_gt0_inAdmissiblesFromPointingPairsInfo = new Map();
+
         this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
 
@@ -4315,7 +4555,18 @@ class SudokuCell extends SudokuModel {
         // this.myIndirectNecessarys = new SudokuSet();
         // this.myIndirectNecessaryCollections = new Map();
     }
-
+    // Testen
+    logCell() {
+        console.log('      Index: ' + this.myIndex);
+        if (this.getValue() == '0') {
+            console.log('      Admissibles: ')
+            this.getAdmissibles().forEach(adm => {
+                console.log('          adm: ' + adm);
+            })
+        } else {
+            console.log('      Value = ' + this.getValue());
+        }
+    }
     // ===================================================================
     // Getter
     // ===================================================================
@@ -4351,9 +4602,13 @@ class SudokuCell extends SudokuModel {
             this.myLevel_0_inAdmissibles);
     }
     getTotalAdmissibles() {
-        // Die zulässigen Zahlen einer Zelle sind das Komplement der unzulässigen Zahlen
-        return new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
-            this.getTotalInAdmissibles());
+        if (this.getValue() == '0') {
+            // Die zulässigen Zahlen einer Zelle sind das Komplement der unzulässigen Zahlen
+            return new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
+                this.getTotalInAdmissibles());
+        } else {
+            return new SudokuSet();
+        }
     }
 
     getNecessarys() {
@@ -4488,6 +4743,10 @@ class SudokuCell extends SudokuModel {
         this.myLevel_gt0_inAdmissiblesFromHiddenPairs = new Map();
         this.myLevel_gt0_inAdmissiblesFromOverlapping = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromOverlappingInfo = new Map();
+
+        this.myLevel_gt0_inAdmissiblesFromPointingPairs = new SudokuSet();
+        this.myLevel_gt0_inAdmissiblesFromPointingPairsInfo = new Map();
+
 
         this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
