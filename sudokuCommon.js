@@ -3389,11 +3389,6 @@ class SudokuGrid extends SudokuModel {
             // derive_inAdmissiblesFromSingles kann es nicht mehr geben,
             // aus dem gleichen Grund.
 
-            if (this.derive_inAdmissiblesFromPointingPairs()) {
-                inAdmissiblesAdded = true;
-            }
-
-            /*
             if (this.derive_inAdmissiblesFromHiddenPairs()) {
                 inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromNakedPairs()) {
@@ -3403,8 +3398,7 @@ class SudokuGrid extends SudokuModel {
             } else if (this.derive_inAdmissiblesFromPointingPairs()) {
                 inAdmissiblesAdded = true;
             }
-    
-            */
+
         }
     }
 
@@ -3422,10 +3416,10 @@ class SudokuGrid extends SudokuModel {
         let c5 = false;
 
         while (inAdmissiblesAdded && !this.isInsolvable()) {
-            /*    c4 = this.derive_inAdmissiblesFromSingles();
-                c1 = this.derive_inAdmissiblesFromHiddenPairs();
-                c2 = this.derive_inAdmissiblesFromNakedPairs();
-                c3 = this.derive_inAdmissiblesFromOverlapping(); */
+            c4 = this.derive_inAdmissiblesFromSingles();
+            c1 = this.derive_inAdmissiblesFromHiddenPairs();
+            c2 = this.derive_inAdmissiblesFromNakedPairs();
+            c3 = this.derive_inAdmissiblesFromOverlapping();
             c5 = this.derive_inAdmissiblesFromPointingPairs();
             inAdmissiblesAdded = c1 || c2 || c3 || c4 || c5;
         }
@@ -4334,7 +4328,7 @@ class SudokuCellView extends SudokuView {
                     const [pairInfo] = tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
                     pairInfo.collection.myCells.forEach(cell => {
                         if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
-                            cell.myView.setBorderGreenSelected();
+                            cell.myView.setBorderRedSelected();
                         } else {
                             cell.myView.setBorderSelected();
                         }
@@ -4370,7 +4364,7 @@ class SudokuCellView extends SudokuView {
                 info.pVector.myCells.forEach(cell => {
                     if (cell.getValue() == '0' && cell.getTotalAdmissibles().has(adMissibleNrSelected)) {
                         cell.myView.unsetSelected();
-                        cell.myView.setBorderGreenSelected();
+                        cell.myView.setBorderRedSelected();
                     }
                 })
 
