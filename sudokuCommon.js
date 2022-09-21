@@ -3393,7 +3393,7 @@ class SudokuGrid extends SudokuModel {
                 inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromNakedPairs()) {
                 inAdmissiblesAdded = true;
-            } else if (this.derive_inAdmissiblesFromOverlapping()) {
+            } else if (this.derive_inAdmissiblesFromIntersection()) {
                 inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromPointingPairs()) {
                 inAdmissiblesAdded = true;
@@ -3419,7 +3419,7 @@ class SudokuGrid extends SudokuModel {
             c4 = this.derive_inAdmissiblesFromSingles();
             c1 = this.derive_inAdmissiblesFromHiddenPairs();
             c2 = this.derive_inAdmissiblesFromNakedPairs();
-            c3 = this.derive_inAdmissiblesFromOverlapping();
+            c3 = this.derive_inAdmissiblesFromIntersection();
             c5 = this.derive_inAdmissiblesFromPointingPairs();
             inAdmissiblesAdded = c1 || c2 || c3 || c4 || c5;
         }
@@ -3570,13 +3570,13 @@ class SudokuGrid extends SudokuModel {
                         let newInAdmissibles =
                             tmpCell.myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
                         // Die Liste der indirekt unzulässigen verursacht von overlap wird gesetzt
-                        tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping = newInAdmissibles;
+                        tmpCell.myLevel_gt0_inAdmissiblesFromIntersection = newInAdmissibles;
                         newInAdmissibles.forEach(inAdNr => {
                             let overlapInfo = {
                                 block: tmpBlock,
                                 rowCol: strongRow
                             }
-                            tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo.set(inAdNr, overlapInfo);
+                            tmpCell.myLevel_gt0_inAdmissiblesFromIntersectionInfo.set(inAdNr, overlapInfo);
                         })
                     }
                 }
@@ -3607,14 +3607,14 @@ class SudokuGrid extends SudokuModel {
                     if (localAdded) {
                         let newInAdmissibles =
                             tmpCell.myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
-                        tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping = newInAdmissibles;
+                        tmpCell.myLevel_gt0_inAdmissiblesFromIntersection = newInAdmissibles;
 
                         newInAdmissibles.forEach(inAdNr => {
                             let overlapInfo = {
                                 block: tmpBlock,
                                 rowCol: strongCol
                             }
-                            tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo.set(inAdNr, overlapInfo);
+                            tmpCell.myLevel_gt0_inAdmissiblesFromIntersectionInfo.set(inAdNr, overlapInfo);
                         })
                     }
                 }
@@ -3731,7 +3731,7 @@ class SudokuGrid extends SudokuModel {
         return inAdmissiblesAdded;
     }
 
-    derive_inAdmissiblesFromOverlapping() {
+    derive_inAdmissiblesFromIntersection() {
         let tmpBlock = null;
         let tmpRow = null;
         let tmpCol = null;
@@ -4339,9 +4339,9 @@ class SudokuCellView extends SudokuView {
             }
 
             if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-                tmpCell.myLevel_gt0_inAdmissiblesFromOverlapping.size > 0) {
+                tmpCell.myLevel_gt0_inAdmissiblesFromIntersection.size > 0) {
 
-                let info = tmpCell.myLevel_gt0_inAdmissiblesFromOverlappingInfo.get(adMissibleNrSelected);
+                let info = tmpCell.myLevel_gt0_inAdmissiblesFromIntersectionInfo.get(adMissibleNrSelected);
                 info.block.myCells.forEach(cell => {
                     cell.myView.setBorderSelected();
                 });
@@ -4463,8 +4463,8 @@ class SudokuCell extends SudokuModel {
 
         this.myLevel_gt0_inAdmissiblesFromPairs = new Map();
         this.myLevel_gt0_inAdmissiblesFromHiddenPairs = new Map();
-        this.myLevel_gt0_inAdmissiblesFromOverlapping = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesFromOverlappingInfo = new Map();
+        this.myLevel_gt0_inAdmissiblesFromIntersection = new SudokuSet();
+        this.myLevel_gt0_inAdmissiblesFromIntersectionInfo = new Map();
 
         this.myLevel_gt0_inAdmissiblesFromPointingPairs = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromPointingPairsInfo = new Map();
@@ -4655,12 +4655,10 @@ class SudokuCell extends SudokuModel {
 
         this.myLevel_gt0_inAdmissiblesFromPairs = new Map();
         this.myLevel_gt0_inAdmissiblesFromHiddenPairs = new Map();
-        this.myLevel_gt0_inAdmissiblesFromOverlapping = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesFromOverlappingInfo = new Map();
-
+        this.myLevel_gt0_inAdmissiblesFromIntersection = new SudokuSet();
+        this.myLevel_gt0_inAdmissiblesFromIntersectionInfo = new Map();
         this.myLevel_gt0_inAdmissiblesFromPointingPairs = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromPointingPairsInfo = new Map();
-
 
         this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
         this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
