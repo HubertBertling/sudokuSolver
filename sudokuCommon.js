@@ -3548,7 +3548,7 @@ class SudokuGrid extends SudokuModel {
 
     // Funktionen für die Überschneidungstechnik
 
-    cellOverlapInRowEliminate(tmpBlock, row, strongRow, strongNumbers) {
+    cellIntersectionInRowEliminate(tmpBlock, row, strongRow, strongNumbers) {
         // Eliminiere die strongNumbers in row des Blocks tmpBlock
         let inAdmissiblesAdded = false;
 
@@ -3559,11 +3559,11 @@ class SudokuGrid extends SudokuModel {
             if (tmpCell.getValue() == '0') {
                 let oldInAdmissibles = new SudokuSet(tmpCell.myLevel_gt0_inAdmissibles);
                 let tmpAdmissibles = tmpCell.getTotalAdmissibles();
-                let inAdmissiblesFromOverlap = tmpAdmissibles.intersection(strongNumbers);
+                let inAdmissiblesFromIntersection = tmpAdmissibles.intersection(strongNumbers);
 
-                if (inAdmissiblesFromOverlap.size > 0) {
+                if (inAdmissiblesFromIntersection.size > 0) {
                     tmpCell.myLevel_gt0_inAdmissibles =
-                        tmpCell.myLevel_gt0_inAdmissibles.union(inAdmissiblesFromOverlap);
+                        tmpCell.myLevel_gt0_inAdmissibles.union(inAdmissiblesFromIntersection);
                     let localAdded = !oldInAdmissibles.equals(tmpCell.myLevel_gt0_inAdmissibles);
                     inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
                     if (localAdded) {
@@ -3585,7 +3585,7 @@ class SudokuGrid extends SudokuModel {
         return inAdmissiblesAdded;
     }
 
-    cellOverlapInColEliminate(tmpBlock, col, strongCol, strongNumbers) {
+    cellIntersectionInColEliminate(tmpBlock, col, strongCol, strongNumbers) {
         // Eliminiere die strongNumbers in col des Blocks tmpBlock
         let inAdmissiblesAdded = false;
 
@@ -3596,12 +3596,12 @@ class SudokuGrid extends SudokuModel {
             if (tmpCell.getValue() == '0') {
                 let oldInAdmissibles = new SudokuSet(tmpCell.myLevel_gt0_inAdmissibles);
                 let tmpAdmissibles = tmpCell.getTotalAdmissibles();
-                let inAdmissiblesFromOverlap = tmpAdmissibles.intersection(strongNumbers);
+                let inAdmissiblesFromIntersection = tmpAdmissibles.intersection(strongNumbers);
 
-                if (inAdmissiblesFromOverlap.size > 0) {
+                if (inAdmissiblesFromIntersection.size > 0) {
 
                     tmpCell.myLevel_gt0_inAdmissibles =
-                        tmpCell.myLevel_gt0_inAdmissibles.union(inAdmissiblesFromOverlap);
+                        tmpCell.myLevel_gt0_inAdmissibles.union(inAdmissiblesFromIntersection);
                     let localAdded = !oldInAdmissibles.equals(tmpCell.myLevel_gt0_inAdmissibles);
                     inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
                     if (localAdded) {
@@ -3782,10 +3782,10 @@ class SudokuGrid extends SudokuModel {
                             row2 = 1;
                         }
                     }
-                    let newInAdmissiblesAdded1 = this.cellOverlapInRowEliminate(tmpBlock, row1, tmpRow, strongNumbersInRowInsideBlock);
+                    let newInAdmissiblesAdded1 = this.cellIntersectionInRowEliminate(tmpBlock, row1, tmpRow, strongNumbersInRowInsideBlock);
                     inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded1;
 
-                    let newInAdmissiblesAdded2 = this.cellOverlapInRowEliminate(tmpBlock, row2, tmpRow, strongNumbersInRowInsideBlock);
+                    let newInAdmissiblesAdded2 = this.cellIntersectionInRowEliminate(tmpBlock, row2, tmpRow, strongNumbersInRowInsideBlock);
                     inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded2;
                 }
             }
@@ -3831,10 +3831,10 @@ class SudokuGrid extends SudokuModel {
                         }
                     }
                     // col1 bereinigen            
-                    let newInAdmissiblesAdded1 = this.cellOverlapInColEliminate(tmpBlock, col1, tmpCol, strongNumbersInColInsideBlock);
+                    let newInAdmissiblesAdded1 = this.cellIntersectionInColEliminate(tmpBlock, col1, tmpCol, strongNumbersInColInsideBlock);
                     inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded1;
 
-                    let newInAdmissiblesAdded2 = this.cellOverlapInColEliminate(tmpBlock, col2, tmpCol, strongNumbersInColInsideBlock);
+                    let newInAdmissiblesAdded2 = this.cellIntersectionInColEliminate(tmpBlock, col2, tmpCol, strongNumbersInColInsideBlock);
                     inAdmissiblesAdded = inAdmissiblesAdded || newInAdmissiblesAdded2;
                 }
             }
