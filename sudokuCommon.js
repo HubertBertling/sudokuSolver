@@ -275,6 +275,10 @@ class SudokuSolverController {
             this.statisticBtnPressed();
         });
 
+        document.querySelector('#btn-print').addEventListener('click', () => {
+            this.printBtnPressed();
+        });
+
         document.getElementById('btn-save-mobile').addEventListener('click', () => {
             sudoApp.mySolver.myStepper.stopAsyncLoop();
             sudoApp.mySolverController.mySuccessDialog.close();
@@ -384,6 +388,26 @@ class SudokuSolverController {
             sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, playedPuzzleDbElement);
             // Wechsle in den DB-Reiter
             document.getElementById("puzzle-db-tab").click();
+        }
+    }
+
+    printBtnPressed() {
+        this.mySolver.autoExecStop();
+        this.mySuccessDialog.close();
+        let playedPuzzleDbElement = this.mySolver.myGrid.getPlayedPuzzleDbElement();
+
+        let puzzleId = this.mySolver.myGrid.loadedPuzzleId;
+        if (puzzleId == '' || puzzleId == '-') {
+            let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+            // this.myPuzzleSaveDialog.open(newPuzzelId, '');
+            //Speichere den named Zustand
+            sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzelId, 'Druck (' + new Date().toLocaleString('de-DE') + ')', playedPuzzleDbElement);
+            
+            document.getElementById("puzzle-db-tab").click();
+            sudoApp.myPuzzleDBController.printBtnPressed();
+        } else {
+            document.getElementById("puzzle-db-tab").click();
+            sudoApp.myPuzzleDBController.printBtnPressed();
         }
     }
 

@@ -35,7 +35,7 @@
                         <div class="main-sudoku-grid" id="main-sudoku-grid">
                             <!-- block 0 -->
                         </div>
-                        
+
                         <div class="reasonInsolvability" id="reasonInsolvability">
 
                         </div>
@@ -48,7 +48,7 @@
                         <div class="evaluations" id="evaluations">
 
                         </div>
-                         <div class="progress-box" id="progress-box">
+                        <div class="progress-box" id="progress-box">
                             <div class="progress-block">
                                 <div class="step-count-box">
                                     <div class="step-count" id="step-count">
@@ -133,6 +133,7 @@
                                 <button class="pc-btn btn-generate" id="btn-generate">Neues Puzzle</button>
                                 <button class="pc-btn" id="btn-save">Puzzle speichern</button>
                                 <button class="pc-btn" id="btn-statistic">Puzzle-Daten aktualisieren</button>
+                                <button class="pc-btn" id="btn-print">Drucken</button>
                             </div>
                         </div>
                         <div class="eval-btn-block last-row">
@@ -254,10 +255,12 @@
                     <!--Die 4 buttons unterhalb der Puzzle-Datenbanktabelle -->
                     <button class="pc-btn noprint" id="pz-btn-load">Laden
                     </button>
-                    <button class="pc-btn noprint" id="pz-btn-previous" onclick="sudoApp.myPuzzleDBController.previousBtnPressed()"><img
+                    <button class="pc-btn noprint" id="pz-btn-previous"
+                        onclick="sudoApp.myPuzzleDBController.previousBtnPressed()"><img
                             src="images/pfeilrueckwaerts.png" class="forward-backward-image"></button>
-                    <button class="pc-btn noprint" id="pz-btn-next" onclick="sudoApp.myPuzzleDBController.nextBtnPressed()"><img
-                            src="images/pfeilvorwaerts.png" class="forward-backward-image"></button>
+                    <button class="pc-btn noprint" id="pz-btn-next"
+                        onclick="sudoApp.myPuzzleDBController.nextBtnPressed()"><img src="images/pfeilvorwaerts.png"
+                            class="forward-backward-image"></button>
                     <button class="pc-btn noprint" id="pz-btn-delete"
                         onclick="sudoApp.myPuzzleDBController.deleteBtnPressed()">Löschen</button>
                 </div>
@@ -286,7 +289,8 @@
                     </div>
                 </div>
                 <!--In der Druckausgabe wird der Druck-Button unterdrückt-->
-                <button class="pc-btn noprint" id="pz-btn-print" onclick="sudoApp.myPuzzleDBController.printBtnPressed()">Drucken</button>
+                <button class="pc-btn noprint" id="pz-btn-print"
+                    onclick="sudoApp.myPuzzleDBController.printBtnPressed()">Drucken</button>
             </div>
             <!--Der Inhalt des Reiters Hilfe-->
             <div id="help" class="tabcontent tabhelp">
