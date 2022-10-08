@@ -262,3 +262,11 @@ Beim Abspeichern kann dem Puzzle ein Name gegeben werden. Automatisch erhält es
 Auf dem Smartphone ist der Solver/Generator als Web-Anwendung verfügbar. Also in einem Browser die URL eingeben. Die Funktionalität ist bis auf die Puzzle-Datenbank identisch.
 
 In der Smartphone-Version kann das aktuelle Puzzle gespeichert werden. Dabei wird ein eventuell schon vorher gespeichertes Puzzle überschrieben. Es kann also nur ein Puzzle gespeichert werden. Dies ermöglicht die Speicherung eines aktuellen Puzzles, um es vielleicht später analysieren zu können.
+
+## Sudoku im Internet
+
+Eine herausragende Seite für Sudoku-Interessierte ist die Seite von [Andrew Stuart](https://www.sudokuwiki.org/Main_Page). Dort findest Du einen kompletten Überblick über logische Lösungsstrategien für klassisches Sudoku und auch einen Überblick über nicht klassische Sudoku-Varianten.
+
+Stuarts Sudoku-Solver stellt die Anwendung der Lösungsstrategien in den Mittelpunkt. Ein Lösungsschritt besteht aus der Anwendung einer logischen Schlussregel. Das kann die Elimination von Kandidaten in mehreren Zellen sein oder die Setzung von notwendigen Nummern in mehreren Zellen gleichzeitig. Puzzles, die keine logische Lösung haben, löst der Solver (absichtlich) nicht.
+
+Stuarts Sudoku-Solver richtet sich an Sudoku-Strategie-Experten bzw. an solche, die es werden wollen. Der von mir präsentierte Solver/Generator wendet sich an den Gelegenheits-Sudoku-Spieler. Sie bekommen auf jeden Fall eine Lösung ihres Puzzles. Ebenso eine Erklärung einfacher Strategien, wenn sie bei der Lösung angewendet werden.
