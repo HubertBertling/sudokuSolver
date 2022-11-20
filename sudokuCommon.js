@@ -402,7 +402,7 @@ class SudokuSolverController {
             // this.myPuzzleSaveDialog.open(newPuzzelId, '');
             //Speichere den named Zustand
             sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzelId, 'Druck (' + new Date().toLocaleString('de-DE') + ')', playedPuzzleDbElement);
-            
+
             document.getElementById("puzzle-db-tab").click();
             sudoApp.myPuzzleDBController.printBtnPressed();
         } else {
@@ -413,6 +413,7 @@ class SudokuSolverController {
 
     evalTypeSelected(value) {
         this.mySolver.evalTypeSelected(value);
+        this.mySolver.notify();
     }
 
     savePuzzleDlgOKPressed() {
@@ -548,6 +549,10 @@ class SudokuSolverView extends SudokuView {
                 }
                 break;
             }
+            case 'evaluationType': {
+                this.displayEvalType(aspectValue);
+                break;
+            }
             default: {
                 throw new Error('Unknown aspect: ' + aspect);
             }
@@ -593,6 +598,35 @@ class SudokuSolverView extends SudokuView {
             backwardNode.classList.add('checked');
         }
     }
+
+    displayEvalType(et) {
+        let noEvalNode = document.getElementById('no-eval');
+        let lazyNode = document.getElementById('lazy');
+        let strictPlusNode = document.getElementById('strict-plus');
+        let strictMinusNode = document.getElementById('strict-minus');
+        switch (et) {
+            case 'no-eval': {
+                noEvalNode.checked = true;
+                break;
+            }
+            case 'lazy': {
+                lazyNode.checked = true;
+                break;
+            }
+            case 'strict-plus': {
+                strictPlusNode.checked = true;
+                break;
+            }
+            case 'no-strict-minus': {
+                strictMinusNode.checked = true;
+                break;
+            }           
+            default: {
+                throw new Error('Unknown eval type: ' + et);
+            }
+        }
+      }
+
 
     displayProgress() {
         let myGrid = this.getMyModel().myGrid;
@@ -749,6 +783,10 @@ class SudokuCalculator extends SudokuModel {
         // dass die Looper gestartet werden können.
         this.setGamePhase('play');
         this.isInAutoExecMode = true;
+        if (this.myGrid.evalType == 'no-eval') {
+            this.myGrid.setEvalType('lazy');
+            this.notifyAspect('evaluationType', 'lazy');
+        }
         this.myGrid.clearAutoExecCellInfos();
         this.myGrid.deselect();
         this.myStepper.init();
@@ -2983,7 +3021,7 @@ class SudokuGrid extends SudokuModel {
         this.sudoRows = [];
         this.sudoCols = [];
 
-        this.evalType = 'lazy';
+        this.evalType = 'no-eval';
         // this.init();
     }
 
@@ -3157,6 +3195,7 @@ class SudokuGrid extends SudokuModel {
     // Other methods
     // ========================================================
     evaluateMatrix() {
+        if (this.evalType == 'no-eval') this.clearEvaluations();
         if (this.evalType == 'lazy') this.evaluateGridLazy();
         if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') this.evaluateGridStrict();
     }
@@ -3873,6 +3912,7 @@ class SudokuGrid extends SudokuModel {
         for (let i = 0; i < 81; i++) {
             let tmpCell = this.sudoCells[i];
             tmpCell.calculate_level_0_inAdmissibles();
+            tmpCell.candidatesEvaluated = true;
         }
     }
 
@@ -3994,7 +4034,7 @@ class SudokuCellView extends SudokuView {
         let tmpCellNode = document.createElement("div");
         tmpCellNode.setAttribute("class", "sudoku-grid-cell");
         this.setMyNode(tmpCellNode);
-        // Neue Zelle in ihre Block einhängen
+        // Neue Zelle in ihren Block einhängen
         let myCell = this.getMyModel();
         let myBlock = myCell.myBlock;
         let myBlockView = myBlock.getMyView();
@@ -4011,9 +4051,14 @@ class SudokuCellView extends SudokuView {
         let cell = this.getMyModel();
         if (cell.myValue == '0') {
             // Die Zelle ist noch nicht gesetzt
-            this.displayAdmissibles();
-            this.displayNecessary(cell.myNecessarys);
-            this.displayLevel_gt0_inAdmissibles(cell.myLevel_gt0_inAdmissibles, cell.myNecessarys);
+            if (cell.candidatesEvaluated) {
+                this.displayAdmissibles();
+                this.displayNecessary(cell.myNecessarys);
+                this.displayLevel_gt0_inAdmissibles(cell.myLevel_gt0_inAdmissibles, cell.myNecessarys);
+            } else {
+                // Leere Zelle anzeigen
+                this.myNode.classList.add('nested');
+            }
         } else {
             // Die Zelle ist mit einer Nummer belegt
             // Setze die Klassifizierung in der DOM-Zelle
@@ -4673,6 +4718,8 @@ class SudokuCell extends SudokuModel {
     }
 
     clearEvaluations() {
+        // 
+        this.candidatesEvaluated = false;
         // Speichert die aktuell unzulässigen Zahlen für diese Zelle
         this.myLevel_0_inAdmissibles = new SudokuSet();
         this.myLevel_gt0_inAdmissibles = new SudokuSet();
