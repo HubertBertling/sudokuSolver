@@ -603,13 +603,19 @@ class SudokuSolverView extends SudokuView {
         let lazyNode = document.getElementById('lazy');
         let strictPlusNode = document.getElementById('strict-plus');
         let strictMinusNode = document.getElementById('strict-minus');
+      
+        let mobileNoEvalNode = document.getElementById('mobile-no-eval');
+        let mobileLazyNode = document.getElementById('mobile-lazy');
+        let mobileStrictMinusNode = document.getElementById('mobile-strict-minus');
         switch (et) {
             case 'no-eval': {
                 noEvalNode.checked = true;
+                mobileNoEvalNode.checked = true;
                 break;
             }
             case 'lazy': {
                 lazyNode.checked = true;
+                mobileLazyNode.checked = true;
                 break;
             }
             case 'strict-plus': {
@@ -618,6 +624,7 @@ class SudokuSolverView extends SudokuView {
             }
             case 'no-strict-minus': {
                 strictMinusNode.checked = true;
+                mobileStrictMinusNode.checked = true;
                 break;
             }           
             default: {
