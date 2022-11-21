@@ -369,12 +369,9 @@ class SudokuSolverController {
     }
 
     saveBtnPressed() {
-        // this.mySolver.reset();
         this.mySuccessDialog.close();
         let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-        this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');
-        // document.getElementById("puzzle-db-tab").click();
-            
+        this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');      
     }
 
     statisticBtnPressed() {
