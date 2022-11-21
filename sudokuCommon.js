@@ -369,10 +369,12 @@ class SudokuSolverController {
     }
 
     saveBtnPressed() {
-        this.mySolver.reset();
+        // this.mySolver.reset();
         this.mySuccessDialog.close();
         let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-        this.myPuzzleSaveDialog.open(newPuzzelId, '');
+        this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');
+        // document.getElementById("puzzle-db-tab").click();
+            
     }
 
     statisticBtnPressed() {
@@ -383,7 +385,7 @@ class SudokuSolverController {
         let puzzleId = this.mySolver.myGrid.loadedPuzzleId;
         if (puzzleId == '' || puzzleId == '-') {
             let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-            this.myPuzzleSaveDialog.open(newPuzzelId, '');
+            this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');
         } else {
             sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, playedPuzzleDbElement);
             // Wechsle in den DB-Reiter
@@ -972,6 +974,8 @@ class SudokuSolver extends SudokuCalculator {
             let puzzle = JSON.parse(e.data);
             // Initialisierungen vor dem Laden
             sudoApp.mySolver.loadPuzzle('-', puzzle);
+            // Gelöstes generiertes Puzzle zurücksetzen
+            sudoApp.mySolver.reset();
             sudoApp.mySolver.notify();
             sudoApp.myTabView.openGrid();
             // Der sich drehende Loader wird gestoppt    
@@ -3047,6 +3051,9 @@ class SudokuGrid extends SudokuModel {
     // ========================================================
     setEvalType(et) {
         this.evalType = et;
+        if(et == 'no-eval') {
+            this.myCalculator.autoExecStop();          
+        }
         this.evaluateMatrix();
     }
 
@@ -3142,12 +3149,13 @@ class SudokuGrid extends SudokuModel {
         );
         puzzleDbElement.defCount = 0;
         for (let i = 0; i < 81; i++) {
+            puzzleDbElement.puzzle[i] = {
+                cellValue: this.sudoCells[i].getValue(),
+                cellPhase: this.sudoCells[i].getPhase()
+            }
             if (this.sudoCells[i].getPhase() == 'define') {
                 puzzleDbElement.defCount++;
-                puzzleDbElement.puzzle[i] = this.sudoCells[i].getValue();
-            } else {
-                puzzleDbElement.puzzle[i] = '0';
-            }
+            } 
         }
         // Status setzen
         puzzleDbElement.level = this.difficulty;
@@ -3155,7 +3163,7 @@ class SudokuGrid extends SudokuModel {
             puzzleDbElement.status = 'gelöst';
             if (this.evalType == 'lazy') {
                 puzzleDbElement.stepsLazy = this.steps;
-            } else {
+            } else if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') {
                 puzzleDbElement.stepsStrict = this.steps;
             }
             puzzleDbElement.backTracks = this.backTracks;
@@ -3263,11 +3271,7 @@ class SudokuGrid extends SudokuModel {
         this.backTracks = puzzleDbElement.backTracks;
         let puzzle = puzzleDbElement.puzzle;
         for (let i = 0; i < 81; i++) {
-            if (puzzle[i] == '0') {
-                this.sudoCells[i].manualSetValue(puzzle[i], '');
-            } else {
-                this.sudoCells[i].manualSetValue(puzzle[i], 'define');
-            }
+            this.sudoCells[i].manualSetValue(puzzle[i].cellValue, puzzle[i].cellPhase);
         }
         this.evaluateMatrix();
     }
@@ -5328,7 +5332,7 @@ class SudokuPuzzleDB {
     displayClear() {
         this.displayClearPZNr();
         this.displayClearTable('screen-puzzle');
-        this.displayClearTable('solution');
+        // this.displayClearTable('solution');
     }
 
 
@@ -5340,7 +5344,6 @@ class SudokuPuzzleDB {
         let selectedPZ = puzzleMap.get(key);
         this.displayIdRow(key, selectedPZ.name, selectedPZ.level);
         this.displayTable('screen-puzzle', selectedPZ.puzzle);
-        this.displayTable('solution', selectedPZ.solution);
         this.displayDefineCounter(selectedPZ);
     }
     displayIdRow(uid, name, level) {
@@ -5371,19 +5374,30 @@ class SudokuPuzzleDB {
             for (let col = 0; col < 9; col++) {
                 let cellField = document.createElement('div')
                 cellField.classList.add('cell-field');
-                if (tableArray[k] == '0') {
+                if (tableArray[k].cellValue == '0') {
                     let currentText = document.createTextNode('');
                     cellField.appendChild(currentText);
                 } else {
-                    let currentText = document.createTextNode(tableArray[k]);
+                    let currentText = document.createTextNode(tableArray[k].cellValue);
                     cellField.appendChild(currentText);
+                    if (tableArray[k].cellPhase == 'define') {
+                        cellField.style.color = 'blue';
+                        cellField.style.fontWeight = 'bold';
+                    }
                 }
-                cellField.style.border = "1px solid white";
+             /*   cellField.style.border = "1px solid white";
                 if (row === 2 || row === 5) {
                     cellField.style.borderBottom = "4px solid white";
                 }
                 if (col === 2 || col === 5) {
                     cellField.style.borderRight = "4px solid white";
+                }  */
+                cellField.style.border = "1px solid darkgrey";
+                if (row === 2 || row === 5) {
+                    cellField.style.borderBottom = "2px solid black";
+                }
+                if (col === 2 || col === 5) {
+                    cellField.style.borderRight = "2px solid black";
                 }
                 table.appendChild(cellField);
                 k++;
@@ -5399,12 +5413,16 @@ class SudokuPuzzleDB {
             for (let col = 0; col < 9; col++) {
                 let cellField = document.createElement('div')
                 cellField.classList.add('cell-field');
-                if (tableArray[k] == '0') {
+                if (tableArray[k].cellValue == '0') {
                     let currentText = document.createTextNode('');
                     cellField.appendChild(currentText);
                 } else {
-                    let currentText = document.createTextNode(tableArray[k]);
+                    let currentText = document.createTextNode(tableArray[k].cellValue);
                     cellField.appendChild(currentText);
+                    if (tableArray[k].cellPhase == 'define') {
+                        cellField.style.color = 'blue';
+                        cellField.style.fontWeight = 'bold';
+                    }
                 }
                 cellField.style.border = "1px solid darkgrey";
                 if (row === 2 || row === 5) {

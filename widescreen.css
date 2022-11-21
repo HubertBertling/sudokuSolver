@@ -829,13 +829,13 @@ input[readonly] {
 }
 
 .cell-field {
+    font-size: 1.8rem;
+    font-weight: bold;
     position: relative;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     display: grid;
-    background-color: grey;
     place-items: center;
-    color: white;
 }
 
 #pz-btn-print {
