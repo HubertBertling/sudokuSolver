@@ -3275,7 +3275,15 @@ class SudokuGrid extends SudokuModel {
         this.backTracks = puzzleDbElement.backTracks;
         let puzzle = puzzleDbElement.puzzle;
         for (let i = 0; i < 81; i++) {
-            this.sudoCells[i].manualSetValue(puzzle[i].cellValue, puzzle[i].cellPhase);
+            let tmpCellValue = puzzle[i].cellValue;
+            let tmpCellPhase = 'define';
+            if (tmpCellValue == undefined) {
+                // Altes Format lesen
+                tmpCellValue = puzzle[i];
+            } else {
+                tmpCellPhase = puzzle[i].cellPhase;
+            }
+            this.sudoCells[i].manualSetValue(tmpCellValue, tmpCellPhase);
         }
         this.evaluateMatrix();
     }
