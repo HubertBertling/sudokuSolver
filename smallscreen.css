@@ -135,7 +135,8 @@ html {
     width: 9.8vw;
     /* border-radius: var(--border-radius); */
     display: grid;
-    font-size: var(--font-size-btn);
+    /* font-size: var(--font-size-btn); */
+    font-size: 1.8rem;
     place-items: center;
     margin: 0.05rem; 
 }
