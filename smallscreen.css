@@ -20,6 +20,7 @@
     --played-cell-color: #0d1117;
 
     --nested-cell-bg-color: #ebdaa4;
+    /*--nested-cell-bg-color: white; */
     --nested-cell-color: black;
 
     --selected-cell-bg-color: black;
@@ -116,25 +117,27 @@ html {
 .main-sudoku-grid {
     display: grid;
     grid-template-columns: repeat(3, auto);
+    background-color: black;
+    margin: 0.1em;
 }
 
 .sudoku-block {
     margin: 0.2rem;
     display: grid;
     grid-template-columns: repeat(3, auto);
-    border-radius: var(--border-radius);
+    /* border-radius: var(--border-radius); */
     place-items: center;
 }
 
 .sudoku-grid-cell {
     position: relative;
-    height: 9.5vw;
-    width: 9.5vw;
-    border-radius: var(--border-radius);
+    height: 9.8vw;
+    width: 9.8vw;
+    /* border-radius: var(--border-radius); */
     display: grid;
     font-size: var(--font-size-btn);
     place-items: center;
-    margin: 0.1rem;
+    margin: 0.05rem; 
 }
 
 .sudoku-grid-cell.define {
@@ -221,7 +224,7 @@ html {
     font-size: 0.9rem;
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-color);
-    border: 0.1rem solid #0050ff
+    /* border: 0.1rem solid grey;*/
 }
 
 .sudoku-grid-cell.selected {
