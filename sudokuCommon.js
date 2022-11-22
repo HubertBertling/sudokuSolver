@@ -4472,7 +4472,7 @@ class SudokuCellView extends SudokuView {
         // erfolgreich durch Backtracking die Puzzles lösen. Allerdings müssten sehr viel mehr Zellen
         // gesetzt werden, bis das ein vorhandener Widerspruch mit diesem Kriterium aufgedeckt würde.
         // Alle weiteren Kriterien dienen lediglich der früheren Aufdeckung von Widersprüchen.
-        if (cell.getValue() !== '0' && cell.myLevel_0_inAdmissibles.has(cell.getValue())) {
+        if (cell.getValue() !== '0' && cell.myDirectInAdmissibles().has(cell.getValue())) {
             cell.myInfluencers.forEach(influencerCell => {
                 if (influencerCell.getValue() == cell.getValue()) {
                     influencerCell.myView.displayCellError();
@@ -4760,16 +4760,24 @@ class SudokuCell extends SudokuModel {
     }
 
     calculate_level_0_inAdmissibles() {
-        // Level 0 unzulässige Nummern dieser Zelle sind Nummern,
+        // Level 0 unzulässige Nummern sind direkt unzulässige Nummern.
+        // Sie werden in der Zelle nicht mehr angezeigt
+        this.myLevel_0_inAdmissibles = this.myDirectInAdmissibles();
+        return this.myLevel_0_inAdmissibles;
+    }
+
+    myDirectInAdmissibles() {
+        // Direkt unzulässige Nummern dieser Zelle sind Nummern,
         // die an anderer Stelle in der Block, Zeile oder Spalte dieser Zelle
-        // gesetzt sind.Sie werden in der Zelle nicht mehr angezeigt
+        // gesetzt sind.
+        let tmpInAdmissibles = new SudokuSet();
         this.myInfluencers.forEach(influenceCell => {
             if (influenceCell.getValue() !== '0') {
                 // Die Einflusszelle ist gesetzt
-                this.myLevel_0_inAdmissibles.add(influenceCell.getValue());
+                tmpInAdmissibles.add(influenceCell.getValue());
             }
         })
-        return this.myLevel_0_inAdmissibles;
+        return tmpInAdmissibles;
     }
 
 
@@ -4856,7 +4864,7 @@ class SudokuCell extends SudokuModel {
     isInsolvable() {
         return (
             // 1) Die Nummer ist bereits einmal gesetzt.
-            (this.getValue() !== '0' && this.myLevel_0_inAdmissibles.has(this.getValue())) ||
+            (this.getValue() !== '0' && this.myDirectInAdmissibles().has(this.getValue())) ||
             // 2) Überhaupt keine zulässige Kandidaten mehr
             (this.getValue() == '0' && this.getTotalAdmissibles().size == 0) ||
             // 3) Gleichzeitig verschiedene notwendige Nummern
