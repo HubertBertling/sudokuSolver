@@ -45,7 +45,7 @@ Die nachfolgend verwendeten Begriffe sind im Laufe der Entwicklung dieses Solver
 |Zelle  |Bedeutung  |
 |---------|---------|
 |<img src="./images/definedCell.png" width="160px"/>|**Eine gegebene Nummer (Given):** In der Definitionsphase gesetzte Nummer.|
-|<img src="./images/playedCell.png" width="160px"/>|**Eime Lösungsnummer:** In der Lösungsphase gesetzte Nummer. In dieser Zelle wurde in der Lösungsphase manuell oder automatisch die Nummer 5 gesetzt. Wenn sie automatisch gesetzt wurde, wurde die automatische Ausführung des Solvers inzwischen gestoppt. Mit dem Stoppen der automatischen Ausführung wird in den Lösungszellen die Information über die automatische Ausführung gelöscht.|
+|<img src="./images/playedCell.png" width="160px"/>|**Eine Lösungsnummer:** In der Lösungsphase gesetzte Nummer. In dieser Zelle wurde in der Lösungsphase manuell oder automatisch die Nummer 5 gesetzt. Wenn sie automatisch gesetzt wurde, wurde die automatische Ausführung des Solvers inzwischen gestoppt. Mit dem Stoppen der automatischen Ausführung wird in den Lösungszellen die Information über die automatische Ausführung gelöscht.|
 |<img src="./images/auto1option.png" width="160px"/>|**Automatisch gesetzte Nummer (Nummer eindeutig):** Der Solver hat in dieser Zelle automatisch die Nummer 5 gesetzt. Und zwar in der 8. Setzung einer Nummer in der Tabelle.. Die Wahl der zu setzenden Nummer war eindeutig. D.h. Die Nummer war eine notwendige Nummer oder ein Single. Definitionen siehe weiter unten.|
 |<img src="./images/auto2option.png" width="160px"/>|**Automatisch gesetzte Nummer einer Auswahl (Erste Nummer von zwei Optionen):** Der Solver hat in dieser Zelle automatisch die Nummer 1 gesetzt. Und zwar in der 1. Setzung einer Nummer. Er musste zwischen den beiden Nummern 1 und 8 wählen. Der Solver wählt zunächst die Nummer 1. Wenn die Vervollständigung der Matrix gelingt, kommt die zweite Nummer nicht mehr zum Zuge. Gelingt die Vervollständigung nicht, kehrt der Automat zu dieser Zelle zurück und probiert die zweite Option 8. Die Option 8 wurde noch nicht probiert. Noch nicht abgearbeitete Nummern werden mit gelbem Hintergrund angezeigt.|
 |<img src="./images/auto3option.png" width="160px"/>|**Automatisch gesetzte Nummer einer Auswahl (Erste Nummer von mehr als zwei Optionen):** Der Solver hat in dieser Zelle automatisch die Nummer 2 gesetzt. Und zwar in der 11. Setzung einer Nummer. Er musste zwischen den Nummern 2, 3 und noch weiteren hier nicht sichtbaren durch den Stern repräsentierten Nummern wählen. Der Solver wählt zunächst die Nummer 2. Wenn die Vervollständigung der Matrix gelingt, kommt die zweite Nummer nicht mehr zum Zuge. Gelingt die Vervollständigung nicht, kehrt der Automat zu dieser Zelle zurück und probiert die zweite Option 3. Nach und nach werden die nicht sichtbaren Optionen angezeigt. In der Praxis kommt der Versuch einer dritten Option so gut wie überhaupt nicht vor, weil zuvor schon eine Lösung gefunden wurde.|
@@ -115,25 +115,41 @@ In fairen Puzzles kann man unzulässige Kandidaten allein durch logisches Schlie
 1. **Kriterium: Unzulässig wegen Überschneidung.** Ein Block und eine Spalte oder Reihe überschneiden sich. In der Spalte gibt es Nummern, die nur in den gemeinsamen Zellen mit dem Block auftauchen. Im Beispiel die 7. Damit es am Ende in der Spalte überhaupt eine 7 gibt, muss eine 7 in der Spalte gewählt werden. Dies wiederum bedeutet, dass die Nummern 7 in dem Block neben der Spalte gestrichen werden müssen.
 ![Überschneidung](./images/ueberschneidung.png)
 
-### Auswertungsmethoden
+### Methoden der Kandidatenauswertung
 
-Wenn die Anzahl unzulässiger Kandidaten (die roten Nummern) groß wird, wird es immer schwieriger, nackte Paare oder versteckte Paare zu erkennen. Siehe das nachfolgende Beispiel.
+Der Solver unterscheidet mehrere Methoden der Kandidatenauswertung.
 
-![strictplus](./images/strictplus.png)
+1. **Keine Kandidatenauswertung:** Der Solver arbeitet ohne Kandidaten. Diese Option ist wünschenswert, wenn der Spieler ohne Hilfe des Solvers eine manuelle Lösung des Puzzles suchen will. In diesem Modus werden in den Zellen keine Kandidaten angezeigt.
 
-Abhilfe schafft hier die Lazy-Auswertung.
+1. **Lazy Kandidatenauswertung:** Wenn die Anzahl unzulässiger Kandidaten (die roten Nummern) groß wird, wird es immer schwieriger, nackte Paare oder versteckte Paare zu erkennen. Die Lazy-Auswertungsmethode praktiziert eine verzögerte Auswertung. Die Auswertung erfolgt nur soweit, bis die nächste notwendige Nummer oder die nächste Single-Nummer oder die nächste versteckte Single-Nummer bestimmt ist. Nur im Lazy-Modus, sind die oben gezeigten Beispiele mit ihren Erläuterungen der Kandidatennummern möglich.
 
-Lazy1. **Lazy Auswertung:** Diese Auswertungsmethode praktiziert eine verzögerte Auswertung. Die Auswertung erfolgt nur soweit, bis die nächste notwendige Nummer oder die nächste Single-Nummer oder die nächste versteckte Single-Nummer bestimmt ist. Nur im Lazy-Modus, sind die oben gezeigten Beispiele mit ihren Erläuterungen der Kandidatennummern möglich.
-
-1. **Strikte Auswertung:** Diese  Auswertungsmethode führt eine vollständige Auswertung durch: Alle aktuell unzulässigen Kandidaten, alle notwendigen Nummern, alle Singles und versteckten Singles werden ermittelt.
+1. **Strikte Auswertung:** Diese Auswertungsmethode führt eine vollständige Auswertung durch: Alle aktuell unzulässigen Kandidaten, alle notwendigen Nummern, alle Singles und versteckten Singles werden ermittelt.
 
 Die strikte Auswertung kann in zwei Varianten angezeigt werden:
 
 1. **Strikt +**: Alle errechneten unzulässigen Kandidaten werden angezeigt (in roter Schrift). Bei sehr vielen unzulässigen Kandidaten wird das schnell sehr unübersichtlich, siehe das vorige Beispiel.
 
-1. **Strikt -** : Die errechneten unzulässigen Kandidaten werden ausgeblendet. Das nachfolgende Bild zeigt die vor vorige Tabelle mit dem Puzzle-Namen 'Schwer 2 Singles' im Strikt-Minus-Modus. ![Strikt Minus](./images/striktminus.png)
+1. **Strikt -** : Die errechneten unzulässigen Kandidaten werden ausgeblendet.
 
-In der Strikt-Minus-Tabelle dieses Beispiels besitzen alle Zellen nur noch genau eine zulässige Nummer. Alle Nummern sind Singles. Mit anderen Worten: wir sehen hier die Lösung des Sudokus. Der Solver präsentiert hier eine Lösung ohne Backtracking. Die meisten leichten und mittleren Sudokus in den Zeitschriften können ohne Backtracking gelöst werden.
+Das nachfolgende Bild zeigt ein Puzzle im Strikt-Minus-Auswertungsmodus. Bei genauerer Betrachtung dieses Beispiels fällt auf, dass in allen Zelle nur noch eine Nummer zulässig ist.
+
+![strictplus](./images/strictplus.png)
+
+Das nachfolgende Bild zeigt die vorige Tabelle im Strikt-Minus-Modus. Im Strikt-Minus-Modus ist unmittelbar sichtbar, dass alle Zellen dieses Beispiels nur noch genau eine zulässige Nummer haben. Alle Nummern sind Singles. Mit anderen Worten: wir sehen hier die Lösung des Sudokus. Der Solver präsentiert hier eine Lösung ohne Backtracking. Die meisten leichten und mittleren Sudokus in den Zeitschriften können ohne Backtracking gelöst werden.
+
+![Strikt Minus](./images/striktminus.png)
+
+### Vergleich der Auswertungsmodi Lazy und Strikt
+
+Wir vergleichen die jeweiligen Vorteile der Auswertungsmodi.
+
+**Vorteil der Lazy-Auswertung: Nachvollziehbarkeit des Lösungsweges.** Die Lazy-Auswertung ist vorteilhaft, wenn man den Lösungsweg im Einzelnen nachvollziehen will. Es werden nur unzulässige Kandidaten berechnet und angezeigt, die für den nächsten Schritt relevant sind. Für diese wenigen unzulässigen Kandidaten ist ihre Verursachung leicht visuell darstellbar und damit verstehbar, beispielsweise ein (nacktes) Paar.
+
+Im Lazy-Modus wird die Verursachung notwendiger Nummern oder unzulässiger Kandidaten angezeigt durch gestrichelte Border, wenn die Zelle der notwendigen Nummer oder unzulässigen Nummer selektiert ist. Durch erneutes Klicken der selektierten Zelle können die Ursachen der notwendigen und unzulässigen Kandidaten der Reihe nach jeweils angezeigt werden. Wenn alle Kandidaten angezeigt wurden, führt das erneute Klicken der Zelle zur Deselektion der Zelle.
+
+**Vorteil der strikten Auswertung: Lösung des Puzzles mit weniger Schritten.** Im Auswertungsmodus Strikt benötigt der Solver im Allgemeinen weniger Schritte bis zur Lösung des Puzzles als im Ausführungsmodus Lazy. Woran liegt das? Es liegt daran, dass der Solver im Ausführungsmodus Strikt sehr viel früher die Widersprüchlichkeit, falls vorhanden, der aktuellen Nummernbelegungen feststellt. Dies wiederum führt dazu, dass die Anzahl der Rückwärtsschritte entsprechend geringer wird und damit die Anzahl der Schritte insgesamt. Die Anzahl der Rückwärtsläufe bleibt in beiden Ausführungsmodi gleich. Der Solver untersucht in beiden Auswertungsmodi dieselben Optionen.
+
+Dieser Sudoku-Solver zeichnet sich in erster Linie durch seine nachvollziehbare Lösungssuche aus. Die Schrittminimierung ist kein Ziel. Daher ist der Lazy-Auswertungsmodus der Default.
 
 ## Widerspruchsvolle Sudokus
 
@@ -191,18 +207,6 @@ Der Solver sucht gemäß der folgenden Priorität die nächste offene Zelle und 
 ### Wie prüft der Solver die neu gesetzte Nummer?
 
 Der Solver prüft nach der Setzung einer neuen Nummer, ob das Sudoku mit dieser gesetzten Nummer widersprüchlich geworden ist. Falls ja, wird der Solver in den Rückwärts-Modus geschaltet und geht zurück bis zu einer Zelle, die mehrere Optionen für eine Nummernsetzung hatte.
-
-### Vergleich der Auswertungsmodi Lazy und Strikt
-
-Wir vergleichen die jeweiligen Vorteile der Auswertungsmodi.
-
-**Vorteil der Lazy-Auswertung: Nachvollziehbarkeit des Lösungsweges.** Die Lazy-Auswertung ist vorteilhaft, wenn man den Lösungsweg im Einzelnen nachvollziehen will. Es werden nur unzulässige Kandidaten berechnet und angezeigt, die für den nächsten Schritt relevant sind. Für diese wenigen unzulässigen Kandidaten ist ihre Verursachung leicht visuell darstellbar und damit verstehbar, beispielsweise ein (nacktes) Paar.
-
-Im Lazy-Modus wird die Verursachung notwendiger Nummern oder unzulässiger Kandidaten angezeigt durch gestrichelte Border, wenn die Zelle der notwendigen Nummer oder unzulässigen Nummer selektiert ist. Durch erneutes Klicken der selektierten Zelle können die Ursachen der notwendigen und unzulässigen Kandidaten der Reihe nach jeweils angezeigt werden. Wenn alle Kandidaten angezeigt wurden, führt das erneute Klicken der Zelle zur Deselektion der Zelle.
-
-**Vorteil der strikten Auswertung: Lösung des Puzzles mit weniger Schritten.** Im Auswertungsmodus Strikt benötigt der Solver im Allgemeinen weniger Schritte bis zur Lösung des Puzzles als im Ausführungsmodus Lazy. Woran liegt das? Es liegt daran, dass der Solver im Ausführungsmodus Strikt sehr viel früher die Widersprüchlichkeit, falls vorhanden, der aktuellen Nummernbelegungen feststellt. Dies wiederum führt dazu, dass die Anzahl der Rückwärtsschritte entsprechend geringer wird und damit die Anzahl der Schritte insgesamt. Die Anzahl der Rückwärtsläufe bleibt in beiden Ausführungsmodi gleich. Der Solver untersucht in beiden Auswertungsmodi dieselben Optionen.
-
-Dieser Sudoku-Solver zeichnet sich in erster Linie durch seine nachvollziehbare Lösungssuche aus. Die Schrittminimierung ist kein Ziel. Daher ist der Lazy-Auswertungsmodus der Default.
 
 ## Sudoku-Schwierigkeitsgrade (Level)
 
