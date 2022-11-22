@@ -2125,13 +2125,13 @@ class SudokuGroupView extends SudokuView {
         */
     }
 
-    displayError() {
-        this.myNode.classList.add('err');
+    // displayError() {
+    //    this.myNode.classList.add('err');
         /*    this.myNode.classList.add('cell-err');
             setTimeout(() => {
                 this.myNode.classList.remove('cell-err');
             }, 500); */
-    }
+    // }
 }
 class SudokuGroup extends SudokuModel {
     // Abstrakte Klasse, deren konkrete Instanzen
@@ -2642,7 +2642,15 @@ class SudokuBlockView extends SudokuGroupView {
         })
     }
 
+    getMyBlock() {
+        return super.getMyModel();
+    }
 
+    displayError() {
+        this.getMyBlock().myCells.forEach(sudoCell => {
+            sudoCell.myView.displayColError();
+        })
+    }
 
 }
 

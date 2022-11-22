@@ -25,7 +25,8 @@
 
     --selected-cell-bg-color: black;
     --selected-cell-color: white;
-    --selected-cell-border-color: black;
+    --selected-cell-border-color: Magenta;
+
 
     --error-cell-bg-color: #e91e63;
     --error-cell-color: white;
@@ -273,15 +274,15 @@ html {
 }
 */
 .sudoku-grid-cell.hover {
-    border: 3px solid var(--selected-cell-border-color);
+    border: 2px solid var(--selected-cell-border-color);
 }
 
 .sudoku-grid-cell.hover-red {
-    border: 3px dashed Crimson;
+    border: 3px dashed Magenta;
 }
 
 .sudoku-grid-cell.hover-green {
-    border: 3px dashed darkgreen;
+    border: 3px dashed green;
 }
 
 .sudoku-block.err {
@@ -296,13 +297,13 @@ html {
 }
 
 .sudoku-grid-cell.col-err {
-    border-top: 5px solid var(--error-cell-bg-color);
-    border-bottom: 5px solid var(--error-cell-bg-color);
+    border-top: 4px solid var(--error-cell-bg-color);
+    border-bottom: 4px solid var(--error-cell-bg-color);
 }
 
 .sudoku-grid-cell.row-err {
-    border-left: 5px solid var(--error-cell-bg-color);
-    border-right: 5px solid var(--error-cell-bg-color);
+    border-left: 4px solid var(--error-cell-bg-color);
+    border-right: 4px solid var(--error-cell-bg-color);
 }
 
 
