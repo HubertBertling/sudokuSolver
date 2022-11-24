@@ -77,224 +77,214 @@
                     </div>
 
                     <div class="game-col2">
-                        <div class="mode-btn-block">
-                            <p>Spielmodus</p>
-                            <div class="mode-btns">
-                                <button class="pc-btn btn-define" id="btn-define">Definieren</button>
-                                <button class="pc-btn btn-play" id="btn-play">Lösen</button>
-                            </div>
+                        <div class="app-header">
+                            HB - Sudoku
                         </div>
-                        <div class="manual-btn-block" id="manual-exec-btns">
-                            <p>Manuell Lösen</p>
-                            <div class="numbers" id="numbers">
-                                <button class="pc-btn number">1</button>
-                                <button class="pc-btn number">2</button>
-                                <button class="pc-btn number">3</button>
-                                <button class="pc-btn number">4</button>
-                                <button class="pc-btn number">5</button>
-                                <button class="pc-btn number">6</button>
-                                <button class="pc-btn number">7</button>
-                                <button class="pc-btn number">8</button>
-                                <button class="pc-btn number">9</button>
-                                <button class="pc-btn btn-delete-cell" id="btn-delete-cell">X</button>
-                            </div>
-                        </div>
-                        <div class="automatic-btn-block automatic-exec" id="automatic-exec">
-                            <p>Automatisch Lösen</p>
-                            <div class="auto-exec-btns" id="auto-exec-btns">
-                                <div class="btn-auto-block">
-                                    <button class="pc-btn btn-automatic tooltip btn-run" id="btn-run"><img
-                                            src="images/play-96.png" class="btn-image">
-                                        <span class="tooltiptext">Start</span>
-                                    </button>
-                                    <button class="pc-btn btn-automatic tooltip btn-pause" id="btn-pause"><img
-                                            src="images/pause-96.png" class="btn-image">
-                                        <span class="tooltiptext">Pause</span>
-                                    </button>
-                                    <button class="pc-btn btn-automatic tooltip btn-stop" id="btn-stop"><img
-                                            src="images/stop-96.png" class="btn-image">
-                                        <span class="tooltiptext">Stop</span>
-                                    </button>
-                                </div>
-                                <button class="pc-btn tooltip btn-autoStep" id="btn-autoStep">
-                                    <img src="images/step-96.png" class="btn-image" id="image-autostep">
-                                    <span>Automatisch Lösen</span><br>
-                                    <span>Schritt für Schritt</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="puzzle-btn-block">
-                            <p>Puzzle</p>
-                            <div class="config-btns">
-                                <button class="pc-btn btn-init" id="btn-init">Initialisieren</button>
-                                <button class="pc-btn btn-reset" id="btn-reset">Zurücksetzen</button>
-                            </div>
-                            <div class="storage-btns">
-                                <button class="pc-btn btn-generate" id="btn-generate">Neues Puzzle</button>
-                                <button class="pc-btn" id="btn-save">Puzzle speichern</button>
-                                <button class="pc-btn" id="btn-statistic">Puzzle-Daten aktualisieren</button>
-                                <button class="pc-btn" id="btn-print">Drucken</button>
-                            </div>
+                        <div class="pc-grid-container">
+
+                            <button class="pc-btn btn-init" id="btn-init">Init</button>
+                            <button class="pc-btn btn-reset" id="btn-reset">Zurück</button>
+                            <button class="pc-btn btn-generate" id="btn-generate">Neu</button>
+
+                            <button class="pc-btn btn-define" id="btn-define">Definieren</button>
+                            <button class="pc-btn btn-play" id="btn-play">Lösen</button>
+                            <button class="pc-btn btn-delete-cell" id="btn-delete-cell">X</button>
+
+                            <button class="pc-btn number">1</button>
+                            <button class="pc-btn number">2</button>
+                            <button class="pc-btn number">3</button>
+
+                            <button class="pc-btn number">4</button>
+                            <button class="pc-btn number">5</button>
+                            <button class="pc-btn number">6</button>
+
+                            <button class="pc-btn number">7</button>
+                            <button class="pc-btn number">8</button>
+                            <button class="pc-btn number">9</button>
+
+                            <button class="pc-btn btn-automatic btn-run" id="btn-run"><img src="images/play-96.png"
+                                    class="btn-image">
+                                <span>Start</span>
+                            </button>
+                            <button class="pc-btn btn-automatic btn-pause" id="btn-pause"><img src="images/pause-96.png"
+                                    class="btn-image">
+                                <span>Pause</span>
+                            </button>
+                            <button class="pc-btn btn-automatic btn-stop" id="btn-stop"><img src="images/stop-96.png"
+                                    class="btn-image">
+                                <span>Stop</span>
+
+                            </button>
+
+                            <button class="pc-btn btn-autoStep" id="btn-autoStep">
+                                <img src="images/step-96.png" class="btn-image">
+                                <span>Schritt</span>
+                            </button>
+                            <button class="pc-btn btn-save" id="btn-save">Speichern unter</button>
+                            <button class="pc-btn" id="btn-statistic">Speichern</button>
+                            <button class="pc-btn btn-print" id="btn-print">Drucken</button>
+
                         </div>
                         <div class="eval-btn-block last-row">
-                            <p>Kandidatenauswertung</p>
-                            <div class="evaluation">
-                                <div>
-                                    <input type="radio" class="eval-type" id="no-eval" name="auswertung" value="no-eval"
-                                        checked>
-                                    <label for="lazy">Keine</label>
-                                </div>
-                                <div>
-                                    <input type="radio" class="eval-type" id="lazy" name="auswertung" value="lazy">
-                                    <label for="lazy">Lazy</label>
-                                </div>
-                                <div>
-                                    <input type="radio" class="eval-type" id="strict-plus" name="auswertung"
-                                        value="strict-plus">
-                                    <label for="strict-plus">Strikt +</label>
-                                </div>
-                                <div>
-                                    <input type="radio" class="eval-type" id="strict-minus" name="auswertung"
-                                        value="strict-minus">
-                                    <label for="strict-minus">Strikt -</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mobile-grid-container noprint">
+                                <fieldset>
+                                    <legend>
+                                        Kandidatenauswertung
+                                    </legend>
+                                    <label>
+                                        <input type="radio" class="eval-type" id="no-eval" name="auswertung"
+                                            value="no-eval" checked>Keine
+                                    </label>
+                                    <label>
+                                        <input type="radio" class="eval-type" id="lazy" name="auswertung" value="lazy">
+                                        Lazy
+                                    </label>
+                                    <label>
+                                        <input type="radio" class="eval-type" id="strict-plus" name="auswertung"
+                                            value="strict-plus">
+                                        Strikt +
+                                    </label>
+                                    <label>
+                                        <input type="radio" class="eval-type" id="strict-minus" name="auswertung"
+                                            value="strict-minus">
+                                        Strikt -
+                                    </label>
+                                </fieldset>
+                         </div>
 
-                        <div class="mobile-evaluation">
-                            <div>
-                                <input type="radio" class="mobile-eval-type" id="mobile-no-eval" name="mobile-auswertung"
-                                    value="no-eval" checked>
-                                <label for="mobile-no-eval">Keine</label>
-                            </div>
-                                 <div>
-                                <input type="radio" class="mobile-eval-type" id="mobile-lazy" name="mobile-auswertung"
-                                    value="lazy">
-                                <label for="mobile-lazy">Lazy</label>
-                            </div>
-                       <!-- <div>
+                    </div>
+                </div>
+            </div>
+            <div class="mobile-grid-container noprint">
+
+                <div class="mobile-evaluation">
+                    <div>
+                        <input type="radio" class="mobile-eval-type" id="mobile-no-eval" name="mobile-auswertung"
+                            value="no-eval" checked>
+                        <label for="mobile-no-eval">Keine</label>
+                    </div>
+                    <div>
+                        <input type="radio" class="mobile-eval-type" id="mobile-lazy" name="mobile-auswertung"
+                            value="lazy">
+                        <label for="mobile-lazy">Lazy</label>
+                    </div>
+                    <!-- <div>
                                 <input type="radio" class="mobile-eval-type" id="mobile-strict-plus"
                                     name="mobile-auswertung" value="strict-plus">
                                 <label for="mobile-strict-plus">S +</label>
                             </div>
                             -->
-                            <div>
-                                <input type="radio" class="mobile-eval-type" id="mobile-strict-minus"
-                                    name="mobile-auswertung" value="strict-minus">
-                                <label for="mobile-strict-minus">Strikt</label>
-                            </div>
-                        </div>
+                    <div>
+                        <input type="radio" class="mobile-eval-type" id="mobile-strict-minus" name="mobile-auswertung"
+                            value="strict-minus">
+                        <label for="mobile-strict-minus">Strikt</label>
+                    </div>
+                </div>
 
-                        <button class="mobile-interface mobile-btn" id="btn-save-mobile">Speichern</button>
-                        <button class="mobile-interface mobile-btn" onclick="sudoApp.helpFunktion()">?</button>
-                        <button class="mobile-interface mobile-btn btn-init">Init</button>
-                        <button class="mobile-interface mobile-btn btn-reset">Zurück</button>
-                        <button class="mobile-interface mobile-btn" id="btn-restore-mobile">Laden</button>
-                        <button class="mobile-interface mobile-btn btn-generate">Neu</button>
-                        <button class="mobile-interface mobile-btn btn-define">Def.</button>
-                        <button class="mobile-interface mobile-btn btn-play">Lösen</button>
-                        <button class="mobile-interface mobile-btn btn-delete-cell">X</button>
-                        <button class="mobile-interface mobile-btn btn-run" id="btn-run"><img src="images/play-96.png"
-                                class="btn-image">
-                            <span>Start</span>
-                        </button>
-                        <button class="mobile-interface mobile-btn mobile-number">1</button>
-                        <button class="mobile-interface mobile-btn mobile-number">2</button>
-                        <button class="mobile-interface mobile-btn mobile-number">3</button>
-                        <button class="mobile-interface mobile-btn btn-pause"><img src="images/pause-96.png"
-                                class="btn-image">
-                            <span>Pause</span>
-                        </button>
-                        <button class="mobile-interface mobile-btn mobile-number">4</button>
-                        <button class="mobile-interface mobile-btn mobile-number">5</button>
-                        <button class="mobile-interface mobile-btn mobile-number">6</button>
-                        <button class="mobile-interface mobile-btn btn-stop"><img src="images/stop-96.png"
-                                class="btn-image">
-                            <span>Stop</span>
-                        </button>
-                        <button class="mobile-interface mobile-btn mobile-number">7</button>
-                        <button class="mobile-interface mobile-btn mobile-number">8</button>
-                        <button class="mobile-interface mobile-btn mobile-number">9</button>
-                        <button class="mobile-interface mobile-btn btn-automatic btn-autoStep" id="btn-autoStep">
-                            <img src="images/step-96.png" class="btn-image" id="image-autostep">
-                            <span>Schritt</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <!--Der Inhalt des Reiters Puzzle-Datenbank-->
-            <div id="puzzle-db" class="tabcontent tabdatabase">
-                <section class="noprint">
-                    <div class="container">
-                        <table class="puzzle-db-table " id="puzzle-db-table">
-                            <!--Die Datenbanktabelle-->
-                            <thead class="puzzle-db-thead">
-                                <tr>
-                                    <th style="cursor:pointer">Puzzle-Id <div>Puzzle-Id</div>
-                                    </th>
-                                    <th id="col-name" style="cursor:pointer">Puzzle-Name <div>Puzzle-Name</div>
-                                    </th>
-                                    <th id="col-defCount" style="cursor:pointer">Def. Zellen<div>Def. Zellen</div>
-                                    </th>
-                                    <th id="col-status" style="cursor:pointer">Status<div>Status</div>
-                                    </th>
-                                    <th id="col-steps-lazy" style="cursor:pointer">Schritte (lazy)<div>Schritte (lazy)
-                                        </div>
-                                    </th>
-                                    <th id="col-steps-strict" style="cursor:pointer">Schritte (strikt)<div>Schritte
-                                            (strikt)
-                                        </div>
-                                    </th>
-                                    <th id="col-level" style="cursor:pointer">Level<div>Level</div>
-                                    </th>
-                                    <th id="col-backTracks" style="cursor:pointer">#Rückwärts<div>#Rückwärts</div>
-                                    </th>
-                                    <th id="col-date" style="cursor:pointer">Datum<div>Datum</div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="puzzle-db-tbody" id="puzzle-db-tbody">
-                                <!--Der Inhalt der Datenbanktabelle wird per JS aus dem Local-Store geladen-->
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-                <div class="puzzle-btns ">
-                    <!--Die 4 buttons unterhalb der Puzzle-Datenbanktabelle -->
-                    <button class="pc-btn noprint" id="pz-btn-load">Laden
-                    </button>
-                    <button class="pc-btn noprint" id="pz-btn-previous"
-                        onclick="sudoApp.myPuzzleDBController.previousBtnPressed()"><img
-                            src="images/pfeilrueckwaerts.png" class="forward-backward-image"></button>
-                    <button class="pc-btn noprint" id="pz-btn-next"
-                        onclick="sudoApp.myPuzzleDBController.nextBtnPressed()"><img src="images/pfeilvorwaerts.png"
-                            class="forward-backward-image"></button>
-                    <button class="pc-btn noprint" id="pz-btn-delete"
-                        onclick="sudoApp.myPuzzleDBController.deleteBtnPressed()">Löschen</button>
-                </div>
-                <div class="puzzle-header">
-                    <!--Die Überschrift zum aktuell geladenen Puzzle-->
-                    <h1 class="noprint">Selektiertes Puzzle:</h1>
-                    <!--Id und Name des aktuell geladenen Puzzles werden als String via JS erzeugt-->
-                    <div class="pz-id-row" id="pz-id-row">0</div>
-                </div>
-                <div class="puzzle-line">
-                    <div class="pz-table" id="screen-puzzle">
-                    </div>
-                    <div class="pz-table" id="print-puzzle">
-                    </div>
-                </div>
-                <!--In der Druckausgabe wird der Druck-Button unterdrückt-->
-                <button class="pc-btn noprint" id="pz-btn-print"
-                    onclick="sudoApp.myPuzzleDBController.printBtnPressed()">Drucken</button>
-            </div>
-            <!--Der Inhalt des Reiters Hilfe-->
-            <div id="help" class="tabcontent tabhelp">
-                <embed class="help-embed" src="./help.html"> </embed>
+                <button class="mobile-interface mobile-btn" id="btn-save-mobile">Speichern</button>
+                <button class="mobile-interface mobile-btn" onclick="sudoApp.helpFunktion()">?</button>
+                <button class="mobile-interface mobile-btn btn-init">Init</button>
+                <button class="mobile-interface mobile-btn btn-reset">Zurück</button>
+                <button class="mobile-interface mobile-btn" id="btn-restore-mobile">Laden</button>
+                <button class="mobile-interface mobile-btn btn-generate">Neu</button>
+                <button class="mobile-interface mobile-btn btn-define">Def.</button>
+                <button class="mobile-interface mobile-btn btn-play">Lösen</button>
+                <button class="mobile-interface mobile-btn btn-delete-cell">X</button>
+                <button class="mobile-interface mobile-btn btn-run" id="btn-run"><img src="images/play-96.png"
+                        class="btn-image">
+                    <span>Start</span>
+                </button>
+                <button class="mobile-interface mobile-btn mobile-number">1</button>
+                <button class="mobile-interface mobile-btn mobile-number">2</button>
+                <button class="mobile-interface mobile-btn mobile-number">3</button>
+                <button class="mobile-interface mobile-btn btn-pause"><img src="images/pause-96.png" class="btn-image">
+                    <span>Pause</span>
+                </button>
+                <button class="mobile-interface mobile-btn mobile-number">4</button>
+                <button class="mobile-interface mobile-btn mobile-number">5</button>
+                <button class="mobile-interface mobile-btn mobile-number">6</button>
+                <button class="mobile-interface mobile-btn btn-stop"><img src="images/stop-96.png" class="btn-image">
+                    <span>Stop</span>
+                </button>
+                <button class="mobile-interface mobile-btn mobile-number">7</button>
+                <button class="mobile-interface mobile-btn mobile-number">8</button>
+                <button class="mobile-interface mobile-btn mobile-number">9</button>
+                <button class="mobile-interface mobile-btn btn-automatic btn-autoStep" id="btn-autoStep">
+                    <img src="images/step-96.png" class="btn-image" id="image-autostep">
+                    <span>Schritt</span>
+                </button>
             </div>
         </div>
+    </div>
+    <!--Der Inhalt des Reiters Puzzle-Datenbank-->
+    <div id="puzzle-db" class="tabcontent tabdatabase">
+        <section class="noprint">
+            <div class="container">
+                <table class="puzzle-db-table " id="puzzle-db-table">
+                    <!--Die Datenbanktabelle-->
+                    <thead class="puzzle-db-thead">
+                        <tr>
+                            <th style="cursor:pointer">Puzzle-Id <div>Puzzle-Id</div>
+                            </th>
+                            <th id="col-name" style="cursor:pointer">Puzzle-Name <div>Puzzle-Name</div>
+                            </th>
+                            <th id="col-defCount" style="cursor:pointer">Def. Zellen<div>Def. Zellen</div>
+                            </th>
+                            <th id="col-status" style="cursor:pointer">Status<div>Status</div>
+                            </th>
+                            <th id="col-steps-lazy" style="cursor:pointer">Schritte (lazy)<div>Schritte (lazy)
+                                </div>
+                            </th>
+                            <th id="col-steps-strict" style="cursor:pointer">Schritte (strikt)<div>Schritte
+                                    (strikt)
+                                </div>
+                            </th>
+                            <th id="col-level" style="cursor:pointer">Level<div>Level</div>
+                            </th>
+                            <th id="col-backTracks" style="cursor:pointer">#Rückwärts<div>#Rückwärts</div>
+                            </th>
+                            <th id="col-date" style="cursor:pointer">Datum<div>Datum</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="puzzle-db-tbody" id="puzzle-db-tbody">
+                        <!--Der Inhalt der Datenbanktabelle wird per JS aus dem Local-Store geladen-->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <div class="puzzle-btns ">
+            <!--Die 4 buttons unterhalb der Puzzle-Datenbanktabelle -->
+            <button class="pc-btn noprint" id="pz-btn-load">Laden
+            </button>
+            <button class="pc-btn noprint" id="pz-btn-previous"
+                onclick="sudoApp.myPuzzleDBController.previousBtnPressed()"><img src="images/pfeilrueckwaerts.png"
+                    class="forward-backward-image"></button>
+            <button class="pc-btn noprint" id="pz-btn-next" onclick="sudoApp.myPuzzleDBController.nextBtnPressed()"><img
+                    src="images/pfeilvorwaerts.png" class="forward-backward-image"></button>
+            <button class="pc-btn noprint" id="pz-btn-delete"
+                onclick="sudoApp.myPuzzleDBController.deleteBtnPressed()">Löschen</button>
+        </div>
+        <div class="puzzle-header">
+            <!--Die Überschrift zum aktuell geladenen Puzzle-->
+            <h1 class="noprint">Selektiertes Puzzle:</h1>
+            <!--Id und Name des aktuell geladenen Puzzles werden als String via JS erzeugt-->
+            <div class="pz-id-row" id="pz-id-row">0</div>
+        </div>
+        <div class="puzzle-line">
+            <div class="pz-table" id="screen-puzzle">
+            </div>
+            <div class="pz-table" id="print-puzzle">
+            </div>
+        </div>
+        <!--In der Druckausgabe wird der Druck-Button unterdrückt-->
+        <button class="pc-btn noprint" id="pz-btn-print"
+            onclick="sudoApp.myPuzzleDBController.printBtnPressed()">Drucken</button>
+    </div>
+    <!--Der Inhalt des Reiters Hilfe-->
+    <div id="help" class="tabcontent tabhelp">
+        <embed class="help-embed" src="./help.html"> </embed>
+    </div>
+    </div>
     </div>
     <!--Dialoge -->
     <div id="backstore" style="display: none">
