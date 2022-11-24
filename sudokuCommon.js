@@ -2945,7 +2945,7 @@ class SudokuGridView extends SudokuView {
     constructor(suGrid) {
         super(suGrid);
         // Das bisherige DOM-Modell löschen
-        this.domInputAreaNode = document.getElementById("gridArea");
+        this.domExplainer = document.getElementById("grid-plus-explainer");
     }
     upDate() {
         // Das bisherige DOM-Modell löschen
@@ -2954,7 +2954,7 @@ class SudokuGridView extends SudokuView {
         let new_Node = document.createElement('div');
         new_Node.setAttribute('id', 'main-sudoku-grid');
         new_Node.classList.add('main-sudoku-grid');
-        this.domInputAreaNode.replaceChild(new_Node, old_Node);
+        this.domExplainer.replaceChild(new_Node, old_Node);
         this.setMyNode(new_Node);
 
         // Die 9 Blöcke anzeigen
@@ -4353,7 +4353,7 @@ class SudokuCellView extends SudokuView {
                         }
                     });
                     sudoApp.mySolver.myView.displayTechnique(Array.from(tmpCell.myNecessarys)[0] +
-                        ' notwendig, weil einzig in der Gruppe.');
+                        ' notwendig, weil in der Gruppe nur hier Kandidat.');
                     return;
                 }
             }

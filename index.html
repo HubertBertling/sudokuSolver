@@ -31,16 +31,19 @@
             <div id="sudoku-solver" class="tabcontent tabsolver">
                 <div class="sudoku-solver-in-tab">
                     <div class="gridArea" id="gridArea">
-                        <div id="loader"></div>
-                        <div class="main-sudoku-grid" id="main-sudoku-grid">
-                            <!-- block 0 -->
-                        </div>
+                        <div class="grid-plus-explainer" id="grid-plus-explainer">
+                            <div id="loader"></div>
 
-                        <div class="reasonInsolvability" id="reasonInsolvability">
+                            <div class="main-sudoku-grid" id="main-sudoku-grid">
+                                <!-- block 0 -->
+                            </div>
 
-                        </div>
-                        <div class="technique" id="technique">
+                            <div class="reasonInsolvability" id="reasonInsolvability">
 
+                            </div>
+                            <div class="technique" id="technique">
+
+                            </div>
                         </div>
                         <div class="loaded-evaluations" id="loaded-evaluations">
 
@@ -126,30 +129,30 @@
 
                         </div>
                         <div class="eval-btn-block last-row">
-                                <fieldset>
-                                    <legend>
-                                        Kandidatenauswertung
-                                    </legend>
-                                    <label>
-                                        <input type="radio" class="eval-type" id="no-eval" name="auswertung"
-                                            value="no-eval" checked>Keine
-                                    </label>
-                                    <label>
-                                        <input type="radio" class="eval-type" id="lazy" name="auswertung" value="lazy">
-                                        Lazy
-                                    </label>
-                                    <label>
-                                        <input type="radio" class="eval-type" id="strict-plus" name="auswertung"
-                                            value="strict-plus">
-                                        Strikt +
-                                    </label>
-                                    <label>
-                                        <input type="radio" class="eval-type" id="strict-minus" name="auswertung"
-                                            value="strict-minus">
-                                        Strikt -
-                                    </label>
-                                </fieldset>
-                         </div>
+                            <fieldset>
+                                <legend>
+                                    Kandidatenauswertung
+                                </legend>
+                                <label>
+                                    <input type="radio" class="eval-type" id="no-eval" name="auswertung" value="no-eval"
+                                        checked>Keine
+                                </label>
+                                <label>
+                                    <input type="radio" class="eval-type" id="lazy" name="auswertung" value="lazy">
+                                    Lazy
+                                </label>
+                                <label>
+                                    <input type="radio" class="eval-type" id="strict-plus" name="auswertung"
+                                        value="strict-plus">
+                                    Strikt +
+                                </label>
+                                <label>
+                                    <input type="radio" class="eval-type" id="strict-minus" name="auswertung"
+                                        value="strict-minus">
+                                    Strikt -
+                                </label>
+                            </fieldset>
+                        </div>
 
                     </div>
                 </div>

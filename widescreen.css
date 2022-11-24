@@ -164,6 +164,9 @@ html {
     margin: 0.1em;  
 }
 
+.grid-plus-explainer {
+    border: 1px solid black;
+}
 .sudoku-block {
     margin: 0.1rem;
     display: grid;
@@ -173,8 +176,8 @@ html {
 
 .sudoku-grid-cell {
     position: relative;
-    height: 50px;
-    width: 50px;
+    height: 45px;
+    width: 45px;
     display: grid;
     font-size: 2rem;
     place-items: center;
@@ -370,6 +373,10 @@ html {
     font-size: 1.0rem;
     display: flex;
     padding-top: 5px;
+}
+
+.loaded-evaluations {
+    margin-top: 0.5rem;
 }
 
 .technique, .reasonInsolvability {
