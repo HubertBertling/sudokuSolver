@@ -371,7 +371,7 @@ class SudokuSolverController {
     saveBtnPressed() {
         this.mySuccessDialog.close();
         let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-        this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');      
+        this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');
     }
 
     statisticBtnPressed() {
@@ -603,7 +603,7 @@ class SudokuSolverView extends SudokuView {
         let lazyNode = document.getElementById('lazy');
         let strictPlusNode = document.getElementById('strict-plus');
         let strictMinusNode = document.getElementById('strict-minus');
-      
+
         let mobileNoEvalNode = document.getElementById('mobile-no-eval');
         let mobileLazyNode = document.getElementById('mobile-lazy');
         let mobileStrictMinusNode = document.getElementById('mobile-strict-minus');
@@ -626,12 +626,12 @@ class SudokuSolverView extends SudokuView {
                 strictMinusNode.checked = true;
                 mobileStrictMinusNode.checked = true;
                 break;
-            }           
+            }
             default: {
                 throw new Error('Unknown eval type: ' + et);
             }
         }
-      }
+    }
 
 
     displayProgress() {
@@ -2127,10 +2127,10 @@ class SudokuGroupView extends SudokuView {
 
     // displayError() {
     //    this.myNode.classList.add('err');
-        /*    this.myNode.classList.add('cell-err');
-            setTimeout(() => {
-                this.myNode.classList.remove('cell-err');
-            }, 500); */
+    /*    this.myNode.classList.add('cell-err');
+        setTimeout(() => {
+            this.myNode.classList.remove('cell-err');
+        }, 500); */
     // }
 }
 class SudokuGroup extends SudokuModel {
@@ -3063,8 +3063,8 @@ class SudokuGrid extends SudokuModel {
     // ========================================================
     setEvalType(et) {
         this.evalType = et;
-        if(et == 'no-eval') {
-            this.myCalculator.autoExecStop();          
+        if (et == 'no-eval') {
+            this.myCalculator.autoExecStop();
         }
         this.evaluateMatrix();
     }
@@ -3167,7 +3167,7 @@ class SudokuGrid extends SudokuModel {
             }
             if (this.sudoCells[i].getPhase() == 'define') {
                 puzzleDbElement.defCount++;
-            } 
+            }
         }
         // Status setzen
         puzzleDbElement.level = this.difficulty;
@@ -4978,53 +4978,8 @@ class SudokuPuzzleDBController {
 }
 class SudokuPuzzleDB {
     constructor() {
-        // Hole den Speicher als ein Objekt
-        let str_puzzleDB = localStorage.getItem("localSudokuDB");
-        if (str_puzzleDB == null) {
-            // Falls der Local-Storage leer ist, wird ein erstes Puzzle angelegt.
-            let puzzleDbElement = new SudokuPuzzle(
-                "BeispielSchwer",
-                26,
-                'ungelöst',
-                0,
-                0,
-                'Keine Angabe',
-                0,
-                (new Date()).toJSON(),
-                [
-                    "0", "0", "0", "3", "0", "0", "0", "0", "5",
-                    "0", "2", "0", "0", "8", "9", "0", "0", "0",
-                    "0", "0", "8", "0", "0", "6", "0", "0", "3",
-                    "8", "0", "9", "0", "0", "1", "0", "3", "6",
-                    "0", "0", "0", "9", "0", "3", "0", "5", "0",
-                    "0", "0", "1", "7", "0", "0", "0", "0", "0",
-                    "0", "0", "0", "0", "0", "0", "0", "7", "1",
-                    "0", "8", "2", "0", "1", "0", "0", "0", "0",
-                    "0", "1", "0", "0", "3", "4", "0", "0", "0"
-                ],
-                [
-                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                    "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                ]
-            );
-
-            let puzzleMap = new Map();
-            let uid = Date.now().toString(36) + Math.random().toString(36).substr(2);
-            puzzleMap.set(uid, puzzleDbElement);
-            // Kreiere die JSON-Version des Speicherobjektes
-            // und speichere sie.
-            let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
-            localStorage.setItem("localSudokuDB", update_str_puzzleMap);
-        }
-        // Der Index wird auf jeden Fall auf das erste Puzzle gesetzt
-        this.selectedIndex = 0;
+        
+        this.selectedIndex = -1;
         // 
         this.sorted = new Map([
             ['name', 'desc'],
@@ -5223,12 +5178,10 @@ class SudokuPuzzleDB {
         if (this.selectedIndex > 0) {
             this.selectedIndex--;
         }
-        if (puzzleMap.size > 1) {
-            puzzleMap.delete(key);
-            let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
-            localStorage.setItem("localSudokuDB", update_str_puzzleMap);
-            this.display();
-        }
+        puzzleMap.delete(key);
+        let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
+        localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+        this.display();
     }
 
     selectedPZ() {
@@ -5413,13 +5366,13 @@ class SudokuPuzzleDB {
                         cellField.style.fontWeight = 'bold';
                     }
                 }
-             /*   cellField.style.border = "1px solid white";
-                if (row === 2 || row === 5) {
-                    cellField.style.borderBottom = "4px solid white";
-                }
-                if (col === 2 || col === 5) {
-                    cellField.style.borderRight = "4px solid white";
-                }  */
+                /*   cellField.style.border = "1px solid white";
+                   if (row === 2 || row === 5) {
+                       cellField.style.borderBottom = "4px solid white";
+                   }
+                   if (col === 2 || col === 5) {
+                       cellField.style.borderRight = "4px solid white";
+                   }  */
                 cellField.style.border = "1px solid darkgrey";
                 if (row === 2 || row === 5) {
                     cellField.style.borderBottom = "2px solid black";
