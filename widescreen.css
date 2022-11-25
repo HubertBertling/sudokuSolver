@@ -811,10 +811,9 @@ input[readonly] {
 
 .cell-field {
     font-size: 1.8rem;
-    font-weight: bold;
     position: relative;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     display: grid;
     place-items: center;
 }
