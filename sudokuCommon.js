@@ -667,16 +667,26 @@ class SudokuSolverView extends SudokuView {
 
     displayLoadedBenchmark(levelOfDifficulty, countBackwards) {
         let evalNode = document.getElementById("loaded-evaluations");
-        evalNode.innerHTML =
+        if (countBackwards == 0) {
+            evalNode.innerHTML =
+            '<span style="background-color:#7986CB ; color:white ; width: 7rem"> &nbsp Geladen:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+        } else {
+            evalNode.innerHTML =
             '<span style="background-color:#7986CB ; color:white ; width: 7rem"> &nbsp Geladen:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
             + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
+        }
     }
 
     displayBenchmark(levelOfDifficulty, countBackwards) {
         let evalNode = document.getElementById("evaluations");
-        evalNode.innerHTML =
+        if (countBackwards == 0){
+            evalNode.innerHTML =
+            '<span style="background-color:#4DB6AC; width: 7rem"> &nbsp Berechnet:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+        } else {
+            evalNode.innerHTML =
             '<span style="background-color:#4DB6AC; width: 7rem"> &nbsp Berechnet:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
             + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
+        }
     }
 
 
