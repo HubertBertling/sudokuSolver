@@ -803,14 +803,14 @@ input[readonly] {
 
 .pz-table,
 .solution-table {
-    margin-left: 5px;
+    margin-left: 30px;
     margin-right: 5px;
     display: grid;
     grid-template-columns: repeat(9, auto);
 }
 
 .cell-field {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     position: relative;
     width: 20px;
     height: 20px;
