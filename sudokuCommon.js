@@ -1174,8 +1174,8 @@ class SuccessDialog {
             this.winBox = new WinBox("Lösung gefunden", {
                 x: "center",
                 y: "center",
-                width: "200px",
-                height: "300px",
+                width: "250px",
+                height: "3800px",
                 mount: document.getElementById("contentSuccessDlg")
             });
         } else {
