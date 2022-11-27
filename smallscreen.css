@@ -612,10 +612,11 @@ label {
 }
 
 .successImg {
-    margin-left: 10px;
-    height: 225px;
-    width: 150px;
+    margin-left: 30px;
+    height: 270px;
+    width: 180px;
 }
+
 
 .okCancelBtn {
     padding: 1px 30px;
