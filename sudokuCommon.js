@@ -5376,13 +5376,7 @@ class SudokuPuzzleDB {
                         cellField.style.fontWeight = 'bold';
                     }
                 }
-                /*   cellField.style.border = "1px solid white";
-                   if (row === 2 || row === 5) {
-                       cellField.style.borderBottom = "4px solid white";
-                   }
-                   if (col === 2 || col === 5) {
-                       cellField.style.borderRight = "4px solid white";
-                   }  */
+         
                 cellField.style.border = "1px solid darkgrey";
                 if (row === 2 || row === 5) {
                     cellField.style.borderBottom = "2px solid black";

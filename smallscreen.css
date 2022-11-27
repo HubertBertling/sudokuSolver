@@ -127,7 +127,7 @@ html {
 }
 
 .sudoku-block {
-    margin: 0.2rem;
+    margin: 0.15rem;
     display: grid;
     grid-template-columns: repeat(3, auto);
     /* border-radius: var(--border-radius); */
