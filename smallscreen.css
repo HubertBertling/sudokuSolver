@@ -588,6 +588,15 @@ label {
     margin-right: 15px;
 }
 
+.success-ok-cancel-btns {
+    margin-top: 5px;
+    margin-left: 25px;
+    margin-right: 25px;
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+
 .successForm,
 .dlg-form {
     margin-left: 5px;

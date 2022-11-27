@@ -714,6 +714,14 @@ input[readonly] {
     grid-template-columns: 1fr 1fr;
 }
 
+.success-ok-cancel-btns {
+    margin-top: 5px;
+    margin-left: 25px;
+    margin-right: 25px;
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
 .successForm,
 .dlg-form {
     margin-left: 10px;
