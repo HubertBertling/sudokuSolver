@@ -1175,7 +1175,7 @@ class SuccessDialog {
                 x: "center",
                 y: "center",
                 width: "250px",
-                height: "3800px",
+                height: "400px",
                 mount: document.getElementById("contentSuccessDlg")
             });
         } else {
