@@ -1,22 +1,21 @@
-// Der Web Worker wartet auf eine Nachricht von Main.
+// The Web Worker is assigned a message handler.
 self.onmessage = function (n) {
     if (n.data == "Run") {
-        // Der Web Worker generiert ein neues Puzzle
+        // If the message is "Run", the Web Worker generates a new puzzle
         sudoApp.myGenerator.generatePuzzle();
-        // Das Generator-Grid liefert das generierte Puzzle in der Form eines
-        // Datenbankelements
+        // The generator returns the generated puzzle in the form of a database element
         let puzzle = sudoApp.myGenerator.myGrid.getPlayedPuzzleDbElement();
         let str_puzzle = JSON.stringify(puzzle);
-        // Das serialisierte Puzzle wird als Nachricht nach Main gesendet
+        // The serialized puzzle is sent as a message to Main
         self.postMessage(str_puzzle);
-        // Der Web Worker beendet sich selbst
+        // The Web Worker terminates itself
         self.close();
     }
 };
 
 class SudokuWorkerApp {
     constructor() {
-        // Komponenten der WorkerApp
+        // The only component of the Sudoku worker app is the generator.
         this.myGenerator = new SudokuGenerator();
     }
     init() {
@@ -25,24 +24,25 @@ class SudokuWorkerApp {
 }
 
 class SudokuApp {
-    // Die Darstellung der ganzen App
     constructor() {
         // ==============================================================
-        // Komponenten der App
+        // Components of the app
         // ==============================================================
+        // 1. The solver component
         this.mySolver = new SudokuSolver();
         this.mySolverView = new SudokuSolverView(this.mySolver);
         this.mySolverController = new SudokuSolverController(this.mySolver);
-        // Ein echtes MVC-Pattern gibt es nur für den Solver
-        // Die übrigen Model- und View-Klassen sind nur Subkomponenten
-        // der Solver-Klassen. Sie verwirklichen keine eigene
-        // Observer-Beziehung
+        // A true MVC pattern exists only for the solver. 
+        // The other model and view classes are only subcomponents of the solver classes. 
+        // They do not realize any own observer relationship.
         this.mySolver.attach(this.mySolverView);
         this.mySolver.setMyView(this.mySolverView);
 
+        // 2. The database component
         this.myPuzzleDB = new SudokuPuzzleDB();
         this.myPuzzleDBController = new SudokuPuzzleDBController(this.myPuzzleDB);
-        // Die Reiteransicht
+
+        // 3. The tab view component
         this.myTabView = new SudokuTabView();
     }
 
@@ -59,37 +59,37 @@ class SudokuApp {
 }
 
 class SudokuTabView {
-    // Die Software der Reiteransicht
+    // The tab view component
     constructor() {
         this.myPages = [];
-        // 1. Der Reiter "Sudoku-Solver"
+        // 1. The tab "Sudoku Solver"
         this.myPages.push(new SudokuGridPage("sudoku-grid-tab", "sudoku-solver"));
-        // 2. Der Reiter "Puzzle-Datenbank"
+        // 2. The tab "Puzzle Database"
         this.myPages.push(new SudokuDatabasePage("puzzle-db-tab", "puzzle-db"));
-        // 3. Der Reiter "Hilfe"
+        // 3. the help tab
         this.myPages.push(new SudokuHelpPage("puzzle-help-tab", "help"));
     }
     open(pageToOpen) {
-        // Alle Seiten schließen.
+        // Close all tabs
         this.myPages.forEach(page => {
             page.close();
         })
         pageToOpen.open();
     }
     openGrid() {
-        // Alle Seiten schließen.
+        // Close all tabs
         this.myPages.forEach(page => {
             page.close();
         })
-        // Die Grid-Seite öffnen (Die Grid-Seite ist die erste Seite)
+        // Open the solver tab (the first tab)
         this.myPages[0].open();
     }
     init() {
         this.openGrid();
     }
 }
-class SudokuPage {
-    // Abstrakte Klasse für den Reiter
+class SudokuTabbedPage {
+    // Abstract class for the tabbed page
     constructor(linkNodeId, contentNodeId) {
         this.myLinkNode = document.getElementById(linkNodeId);
         this.myContentNode = document.getElementById(contentNodeId);
@@ -109,8 +109,7 @@ class SudokuPage {
         this.myLinkNode.style.color = 'black';
     }
 }
-class SudokuGridPage extends SudokuPage {
-    // Reiter der Matrix
+class SudokuGridPage extends SudokuTabbedPage {
     constructor(tabId, contentId) {
         super(tabId, contentId);
     }
@@ -118,8 +117,7 @@ class SudokuGridPage extends SudokuPage {
         sudoApp.mySolver.notify();
         super.open();
     }
-} class SudokuDatabasePage extends SudokuPage {
-    // Reiter der Datenbank
+} class SudokuDatabasePage extends SudokuTabbedPage {
     constructor(tabId, contentId) {
         super(tabId, contentId);
     }
@@ -128,8 +126,7 @@ class SudokuGridPage extends SudokuPage {
         sudoApp.myPuzzleDB.display();
     }
 }
-class SudokuHelpPage extends SudokuPage {
-    // Reiter der Hilfeseite
+class SudokuHelpPage extends SudokuTabbedPage {
     constructor(tabId, contentId) {
         super(tabId, contentId);
     }
@@ -140,17 +137,21 @@ class SudokuHelpPage extends SudokuPage {
 
 class SudokuSolverController {
     constructor(solver) {
+        // The solver model
         this.mySolver = solver;
+        // Used dialogs
         this.mySuccessDialog = new SuccessDialog();
         this.myPuzzleSaveDialog = new PuzzleSaveDialog();
 
+        // =============================================================
+        // The events of the solver are set
+        // =============================================================
 
-        // Die Events des Solvers werden gesetzt
-        // Click-Event für die Nummern-Buttons setzen
+        // Set click event for the number buttons
         this.number_inputs = document.querySelectorAll('.number');
         this.number_inputs.forEach((e, index) => {
             e.addEventListener('click', () => {
-                // Hinweis: index + 1 = number on button
+                // Notice: index + 1 = number on button
                 let btnNumber = (index + 1).toString();
                 this.handleNumberPressed(btnNumber);
             })
@@ -158,20 +159,20 @@ class SudokuSolverController {
         this.number_inputs = document.querySelectorAll('.mobile-number');
         this.number_inputs.forEach((e, index) => {
             e.addEventListener('click', () => {
-                // Hinweis: index + 1 = number on button
+                // Notice: index + 1 = number on button
                 let btnNumber = (index + 1).toString();
                 this.handleNumberPressed(btnNumber);
             })
         });
 
-        //Click-Event für den Delete-Button setzen
+        //Click-Events for both delete buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-delete-cell');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
                 this.handleDeletePressed();
             })
         });
-
+        // Events of keys on the keyboard
         window.addEventListener("keydown", (event) => {
             switch (event.key) {
                 case "1":
@@ -194,7 +195,7 @@ class SudokuSolverController {
             }
         });
 
-        // Die beiden Phase-Button 
+        // Click-Events for both define buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-define');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -202,6 +203,7 @@ class SudokuSolverController {
             })
         });
 
+        // Click-Events for both play buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-play');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -209,7 +211,7 @@ class SudokuSolverController {
             })
         });
 
-        // Automatische Ausführung: schrittweise
+        // Click-Events for both step buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-autoStep');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -217,7 +219,7 @@ class SudokuSolverController {
             })
         });
 
-        // Automatische Ausführung: starten bzw. fortsetzen
+        // Click-Events for both run buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-run');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -225,8 +227,7 @@ class SudokuSolverController {
             })
         });
 
-
-        // Automatische Ausführung pausieren
+        // Click-Events for both pause buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-pause');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -234,7 +235,7 @@ class SudokuSolverController {
             })
         });
 
-        // Automatische Ausführung beenden
+        // Click-Events for both stop buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-stop');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -242,22 +243,21 @@ class SudokuSolverController {
             })
         });
 
-        // Der Initialisieren-Button: Initialisiert die Tabelle
+        // Click-Events for both init buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-init');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
                 this.initBtnPressed();
             })
         });
-        // Der Zurücksetzen-Button: Setzt die Tabelle zurück auf die Definition.
-        // Alle Zellen bis auf die, die zur Definition gehören, werden gelöscht
+        // Click-Events for both reset buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-reset');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
                 this.resetBtnPressed();
             })
         });
-        // Der Generieren-Button: generiert ein neues Puzzle
+        // Click-Events for both generate buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-generate');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -267,32 +267,41 @@ class SudokuSolverController {
 
         // Der Speichern-Button: Das aktuelle Puzzle wird unter einem Namen 
         // in der Puzzle-DB gespeichert.
-        document.querySelector('#btn-save').addEventListener('click', () => {
+        // Click-Event for save button desktop
+        document.getElementById('btn-save').addEventListener('click', () => {
             this.saveBtnPressed();
         });
-
-        document.querySelector('#btn-statistic').addEventListener('click', () => {
+        // Click-Event for save button mobile
+        document.getElementById('btn-save-mobile').addEventListener('click', () => {
+            // Stop automatic execution that may be running
+            this.mySolver.myStepper.stopAsyncLoop();
+            // Close possibly open success dialogue
+            this.mySuccessDialog.close();
+            // Save puzzle 
+            this.savePuzzleMobile();
+        });
+        // Overwrite puzzle data in the puzzle database, 
+        // only available in the desktop variant
+        document.getElementById('btn-statistic').addEventListener('click', () => {
             this.statisticBtnPressed();
         });
 
-        document.querySelector('#btn-print').addEventListener('click', () => {
+        // Save and print puzzle data, 
+        // only available in the desktop variant
+        document.getElementById('btn-print').addEventListener('click', () => {
             this.printBtnPressed();
         });
 
-        document.getElementById('btn-save-mobile').addEventListener('click', () => {
-            sudoApp.mySolver.myStepper.stopAsyncLoop();
-            sudoApp.mySolverController.mySuccessDialog.close();
-            sudoApp.mySolverController.savePuzzleMobile();
-        });
-
-        // Radio-Button Auswertungstyp: Lazy, Strikt+ oder Strikt-
+        // Radio button eval type: No-evaluation, Lazy, Strikt+ oder Strikt-
+        // desktop variant
         let radioEvalNodes = document.querySelectorAll('.eval-type');
         radioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
                 this.evalTypeSelected(radioNode.value);
             })
         });
-        // Radio-Button Auswertungstyp: Lazy, Strikt+ oder Strikt-
+        // Radio button eval type: No-evaluation, Lazy, Strikt+ oder Strikt-
+        // mobile variant
         let mobileRadioEvalNodes = document.querySelectorAll('.mobile-eval-type');
         mobileRadioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
@@ -302,23 +311,26 @@ class SudokuSolverController {
     }
 
     // ===============================================================
-    // Solver-Event handler
+    // Solver event handler
     // ===============================================================
 
     handleNumberPressed(nr) {
         if (this.mySolver.isInAutoExecution()) {
-            // Während der automatischen Ausführung Nummer gedrückt
-            // Der Stepper wird angehalten und beendet
+            // Number pressed during automatic execution
+            // The stepper is stopped and terminated
             this.mySolver.autoExecStop();
         } else {
             this.mySolver.atCurrentSelectionSetNumber(nr);
+            if (this.mySolver.succeeds()) {
+                this.mySuccessDialog.open();
+            }
         }
     }
 
     handleDeletePressed() {
         if (this.mySolver.isInAutoExecution()) {
-            // Während der automatischen Ausführung Delete-Taste gedrückt
-            // Der Stepper wird angehalten und beendet
+            // Delete button pressed during automatic execution
+            // The stepper is stopped and terminated
             this.mySolver.autoExecStop();
         } else {
             this.mySolver.deleteSelected();
@@ -326,9 +338,6 @@ class SudokuSolverController {
     }
 
     sudokuCellPressed(cell, index) {
-        /*   if (this.mySolver.isInAutoExecution()) {
-               this.mySolver.autoExecStop();
-           }  */
         this.mySolver.select(cell, index);
     }
 
@@ -669,23 +678,23 @@ class SudokuSolverView extends SudokuView {
         let evalNode = document.getElementById("loaded-evaluations");
         if (countBackwards == 0) {
             evalNode.innerHTML =
-            '<span style="background-color:#7986CB ; color:white ; width: 7rem"> &nbsp Geladen:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+                '<span style="background-color:#7986CB ; color:white ; width: 7rem"> &nbsp Geladen:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
         } else {
             evalNode.innerHTML =
-            '<span style="background-color:#7986CB ; color:white ; width: 7rem"> &nbsp Geladen:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
-            + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
+                '<span style="background-color:#7986CB ; color:white ; width: 7rem"> &nbsp Geladen:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+                + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
         }
     }
 
     displayBenchmark(levelOfDifficulty, countBackwards) {
         let evalNode = document.getElementById("evaluations");
-        if (countBackwards == 0){
+        if (countBackwards == 0) {
             evalNode.innerHTML =
-            '<span style="background-color:#4DB6AC; width: 7rem"> &nbsp Berechnet:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+                '<span style="background-color:#4DB6AC; width: 7rem"> &nbsp Berechnet:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
         } else {
             evalNode.innerHTML =
-            '<span style="background-color:#4DB6AC; width: 7rem"> &nbsp Berechnet:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
-            + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
+                '<span style="background-color:#4DB6AC; width: 7rem"> &nbsp Berechnet:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+                + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
         }
     }
 
@@ -977,26 +986,27 @@ class SudokuSolver extends SudokuCalculator {
     }
 
     startPuzzleGenerator() {
+        // The rotating loader icon is started
         this.notifyAspect('puzzleGenerator', 'started');
-        // Ein neuer Web Worker, der die Generierung durchführt, 
-        // wird erzeugt.
+        // A new web worker that performs the generation, is created.
         let webworkerPuzzleGenerator = new Worker("./generatorApp.js");
-        // Dem Web Worker wird ein Message handler mitgegeben. Der Web Worker
-        // sendet eine Nachricht, die das generierte Puzzle als String enthält.
+        // A message handler is given to the web worker. The web worker
+        // sends a message containing the generated puzzle as a string.
         webworkerPuzzleGenerator.onmessage = function (e) {
-            // Das Puzzle aus dem gelieferten String erzeugen
+            // Create the puzzle from the supplied string
             let puzzle = JSON.parse(e.data);
-            // Initialisierungen vor dem Laden
+            // Load the puzzle into the solver
             sudoApp.mySolver.loadPuzzle('-', puzzle);
-            // Gelöstes generiertes Puzzle zurücksetzen
+            // The delivered puzzle contains its solution along with other info. Therefore
+            // the puzzle must be reset at this point.
             sudoApp.mySolver.reset();
             sudoApp.mySolver.notify();
             sudoApp.myTabView.openGrid();
-            // Der sich drehende Loader wird gestoppt    
+            // The rotating loader icon is stopped
             sudoApp.mySolver.notifyAspect('puzzleGenerator', 'finished');
         }
-        // Dem neuen Web Worker wird die Nachricht Run geschickt,
-        // wodurch die Generierung des neuen Puzzles gestartet wird.
+        // The new web worker is sent the message "Run", 
+        // which starts the generation of the new puzzle.   
         webworkerPuzzleGenerator.postMessage('Run');
     }
 
@@ -1014,9 +1024,14 @@ class SudokuSolver extends SudokuCalculator {
     isInAutoExecution() {
         return super.isInAutoExecution();
     }
+
+    succeeds() {
+        return this.myGrid.isFinished();
+    }
+
     atCurrentSelectionSetNumber(number) {
         super.atCurrentSelectionSetNumber(number);
-        this.notify()
+        this.notify();
     }
     deleteSelected() {
         super.deleteSelected();
@@ -3220,7 +3235,12 @@ class SudokuGrid extends SudokuModel {
         }
         return false;
     }
-
+    isFinished() {
+        let tmp = !this.isInsolvable();
+        for (let i = 0; i < 81; i++) {
+            tmp = tmp || (this.sudoCells[i].getValue() !== '0');
+        }
+    }
     // ========================================================
     // Other methods
     // ========================================================
@@ -4988,7 +5008,7 @@ class SudokuPuzzleDBController {
 }
 class SudokuPuzzleDB {
     constructor() {
-        
+
         this.selectedIndex = -1;
         // 
         this.sorted = new Map([
@@ -5259,64 +5279,65 @@ class SudokuPuzzleDB {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
 
-        let tbNode = document.getElementById('puzzle-db-tbody');
-        while (tbNode.childElementCount > 0) {
-            // Eine Zeile bleibt erhalten
-            tbNode.removeChild(tbNode.lastChild);
-        }
-
-        let i = 0;
-        let selectedTr = null;
-        for (let [key, pz] of puzzleMap) {
-            let tr = document.createElement('tr');
-            tr.setAttribute("onClick", "sudoApp.myPuzzleDB.setSelected(this)");
-            tr.setAttribute("style", "cursor:pointer");
-            tr.classList.add('item')
-            if (i == this.selectedIndex) {
-                tr.classList.add('selected');
-                selectedTr = tr;
+        if (puzzleMap.size > 0) {
+            let tbNode = document.getElementById('puzzle-db-tbody');
+            while (tbNode.childElementCount > 0) {
+                tbNode.removeChild(tbNode.lastChild);
             }
-            i++;
 
-            let td_key = document.createElement('td');
-            td_key.innerText = key;
-            tr.appendChild(td_key);
+            let i = 0;
+            let selectedTr = null;
+            for (let [key, pz] of puzzleMap) {
+                let tr = document.createElement('tr');
+                tr.setAttribute("onClick", "sudoApp.myPuzzleDB.setSelected(this)");
+                tr.setAttribute("style", "cursor:pointer");
+                tr.classList.add('item')
+                if (i == this.selectedIndex) {
+                    tr.classList.add('selected');
+                    selectedTr = tr;
+                }
+                i++;
 
-            let td_name = document.createElement('td');
-            td_name.innerText = pz.name;
-            tr.appendChild(td_name);
+                let td_key = document.createElement('td');
+                td_key.innerText = key;
+                tr.appendChild(td_key);
 
-            let td_defCount = document.createElement('td');
-            td_defCount.innerText = pz.defCount;
-            tr.appendChild(td_defCount);
+                let td_name = document.createElement('td');
+                td_name.innerText = pz.name;
+                tr.appendChild(td_name);
 
-            let td_status = document.createElement('td');
-            td_status.innerText = pz.status;
-            tr.appendChild(td_status);
+                let td_defCount = document.createElement('td');
+                td_defCount.innerText = pz.defCount;
+                tr.appendChild(td_defCount);
 
-            let td_steps_lazy = document.createElement('td');
-            td_steps_lazy.innerText = pz.stepsLazy;
-            tr.appendChild(td_steps_lazy);
+                let td_status = document.createElement('td');
+                td_status.innerText = pz.status;
+                tr.appendChild(td_status);
 
-            let td_steps_strict = document.createElement('td');
-            td_steps_strict.innerText = pz.stepsStrict;
-            tr.appendChild(td_steps_strict);
+                let td_steps_lazy = document.createElement('td');
+                td_steps_lazy.innerText = pz.stepsLazy;
+                tr.appendChild(td_steps_lazy);
 
-            let td_level = document.createElement('td');
-            td_level.innerText = pz.level;
-            tr.appendChild(td_level);
+                let td_steps_strict = document.createElement('td');
+                td_steps_strict.innerText = pz.stepsStrict;
+                tr.appendChild(td_steps_strict);
 
-            let td_backTracks = document.createElement('td');
-            td_backTracks.innerText = pz.backTracks;
-            tr.appendChild(td_backTracks);
+                let td_level = document.createElement('td');
+                td_level.innerText = pz.level;
+                tr.appendChild(td_level);
 
-            let td_date = document.createElement('td');
-            td_date.innerText = (new Date(pz.date)).toLocaleDateString();
-            tr.appendChild(td_date);
+                let td_backTracks = document.createElement('td');
+                td_backTracks.innerText = pz.backTracks;
+                tr.appendChild(td_backTracks);
 
-            tbNode.appendChild(tr);
+                let td_date = document.createElement('td');
+                td_date.innerText = (new Date(pz.date)).toLocaleDateString();
+                tr.appendChild(td_date);
+
+                tbNode.appendChild(tr);
+            }
+            selectedTr.scrollIntoView();
         }
-        selectedTr.scrollIntoView();
     }
 
 
@@ -5328,14 +5349,16 @@ class SudokuPuzzleDB {
 
 
     displayCurrentPZ() {
-        this.displayClear()
-        let str_puzzleMap = localStorage.getItem("localSudokuDB");
-        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-        let key = Array.from(puzzleMap.keys())[this.selectedIndex];
-        let selectedPZ = puzzleMap.get(key);
-        this.displayIdRow(key, selectedPZ.name, selectedPZ.level);
-        this.displayTable('screen-puzzle', selectedPZ.puzzle);
-        this.displayDefineCounter(selectedPZ);
+        if (this.selectedIndex !== -1) {
+            this.displayClear()
+            let str_puzzleMap = localStorage.getItem("localSudokuDB");
+            let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+            let key = Array.from(puzzleMap.keys())[this.selectedIndex];
+            let selectedPZ = puzzleMap.get(key);
+            this.displayIdRow(key, selectedPZ.name, selectedPZ.level);
+            this.displayTable('screen-puzzle', selectedPZ.puzzle);
+            this.displayDefineCounter(selectedPZ);
+        }
     }
     displayIdRow(uid, name, level) {
         let puzzleIdentityRow = document.getElementById('pz-id-row')
@@ -5376,7 +5399,7 @@ class SudokuPuzzleDB {
                         cellField.style.fontWeight = 'bold';
                     }
                 }
-         
+
                 cellField.style.border = "1px solid darkgrey";
                 if (row === 2 || row === 5) {
                     cellField.style.borderBottom = "2px solid black";

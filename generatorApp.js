@@ -1,11 +1,12 @@
-// Der Web Worker importiert den gemeinsamen Code
+// The Web Worker imports the common code
 importScripts('./sudokuCommon.js');
 
 let sudoApp;
 function start() {
+    //A worker app is assigned to the variable "sudoApp".
     sudoApp = new SudokuWorkerApp();
     sudoApp.init();
 }
 
-// Starte und initialisiere die App
+// Launch and initialize the worker app
 start();

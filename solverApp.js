@@ -3,5 +3,5 @@ function start() {
     sudoApp = new SudokuApp();
     sudoApp.init();
 }
-// Starte und initialisiere die App
+// Launch and initialize the app
 start();
