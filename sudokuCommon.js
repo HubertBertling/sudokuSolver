@@ -669,23 +669,23 @@ class SudokuSolverView extends SudokuView {
         let evalNode = document.getElementById("loaded-evaluations");
         if (countBackwards == 0) {
             evalNode.innerHTML =
-            '<span style="background-color:#7986CB ; color:white ; width: 7rem"> &nbsp Geladen:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+                '<span style="background-color:#7986CB ; color:white ; width: 7rem"> &nbsp Geladen:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
         } else {
             evalNode.innerHTML =
-            '<span style="background-color:#7986CB ; color:white ; width: 7rem"> &nbsp Geladen:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
-            + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
+                '<span style="background-color:#7986CB ; color:white ; width: 7rem"> &nbsp Geladen:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+                + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
         }
     }
 
     displayBenchmark(levelOfDifficulty, countBackwards) {
         let evalNode = document.getElementById("evaluations");
-        if (countBackwards == 0){
+        if (countBackwards == 0) {
             evalNode.innerHTML =
-            '<span style="background-color:#4DB6AC; width: 7rem"> &nbsp Berechnet:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+                '<span style="background-color:#4DB6AC; width: 7rem"> &nbsp Berechnet:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
         } else {
             evalNode.innerHTML =
-            '<span style="background-color:#4DB6AC; width: 7rem"> &nbsp Berechnet:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
-            + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
+                '<span style="background-color:#4DB6AC; width: 7rem"> &nbsp Berechnet:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+                + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
         }
     }
 
@@ -4945,51 +4945,69 @@ class SudokuPuzzleDBController {
     // ===============================================================
 
     loadBtnPressed() {
-        let puzzle = this.myPuzzleDB.getSelectedPuzzle();
-        let uid = this.myPuzzleDB.getSelectedUid();
-        sudoApp.mySolver.loadPuzzle(uid, puzzle);
-        sudoApp.mySolver.notify();
-        sudoApp.myTabView.openGrid();
+        if (this.myPuzzleDB.getSize() > 0) {
+            let puzzle = this.myPuzzleDB.getSelectedPuzzle();
+            let uid = this.myPuzzleDB.getSelectedUid();
+            sudoApp.mySolver.loadPuzzle(uid, puzzle);
+            sudoApp.mySolver.notify();
+            sudoApp.myTabView.openGrid();
+        }
     }
 
     mobileRestoreBtnPressed() {
-        let uid = 'l2rcvi2mobile8h05azkg';
-        if (!sudoApp.myPuzzleDB.has(uid)) {
-            uid = this.myPuzzleDB.getSelectedUid();
+        if (this.myPuzzleDB.getSize() > 0) {
+            let uid = 'l2rcvi2mobile8h05azkg';
+            if (!sudoApp.myPuzzleDB.has(uid)) {
+                uid = this.myPuzzleDB.getSelectedUid();
+            }
+            let puzzle = this.myPuzzleDB.getPuzzle(uid);
+            sudoApp.mySolver.init();
+            sudoApp.mySolver.myGrid.loadPuzzle(uid, puzzle);
+            sudoApp.mySolver.setGamePhase('play');
+            sudoApp.mySolver.notify();
         }
-        let puzzle = this.myPuzzleDB.getPuzzle(uid);
-        sudoApp.mySolver.init();
-        sudoApp.mySolver.myGrid.loadPuzzle(uid, puzzle);
-        sudoApp.mySolver.setGamePhase('play');
-        sudoApp.mySolver.notify();
     }
 
     printBtnPressed() {
-        let str_puzzleMap = localStorage.getItem("localSudokuDB");
-        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-        let key = Array.from(puzzleMap.keys())[sudoApp.myPuzzleDB.selectedIndex];
-        let selectedPZ = puzzleMap.get(key);
-        this.myPuzzleDB.displayTablePrint('print-puzzle', selectedPZ.puzzle);
-        window.print();
+        if (this.myPuzzleDB.getSize() > 0) {
+            let str_puzzleMap = localStorage.getItem("localSudokuDB");
+            let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+            let key = Array.from(puzzleMap.keys())[sudoApp.myPuzzleDB.selectedIndex];
+            let selectedPZ = puzzleMap.get(key);
+            this.myPuzzleDB.displayTablePrint('print-puzzle', selectedPZ.puzzle);
+            window.print();
+        }
     }
 
     nextBtnPressed() {
-        this.myPuzzleDB.nextPZ();
+        if (this.myPuzzleDB.getSize() > 0) {
+            this.myPuzzleDB.nextPZ();
+        }
     }
     previousBtnPressed() {
-        // Select previous Puzzle
-        this.myPuzzleDB.previousPZ();
+        if (this.myPuzzleDB.getSize() > 0) {
+            // Select previous Puzzle
+            this.myPuzzleDB.previousPZ();
+        }
     }
 
     deleteBtnPressed() {
-        this.myPuzzleDB.deleteSelected();
+        if (this.myPuzzleDB.getSize() > 0) {
+            this.myPuzzleDB.deleteSelected();
+        }
     }
 
 }
 class SudokuPuzzleDB {
     constructor() {
-        
-        this.selectedIndex = -1;
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        if (puzzleMap.size > 0) {
+            this.selectedIndex = puzzleMap.size - 1;
+        } else {
+            this.selectedIndex = -1;
+        }
+
         // 
         this.sorted = new Map([
             ['name', 'desc'],
@@ -5001,9 +5019,14 @@ class SudokuPuzzleDB {
             ['backTracks', 'desc'],
             ['date', 'desc']
         ]);
-
-
     }
+
+    getSize() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        return puzzleMap.size;
+    }
+
     init() {
         // Bisher nichts
     }
@@ -5258,65 +5281,66 @@ class SudokuPuzzleDB {
     displayPuzzleDB() {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-
         let tbNode = document.getElementById('puzzle-db-tbody');
         while (tbNode.childElementCount > 0) {
             // Eine Zeile bleibt erhalten
             tbNode.removeChild(tbNode.lastChild);
         }
+        if (puzzleMap.size > 0) {
 
-        let i = 0;
-        let selectedTr = null;
-        for (let [key, pz] of puzzleMap) {
-            let tr = document.createElement('tr');
-            tr.setAttribute("onClick", "sudoApp.myPuzzleDB.setSelected(this)");
-            tr.setAttribute("style", "cursor:pointer");
-            tr.classList.add('item')
-            if (i == this.selectedIndex) {
-                tr.classList.add('selected');
-                selectedTr = tr;
+            let i = 0;
+            let selectedTr = null;
+            for (let [key, pz] of puzzleMap) {
+                let tr = document.createElement('tr');
+                tr.setAttribute("onClick", "sudoApp.myPuzzleDB.setSelected(this)");
+                tr.setAttribute("style", "cursor:pointer");
+                tr.classList.add('item')
+                if (i == this.selectedIndex) {
+                    tr.classList.add('selected');
+                    selectedTr = tr;
+                }
+                i++;
+
+                let td_key = document.createElement('td');
+                td_key.innerText = key;
+                tr.appendChild(td_key);
+
+                let td_name = document.createElement('td');
+                td_name.innerText = pz.name;
+                tr.appendChild(td_name);
+
+                let td_defCount = document.createElement('td');
+                td_defCount.innerText = pz.defCount;
+                tr.appendChild(td_defCount);
+
+                let td_status = document.createElement('td');
+                td_status.innerText = pz.status;
+                tr.appendChild(td_status);
+
+                let td_steps_lazy = document.createElement('td');
+                td_steps_lazy.innerText = pz.stepsLazy;
+                tr.appendChild(td_steps_lazy);
+
+                let td_steps_strict = document.createElement('td');
+                td_steps_strict.innerText = pz.stepsStrict;
+                tr.appendChild(td_steps_strict);
+
+                let td_level = document.createElement('td');
+                td_level.innerText = pz.level;
+                tr.appendChild(td_level);
+
+                let td_backTracks = document.createElement('td');
+                td_backTracks.innerText = pz.backTracks;
+                tr.appendChild(td_backTracks);
+
+                let td_date = document.createElement('td');
+                td_date.innerText = (new Date(pz.date)).toLocaleDateString();
+                tr.appendChild(td_date);
+
+                tbNode.appendChild(tr);
             }
-            i++;
-
-            let td_key = document.createElement('td');
-            td_key.innerText = key;
-            tr.appendChild(td_key);
-
-            let td_name = document.createElement('td');
-            td_name.innerText = pz.name;
-            tr.appendChild(td_name);
-
-            let td_defCount = document.createElement('td');
-            td_defCount.innerText = pz.defCount;
-            tr.appendChild(td_defCount);
-
-            let td_status = document.createElement('td');
-            td_status.innerText = pz.status;
-            tr.appendChild(td_status);
-
-            let td_steps_lazy = document.createElement('td');
-            td_steps_lazy.innerText = pz.stepsLazy;
-            tr.appendChild(td_steps_lazy);
-
-            let td_steps_strict = document.createElement('td');
-            td_steps_strict.innerText = pz.stepsStrict;
-            tr.appendChild(td_steps_strict);
-
-            let td_level = document.createElement('td');
-            td_level.innerText = pz.level;
-            tr.appendChild(td_level);
-
-            let td_backTracks = document.createElement('td');
-            td_backTracks.innerText = pz.backTracks;
-            tr.appendChild(td_backTracks);
-
-            let td_date = document.createElement('td');
-            td_date.innerText = (new Date(pz.date)).toLocaleDateString();
-            tr.appendChild(td_date);
-
-            tbNode.appendChild(tr);
+            selectedTr.scrollIntoView();
         }
-        selectedTr.scrollIntoView();
     }
 
 
@@ -5331,11 +5355,13 @@ class SudokuPuzzleDB {
         this.displayClear()
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-        let key = Array.from(puzzleMap.keys())[this.selectedIndex];
-        let selectedPZ = puzzleMap.get(key);
-        this.displayIdRow(key, selectedPZ.name, selectedPZ.level);
-        this.displayTable('screen-puzzle', selectedPZ.puzzle);
-        this.displayDefineCounter(selectedPZ);
+        if (puzzleMap.size > 0) {
+            let key = Array.from(puzzleMap.keys())[this.selectedIndex];
+            let selectedPZ = puzzleMap.get(key);
+            this.displayIdRow(key, selectedPZ.name, selectedPZ.level);
+            this.displayTable('screen-puzzle', selectedPZ.puzzle);
+            this.displayDefineCounter(selectedPZ);
+        }
     }
     displayIdRow(uid, name, level) {
         let puzzleIdentityRow = document.getElementById('pz-id-row')
@@ -5376,7 +5402,7 @@ class SudokuPuzzleDB {
                         cellField.style.fontWeight = 'bold';
                     }
                 }
-         
+
                 cellField.style.border = "1px solid darkgrey";
                 if (row === 2 || row === 5) {
                     cellField.style.borderBottom = "2px solid black";
@@ -5430,6 +5456,7 @@ class SudokuPuzzleDB {
     }
 
     getSelectedPuzzle() {
+
         let selectedPZ = this.selectedPZ();
         return selectedPZ;
     }
