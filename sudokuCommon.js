@@ -282,8 +282,8 @@ class SudokuSolverController {
         });
         // Overwrite puzzle data in the puzzle database, 
         // only available in the desktop variant
-        document.getElementById('btn-statistic').addEventListener('click', () => {
-            this.statisticBtnPressed();
+        document.getElementById('btn-overwrite').addEventListener('click', () => {
+            this.overwriteBtnPressed();
         });
 
         // Save and print puzzle data, 
@@ -383,7 +383,7 @@ class SudokuSolverController {
         this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');
     }
 
-    statisticBtnPressed() {
+    overwriteBtnPressed() {
         this.mySolver.autoExecStop();
         this.mySuccessDialog.close();
         let playedPuzzleDbElement = this.mySolver.myGrid.getPlayedPuzzleDbElement();
@@ -3066,6 +3066,8 @@ class SudokuGrid extends SudokuModel {
         // this.init();
     }
 
+    
+
     init() {
         // Speichert die aktuell selektierte Zelle und ihren Index
         this.selectedCell = undefined;
@@ -5014,6 +5016,7 @@ class SudokuPuzzleDBController {
     deleteBtnPressed() {
         if (this.myPuzzleDB.getSize() > 0) {
             this.myPuzzleDB.deleteSelected();
+
         }
     }
 
@@ -5224,7 +5227,7 @@ class SudokuPuzzleDB {
     }
 
     deleteSelected() {
-        // Hole den Speicher als ein Objekt
+        // Get the database as an object
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         let key = Array.from(puzzleMap.keys())[this.selectedIndex];
