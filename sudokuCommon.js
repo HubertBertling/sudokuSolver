@@ -976,6 +976,14 @@ class SudokuSolver extends SudokuCalculator {
         this.notify();
     }
 
+    clearLoadedPuzzleInfo(key) {
+        let loadedPuzzleId = this.myGrid.loadedPuzzleId;
+        if (loadedPuzzleId == key) {
+            this.myGrid.loadedPuzzleId = '';
+            this.myGrid.loadedPuzzleName = '';
+        }
+    }
+
     startPuzzleGenerator() {
         this.notifyAspect('puzzleGenerator', 'started');
         // Ein neuer Web Worker, der die Generierung durchführt, 
@@ -5211,9 +5219,11 @@ class SudokuPuzzleDB {
         if (this.selectedIndex > 0) {
             this.selectedIndex--;
         }
-        puzzleMap.delete(key);
+        puzzleMap.delete(key);        
         let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+        //Clear loaded puzzle info, if loaded puzzle is deleted
+        sudoApp.mySolver.clearLoadedPuzzleInfo(key);
         this.display();
     }
 
