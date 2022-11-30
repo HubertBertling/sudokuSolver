@@ -265,8 +265,6 @@ class SudokuSolverController {
             })
         });
 
-        // Der Speichern-Button: Das aktuelle Puzzle wird unter einem Namen 
-        // in der Puzzle-DB gespeichert.
         // Click-Event for save button desktop
         document.getElementById('btn-save').addEventListener('click', () => {
             this.saveBtnPressed();
@@ -316,7 +314,7 @@ class SudokuSolverController {
 
     handleNumberPressed(nr) {
         if (this.mySolver.isInAutoExecution()) {
-            // Number pressed during automatic execution
+            // Number button pressed during automatic execution
             // The stepper is stopped and terminated
             this.mySolver.autoExecStop();
         } else {
@@ -332,9 +330,9 @@ class SudokuSolverController {
             // Delete button pressed during automatic execution
             // The stepper is stopped and terminated
             this.mySolver.autoExecStop();
-        } else {
-            this.mySolver.deleteSelected();
-        };
+        }
+        this.mySolver.deleteSelected();
+
     }
 
     sudokuCellPressed(cell, index) {
@@ -1034,7 +1032,7 @@ class SudokuSolver extends SudokuCalculator {
     }
 
     succeeds() {
-        return this.myGrid.isFinished();
+        return this.myGrid.isFinished() && !this.myGrid.isInsolvable();
     }
 
     atCurrentSelectionSetNumber(number) {
@@ -1711,6 +1709,9 @@ class StepperOnGrid {
 
         if (this.myResult == '' || this.myResult == 'inProgress') {
             this.myResult = this.asyncObservedStep();
+            if (this.myResult == 'success') {
+                this.cleanupFinishedLoop();
+            }
         } else {
             this.cleanupFinishedLoop();
         }
@@ -1868,11 +1869,22 @@ class StepperOnGrid {
             this.goneSteps++;
             // Falls die Nummernsetzung zur Unlösbarkeit führt
             // muss der Solver zurückgehen
-            if (this.deadlockReached()) {
+
+            /*   if (this.deadlockReached()) {
                 this.setAutoDirection('backward');
                 this.countBackwards++;
-            }
+            }           
             return 'inProgress';
+            */
+            if (this.myGrid.isInsolvable()) {
+                this.setAutoDirection('backward');
+                this.countBackwards++;
+                return 'inProgress';
+            } else if (this.myGrid.isFinished()) {
+                return 'success'
+            } else {
+                return 'inProgress';
+            }
         }
     }
 
@@ -3074,7 +3086,7 @@ class SudokuGrid extends SudokuModel {
         // this.init();
     }
 
-    
+
 
     init() {
         // Speichert die aktuell selektierte Zelle und ihren Index
@@ -3246,10 +3258,10 @@ class SudokuGrid extends SudokuModel {
         return false;
     }
     isFinished() {
-        let tmp = !this.isInsolvable();
         for (let i = 0; i < 81; i++) {
-            tmp = tmp || (this.sudoCells[i].getValue() !== '0');
+            if (this.sudoCells[i].getValue() == '0') return false;
         }
+        return true;
     }
     // ========================================================
     // Other methods
@@ -5242,7 +5254,7 @@ class SudokuPuzzleDB {
         if (this.selectedIndex > 0) {
             this.selectedIndex--;
         }
-        puzzleMap.delete(key);        
+        puzzleMap.delete(key);
         let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
         //Clear loaded puzzle info, if loaded puzzle is deleted
@@ -5264,7 +5276,6 @@ class SudokuPuzzleDB {
         let key = Array.from(puzzleMap.keys())[this.selectedIndex];
         return key;
     }
-
 
     nextPZ() {
         let displayRows = document.getElementById('puzzle-db-tbody').rows;
@@ -5316,7 +5327,6 @@ class SudokuPuzzleDB {
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         let tbNode = document.getElementById('puzzle-db-tbody');
         while (tbNode.childElementCount > 0) {
-            // Eine Zeile bleibt erhalten
             tbNode.removeChild(tbNode.lastChild);
         }
         if (puzzleMap.size > 0) {
