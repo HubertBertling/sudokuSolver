@@ -1144,7 +1144,7 @@ class PuzzleSaveDialog {
                 x: "center",
                 y: "center",
                 width: "400px",
-                height: "300px",
+                height: "280px",
                 mount: document.getElementById("contentSaveDlg")
             });
         } else {
