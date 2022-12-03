@@ -168,7 +168,7 @@ html {
     border: 1px solid black;
 }
 .sudoku-block {
-    margin: 0.1rem;
+    margin: 0.2rem;
     display: grid;
     grid-template-columns: repeat(3, auto);
     place-items: center;
