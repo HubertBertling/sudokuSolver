@@ -393,7 +393,7 @@ class SudokuSolverController {
         } else {
             sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, playedPuzzleDbElement);
             // Wechsle in den DB-Reiter
-            document.getElementById("puzzle-db-tab").click();
+            // document.getElementById("puzzle-db-tab").click();
         }
     }
 
