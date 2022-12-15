@@ -48,9 +48,9 @@
                         <div class="loaded-evaluations" id="loaded-evaluations">
 
                         </div>
-                        <div class="evaluations" id="evaluations">
+                   <!---     <div class="evaluations" id="evaluations">
 
-                        </div>
+                        </div>  -->
                         <div class="progress-box" id="progress-box">
                             <div class="progress-block">
                                 <div class="step-count-box">
@@ -100,16 +100,18 @@
                             <button class="pc-btn btn-col-1-2 number">7</button>
                             <button class="pc-btn btn-col-3-4 number">8</button>
                             <button class="pc-btn btn-col-5-6 number">9</button>
-                            <button class="pc-btn btn-automatic btn-col-1-2 btn-run" id="btn-run"><img src="images/play-96.png"
-                                    class="btn-image">
+                            <button class="pc-btn btn-col-1-2-3-4-5-6 btn-showWrongNumbers">Prüfen</button>
+            
+                            <button class="pc-btn btn-automatic btn-col-1-2 btn-run" id="btn-run"><img
+                                    src="images/play-96.png" class="btn-image">
                                 <span>Start</span>
                             </button>
-                            <button class="pc-btn btn-automatic btn-col-3-4 btn-pause" id="btn-pause"><img src="images/pause-96.png"
-                                    class="btn-image">
+                            <button class="pc-btn btn-automatic btn-col-3-4 btn-pause" id="btn-pause"><img
+                                    src="images/pause-96.png" class="btn-image">
                                 <span>Pause</span>
                             </button>
-                            <button class="pc-btn btn-automatic btn-col-5-6 btn-stop" id="btn-stop"><img src="images/stop-96.png"
-                                    class="btn-image">
+                            <button class="pc-btn btn-automatic btn-col-5-6 btn-stop" id="btn-stop"><img
+                                    src="images/stop-96.png" class="btn-image">
                                 <span>Stop</span>
                             </button>
                             <button class="pc-btn btn-autoStep btn-col-1-2-3-4-5-6" id="btn-autoStep">
@@ -174,12 +176,16 @@
                         <label for="mobile-strict-minus">Strikt</label>
                     </div>
                 </div>
-
-                <button class="mobile-interface mobile-btn" id="btn-save-mobile">Speichern</button>
-                <button class="mobile-interface mobile-btn" onclick="sudoApp.helpFunktion()">?</button>
+                <div class="mobile-store-btns">
+                    <div class="mobile-store-btns-grid">
+                        <button class="mobile-interface mobile-btn" id="btn-save-mobile">Speichern</button>
+                        <button class="mobile-interface mobile-btn" id="btn-restore-mobile">Laden</button>
+                        <button class="mobile-interface mobile-btn" onclick="sudoApp.helpFunktion()">?</button>
+                    </div>
+                </div>
                 <button class="mobile-interface mobile-btn btn-init">Init</button>
                 <button class="mobile-interface mobile-btn btn-reset">Zurück</button>
-                <button class="mobile-interface mobile-btn" id="btn-restore-mobile">Laden</button>
+                <button class="mobile-interface mobile-btn btn-showWrongNumbers">Prüfen</button>
                 <button class="mobile-interface mobile-btn btn-generate">Neu</button>
                 <button class="mobile-interface mobile-btn btn-define">Def.</button>
                 <button class="mobile-interface mobile-btn btn-play">Lösen</button>
@@ -310,7 +316,7 @@
         </div>
     </div>
     <script src="./sudokuCommon.js"></script>
-    <script src="./solverApp.js"></script>
+    <script src="./sudokuMainApp.js"></script>
 </body>
 
 </html>

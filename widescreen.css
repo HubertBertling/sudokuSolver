@@ -359,7 +359,8 @@ html {
     border-right: 2px solid var(--error-cell-bg-color);
 }
 
-.sudoku-grid-cell.err {
+.sudoku-grid-cell.err,
+.sudoku-grid-cell.wrong {
     /* background-color: var(--error-cell-bg-color); 
     color: var(--error-cell-color); */
     border: 4px solid Crimson;
@@ -382,9 +383,9 @@ html {
 .technique, .reasonInsolvability {
     font-size: 1.0rem;
     display: flex;
-    padding-top: 3px;
+    padding-top: 5px;
     padding-left: 2px;
-    padding-bottom: 3px;
+    padding-bottom: 5px;
     /* border: 1px solid black; */
     background-color: lightgrey;
 }
@@ -464,6 +465,7 @@ html {
     border: none;
     padding-left: 1rem;
     padding-right: 1rem;
+    
 }
 
 .pc-btn:active {

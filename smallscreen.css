@@ -309,7 +309,8 @@ html {
 }
 
 
-.sudoku-grid-cell.err {
+.sudoku-grid-cell.err,
+.sudoku-grid-cell.wrong  {
     /*  
         background-color: var(--error-cell-bg-color);
         color: var(--error-cell-color);
@@ -336,9 +337,9 @@ html {
 .reasonInsolvability {
     font-size: 1.0rem;
     display: flex;
-    padding-top: 2px;
+    padding-top: 3px;
     padding-left: 2px;
-    padding-bottom: 2px;
+    padding-bottom: 3px;
     background-color: lightgrey;
     color: Crimson; 
 }
@@ -378,10 +379,6 @@ html {
 }
 
 
-.mobile-evaluation {
-    margin-left: 1rem;
-}
-
 input[type="radio"] {
     height: 1.1rem;
     width: 1.1rem;    
@@ -398,6 +395,8 @@ input[type="radio"] {
     align-items: center;
     border: none;
 }
+
+
 
 .btn-define {
     background-color: var(--defined-cell-bg-color);
@@ -428,17 +427,31 @@ input[type="radio"] {
 }
 
 .mobile-evaluation {
+    margin-left: 1rem;
     place-items: center;
     grid-column: 1 / span 2;
     display: flex;
 }
 
+.mobile-store-btns{
+    place-items: center;
+    grid-column: 3 / span 2;
+    display: flex;  
+}
+
+.mobile-store-btns-grid {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: 3fr 2fr 2fr;
+    gap: 0.3rem;
+    font-size: 1.4rem;
+}
 
 label {
     margin-left: 0.5rem;
     margin-right: 1.0rem;
     float: right;
-    font-size: 1.2rem;
+    font-size: 1.2rem;    
 }
 
 .btn-image {
