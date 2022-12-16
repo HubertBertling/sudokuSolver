@@ -91,6 +91,7 @@ Manuelle Ausführung bedeutet, dass der Spieler die Nummern in den Zellen setzt.
 |**Init**|Durch das Drücken dieser Initialisierungstaste wird das aktuelle Puzzle des Solvers initialisiert. Danach ist die Sudoku-Tabelle leer.|
 |**Zurück**|Mittels dieser Taste wird das Puzzle des Solvers zurückgesetzt auf die Aufgabenstellung. D.h. alle in der Lösungsphase gesetzten Zellen, die grünen Zellen, werden gelöscht. Die Givens bleiben erhalten.|
 |**Neu**|Mittels dieser Taste kann ein neues Puzzle generiert werden.|
+|**Prüfen**|Die gesetzten Lösungsnummern werden geprüft. Wenn sie falsch gesetzt sind, werden sie als fehlerhaft gekennzeichnet. Diese Funktion ist dann nützlich, wenn man das Puzzle manuell lösen will und man vermutet, dass man bereits einen Fehler gemacht hat. Sie ist des weiteren nützlich, wenn man im Lazy-Modus entdeckt, dass die bisherige Setzung der Nummern widersprüchlich ist. Die Prüfung liefert dann die verursachenden falsch gesetzten Nummern.
 |**Speichern unter**|Mittels dieser Taste kann das aktuelle Puzzle in der Datenbank gespeichert werden.|
 |**Überschreiben**|Mittels dieser Taste können für ein aus der Datenbank geladenes Puzzle die Daten in der Datenbank aktualisiert werden. Die alten Daten werden durch die neuen Daten überschrieben. Falls das aktuelle Puzzle nicht aus der Datenbank geladen wurde, wird der Speicherdialog angestoßen.|
 

@@ -177,11 +177,11 @@
                     </div>
                 </div>
                 <div class="mobile-store-btns">
-                    <button class="mobile-interface mobile-btn-save" id="btn-save-mobile"><img
+                    <button class="mobile-interface mobile-btn mobile-btn-save" id="btn-save-mobile"><img
                             src="images/save.png" class="btn-image-save">
                     </button>
-                    <button class="mobile-interface mobile-btn-restore" id="btn-restore-mobile"><img
-                        src="images/oeffnen.png" class="btn-image-open"></button>
+                    <button class="mobile-interface mobile-btn mobile-btn-restore" id="btn-restore-mobile"><img
+                            src="images/oeffnen.png" class="btn-image-open"></button>
                 </div>
                 <button class="mobile-interface mobile-btn" onclick="sudoApp.helpFunktion()">?</button>
                 <button class="mobile-interface mobile-btn btn-init">Init</button>
@@ -215,76 +215,81 @@
                     <span>Schritt</span>
                 </button>
             </div>
-        </div>
-    </div>
-    <!--Der Inhalt des Reiters Puzzle-Datenbank-->
-    <div id="puzzle-db" class="tabcontent tabdatabase">
-        <section class="noprint">
-            <div class="container">
-                <table class="puzzle-db-table " id="puzzle-db-table">
-                    <!--Die Datenbanktabelle-->
-                    <thead class="puzzle-db-thead">
-                        <tr>
-                            <th style="cursor:pointer">Puzzle-Id <div>Puzzle-Id</div>
-                            </th>
-                            <th id="col-name" style="cursor:pointer">Puzzle-Name <div>Puzzle-Name</div>
-                            </th>
-                            <th id="col-defCount" style="cursor:pointer">Def. Zellen<div>Def. Zellen</div>
-                            </th>
-                            <th id="col-status" style="cursor:pointer">Status<div>Status</div>
-                            </th>
-                            <th id="col-steps-lazy" style="cursor:pointer">Schritte (lazy)<div>Schritte (lazy)
-                                </div>
-                            </th>
-                            <th id="col-steps-strict" style="cursor:pointer">Schritte (strikt)<div>Schritte
-                                    (strikt)
-                                </div>
-                            </th>
-                            <th id="col-level" style="cursor:pointer">Level<div>Level</div>
-                            </th>
-                            <th id="col-backTracks" style="cursor:pointer">#Rückwärts<div>#Rückwärts</div>
-                            </th>
-                            <th id="col-date" style="cursor:pointer">Datum<div>Datum</div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="puzzle-db-tbody" id="puzzle-db-tbody">
-                        <!--Der Inhalt der Datenbanktabelle wird per JS aus dem Local-Store geladen-->
-                    </tbody>
-                </table>
+
+            <!--Der Inhalt des Reiters Puzzle-Datenbank-->
+            <div id="puzzle-db" class="tabcontent tabdatabase">
+                <section class="noprint">
+                    <div class="container">
+                        <table class="puzzle-db-table " id="puzzle-db-table">
+                            <!--Die Datenbanktabelle-->
+                            <thead class="puzzle-db-thead">
+                                <tr>
+                                    <th style="cursor:pointer">Puzzle-Id <div>Puzzle-Id</div>
+                                    </th>
+                                    <th id="col-name" style="cursor:pointer">Puzzle-Name <div>Puzzle-Name</div>
+                                    </th>
+                                    <th id="col-defCount" style="cursor:pointer">Def. Zellen<div>Def. Zellen</div>
+                                    </th>
+                                    <th id="col-status" style="cursor:pointer">Status<div>Status</div>
+                                    </th>
+                                    <th id="col-steps-lazy" style="cursor:pointer">Schritte (lazy)<div>Schritte (lazy)
+                                        </div>
+                                    </th>
+                                    <th id="col-steps-strict" style="cursor:pointer">Schritte (strikt)<div>Schritte
+                                            (strikt)
+                                        </div>
+                                    </th>
+                                    <th id="col-level" style="cursor:pointer">Level<div>Level</div>
+                                    </th>
+                                    <th id="col-backTracks" style="cursor:pointer">#Rückwärts<div>#Rückwärts</div>
+                                    </th>
+                                    <th id="col-date" style="cursor:pointer">Datum<div>Datum</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="puzzle-db-tbody" id="puzzle-db-tbody">
+                                <!--Der Inhalt der Datenbanktabelle wird per JS aus dem Local-Store geladen-->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                <div class="puzzle-btns ">
+                    <!--Die 4 buttons unterhalb der Puzzle-Datenbanktabelle -->
+                    <button class="pc-btn noprint" id="pz-btn-load">Laden
+                    </button>
+                    <button class="pc-btn noprint" id="pz-btn-previous"
+                        onclick="sudoApp.myPuzzleDBController.previousBtnPressed()"><img
+                            src="images/pfeilrueckwaerts.png" class="forward-backward-image"></button>
+                    <button class="pc-btn noprint" id="pz-btn-next"
+                        onclick="sudoApp.myPuzzleDBController.nextBtnPressed()"><img src="images/pfeilvorwaerts.png"
+                            class="forward-backward-image"></button>
+                    <button class="pc-btn noprint" id="pz-btn-delete"
+                        onclick="sudoApp.myPuzzleDBController.deleteBtnPressed()">Löschen</button>
+                </div>
+                <div class="puzzle-header">
+                    <!--Die Überschrift zum aktuell geladenen Puzzle-->
+                    <h1 class="noprint">Selektiertes Puzzle:</h1>
+                    <!--Id und Name des aktuell geladenen Puzzles werden als String via JS erzeugt-->
+                    <div class="pz-id-row" id="pz-id-row">0</div>
+                </div>
+                <div class="puzzle-line">
+                    <div class="pz-table" id="screen-puzzle">
+                    </div>
+                    <div class="pz-table" id="print-puzzle">
+                    </div>
+                </div>
+                <!--In der Druckausgabe wird der Druck-Button unterdrückt-->
+                <button class="pc-btn noprint" id="pz-btn-print"
+                    onclick="sudoApp.myPuzzleDBController.printBtnPressed()">Drucken</button>
             </div>
-        </section>
-        <div class="puzzle-btns ">
-            <!--Die 4 buttons unterhalb der Puzzle-Datenbanktabelle -->
-            <button class="pc-btn noprint" id="pz-btn-load">Laden
-            </button>
-            <button class="pc-btn noprint" id="pz-btn-previous"
-                onclick="sudoApp.myPuzzleDBController.previousBtnPressed()"><img src="images/pfeilrueckwaerts.png"
-                    class="forward-backward-image"></button>
-            <button class="pc-btn noprint" id="pz-btn-next" onclick="sudoApp.myPuzzleDBController.nextBtnPressed()"><img
-                    src="images/pfeilvorwaerts.png" class="forward-backward-image"></button>
-            <button class="pc-btn noprint" id="pz-btn-delete"
-                onclick="sudoApp.myPuzzleDBController.deleteBtnPressed()">Löschen</button>
-        </div>
-        <div class="puzzle-header">
-            <!--Die Überschrift zum aktuell geladenen Puzzle-->
-            <h1 class="noprint">Selektiertes Puzzle:</h1>
-            <!--Id und Name des aktuell geladenen Puzzles werden als String via JS erzeugt-->
-            <div class="pz-id-row" id="pz-id-row">0</div>
-        </div>
-        <div class="puzzle-line">
-            <div class="pz-table" id="screen-puzzle">
+            <!--Der Inhalt des Reiters Hilfe-->
+            <div id="help" class="tabcontent tabhelp">
+                <embed class="help-embed" src="./help.html"> </embed>
             </div>
-            <div class="pz-table" id="print-puzzle">
-            </div>
+
+
+
         </div>
-        <!--In der Druckausgabe wird der Druck-Button unterdrückt-->
-        <button class="pc-btn noprint" id="pz-btn-print"
-            onclick="sudoApp.myPuzzleDBController.printBtnPressed()">Drucken</button>
-    </div>
-    <!--Der Inhalt des Reiters Hilfe-->
-    <div id="help" class="tabcontent tabhelp">
-        <embed class="help-embed" src="./help.html"> </embed>
     </div>
     </div>
     </div>
