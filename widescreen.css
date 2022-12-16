@@ -494,13 +494,20 @@ html {
 .btn-define {
     background-color: var(--defined-cell-bg-color);
     color: var(--defined-cell-color);
+    margin-top: 0.7rem;
  }
 
 .btn-play {
     background-color: var(--played-cell-bg-color);
     color: var(--standard-btn-color);
+    margin-top: 0.7rem;
     
 }
+
+.btn-run, .btn-pause, .btn-stop, .btn-save, .btn-overwrite {
+    margin-top: 0.7rem;
+}
+
 .btn-col-1-2 {
     grid-column: 1 / span 2;
 }
@@ -535,6 +542,8 @@ html {
 .btn-delete-cell {
     background-color: var(--delete-btn-bg-color);
     color: var(--delete-btn-color);
+    margin-top: 0.7rem;
+
 }
 
 .btn-image {

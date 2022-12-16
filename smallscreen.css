@@ -375,13 +375,14 @@ html {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.3rem;
-    font-size: 1.4rem;
+    font-size: 1.0rem;
 }
 
 
 input[type="radio"] {
     height: 1.1rem;
     width: 1.1rem;    
+    grid-column: 1 / span 2;
 }
 
 .mobile-btn {
@@ -395,8 +396,22 @@ input[type="radio"] {
     align-items: center;
     border: none;
 }
+.mobile-store-btns {
+    display:grid;
+    grid-template-columns: 1fr 1fr;  
+    justify-content: center;
+    gap: 0.3rem;
 
+}
+.mobile-btn-save, .mobile-btn-restore {
+    background-color: var(--standard-btn-bg-color);
+    text-align: center;
+    height: var(--standard-btn-height);
+    border-radius: 0.3rem;
+    border: none;
+    font-size: 1.2rem;
 
+}
 
 .btn-define {
     background-color: var(--defined-cell-bg-color);
@@ -433,19 +448,6 @@ input[type="radio"] {
     display: flex;
 }
 
-.mobile-store-btns{
-    place-items: center;
-    grid-column: 3 / span 2;
-    display: flex;  
-}
-
-.mobile-store-btns-grid {
-    margin-top: 1rem;
-    display: grid;
-    grid-template-columns: 3fr 2fr 2fr;
-    gap: 0.3rem;
-    font-size: 1.4rem;
-}
 
 label {
     margin-left: 0.5rem;
@@ -458,9 +460,15 @@ label {
     width: 1.8rem;
     height: 1.6rem;
     margin-right: 1rem;
+   
 }
 
-
+.btn-image-save, .btn-image-open {
+    width: 2.4rem;
+    height: 2.2rem;
+    /*background-color: var(--standard-btn-bg-color);*/
+   
+}
 /*======================================*/
 /* Progress block */
 /*======================================*/

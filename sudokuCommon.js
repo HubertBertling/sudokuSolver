@@ -305,6 +305,10 @@ class SudokuSolverController {
 
     startBtnPressed() {
         this.mySolver.startSolverLoop();
+        if (this.mySolver.myGrid.solvedPuzzleRecord == null) {
+            this.mySolver.getSolvedPuzzleRecord();
+        }
+  
     }
 
     pauseBtnPressed() {

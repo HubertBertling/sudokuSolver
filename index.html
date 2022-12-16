@@ -48,7 +48,7 @@
                         <div class="loaded-evaluations" id="loaded-evaluations">
 
                         </div>
-                   <!---     <div class="evaluations" id="evaluations">
+                        <!---     <div class="evaluations" id="evaluations">
 
                         </div>  -->
                         <div class="progress-box" id="progress-box">
@@ -101,7 +101,7 @@
                             <button class="pc-btn btn-col-3-4 number">8</button>
                             <button class="pc-btn btn-col-5-6 number">9</button>
                             <button class="pc-btn btn-col-1-2-3-4-5-6 btn-showWrongNumbers">Prüfen</button>
-            
+
                             <button class="pc-btn btn-automatic btn-col-1-2 btn-run" id="btn-run"><img
                                     src="images/play-96.png" class="btn-image">
                                 <span>Start</span>
@@ -119,7 +119,7 @@
                                 <span>Schritt</span>
                             </button>
                             <button class="pc-btn btn-save btn-col-1-2-3" id="btn-save">Speichern unter</button>
-                            <button class="pc-btn btn-col-4-5-6" id="btn-overwrite">Überschreiben</button>
+                            <button class="pc-btn btn-col-4-5-6 btn-overwrite" id="btn-overwrite">Überschreiben</button>
                             <button class="pc-btn btn-print btn-col-1-2-3-4-5-6" id="btn-print">Drucken</button>
                         </div>
                         <div class="eval-btn-block last-row">
@@ -177,12 +177,13 @@
                     </div>
                 </div>
                 <div class="mobile-store-btns">
-                    <div class="mobile-store-btns-grid">
-                        <button class="mobile-interface mobile-btn" id="btn-save-mobile">Speichern</button>
-                        <button class="mobile-interface mobile-btn" id="btn-restore-mobile">Laden</button>
-                        <button class="mobile-interface mobile-btn" onclick="sudoApp.helpFunktion()">?</button>
-                    </div>
+                    <button class="mobile-interface mobile-btn-save" id="btn-save-mobile"><img
+                            src="images/save.png" class="btn-image-save">
+                    </button>
+                    <button class="mobile-interface mobile-btn-restore" id="btn-restore-mobile"><img
+                        src="images/oeffnen.png" class="btn-image-open"></button>
                 </div>
+                <button class="mobile-interface mobile-btn" onclick="sudoApp.helpFunktion()">?</button>
                 <button class="mobile-interface mobile-btn btn-init">Init</button>
                 <button class="mobile-interface mobile-btn btn-reset">Zurück</button>
                 <button class="mobile-interface mobile-btn btn-showWrongNumbers">Prüfen</button>
