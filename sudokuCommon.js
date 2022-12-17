@@ -3241,9 +3241,7 @@ class SudokuGrid extends SudokuModel {
                 puzzleDbElement.solution[i] = this.sudoCells[i].getValue();
             }
             puzzleDbElement.date = (new Date()).toJSON();
-        } else {
-            puzzleDbElement.status = 'unlösbar';
-        }
+        } 
         return puzzleDbElement;
     }
 
@@ -3362,8 +3360,6 @@ class SudokuGrid extends SudokuModel {
     }
 
     loadPuzzleInfos(uid, puzzleDbElement) {
-        // this.loadedPuzzleId = uid;
-        // this.loadedPuzzleName = puzzleDbElement.name;
         this.difficulty = puzzleDbElement.level;
         this.backTracks = puzzleDbElement.backTracks;
         this.solvedPuzzle = puzzleDbElement.puzzle;
