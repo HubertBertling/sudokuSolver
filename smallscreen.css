@@ -326,8 +326,8 @@ html {
 
 
 
-.evaluations,
 .loaded-evaluations {
+    margin-top: 3px;
     font-size: 1.0rem;
     display: flex;
     padding-top: 5px;
@@ -371,7 +371,7 @@ html {
 
 
 .mobile-grid-container {
-    margin-top: 1rem;
+    margin-top: 0.3rem;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.3rem;
@@ -473,14 +473,24 @@ label {
 /* Progress block */
 /*======================================*/
 
+.progress-box {
+    border-bottom: 3px solid #0d1117;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    color: var(--screen-color);
+    font-size: 1.0rem;
+}
+
 .progress-block {
     margin-top: 5px;
-    margin-right: 5px;
-    line-height: 20px;
+    line-height: 16px;
     display: grid;
-    grid-template-columns: 0.3fr 0.1fr 1fr;
+    grid-template-columns: 0.25fr 0.1fr 1fr;
     gap: 2px;
 }
+.evaluations {
+    margin-left: 10px;
+ }
 
 .mobile-help {
     border-left: darkgrey dashed 3px;
@@ -500,36 +510,34 @@ label {
     border-bottom: darkgrey dashed 3px;
 }
 
-.evaluation {
-    padding-left: 20px;
-    font-size: 1.2rem;
-}
 
 .checkbox {
     margin-left: 3px;
     background-color: var(--screen-bg-color);
 }
-
+/*
 .step-count {
     font-size: 1.2rem;
     margin-left: 5px;
 }
+*/
 
 .step-count-box {
-    line-height: 20px;
-    height: 20px;
+    line-height: 16px;
+    height: 16px;
     display: flex;
-    width: 80px;
+    margin-right: 5px;
+    width: 140px;
 }
 
 .forward-backward-image {
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
 }
 
 .forward,
 .backward {
-    height: 20px;
+    height: 16px;
     padding-left: 10px;
     padding-right: 10px;
 }
@@ -550,8 +558,8 @@ label {
 #myProgress {
     position: relative;
     width: 100%;
-    height: 20px;
-    font-size: 1.2rem;
+    height: 16px;
+    font-size: 1.0rem;
     text-align: right;
     background-color: var(--nested-cell-bg-color);
 }
@@ -560,8 +568,8 @@ label {
 #myBarPlay {
     position: absolute;
     width: 20%;
-    height: 20px;
-    line-height: 20px;
+    height: 16px;
+    line-height: 16px;
 }
 
 #myBarDef {
@@ -580,7 +588,7 @@ label {
 }
 
 .total-bar-value {
-    line-height: 20px;
+    line-height: 16px;
     vertical-align: center;
 }
 

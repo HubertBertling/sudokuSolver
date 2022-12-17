@@ -503,7 +503,7 @@ class SudokuSolverView extends SudokuView {
         myGrid.getMyView().upDate();
         this.displayGamePhase();
         this.displayLoadedBenchmark(myGrid.difficulty, myGrid.backTracks);
-        // this.displayBenchmark(myStepper.levelOfDifficulty, myStepper.countBackwards);
+        this.displayBenchmark(myStepper.countBackwards);
         this.displayGoneSteps(myStepper.getGoneSteps());
         this.displayAutoDirection(myStepper.getAutoDirection());
         this.displayProgress();
@@ -656,19 +656,13 @@ class SudokuSolverView extends SudokuView {
                 + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
         }
     }
-    /*
-    displayBenchmark(levelOfDifficulty, countBackwards) {
+
+    displayBenchmark(countBackwards) {
         let evalNode = document.getElementById("evaluations");
-        if (countBackwards == 0) {
-            evalNode.innerHTML =
-                '<span style="background-color:#4DB6AC; width: 7rem"> &nbsp Berechnet:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
-        } else {
-            evalNode.innerHTML =
-                '<span style="background-color:#4DB6AC; width: 7rem"> &nbsp Berechnet:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
-                + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
-        }
+        evalNode.innerHTML =
+            '<b>Rückwärts:</b> &nbsp' + countBackwards;
     }
-    */
+
 
     startLoaderAnimation() {
         // Der sich drehende Loader wird angezeigt
@@ -1757,7 +1751,7 @@ class StepperOnGrid {
                 // throw new Error('Generator with unexpected fail! ');
                 this.myGrid.difficulty = 'unlösbar';
                 this.myGrid.backTracks = this.countBackwards;
-                this.myGrid.steps = this.goneSteps;      
+                this.myGrid.steps = this.goneSteps;
                 break;
             }
             case '':
@@ -3241,7 +3235,7 @@ class SudokuGrid extends SudokuModel {
                 puzzleDbElement.solution[i] = this.sudoCells[i].getValue();
             }
             puzzleDbElement.date = (new Date()).toJSON();
-        } 
+        }
         return puzzleDbElement;
     }
 

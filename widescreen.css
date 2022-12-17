@@ -370,7 +370,7 @@ html {
     background-color: black;
 }
 
-.evaluations, .loaded-evaluations {
+.loaded-evaluations {
     font-size: 1.0rem;
     display: flex;
     padding-top: 5px;
@@ -600,8 +600,7 @@ input[type="radio"] {
     gap: 2px;
 }
 
-.evaluation {
-    font-size: 1.0rem;
+.evaluations {
     margin-left: 10px;
 }
 
@@ -620,7 +619,7 @@ input[type="radio"] {
     height: 16px;
     display: flex;
     margin-right: 5px;
-    width: 70px;
+    width: 140px;
 }
 
 .forward-backward-image {
