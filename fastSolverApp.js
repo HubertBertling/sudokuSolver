@@ -12,7 +12,7 @@ function start() {
 self.onmessage = function (n) {
     let request = JSON.parse(n.data);
     if (request.name == "solve") {
-        // If the message is "Run", the Web Worker generates a new puzzle
+        // If the message is "solve", the Web Worker solves the puzzle, given in the request
         sudoApp.myFastSolver.solvePuzzle(request.value);
         // The generator returns the generated puzzle in the form of a database element
         let solvedPuzzle = sudoApp.myFastSolver.myGrid.getPlayedPuzzleRecord();

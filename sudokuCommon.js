@@ -308,7 +308,7 @@ class SudokuSolverController {
         if (this.mySolver.myGrid.solvedPuzzleRecord == null) {
             this.mySolver.getSolvedPuzzleRecord();
         }
-  
+
     }
 
     pauseBtnPressed() {
@@ -773,7 +773,15 @@ class SudokuCalculator extends SudokuModel {
         } else {
             if (this.myStepper.deadlockReached()) {
                 // Der Calculator braucht gar nicht in den Auto-Modus gesetzt werden
-                alert("Keine (weitere) Lösung gefunden!");
+                if (sudoApp instanceof SudokuMainApp) {
+                    alert("Keine (weitere) Lösung gefunden!");
+                } else {
+                    // Übertrage Stepper-Infos nach Grid-Infos.
+                    this.myGrid.difficulty = 'unlösbar';
+                    this.myGrid.backTracks = this.countBackwards;
+                    this.myGrid.steps = this.goneSteps;
+                    this.notifyLoopFinished();
+                }
             } else {
                 // Der Calculator wird in den Auto-Modus gesetzt
                 // und die Loop wird gestartet.
@@ -1017,9 +1025,6 @@ class SudokuSolver extends SudokuCalculator {
     }
     setGamePhase(phase) {
         super.setGamePhase(phase);
-        //    if (this.myGrid.solvedPuzzleRecord == null) {
-        //        this.getSolvedPuzzleRecord();
-        //    }
         this.notify();
     }
     executeSingleStep() {
@@ -1701,7 +1706,15 @@ class StepperOnGrid {
                 break;
             }
             case 'fail': {
-                alert("Keine (weitere) Lösung gefunden!");
+                if (sudoApp instanceof SudokuMainApp) {
+                    alert("Keine (weitere) Lösung gefunden!");
+                } else {
+                    // Übertrage Stepper-Infos nach Grid-Infos.
+                    this.myGrid.difficulty = 'unlösbar';
+                    this.myGrid.backTracks = this.countBackwards;
+                    this.myGrid.steps = this.goneSteps;
+                    this.notifyLoopFinished();
+                }
                 break;
             }
             case '':
@@ -1741,7 +1754,10 @@ class StepperOnGrid {
                 break;
             }
             case 'fail': {
-                throw new Error('Generator with unexpected fail! ');
+                // throw new Error('Generator with unexpected fail! ');
+                this.myGrid.difficulty = 'unlösbar';
+                this.myGrid.backTracks = this.countBackwards;
+                this.myGrid.steps = this.goneSteps;      
                 break;
             }
             case '':
@@ -3225,6 +3241,8 @@ class SudokuGrid extends SudokuModel {
                 puzzleDbElement.solution[i] = this.sudoCells[i].getValue();
             }
             puzzleDbElement.date = (new Date()).toJSON();
+        } else {
+            puzzleDbElement.status = 'unlösbar';
         }
         return puzzleDbElement;
     }
@@ -3344,8 +3362,8 @@ class SudokuGrid extends SudokuModel {
     }
 
     loadPuzzleInfos(uid, puzzleDbElement) {
-        this.loadedPuzzleId = uid;
-        this.loadedPuzzleName = puzzleDbElement.name;
+        // this.loadedPuzzleId = uid;
+        // this.loadedPuzzleName = puzzleDbElement.name;
         this.difficulty = puzzleDbElement.level;
         this.backTracks = puzzleDbElement.backTracks;
         this.solvedPuzzle = puzzleDbElement.puzzle;
