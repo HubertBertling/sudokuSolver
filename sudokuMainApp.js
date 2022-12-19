@@ -1,6 +1,7 @@
 let sudoApp;
 function start() {
     sudoApp = new SudokuMainApp();
+    //sudoApp.migrateDB();
     sudoApp.init();
 }
 class SudokuMainApp {
@@ -32,6 +33,10 @@ class SudokuMainApp {
         this.myPuzzleDB.init();
         this.myTabView.init();
     }
+    migrateDB() {
+        this.myPuzzleDB.migrateDB();
+    }
+
 
     helpFunktion() {
         window.open('./help.html');

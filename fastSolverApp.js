@@ -6,19 +6,20 @@ function start() {
     //A worker app is assigned to the variable "sudoApp".
     sudoApp = new SudokuFastSolverApp();
     sudoApp.init();
+    
 }
 
 // The Web Worker is assigned a message handler.
 self.onmessage = function (n) {
     let request = JSON.parse(n.data);
-    if (request.name == "solve") {
+    if (request.name == "preRun") {
         // If the message is "solve", the Web Worker solves the puzzle, given in the request
         sudoApp.myFastSolver.solvePuzzle(request.value);
-        // The generator returns the generated puzzle in the form of a database element
-        let solvedPuzzle = sudoApp.myFastSolver.myGrid.getPlayedPuzzleRecord();
+        // The FastSolver returns the metadata of the puzzle obtained through a preliminary run
+        let preRunRecord = sudoApp.myFastSolver.myGrid.getPreRunRecord();
         let response = {
-            name: 'solved',
-            value: solvedPuzzle,
+            name: 'preRun',
+            value: preRunRecord,
         }
         let str_response = JSON.stringify(response);
         // The serialized puzzle is sent as a message to Main
@@ -46,13 +47,13 @@ class SudokuFastSolver extends SudokuCalculator {
         super.init();
     }
 
-    solvePuzzle(puzzle) {
+    solvePuzzle(puzzleArray) {
         this.init();
         // Löse dieses Sudoku mit einer nicht getakteten
         // und nicht beobachteten automatischen Ausführung
         // Create the puzzle from the supplied string
         // Load the puzzle into the solver
-        sudoApp.myFastSolver.loadPuzzle('-', puzzle);
+        sudoApp.myFastSolver.myGrid.loadPuzzleArray(puzzleArray);
 
         this.startFastSolverSolutionLoop();
     }

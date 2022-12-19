@@ -294,9 +294,8 @@ class SudokuSolverController {
 
     playBtnPressed() {
         this.mySolver.setGamePhase('play')
-        if (this.mySolver.myGrid.solvedPuzzleRecord == null) {
-            this.mySolver.getSolvedPuzzleRecord();
-        }
+        this.mySolver.getPuzzlePreRunDataUsingWebworker();
+        this.mySolver.notify();
     }
 
     autoStepBtnPressed() {
@@ -305,10 +304,6 @@ class SudokuSolverController {
 
     startBtnPressed() {
         this.mySolver.startSolverLoop();
-        if (this.mySolver.myGrid.solvedPuzzleRecord == null) {
-            this.mySolver.getSolvedPuzzleRecord();
-        }
-
     }
 
     pauseBtnPressed() {
@@ -328,7 +323,7 @@ class SudokuSolverController {
     }
 
     generateBtnPressed() {
-        this.mySolver.getGeneratedPuzzle();
+        this.mySolver.getGeneratedPuzzleUsingWebworker();
     }
 
     saveBtnPressed() {
@@ -340,14 +335,15 @@ class SudokuSolverController {
     overwriteBtnPressed() {
         this.mySolver.autoExecStop();
         this.mySuccessDialog.close();
-        let playedPuzzleDbElement = this.mySolver.myGrid.getPlayedPuzzleRecord();
+        let tmpPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
 
         let puzzleId = this.mySolver.myGrid.loadedPuzzleId;
+        let puzzleName = this.mySolver.myGrid.loadedPuzzleName;
         if (puzzleId == '' || puzzleId == '-') {
             let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
             this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');
         } else {
-            sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, playedPuzzleDbElement);
+            sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, puzzleName, tmpPuzzleDbElement);
             // Wechsle in den DB-Reiter
             // document.getElementById("puzzle-db-tab").click();
         }
@@ -356,7 +352,7 @@ class SudokuSolverController {
     printBtnPressed() {
         this.mySolver.autoExecStop();
         this.mySuccessDialog.close();
-        let playedPuzzleDbElement = this.mySolver.myGrid.getPlayedPuzzleRecord();
+        let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
 
         let puzzleId = this.mySolver.myGrid.loadedPuzzleId;
         if (puzzleId == '' || puzzleId == '-') {
@@ -374,14 +370,14 @@ class SudokuSolverController {
     }
     showWrongNumbersBtnPressed() {
         if (this.mySolver.getGamePhase() == 'play') {
-            let solvedPuzzle = this.mySolver.myGrid.solvedPuzzle;
             // Hier die falschen Zellen markieren
+            let test = sudoApp.mySolver.myGrid.preRunRecord.solvedPuzzle;
             for (let i = 0; i < 81; i++) {
                 let currentCellValue = sudoApp.mySolver.myGrid.sudoCells[i].getValue();
                 let currentCellPhase = sudoApp.mySolver.myGrid.sudoCells[i].getPhase();
                 if (currentCellValue !== '0' &&
                     currentCellPhase !== 'define' &&
-                    currentCellValue !== solvedPuzzle[i].cellValue) {
+                    currentCellValue !== sudoApp.mySolver.myGrid.preRunRecord.solvedPuzzle[i].cellValue) {
                     // Mark cell wrong
                     sudoApp.mySolver.myGrid.sudoCells[i].setWrong();
                 }
@@ -400,7 +396,7 @@ class SudokuSolverController {
         // Der Name unter dem der aktuelle Zustand gespeichert werden soll
         let puzzleId = this.myPuzzleSaveDialog.getPuzzleId();
         let puzzleName = this.myPuzzleSaveDialog.getPuzzleName();
-        let playedPuzzleDbElement = this.mySolver.myGrid.getPlayedPuzzleRecord();
+        let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
         //Speichere den named Zustand
         sudoApp.myPuzzleDB.saveNamedPuzzle(puzzleId, puzzleName, playedPuzzleDbElement);
         // Wechsle in den DB-Reiter
@@ -408,7 +404,7 @@ class SudokuSolverController {
     }
 
     savePuzzleMobile() {
-        let playedPuzzleDbElement = this.mySolver.myGrid.getPlayedPuzzleRecord();
+        let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
         //Speichere den named Zustand
         sudoApp.myPuzzleDB.saveMobilePuzzle(playedPuzzleDbElement);
     }
@@ -502,7 +498,7 @@ class SudokuSolverView extends SudokuView {
 
         myGrid.getMyView().upDate();
         this.displayGamePhase();
-        this.displayLoadedBenchmark(myGrid.difficulty, myGrid.backTracks);
+        this.displayLoadedBenchmark(myGrid.preRunRecord.level, myGrid.preRunRecord.backTracks);
         this.displayBenchmark(myStepper.countBackwards);
         this.displayGoneSteps(myStepper.getGoneSteps());
         this.displayAutoDirection(myStepper.getAutoDirection());
@@ -735,8 +731,8 @@ class SudokuCalculator extends SudokuModel {
         this.setGamePhase('play');
     }
 
-    loadPuzzleInfos(uid, puzzle) {
-        this.myGrid.loadPuzzleInfos(uid, puzzle);
+    loadPreRunRecord(uid, puzzle) {
+        this.myGrid.loadPreRunRecord(uid, puzzle);
     }
 
 
@@ -932,7 +928,7 @@ class SudokuSolver extends SudokuCalculator {
         }
     }
 
-    getGeneratedPuzzle() {
+    getGeneratedPuzzleUsingWebworker() {
         // The rotating loader icon is started
         this.notifyAspect('puzzleGenerator', 'started');
         // A new web worker that performs the generation, is created.
@@ -962,7 +958,7 @@ class SudokuSolver extends SudokuCalculator {
         webworkerPuzzleGenerator.postMessage(str_request);
     }
 
-    getSolvedPuzzleRecord() {
+    getPuzzlePreRunDataUsingWebworker() {
         // The rotating loader icon is started
         // this.notifyAspect('puzzleGenerator', 'started');
         // A new web worker that performs the fast solution of this puzzle, is created.
@@ -972,17 +968,17 @@ class SudokuSolver extends SudokuCalculator {
         webworkerFastSolver.onmessage = function (e) {
             // Create the puzzle from the supplied string
             let response = JSON.parse(e.data);
-            sudoApp.mySolver.loadPuzzleInfos('-', response.value);
+            sudoApp.mySolver.loadPreRunRecord('-', response.value);
             sudoApp.mySolver.notify();
             // The rotating loader icon is stopped
             // sudoApp.mySolver.notifyAspect('puzzleGenerator', 'finished');
         }
         // The new web worker is sent the request message, 
         // which starts the fast solution of the puzzle.
-        let puzzleRecord = sudoApp.mySolver.myGrid.getPlayedPuzzleRecord();
+        let puzzleArray = sudoApp.mySolver.myGrid.getPuzzleArray();
         let request = {
-            name: 'solve',
-            value: puzzleRecord
+            name: 'preRun',
+            value: puzzleArray
         }
         let str_request = JSON.stringify(request);
         webworkerFastSolver.postMessage(str_request);
@@ -3069,8 +3065,14 @@ class SudokuGrid extends SudokuModel {
         this.sudoCols = [];
 
         this.evalType = 'no-eval';
-        this.solvedPuzzleRecord = null;
-        // this.init();
+        this.preRunRecord = {
+            defCount: 0,
+            stepsLazy: 0,
+            stepsStrict: 0,
+            level: 'Keine Angabe',
+            backTracks: 0,
+            solvedPuzzle: []
+        }
     }
 
 
@@ -3087,6 +3089,14 @@ class SudokuGrid extends SudokuModel {
         this.difficulty = 'Keine Angabe';
         this.steps = 0;
         this.backTracks = 0;
+        this.preRunRecord = {
+            defCount: 0,
+            stepsLazy: 0,
+            stepsStrict: 0,
+            level: 'Keine Angabe',
+            backTracks: 0,
+            solvedPuzzle: []
+        }
         // Erzeuge die interne Tabelle
         this.createSudoGrid();
         this.evaluateMatrix();
@@ -3177,67 +3187,126 @@ class SudokuGrid extends SudokuModel {
         }
     }
 
-    getPlayedPuzzleRecord() {
-        // Zusammenstellung des Puzzles, um es abspeichern zu können
-        let puzzleDbElement = new SudokuPuzzle(
-            "-",
-            0,
-            'ungelöst',
-            0,
-            0,
-            'Keine Angabe',
-            0,
-            (new Date()).toJSON(),
-            [
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-            ],
-            [
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                "0", "0", "0", "0", "0", "0", "0", "0", "0",
-            ]
-        );
-        puzzleDbElement.defCount = 0;
+    getPreRunRecord() {
+        // This function is called within the FastSolver web worker
+        // This function compiles the metadata of the puzzle to send it to the main app.
+        let preRunRecord = {
+            defCount: 0,
+            level: 'Keine Angabe',
+            backTracks: 0,
+            solvedPuzzle: []
+        }
+        preRunRecord.defCount = 0;
+        preRunRecord.level = this.difficulty;
+        preRunRecord.backTracks = this.backTracks;
         for (let i = 0; i < 81; i++) {
-            puzzleDbElement.puzzle[i] = {
+            preRunRecord.solvedPuzzle.push({
+                cellValue: this.sudoCells[i].getValue(),
+                cellPhase: this.sudoCells[i].getPhase()
+            })
+            if (this.sudoCells[i].getPhase() == 'define') {
+                preRunRecord.defCount++;
+            }
+        }
+        return preRunRecord;
+    }
+
+    getPuzzleRecord() {
+        // This function is called within the main app.
+        // This function compiles the metadata of the puzzle to store it in the database.
+
+        let preRunRecord = {
+            defCount: 0,
+            level: 'Keine Angabe',
+            backTracks: 0,
+            solvedPuzzle: []
+        }
+        let puzzleRecord = {
+            name: '-',
+            status: 'ungelöst',
+            stepsLazy: 0,
+            stepsStrict: 0,
+            date: (new Date()).toJSON(),
+            puzzle: [],
+            preRunRecord: preRunRecord
+        }
+        if (this.puzzleSolved()) {
+            puzzleRecord.status = 'gelöst';
+            if (this.evalType == 'lazy') {
+                puzzleRecord.stepsLazy = this.steps;
+            } else if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') {
+                puzzleRecord.stepsStrict = this.steps;
+            }
+        }
+        for (let i = 0; i < 81; i++) {
+            puzzleRecord.puzzle[i] = {
                 cellValue: this.sudoCells[i].getValue(),
                 cellPhase: this.sudoCells[i].getPhase()
             }
-            if (this.sudoCells[i].getPhase() == 'define') {
-                puzzleDbElement.defCount++;
-            }
         }
-        // Status setzen
-        puzzleDbElement.level = this.difficulty;
-        if (this.puzzleSolved()) {
-            puzzleDbElement.status = 'gelöst';
-            if (this.evalType == 'lazy') {
-                puzzleDbElement.stepsLazy = this.steps;
-            } else if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') {
-                puzzleDbElement.stepsStrict = this.steps;
-            }
-            puzzleDbElement.backTracks = this.backTracks;
-            for (let i = 0; i < 81; i++) {
-                puzzleDbElement.solution[i] = this.sudoCells[i].getValue();
-            }
-            puzzleDbElement.date = (new Date()).toJSON();
+        puzzleRecord.preRunRecord = this.preRunRecord;
+        /*
+        puzzleRecord.preRunRecord.defCount = this.preRunRecord.defCount;
+        puzzleRecord.preRunRecord.level = this.preRunRecord.level;
+        puzzleRecord.preRunRecord.backTracks = this.preRunRecord.backTracks;
+
+        for (let i = 0; i < 81; i++) {
+            puzzleRecord.preRunRecord.solvedPuzzle.push({
+                cellValue: this.preRunRecord.solvedPuzzle[i].cellValue,
+                cellPhase: this.preRunRecord.solvedPuzzle[i].cellPhase
+            })
         }
-        return puzzleDbElement;
+        */
+        return puzzleRecord;
     }
+
+    getGeneratedPuzzleRecord() {
+        // This function is called within the generator app.
+        // This function compiles the metadata of the puzzle to send it to the main app.
+
+        let preRunRecord = {
+            defCount: 0,
+            level: 'Keine Angabe',
+            backTracks: 0,
+            solvedPuzzle: []
+        }
+        let puzzleRecord = {
+            name: '-',
+            status: 'ungelöst',
+            stepsLazy: 0,
+            stepsStrict: 0,
+            date: (new Date()).toJSON(),
+            puzzle: [],
+            preRunRecord: preRunRecord
+        }
+        if (this.puzzleSolved()) {
+            puzzleRecord.status = 'gelöst';
+            if (this.evalType == 'lazy') {
+                puzzleRecord.stepsLazy = this.steps;
+            } else if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') {
+                puzzleRecord.stepsStrict = this.steps;
+            }
+        }
+        puzzleRecord.preRunRecord.defCount = 0;
+        for (let i = 0; i < 81; i++) {
+            puzzleRecord.puzzle.push({
+                cellValue: this.sudoCells[i].getValue(),
+                cellPhase: this.sudoCells[i].getPhase()
+            })
+            puzzleRecord.preRunRecord.solvedPuzzle.push({
+                cellValue: this.sudoCells[i].getValue(),
+                cellPhase: this.sudoCells[i].getPhase()
+            })
+            if (this.sudoCells[i].getPhase() == 'define') {
+                puzzleRecord.preRunRecord.defCount++;
+            }
+        }
+        puzzleRecord.preRunRecord.level = this.difficulty;
+        puzzleRecord.preRunRecord.backTracks = this.backTracks;
+        return puzzleRecord;
+    }
+
+
 
     isInsolvable() {
         for (let i = 0; i < 81; i++) {
@@ -3333,32 +3402,74 @@ class SudokuGrid extends SudokuModel {
     }
 
 
-    loadPuzzle(uid, puzzleDbElement) {
+    loadPuzzle(uid, puzzleRecordToLoad) {
         this.loadedPuzzleId = uid;
-        this.loadedPuzzleName = puzzleDbElement.name;
-        this.difficulty = puzzleDbElement.level;
-        this.backTracks = puzzleDbElement.backTracks;
-        this.solvedPuzzle = puzzleDbElement.puzzle;
+        this.loadedPuzzleName = puzzleRecordToLoad.name;
+        this.difficulty = puzzleRecordToLoad.preRunRecord.level;
+        this.backTracks = puzzleRecordToLoad.preRunRecord.backTracks;
+        // this.preRunRecord = puzzleRecordToLoad.preRunRecord;
+        this.preRunRecord.defCount = puzzleRecordToLoad.preRunRecord.defCount;
+        this.preRunRecord.stepsLazy = puzzleRecordToLoad.preRunRecord.stepsLazy;
+        this.preRunRecord.stepsStrict = puzzleRecordToLoad.preRunRecord.stepsStrict;
+        this.preRunRecord.level = puzzleRecordToLoad.preRunRecord.level;
+        this.preRunRecord.backTracks = puzzleRecordToLoad.preRunRecord.backTracks;
+        this.preRunRecord.solvedPuzzle = [];
         for (let i = 0; i < 81; i++) {
-            let tmpCellValue = this.solvedPuzzle[i].cellValue;
+            this.preRunRecord.solvedPuzzle.push({
+                cellPhase: puzzleRecordToLoad.preRunRecord.solvedPuzzle[i].cellPhase,
+                cellValue: puzzleRecordToLoad.preRunRecord.solvedPuzzle[i].cellValue
+            })
+        }
+        // Populate Grid 
+        for (let i = 0; i < 81; i++) {
+            let tmpCellValue = puzzleRecordToLoad.puzzle[i].cellValue;
             let tmpCellPhase = 'define';
             if (tmpCellValue == undefined) {
                 // Altes Format lesen
-                tmpCellValue = this.solvedPuzzle[i];
+                tmpCellValue = puzzleRecordToLoad.puzzle[i];
             } else {
-                tmpCellPhase = this.solvedPuzzle[i].cellPhase;
+                tmpCellPhase = puzzleRecordToLoad.puzzle[i].cellPhase;
             }
             this.sudoCells[i].manualSetValue(tmpCellValue, tmpCellPhase);
         }
         this.evaluateMatrix();
     }
 
-    loadPuzzleInfos(uid, puzzleDbElement) {
-        this.difficulty = puzzleDbElement.level;
-        this.backTracks = puzzleDbElement.backTracks;
-        this.solvedPuzzle = puzzleDbElement.puzzle;
-        this.evaluateMatrix();
+    loadPreRunRecord(uid, preRunRecordToLoad) {
+        // this.preRunRecord = puzzleRecordToLoad.preRunRecord;
+        this.preRunRecord.defCount = preRunRecordToLoad.defCount;
+        this.preRunRecord.stepsLazy = preRunRecordToLoad.stepsLazy;
+        this.preRunRecord.stepsStrict = preRunRecordToLoad.stepsStrict;
+        this.preRunRecord.level = preRunRecordToLoad.level;
+        this.preRunRecord.backTracks = preRunRecordToLoad.backTracks;
+        this.preRunRecord.solvedPuzzle = [];
+        for (let i = 0; i < 81; i++) {
+            this.preRunRecord.solvedPuzzle.push({
+                cellPhase: preRunRecordToLoad.solvedPuzzle[i].cellPhase,
+                cellValue: preRunRecordToLoad.solvedPuzzle[i].cellValue
+            })
+        }
     }
+
+    getPuzzleArray() {
+        let tmpPuzzleArray = [];
+        for (let i = 0; i < 81; i++) {
+            tmpPuzzleArray.push({
+                cellPhase: this.sudoCells[i].getPhase(),
+                cellValue: this.sudoCells[i].getValue()
+            })
+        }
+        return tmpPuzzleArray;
+    }
+
+    loadPuzzleArray(pa) {
+        for (let i = 0; i < 81; i++) {
+            let tmpCellValue = pa[i].cellValue;
+            let tmpCellPhase = pa[i].cellPhase;
+            this.sudoCells[i].manualSetValue(tmpCellValue, tmpCellPhase);
+        }
+    }
+
 
     createSudoGrid() {
         // Eine lokale Hilfsfunktion
@@ -5096,6 +5207,39 @@ class SudokuPuzzleDB {
         return puzzleMap.size;
     }
 
+    migrateDB() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        let migratedMap = new Map();       
+        for (const [puzzleId, oldPuzzleRecord] of puzzleMap) {
+            let newPuzzleRecord = this.migrateToV1Record(oldPuzzleRecord);
+            migratedMap.set(puzzleId, newPuzzleRecord);
+        }
+        let str_migratedPuzzleMap = JSON.stringify(Array.from(migratedMap.entries()));
+        // localStorage.setItem("localSudokuDB", str_migratedPuzzleMap );
+    }
+
+    migrateToV1Record(oldPuzzleRecord) {
+        let preRunRecord = {
+            defCount: 0,
+            level: 'Keine Angabe',
+            backTracks: 0,
+            solvedPuzzle: []
+        }
+        let newPuzzleRecord = {
+            name: '-',
+            status: 'ungelöst',
+            stepsLazy: 0,
+            stepsStrict: 0,
+            date: (new Date()).toJSON(),
+            puzzle: [],
+            preRunRecord: preRunRecord
+        }
+        newPuzzleRecord.name = oldPuzzleRecord.name;
+        newPuzzleRecord.preRunRecord.level = oldPuzzleRecord.level;
+        newPuzzleRecord.puzzle = oldPuzzleRecord.puzzle;
+    }
+
     init() {
         // Bisher nichts
     }
@@ -5120,10 +5264,10 @@ class SudokuPuzzleDB {
                 let defCountSorted = this.sorted.get('defCount');
                 if (defCountSorted == '' || defCountSorted == 'desc') {
                     this.sorted.set('defCount', 'asc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].defCount - b[1].defCount));
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].preRunRecord.defCount - b[1].preRunRecord.defCount));
                 } else {
                     this.sorted.set('defCount', 'desc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].defCount - a[1].defCount));
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].preRunRecord.defCount - a[1].preRunRecord.defCount));
                 }
                 break;
             }
@@ -5164,10 +5308,10 @@ class SudokuPuzzleDB {
                 let levelSorted = this.sorted.get('level');
                 if (levelSorted == '' || levelSorted == 'desc') {
                     this.sorted.set('level', 'asc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (a[1].level > b[1].level ? 1 : -1)));
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (a[1].preRunRecord.level > b[1].preRunRecord.level ? 1 : -1)));
                 } else {
                     this.sorted.set('level', 'desc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (a[1].level > b[1].level ? -1 : 1)));
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (a[1].preRunRecord.level > b[1].preRunRecord.level ? -1 : 1)));
                 }
                 break;
             }
@@ -5175,10 +5319,10 @@ class SudokuPuzzleDB {
                 let backTracksSorted = this.sorted.get('backTracks');
                 if (backTracksSorted == '' || backTracksSorted == 'desc') {
                     this.sorted.set('backTracks', 'asc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].backTracks - b[1].backTracks));
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].preRunRecord.backTracks - b[1].preRunRecord.backTracks));
                 } else {
                     this.sorted.set('backTracks', 'desc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].backTracks - a[1].backTracks));
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => b[1].preRunRecord.backTracks - a[1].preRunRecord.backTracks));
                 }
                 break;
             }
@@ -5205,43 +5349,27 @@ class SudokuPuzzleDB {
         this.display();
     }
 
-    saveMobilePuzzle(playedPuzzleDbElement) {
+    saveMobilePuzzle(puzzleRecord) {
         let puzzleId = 'l2rcvi2mobile8h05azkg';
-        playedPuzzleDbElement.name = 'mobile';
-        this.savePuzzle(puzzleId, playedPuzzleDbElement);
+        puzzleRecord.name = 'mobile';
+        this.savePuzzle(puzzleId, puzzleRecord);
     }
 
-    saveNamedPuzzle(id, name, playedPuzzleDbElement) {
-        if (name !== '') {
-            playedPuzzleDbElement.name = name;
-        }
-        this.savePuzzle(id, playedPuzzleDbElement);
+    saveNamedPuzzle(id, name, puzzleRecord) {
+        this.savePuzzle(id, name, puzzleRecord);
     }
-    mergePlayedPuzzle(puzzleId, playedPuzzleDbElement) {
-        let storedPuzzleDbElement = this.getPuzzle(puzzleId);
-
-        storedPuzzleDbElement.defCount = playedPuzzleDbElement.defCount;
-        storedPuzzleDbElement.status = playedPuzzleDbElement.status;
-        if (playedPuzzleDbElement.stepsLazy !== 0) {
-            storedPuzzleDbElement.stepsLazy = playedPuzzleDbElement.stepsLazy;
-        }
-        if (playedPuzzleDbElement.stepsStrict !== 0) {
-            storedPuzzleDbElement.stepsStrict = playedPuzzleDbElement.stepsStrict;
-        }
-        storedPuzzleDbElement.level = playedPuzzleDbElement.level;
-        storedPuzzleDbElement.backTracks = playedPuzzleDbElement.backTracks;
-        storedPuzzleDbElement.date = playedPuzzleDbElement.date;
-        storedPuzzleDbElement.puzzle = playedPuzzleDbElement.puzzle;
-        storedPuzzleDbElement.solution = playedPuzzleDbElement.solution;
-        this.savePuzzle(puzzleId, storedPuzzleDbElement);
+    mergePlayedPuzzle(puzzleId, puzzleName, puzzleRecord) {
+        // Overwrite stored puzzle having the id puzzleId
+        this.savePuzzle(puzzleId, puzzleName, puzzleRecord);
     }
 
-    savePuzzle(puzzleId, puzzleDbElement) {
+    savePuzzle(puzzleId, puzzleName, puzzleRecord) {
         // Hole den Speicher als ein Objekt
+        puzzleRecord.name = puzzleName;
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         // Füge das Puzzle in das Speicherobjekt ein
-        puzzleMap.set(puzzleId, puzzleDbElement);
+        puzzleMap.set(puzzleId, puzzleRecord);
         // Kreiere die JSON-Version des Speicherobjektes
         // und speichere sie.
         let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
@@ -5359,7 +5487,7 @@ class SudokuPuzzleDB {
 
             let i = 0;
             let selectedTr = null;
-            for (let [key, pz] of puzzleMap) {
+            for (let [key, pzRecord] of puzzleMap) {
                 let tr = document.createElement('tr');
                 tr.setAttribute("onClick", "sudoApp.myPuzzleDB.setSelected(this)");
                 tr.setAttribute("style", "cursor:pointer");
@@ -5375,35 +5503,35 @@ class SudokuPuzzleDB {
                 tr.appendChild(td_key);
 
                 let td_name = document.createElement('td');
-                td_name.innerText = pz.name;
+                td_name.innerText = pzRecord.name;
                 tr.appendChild(td_name);
 
                 let td_defCount = document.createElement('td');
-                td_defCount.innerText = pz.defCount;
+                td_defCount.innerText = pzRecord.preRunRecord.defCount;
                 tr.appendChild(td_defCount);
 
                 let td_status = document.createElement('td');
-                td_status.innerText = pz.status;
+                td_status.innerText = pzRecord.status;
                 tr.appendChild(td_status);
 
                 let td_steps_lazy = document.createElement('td');
-                td_steps_lazy.innerText = pz.stepsLazy;
+                td_steps_lazy.innerText = pzRecord.stepsLazy;
                 tr.appendChild(td_steps_lazy);
 
                 let td_steps_strict = document.createElement('td');
-                td_steps_strict.innerText = pz.stepsStrict;
+                td_steps_strict.innerText = pzRecord.stepsStrict;
                 tr.appendChild(td_steps_strict);
 
                 let td_level = document.createElement('td');
-                td_level.innerText = pz.level;
+                td_level.innerText = pzRecord.preRunRecord.level;
                 tr.appendChild(td_level);
 
                 let td_backTracks = document.createElement('td');
-                td_backTracks.innerText = pz.backTracks;
+                td_backTracks.innerText = pzRecord.preRunRecord.backTracks;
                 tr.appendChild(td_backTracks);
 
                 let td_date = document.createElement('td');
-                td_date.innerText = (new Date(pz.date)).toLocaleDateString();
+                td_date.innerText = (new Date(pzRecord.date)).toLocaleDateString();
                 tr.appendChild(td_date);
 
                 tbNode.appendChild(tr);
@@ -5427,9 +5555,9 @@ class SudokuPuzzleDB {
         if (puzzleMap.size > 0) {
             let key = Array.from(puzzleMap.keys())[this.selectedIndex];
             let selectedPZ = puzzleMap.get(key);
-            this.displayIdRow(key, selectedPZ.name, selectedPZ.level);
+            this.displayIdRow(key, selectedPZ.name, selectedPZ.preRunRecord.level);
             this.displayTable('screen-puzzle', selectedPZ.puzzle);
-            this.displayDefineCounter(selectedPZ);
+            // this.displayDefineCounter(selectedPZ);
         }
     }
     displayIdRow(uid, name, level) {
@@ -5541,31 +5669,6 @@ class SudokuPuzzleDB {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         return puzzleMap.has(uid);
-    }
-}
-
-class SudokuPuzzle {
-    constructor(
-        name,
-        defCount,
-        status,
-        stepsLazy,
-        stepsStrict,
-        level,
-        backTracks,
-        date,
-        puzzle,
-        solution) {
-        this.name = name;
-        this.defCount = defCount;
-        this.status = status;
-        this.stepsLazy = stepsLazy;
-        this.stepsStrict = stepsStrict;
-        this.level = level;
-        this.backTracks = backTracks;
-        this.date = date;
-        this.puzzle = puzzle;
-        this.solution = solution;
     }
 }
 
