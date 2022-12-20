@@ -5351,7 +5351,7 @@ class SudokuPuzzleDB {
     saveMobilePuzzle(puzzleRecord) {
         let puzzleId = 'l2rcvi2mobile8h05azkg';
         puzzleRecord.name = 'mobile';
-        this.savePuzzle(puzzleId, puzzleRecord);
+        this.savePuzzle(puzzleId, 'mobile', puzzleRecord);
     }
 
     saveNamedPuzzle(id, name, puzzleRecord) {
