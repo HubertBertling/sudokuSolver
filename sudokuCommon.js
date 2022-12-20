@@ -295,14 +295,19 @@ class SudokuSolverController {
     playBtnPressed() {
         this.mySolver.setGamePhase('play')
         this.mySolver.getPuzzlePreRunDataUsingWebworker();
-        this.mySolver.notify();
     }
 
     autoStepBtnPressed() {
+        if (this.mySolver.getGamePhase() == 'define') {
+            this.mySolver.getPuzzlePreRunDataUsingWebworker();          
+        }
         this.mySolver.executeSingleStep();
     }
 
     startBtnPressed() {
+        if (this.mySolver.getGamePhase() == 'define') {
+            this.mySolver.getPuzzlePreRunDataUsingWebworker();          
+        }
         this.mySolver.startSolverLoop();
     }
 
@@ -966,7 +971,6 @@ class SudokuSolver extends SudokuCalculator {
         // A message handler is given to the web worker. The web worker
         // sends a message containing the solved puzzle as a string.
         webworkerFastSolver.onmessage = function (e) {
-            // Create the puzzle from the supplied string
             let response = JSON.parse(e.data);
             sudoApp.mySolver.loadPreRunRecord('-', response.value);
             sudoApp.mySolver.notify();
@@ -3413,13 +3417,17 @@ class SudokuGrid extends SudokuModel {
         this.preRunRecord.stepsStrict = puzzleRecordToLoad.preRunRecord.stepsStrict;
         this.preRunRecord.level = puzzleRecordToLoad.preRunRecord.level;
         this.preRunRecord.backTracks = puzzleRecordToLoad.preRunRecord.backTracks;
-        this.preRunRecord.solvedPuzzle = [];
+        this.preRunRecord.solvedPuzzle = puzzleRecordToLoad.preRunRecord.solvedPuzzle;
+
+        /*  this.preRunRecord.solvedPuzzle = [];
         for (let i = 0; i < 81; i++) {
             this.preRunRecord.solvedPuzzle.push({
                 cellPhase: puzzleRecordToLoad.preRunRecord.solvedPuzzle[i].cellPhase,
                 cellValue: puzzleRecordToLoad.preRunRecord.solvedPuzzle[i].cellValue
             })
         }
+        */
+
         // Populate Grid 
         for (let i = 0; i < 81; i++) {
             let tmpCellValue = puzzleRecordToLoad.puzzle[i].cellValue;
@@ -3442,13 +3450,15 @@ class SudokuGrid extends SudokuModel {
         this.preRunRecord.stepsStrict = preRunRecordToLoad.stepsStrict;
         this.preRunRecord.level = preRunRecordToLoad.level;
         this.preRunRecord.backTracks = preRunRecordToLoad.backTracks;
-        this.preRunRecord.solvedPuzzle = [];
-        for (let i = 0; i < 81; i++) {
-            this.preRunRecord.solvedPuzzle.push({
-                cellPhase: preRunRecordToLoad.solvedPuzzle[i].cellPhase,
-                cellValue: preRunRecordToLoad.solvedPuzzle[i].cellValue
-            })
-        }
+        this.preRunRecord.solvedPuzzle = preRunRecordToLoad.solvedPuzzle;
+        /*   this.preRunRecord.solvedPuzzle = [];
+           for (let i = 0; i < 81; i++) {
+               this.preRunRecord.solvedPuzzle.push({
+                   cellPhase: preRunRecordToLoad.solvedPuzzle[i].cellPhase,
+                   cellValue: preRunRecordToLoad.solvedPuzzle[i].cellValue
+               })
+           }
+           */
     }
 
     getPuzzleArray() {
@@ -5207,18 +5217,6 @@ class SudokuPuzzleDB {
         return puzzleMap.size;
     }
 
-    migrateDB() {
-        let str_puzzleMap = localStorage.getItem("localSudokuDB");
-        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-        let migratedMap = new Map();       
-        for (const [puzzleId, oldPuzzleRecord] of puzzleMap) {
-            let newPuzzleRecord = this.migrateToV1Record(oldPuzzleRecord);
-            migratedMap.set(puzzleId, newPuzzleRecord);
-        }
-        let str_migratedPuzzleMap = JSON.stringify(Array.from(migratedMap.entries()));
-        // localStorage.setItem("localSudokuDB", str_migratedPuzzleMap );
-    }
-
     migrateToV1Record(oldPuzzleRecord) {
         let preRunRecord = {
             defCount: 0,
@@ -5238,6 +5236,7 @@ class SudokuPuzzleDB {
         newPuzzleRecord.name = oldPuzzleRecord.name;
         newPuzzleRecord.preRunRecord.level = oldPuzzleRecord.level;
         newPuzzleRecord.puzzle = oldPuzzleRecord.puzzle;
+        return newPuzzleRecord;
     }
 
     init() {
@@ -5476,6 +5475,27 @@ class SudokuPuzzleDB {
         this.displayCurrentPZ();
     }
 
+    migratePuzzleDB() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        let newPuzzleMap = new Map();
+        if (puzzleMap.size > 0) {
+            const [key, firstRecord] = puzzleMap.entries().next().value;
+            if (firstRecord.preRunRecord == undefined) {
+                // Altes Format liegt vor
+                let i = 0;
+                for (let [key, oldPuzzleRecord] of puzzleMap) {
+                    let newRecord = this.migrateToV1Record(oldPuzzleRecord);
+                    newPuzzleMap.set(key, newRecord);
+                }
+                // Kreiere die JSON-Version des Speicherobjektes
+                // und speichere sie.
+                let update_str_puzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
+                localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+            }
+        }
+    }
+
     displayPuzzleDB() {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
@@ -5483,6 +5503,7 @@ class SudokuPuzzleDB {
         while (tbNode.childElementCount > 0) {
             tbNode.removeChild(tbNode.lastChild);
         }
+
         if (puzzleMap.size > 0) {
 
             let i = 0;

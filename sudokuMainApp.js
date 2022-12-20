@@ -28,15 +28,12 @@ class SudokuMainApp {
     }
 
     init() {
+        this.myPuzzleDB.migratePuzzleDB() 
         this.mySolver.init();
         this.mySolver.notify();
         this.myPuzzleDB.init();
         this.myTabView.init();
     }
-    migrateDB() {
-        this.myPuzzleDB.migrateDB();
-    }
-
 
     helpFunktion() {
         window.open('./help.html');
