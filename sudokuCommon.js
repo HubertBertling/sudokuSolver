@@ -294,6 +294,9 @@ class SudokuSolverController {
 
     playBtnPressed() {
         this.mySolver.setGamePhase('play')
+        // After switching to the play phase, the puzzles meta-data are calculated in the background.
+        // This includes the solution of the puzzle. The latter allows, the user to have 
+        // his current number settings checked. There is a call button for this check.
         this.mySolver.getPuzzlePreRunDataUsingWebworker();
     }
 
@@ -305,9 +308,7 @@ class SudokuSolverController {
     }
 
     startBtnPressed() {
-        if (this.mySolver.getGamePhase() == 'define') {
-            this.mySolver.getPuzzlePreRunDataUsingWebworker();          
-        }
+        this.mySolver.getPuzzlePreRunDataUsingWebworker();          
         this.mySolver.startSolverLoop();
     }
 
@@ -964,21 +965,21 @@ class SudokuSolver extends SudokuCalculator {
     }
 
     getPuzzlePreRunDataUsingWebworker() {
-        // The rotating loader icon is started
-        // this.notifyAspect('puzzleGenerator', 'started');
         // A new web worker that performs the fast solution of this puzzle, is created.
         let webworkerFastSolver = new Worker("./fastSolverApp.js");
         // A message handler is given to the web worker. The web worker
-        // sends a message containing the solved puzzle as a string.
+        // sends a message containing the solved puzzle as a string (response object).
         webworkerFastSolver.onmessage = function (e) {
             let response = JSON.parse(e.data);
+            // The solved puzzle is uploaded 
+            // to the pre-run meta-data of the puzzle
             sudoApp.mySolver.loadPreRunRecord('-', response.value);
             sudoApp.mySolver.notify();
-            // The rotating loader icon is stopped
-            // sudoApp.mySolver.notifyAspect('puzzleGenerator', 'finished');
         }
         // The new web worker is sent the request message, 
         // which starts the fast solution of the puzzle.
+        // The puzzle to be solved is given as an array parameter
+        // in the request object.
         let puzzleArray = sudoApp.mySolver.myGrid.getPuzzleArray();
         let request = {
             name: 'preRun',
