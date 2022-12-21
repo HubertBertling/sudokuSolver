@@ -61,6 +61,7 @@ Die nachfolgend verwendeten Begriffe sind im Laufe der Entwicklung dieses Solver
 |<img src="./images/nochoice.png" width="100px"/><img src="./images/nochoice2.png" width="100px"/>|**Widerspruch - Überhaupt keine zulässige Nummer:** Für diese Zelle wurde noch keine Nummer gesetzt. Allerdings gibt es keine Kandidatnummer mehr, die noch gesetzt werden könnte. Die Nummern 4 und 8 sind unzulässig. In der zweiten dargestellten Zelle gibt es nicht mal mehr Kandidatnummern. D.h. das Sudoku ist widersprüchlich. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet der Solver in den Rückwärts-Modus um.|
 |<img src="./images/twoNeccessary.png" width="100px"/>|**Widerspruch - Gleichzeitig verschiedene notwendige Nummern:** Für diese Zelle wurde noch keine Nummer gesetzt. Kandidatnummern sind 1, 2 und 4. Jedoch hat der Solver zwei verschiedene notwendige Nummern für diese Zelle ermittelt: 1 und 2. Das geht natürlich nicht. Es können in einer Zelle nicht zwei Nummern gleichzeitig gesetzt werden. D.h. das Sudoku ist widersprüchlich. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet der Solver in den Rückwärts-Modus um.|
 |<img src="./images/conflct.png" width="100px"/>|**Widerspruch - Die Nummer 3 ist bereits einmal gesetzt:** Für diese Zelle wurde die Nummer 3 gesetzt. Diese Nummer ist direkt unzulässig, weil in der Spalte, Reihe oder dem Block dieser Zelle bereits eine 3 gesetzt ist. Das zweite oder dritte Auftreten der Nummer wird ebenfalls mit rotem Rand angezeigt.|
+||**Prüfen - Die Nummer ist falsch gesetzt, wie die Prüfen-Taste ermittelt hat:** Wenn ein Spieler ohne die Kandidaten-Nummern manuell die Nummern setzt, kann er jederzeit mittels der Prüfen-Taste ermitteln, ob alle seine bisherigen Nummern korrekt gesetzt sind. Alle nicht korrekten Setzungen werden wie der Widerspruch angezeigt.|
 
 ### Zwei Phasen
 
@@ -74,6 +75,10 @@ Hinweis: Gegebene Nummern, die Givens - dies sind blaue Nummern - können in der
 ### Manuelle Ausführung
 
 Manuelle Ausführung bedeutet, dass der Spieler die Nummern in den Zellen setzt. Die manuelle Ausführung wird in jedem Fall in der Definitionsphase genutzt. In der Lösungsphase ist sie optional. Die Lösungsphase kann alternativ auch automatisch durchgeführt werden. D.h. der Solver setzt die Nummern in den Zellen.
+
+### Manuelle Ausführung ohne Kandidatennummern
+
+Indem man die Kandidatenauswertung auf 'Keine' setzt, wird die Kandidatenanzeige ausgeschaltet. Auf diese Weise kann man am Computer das Puzzle lösen wie auf einem Blatt Papier.
 
 ### Automatische Ausführung
 
@@ -220,9 +225,9 @@ Extrem oder sehr schwere Sudokus eignen sich nicht für die manuelle Lösungssuc
 
 ## Der Sudoku-Generator
 
-Nahtlos integriert in den Sudoku-Solver findet sich ein Sudoku-Generator. Mittels der Taste **Neu** kann ein neues Puzzle generiert werden. Der Generator generiert nur Puzzles mit den Schwierigkeitsgraden Leicht, Mittel und Schwer. Also keine sehr schweren Puzzles. Die generierten Puzzles können daher allein durch logisches Schließen ohne Backtracking (Trial and Error) gelöst werden.
+Nahtlos integriert in den Sudoku-Solver findet sich ein Sudoku-Generator. Mittels der Taste **Neu** kann ein neues Puzzle generiert werden. Der Generator generiert nur Puzzles mit den Schwierigkeitsgraden 'Leicht', 'Mittel' und 'Schwer'. Also keine sehr schweren Puzzles. Die generierten Puzzles können daher allein durch logisches Schließen ohne Backtracking gelöst werden.
 
-Der Generator kann nicht gezielt ein Puzzle mit bestimmtem Schwierigkeitsgrad herstellen. Die generierten Puzzles haben zufällig einen der genannten Schwierigkeitsgrade. Wenn man einen bestimmten Schwierigkeitsgrad wünscht, muss man gegebenenfalls mehrere Generierungen veranlassen, bis der gewünschte Schwierigkeitsgrad dabei ist.
+Der Generator kann nicht gezielt ein Puzzle mit bestimmtem Schwierigkeitsgrad herstellen. Die generierten Puzzles haben zufällig einen der Schwierigkeitsgrade 'Leicht', 'Mittel' oder 'Schwer'. Wenn man einen bestimmten Schwierigkeitsgrad wünscht, muss man gegebenenfalls mehrere Generierungen veranlassen, bis der gewünschte Schwierigkeitsgrad dabei ist.
 
 ## Die Puzzle-Datenbank
 
