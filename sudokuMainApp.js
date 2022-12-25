@@ -1,7 +1,6 @@
 let sudoApp;
 function start() {
     sudoApp = new SudokuMainApp();
-    //sudoApp.migrateDB();
     sudoApp.init();
 }
 class SudokuMainApp {
