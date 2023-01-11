@@ -302,13 +302,13 @@ class SudokuSolverController {
 
     autoStepBtnPressed() {
         if (this.mySolver.getGamePhase() == 'define') {
-            this.mySolver.getPuzzlePreRunDataUsingWebworker();          
+            this.mySolver.getPuzzlePreRunDataUsingWebworker();
         }
         this.mySolver.executeSingleStep();
     }
 
     startBtnPressed() {
-        this.mySolver.getPuzzlePreRunDataUsingWebworker();          
+        this.mySolver.getPuzzlePreRunDataUsingWebworker();
         this.mySolver.startSolverLoop();
     }
 
@@ -638,23 +638,28 @@ class SudokuSolverView extends SudokuView {
     }
 
     displayTechnique(tech) {
+        let myGrid = this.getMyModel().getMyGrid();
         let evalNode = document.getElementById("technique");
-        if (tech.includes('notwendig, weil')) {
-            evalNode.style.color = 'darkgreen';
+        if (myGrid.evalType == 'lazy') {
+            if (tech.includes('notwendig, weil')) {
+                evalNode.style.color = 'darkgreen';
+            } else {
+                evalNode.style.color = 'Crimson';
+            }
+            evalNode.innerHTML = '<b>Erläuterung:</b> &nbsp' + tech;
         } else {
-            evalNode.style.color = 'Crimson';
+            evalNode.innerHTML = '';
         }
-        evalNode.innerHTML = '<b>Erläuterung (nur Lazy):</b> &nbsp' + tech;
     }
 
     displayLoadedBenchmark(levelOfDifficulty, countBackwards) {
         let evalNode = document.getElementById("loaded-evaluations");
         if (countBackwards == 0) {
             evalNode.innerHTML =
-                '<span style="background-color:#7986CB ; color:white ; width: 5rem"> &nbsp Puzzle:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+                '<b>Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
         } else {
             evalNode.innerHTML =
-                '<span style="background-color:#7986CB ; color:white ; width: 5rem"> &nbsp Puzzle:</span> <b> &nbsp Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
+                '<b>Schwierigkeitsgrad:</b> &nbsp' + levelOfDifficulty + '; &nbsp'
                 + '<b>Rückwärtsläufe:</b> &nbsp' + countBackwards;
         }
     }
@@ -4539,7 +4544,7 @@ class SudokuCellView extends SudokuView {
                         }
                     });
                     sudoApp.mySolver.myView.displayTechnique(Array.from(tmpCell.myNecessarys)[0] +
-                        ' notwendig, weil in der Gruppe nur hier Kandidat.');
+                        ' notwendig, weil in der Gruppe einzig hier Kandidat.');
                     return;
                 }
             }
