@@ -12,7 +12,7 @@ Das tun andere Sudoku-Solver auch. Die Besonderheit des HB-Sudoku-Solvers besteh
 
 Zusammen mit der Lösung bestimmt der Solver den tatsächlichen Schwierigkeitsgrad des Sudokus. Sehr schwere Sudokus - Definition siehe unten - sind manuell kaum zu lösen. Sie sollten daher kein Grund für Frust sein. Konsequenz: Mit der HB-Sudoku-App macht das Sudokulösen Spaß, auch wenn mal ein schweres Puzzle dabei ist.
 
-Der Generator generiert faire Puzzles mit den Schwierigkeitsgraden Leicht, Mittel und Schwer. Im Gegensatz zu Sehr Schweren oder Extrem Schweren Puzzles - Definition der Schwierigkeitsgrade erfolgt weiter unten - können die generierten Puzzles allein durch logisches Schließen gelöst werden. Sie benötigen kein "Back-Tracking", kein kein Raten und Probieren.
+Der Generator generiert faire Puzzles mit den Schwierigkeitsgraden Leicht, Mittel und Schwer. Im Gegensatz zu Sehr Schweren oder Extrem Schweren Puzzles - Definition der Schwierigkeitsgrade erfolgt weiter unten - können die generierten Puzzles allein durch logisches Schließen gelöst werden. Sie benötigen kein "Backtracking", kein kein Raten und Probieren.
 
 ## App-Überblick
 
