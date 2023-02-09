@@ -113,10 +113,14 @@ html {
 .tabdatabase {
     max-width: fit-content;
     min-width: fit-content;
+
 }
 
-.tabhelp {
-    width: 100%;
+iframe {
+	width:100%;
+	min-width: 800px;
+	margin: auto;
+	border:none; 
 }
 
 
