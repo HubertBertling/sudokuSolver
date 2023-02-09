@@ -118,7 +118,8 @@ html {
 
 iframe {
 	width:100%;
-	min-width: 800px;
+    height: 100%;
+	min-width: 700px;
 	margin: auto;
 	border:none; 
 }
