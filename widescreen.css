@@ -82,7 +82,7 @@ html {
     /*  cursor: pointer; */
     padding: 10px 12px;
     /* font-size: 17px; */
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: bold;
     width: 25%;
 }
@@ -133,7 +133,7 @@ iframe {
 */
 
 .puzzle-header {
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     display: inline-block;
     color: black;
     margin-top: 20px;
@@ -425,6 +425,7 @@ iframe {
     color: var(--screen-color);
     text-align: center;
     font-weight: bold;
+    font-size: 1.2rem;
 
 }
 
@@ -433,7 +434,7 @@ iframe {
     font-size: 1.6rem;
 }
 
-.help-embed {
+.helpembed {
     width: 100%;
     height: 85vh;
 }
@@ -463,7 +464,7 @@ iframe {
 }
 
 .app-header {
-    font-size: 2.0rem;
+    font-size: 1.8rem;
     font-weight: bold;
     padding: 1rem;
     text-align: center;
