@@ -119,9 +119,10 @@ html {
 .helpembed {
     width: 100%;
     min-width: 700px;
+    min-height: 800px;
 }
 
-
+/*
 iframe {
 	width:100%;
     height: 700px;
@@ -129,7 +130,7 @@ iframe {
 	margin: auto;
 	border:none; 
 }
-
+*/
 
 .puzzle-header {
     font-size: 1.2rem;
