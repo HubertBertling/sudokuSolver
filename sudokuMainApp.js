@@ -2,6 +2,7 @@ let sudoApp;
 function start() {
     sudoApp = new SudokuMainApp();
     sudoApp.init();
+    
 }
 class SudokuMainApp {
     constructor() {
