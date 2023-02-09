@@ -58,7 +58,7 @@
 body,
 html {
     font-family: 'Open Sans', sans-serif;
-    height: 100vh;
+    height: 95vh;
     background-color: var(--screen-bg-color);
     margin-top: 10px;
     display: flex;
