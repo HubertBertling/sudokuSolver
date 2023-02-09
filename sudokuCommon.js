@@ -46,7 +46,7 @@ class SudokuTabbedPage {
     }
     open() {
         this.myContentNode.style.display = "block";
-        this.myLinkNode.style.backgroundColor = '#F2E2F2';
+        this.myLinkNode.style.backgroundColor = 'rgb(195, 185, 185)';
         this.myLinkNode.style.color = 'black';
     }
 }
@@ -83,6 +83,7 @@ class SudokuSolverController {
         // Used dialogs
         this.mySuccessDialog = new SuccessDialog();
         this.myPuzzleSaveDialog = new PuzzleSaveDialog();
+        this.myInfoDialog = new InfoDialog();
 
         // =============================================================
         // The events of the solver are set
@@ -377,18 +378,29 @@ class SudokuSolverController {
     showWrongNumbersBtnPressed() {
         if (this.mySolver.getGamePhase() == 'play') {
             // Hier die falschen Zellen markieren
-            let test = sudoApp.mySolver.myGrid.preRunRecord.solvedPuzzle;
-            for (let i = 0; i < 81; i++) {
-                let currentCellValue = sudoApp.mySolver.myGrid.sudoCells[i].getValue();
-                let currentCellPhase = sudoApp.mySolver.myGrid.sudoCells[i].getPhase();
-                if (currentCellValue !== '0' &&
-                    currentCellPhase !== 'define' &&
-                    currentCellValue !== sudoApp.mySolver.myGrid.preRunRecord.solvedPuzzle[i].cellValue) {
-                    // Mark cell wrong
-                    sudoApp.mySolver.myGrid.sudoCells[i].setWrong();
+            let wrongCellSet = false;
+            let solvedPuzzle = sudoApp.mySolver.myGrid.preRunRecord.solvedPuzzle;
+            if (solvedPuzzle.length == 0) {
+                this.mySolver.getPuzzlePreRunDataUsingWebworker();
+            } else {
+                for (let i = 0; i < 81; i++) {
+                    let currentCellValue = sudoApp.mySolver.myGrid.sudoCells[i].getValue();
+                    let currentCellPhase = sudoApp.mySolver.myGrid.sudoCells[i].getPhase();
+                    if (currentCellValue !== '0' &&
+                        currentCellPhase !== 'define' &&
+                        currentCellValue !== sudoApp.mySolver.myGrid.preRunRecord.solvedPuzzle[i].cellValue) {
+                        // Mark cell wrong
+                        sudoApp.mySolver.myGrid.sudoCells[i].setWrong();
+                        wrongCellSet = true;
+                    }
+                }
+                sudoApp.mySolver.notify();
+                if (wrongCellSet) {
+                    this.myInfoDialog.open("Prüfergebnis", "Es gibt falsche Lösungsnummern, siehe rot umrandete Zellen!");
+                } else {
+                    this.myInfoDialog.open('Prüfergebnis', 'Bisher sind alle Lösungsnummern korrekt!');
                 }
             }
-            sudoApp.mySolver.notify();
         }
     }
 
@@ -424,6 +436,9 @@ class SudokuSolverController {
         if (this.mySuccessDialog.further()) {
             this.mySolver.tryMoreSolutions();
         }
+    }
+    infoDlgOKPressed() {
+        this.myInfoDialog.close();
     }
 }
 
@@ -755,7 +770,8 @@ class SudokuCalculator extends SudokuModel {
         } else {
             if (this.myStepper.deadlockReached()) {
                 // Der Calculator braucht gar nicht in den Auto-Modus gesetzt werden
-                alert("Keine (weitere) Lösung gefunden!");
+                sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'Keine (weitere) Lösung gefunden!');
+                // alert("Keine (weitere) Lösung gefunden!");
             } else {
                 // Der Calculator wird in den Auto-Modus gesetzt
                 // und die zeitgetacktete Loop wird gestartet.
@@ -775,7 +791,9 @@ class SudokuCalculator extends SudokuModel {
             if (this.myStepper.deadlockReached()) {
                 // Der Calculator braucht gar nicht in den Auto-Modus gesetzt werden
                 if (sudoApp instanceof SudokuMainApp) {
-                    alert("Keine (weitere) Lösung gefunden!");
+                    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'Keine (weitere) Lösung gefunden!');
+
+                    // alert("Keine (weitere) Lösung gefunden!");
                 } else {
                     // Übertrage Stepper-Infos nach Grid-Infos.
                     this.myGrid.difficulty = 'unlösbar';
@@ -842,7 +860,8 @@ class SudokuCalculator extends SudokuModel {
             this.myStepper.executeSingleStep();
         } else {
             if (this.myStepper.deadlockReached()) {
-                alert("Keine (weitere) Lösung gefunden!");
+                sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'Keine (weitere) Lösung gefunden!');
+                // alert("Keine (weitere) Lösung gefunden!");
             } else {
                 this.setInAutoExecMode();
                 this.myStepper.executeSingleStep();
@@ -1197,7 +1216,33 @@ class SuccessDialog {
     }
 }
 
-
+class InfoDialog {
+    constructor() {
+        this.dlgNode = document.getElementById("infoDlg");
+        this.infoDlgHeaderNode = document.getElementById("infoDlgHeader");
+        this.infoDlgBodyNode = document.getElementById("infoDlgBody");
+        this.okNode = document.getElementById("infoDlg-OK-Btn");
+        this.dlgNode.close();
+        this.myOpen = false;
+        this.okNode.addEventListener('click', () => {
+            sudoApp.mySolverController.infoDlgOKPressed();
+        });
+    }
+    open(headerText, bodyText) {
+        this.infoDlgHeaderNode.innerHTML = headerText;
+        this.infoDlgBodyNode.innerHTML = bodyText;
+        // this.dlgNode.setAttribute('open', true);
+        this.dlgNode.showModal();
+        this.myOpen = true;
+    }
+    close() {
+        if (this.myOpen) {
+            // this.dlgNode.removeAttribute('open');
+            this.dlgNode.close();
+            this.myOpen = false;
+        }
+    }
+}
 
 class Randomizer {
     static getRandomIntInclusive(min, max) {
@@ -1285,29 +1330,29 @@ class SudokuSet extends Set {
 
 //========================================================================
 class BackTracker {
-    // Der Backtracker realisiert eine Back-Tracking-Buchführung. Er wird vom
-    // Stepper genutzt, damit dieser in der Sequenz seiner Schritte einen
-    // Backtracking-Prozess realisieren kann. 
-    // Der Backtracker dokumentiert die vom Stepper durchgeführten Schritte, so dass
-    // sie bei Bedarf wieder rückgängig gemacht werden können.
-    // Schritte müssen rückgängig gemacht werden, wenn der letzte vollzogene Schritt des
-    // Steppers für das Puzzle einen Widerspruch aufgedeckt hat. Dann muss der Stepper
-    // mit Hilfe des Backtrackers solange rückwärts gehen, bis er einen Optionsschritt erreicht,
-    // an dem er beim ersten Besuch eine Option hatte. Nun startet er einen weiteren Versuch mit einer
-    // anderen Option des Optionsschrittes.
+    // The Backtracker implements a backtrack accounting. 
+    // The Backtracker documents the steps performed by the stepper, so that
+    // they can be undone if necessary.
+    // Steps have to be undone if the last completed step of the
+    // Stepper has revealed a contradiction for the puzzle. Then the stepper must
+    // backtrack until it reaches an option step,
+    // where he had an option on the first visit. Now it starts another attempt with another
+    // option of the option step.
 
-    // Der Backtracker erzeugt einen Ausführungsbaum aus Optionsschritten, die für jede Option
-    // des Optionsschrittes einen Optionspfad haben. Der Optionspfad besteht aus einer Sequenz
-    // von wirklichen Schritten, die eine Nummernsetzung dokumentieren.
+    // The Backtracker generates an execution tree of option steps, which contains for each option of 
+    // the option step an option path. The option path consists of a sequence
+    // of real steps that document a number setting.
+
 
     constructor() {
-        // Der Backtracker speichert den aktuellen Schritt des Backtracking-Prozesses.
-        // Initial ist der aktuelle Schritt ein Pseudo-Optionsschritt, der zugleich
-        // die Wurzel des Backtracking-Baumes ist.
-        // Die Besonderheiten des Wurzeloptionsschrittes:
-        // 1. Der Wurzeloptionsschritt befindet sich nicht in einem Pfad eines anderen Optionsschrittes
-        // 2. Der Wurzeloptionsschritt zeigt nicht auf eine Zelle der Sudoku-Matrix.
-        // 3. Die Optionsliste enthält keine zulässige Nummer.
+        // The Backtracker stores the current step of the backtracking process.
+        // Initially, the current step is a pseudo option step, which is also
+        // the root of the backtracking tree.
+        // The specifics of the root option step:
+        // 1. the root option step is not in a path of another option step.
+        // 2. the root option step does not point to a cell of the Sudoku matrix.
+        // 3. the option list does not contain a valid number.
+
         this.currentStep = new BackTrackOptionStep(null, -1, ['0']);
         this.maxDepth = 0;
     }
@@ -1707,7 +1752,8 @@ class StepperOnGrid {
             }
             case 'fail': {
                 if (sudoApp instanceof SudokuMainApp) {
-                    alert("Keine (weitere) Lösung gefunden!");
+                    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'Keine (weitere) Lösung gefunden!');
+                    //alert("Keine (weitere) Lösung gefunden!");
                 } else {
                     // Übertrage Stepper-Infos nach Grid-Infos.
                     this.myGrid.difficulty = 'unlösbar';

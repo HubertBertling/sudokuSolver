@@ -63,6 +63,11 @@ html {
     font-family: 'Open Sans', sans-serif;
     width: 100%;
     background-color: var(--screen-bg-color);
+  
+    display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 .app-content {
@@ -650,6 +655,44 @@ label {
 
 .okCancelBtn {
     padding: 1px 30px;
+}
+
+/*=======================================*/
+/* Info-Dialog 
+/*=======================================*/
+.infoDlg::backdrop {
+    background: hsl(201 50% 40% /.5);
+}
+ 
+.infoDlg {
+    width: 75%;
+	height: 20%;
+	position: absolute;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.infoDlgHeader {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin:10px;
+    text-align: center;
+}
+
+.infoDlgBody {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.infoDlg-OK-Btn {
+    width: 100px;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
 }
 
 /*=======================================*/

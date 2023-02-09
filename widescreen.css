@@ -3,7 +3,7 @@
     /*    --screen-bg-color: white; */
     --screen-bg-color: #F2E2F2;
     --screen-color: #0d1117;
-    --standard-btn-bg-color:rgba(0, 0, 0, .25);
+    --standard-btn-bg-color: rgba(0, 0, 0, .25);
     --standard-btn-color: black;
     --standard-btn-height: 20px;
     --delete-btn-bg-color: #e91e63;
@@ -60,13 +60,20 @@ html {
     font-family: 'Open Sans', sans-serif;
     height: 100vh;
     background-color: var(--screen-bg-color);
+ 
+    display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 .app-content {
-    display:grid;
+    display: grid;
 }
+
 /* Style tab links */
 .tablink {
+    margin-left: 10px;
     background-color: #555;
     color: white;
     float: left;
@@ -91,9 +98,9 @@ html {
 /* Style the tab content (and add height:100% for full page content) */
 .tabcontainer {
     display: flex;
-    justify-content: center; 
-    align-items: center; 
- }
+    justify-content: center;
+    align-items: center;
+}
 
 
 .tabcontent {
@@ -102,10 +109,12 @@ html {
     padding: 10px;
 }
 
-.tabsolver, .tabdatabase {
+.tabsolver,
+.tabdatabase {
     max-width: fit-content;
-    min-width:fit-content; 
+    min-width: fit-content;
 }
+
 .tabhelp {
     width: 100%;
 }
@@ -147,6 +156,7 @@ html {
 /* Sudoku grid block */
 /*======================================*/
 .sudoku-solver-in-tab {
+    position:relative;
     display: grid;
     grid-template-columns: repeat(3, auto);
 }
@@ -161,12 +171,13 @@ html {
     display: grid;
     grid-template-columns: repeat(3, auto);
     background-color: black;
-    margin: 0.1em;  
+    margin: 0.1em;
 }
 
 .grid-plus-explainer {
     border: 1px solid black;
 }
+
 .sudoku-block {
     margin: 0.2rem;
     display: grid;
@@ -228,7 +239,7 @@ html {
 .auto-value-cell>div {
     background-color: var(--played-cell-bg-color);
     text-align: center;
-    padding: 0.05rem ;
+    padding: 0.05rem;
 }
 
 .auto-value-cell>div.auto-step-number {
@@ -245,19 +256,19 @@ html {
 .auto-value-cell>div.auto-value-option1 {
     font-size: 1rem;
     width: 0.8rem;
-    padding: 0.1rem ;
+    padding: 0.1rem;
 }
 
 .auto-value-cell>div.auto-value-option2 {
     font-size: 1rem;
     width: 0.8rem;
-    padding: 0.1rem ;
+    padding: 0.1rem;
 }
 
 .auto-value-cell>div.auto-value-option3 {
     font-size: 1rem;
     width: 0.8rem;
-    padding: 0.1rem ;
+    padding: 0.1rem;
 }
 
 .auto-value-cell>div.open {
@@ -314,6 +325,7 @@ html {
     font-size: 1.0rem;
     color: Crimson;
 }
+
 /*
 .nested.err>div.inAdmissible {
     background-color: white;
@@ -380,7 +392,8 @@ html {
     margin-top: 0.5rem;
 }
 
-.technique, .reasonInsolvability {
+.technique,
+.reasonInsolvability {
     font-size: 1.0rem;
     display: flex;
     padding-top: 5px;
@@ -391,7 +404,7 @@ html {
 }
 
 .reasonInsolvability {
-    color: Crimson; 
+    color: Crimson;
 }
 
 
@@ -433,8 +446,9 @@ html {
 
 .game-col2 {
     margin-left: 1rem;
-    min-width:28rem; 
+    min-width: 28rem;
 }
+
 .app-header {
     font-size: 2.0rem;
     font-weight: bold;
@@ -443,8 +457,9 @@ html {
     background-color: DimGray;
     color: white;
     border-radius: 0.3rem;
- 
+
 }
+
 .pc-grid-container {
     margin-top: 1rem;
     display: grid;
@@ -465,7 +480,7 @@ html {
     border: none;
     padding-left: 1rem;
     padding-right: 1rem;
-    
+
 }
 
 .pc-btn:active {
@@ -476,12 +491,12 @@ html {
 .mode-btn-block p {
     font-weight: bold;
     font-size: 1.0rem;
-    
+
 }
 
 
 .manual-btn-block {
-  margin-top: 10px;
+    margin-top: 10px;
 }
 
 .manual-btn-block p {
@@ -495,34 +510,43 @@ html {
     background-color: var(--defined-cell-bg-color);
     color: var(--defined-cell-color);
     margin-top: 0.7rem;
- }
+}
 
 .btn-play {
     background-color: var(--played-cell-bg-color);
     color: var(--standard-btn-color);
     margin-top: 0.7rem;
-    
+
 }
 
-.btn-run, .btn-pause, .btn-stop, .btn-save, .btn-overwrite {
+.btn-run,
+.btn-pause,
+.btn-stop,
+.btn-save,
+.btn-overwrite {
     margin-top: 0.7rem;
 }
 
 .btn-col-1-2 {
     grid-column: 1 / span 2;
 }
+
 .btn-col-3-4 {
     grid-column: 3 / span 2;
 }
+
 .btn-col-5-6 {
     grid-column: 5 / span 2;
 }
+
 .btn-col-1-2-3 {
     grid-column: 1 / span 3;
 }
+
 .btn-col-4-5-6 {
     grid-column: 4 / span 3;
 }
+
 .btn-col-1-2-3-4-5-6 {
     grid-column: 1 / span 6;
 }
@@ -560,6 +584,7 @@ html {
     margin-top: 1rem;
     font-size: 1.2rem;
 }
+
 legend {
     font-weight: bold;
     margin-left: 1rem;
@@ -567,12 +592,12 @@ legend {
 
 label {
     font-size: var(--font-size-btn);
-  
+
 }
 
 input[type="radio"] {
     height: 1.1rem;
-    width: 1.1rem;  
+    width: 1.1rem;
 }
 
 .storage-btns-mobile {
@@ -749,6 +774,43 @@ input[readonly] {
     width: 180px;
 }
 
+/*=======================================*/
+/* Info-Dialog 
+/*=======================================*/
+.infoDlg::backdrop {
+    background: hsl(201 50% 40% /.5);
+}
+ 
+.infoDlg {
+    width: 40%;
+	height: 15%;
+	position: absolute;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.infoDlgHeader {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin:10px;
+    text-align: center;
+}
+
+.infoDlgBody {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.infoDlg-OK-Btn {
+    width: 100px;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
 
 /*=======================================*/
 /* WinBox 
@@ -921,26 +983,36 @@ th {
     z-index: 2;
     width: 200px;
     height: 200px;
-    border: 48px solid #fbf9f900; 
+    border: 48px solid #fbf9f900;
     border-radius: 50%;
     border-top: 48px solid var(--defined-cell-bg-color);
     border-bottom: 48px solid black;
     border-right: 48px solid var(--played-cell-bg-color);
     -webkit-animation: spin 2s linear infinite;
     animation: spin 2s linear infinite;
-  }
-  
-  /* Safari */
-  @-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 
 /*======================================*/
 /* Global block */
