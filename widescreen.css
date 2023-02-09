@@ -116,6 +116,12 @@ html {
 
 }
 
+.helpembed {
+    width: 100%;
+    min-width: 700px;
+}
+
+
 iframe {
 	width:100%;
     height: 700px;
