@@ -796,9 +796,13 @@ input[readonly] {
 }
  
 .infoDlg {
-    width: 40%;
-	height: 15%;
-	position: absolute;
+    width: 30%;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  
+    position: absolute;
     margin-top: auto;
     margin-bottom: auto;
     margin-left: auto;
@@ -822,7 +826,9 @@ input[readonly] {
 .infoDlg-OK-Btn {
     width: 100px;
     margin-top: 10px;
-    margin-left: 10px;
+    /* margin-left: auto; */
+    float: right;
+    margin-right: 10px;
     margin-bottom: 10px;
 }
 

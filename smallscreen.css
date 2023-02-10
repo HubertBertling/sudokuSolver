@@ -61,13 +61,12 @@
 body,
 html {
     font-family: 'Open Sans', sans-serif;
-    width: 100%;
+    height: 95vh;
     background-color: var(--screen-bg-color);
-
-    
+    margin-top: 10px;
     display: flex;
 	flex-direction: column;
-	justify-content: center;
+	/* justify-content: center; */
 	align-items: center;
 }
 
@@ -665,9 +664,13 @@ label {
 }
  
 .infoDlg {
-    width: 75%;
-	height: 20%;
-	position: absolute;
+    width: 60%;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  
+    position: absolute;
     margin-top: auto;
     margin-bottom: auto;
     margin-left: auto;
@@ -691,9 +694,12 @@ label {
 .infoDlg-OK-Btn {
     width: 100px;
     margin-top: 10px;
-    margin-left: 10px;
+    /* margin-left: auto; */
+    float: right;
+    margin-right: 10px;
     margin-bottom: 10px;
 }
+
 
 
 /*=======================================*/
