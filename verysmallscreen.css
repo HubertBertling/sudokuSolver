@@ -341,6 +341,7 @@ html {
 
 .technique,
 .reasonInsolvability {
+    height: 18px;
     font-size: 1.0rem;
     display: flex;
     padding-top: 3px;
