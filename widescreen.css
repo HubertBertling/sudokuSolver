@@ -595,26 +595,62 @@ iframe {
     display: none;
 }
 
+/*======================================*/
+/* Evaluation radio buttons             */
+/*======================================*/
+
+
 .eval-btn-block {
-    margin-top: 1rem;
+    margin-top: 10px;
     font-size: 1.2rem;
 }
 
-legend {
+/* ======================================*/
+/* Evaluation block                       */
+/* ======================================*/
+.eval-legend {
     font-weight: bold;
-    margin-left: 1rem;
+    margin-left: 10px;
 }
 
 label {
-    font-size: var(--font-size-btn);
+    display: block;
+    font-size: 1.2rem;
+  }
+  
+  .pc-floatBlock {
+    margin: 0.8em 0.8em 0 0;
+  } 
 
+  .pc-evaluation-options {
+    margin-left: 1rem;
+    place-items: center;
+    grid-column: 1 / span 2;
+      border: none;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      break-before: always;
+      margin: 0 0 1em 0;
+  }
+
+/*
+.eval-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    line-height: 1.4;
+    display: grid;
+    grid-template-columns: 1em auto;
+    gap: 0.5em;
 }
+*/
 
-input[type="radio"] {
-    height: 1.1rem;
-    width: 1.1rem;
-}
+.eval-type {
+    font-size: 1.2rem;
+ }
 
+
+/* ***************************************/
 .storage-btns-mobile {
     display: none;
 }
@@ -639,15 +675,6 @@ input[type="radio"] {
     grid-template-columns: 0.25fr 0.1fr 1fr;
     gap: 2px;
 }
-
-.evaluations {
-    margin-left: 10px;
-}
-
-.eval-type {
-    margin: 5px;
-}
-
 
 .checkbox {
     margin-left: 3px;
@@ -730,31 +757,55 @@ input[type="radio"] {
 }
 
 
-.textInDlgs {
-    font-size: 1.6rem;
-    float: left;
-    width: 49%;
-    margin-right: 1%;
-    padding: 2px;
+
+/*=======================================*/
+/* Save-Dialog 
+/*=======================================*/
+
+.contentSaveDlg::backdrop {
+    background: hsl(201 50% 40% /.5);
+}
+ 
+.contentSaveDlg {
+    width: 35%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
+  
+    position: absolute;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.textInDlgs:last-child {
-    margin-right: 0px;
+.contentSaveDlgHeader {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin:5px;
+    text-align: center;
 }
 
-.input-row {
-    font-size: 1.6rem;
-    margin: 5px;
+
+.label-saveDlg {
+    margin-top: 20px;
+    margin-left: 10px;
+    font-weight: bold;
+    font-size: 1.4rem;
 }
 
-input {
-    padding: 5px;
+.save-dlg-puzzle-id[readonly] {
+    background-color: lightgray;
+    line-height: 2.0rem;
 }
-
-input[readonly] {
-    background-color: darkgrey;
-}
+.save-dlg-puzzle-id, .save-dlg-puzzle-name{
+    width: 80%;
+    border: 1px solid black;
+    margin: 10px;
+    margin-left: 40px; 
+    padding: 5px; 
+    font-size: 1.2rem;
+ }
 
 .ok-cancel-btns {
     margin-top: 5px;
@@ -764,29 +815,63 @@ input[readonly] {
     grid-template-columns: 1fr 1fr;
 }
 
-.success-ok-cancel-btns {
-    margin-top: 5px;
-    margin-left: 25px;
-    margin-right: 25px;
-    display: grid;
-    grid-template-columns: 1fr;
+.okCancelBtn {
+    width: 85%;
+    margin-top: auto;
+    margin-left: auto; 
+    margin-right: auto;
+    margin-bottom: 15px;
 }
 
-.successForm,
-.dlg-form {
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-top: 10px;
+/*=======================================*/
+/* Success-Dialog 
+/*=======================================*/
+.successDlg::backdrop {
+    background: hsl(201 50% 40% /.5);
+}
+ 
+.successDlg {
+    width: 20%;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  
+    position: absolute;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.successDlgHeader {
     font-size: 1.6rem;
-    display: grid;
-    grid-template-columns: 1fr;
+    font-weight: bold;
+    margin:5px;
+    text-align: center;
+}
+.further-row {
+    display: flex;
+    margin-top: auto;
+    margin-left: 10px;
+}
+label {
+    margin-left: 10px;
+}
+.successImg {
+    margin-left: 10px; 
+    margin-right: auto;
+    height: 85%;
+    width: 85%;
 }
 
-
-.successImg {
-    margin-left: 30px;
-    height: 270px;
-    width: 180px;
+.successDlg-OK-Btn {
+    width: 100px;
+    margin-top: 10px;
+    /* margin-left: auto; */
+    float: right;
+    margin-right: 10px;
+    margin-bottom: 10px;
 }
 
 /*=======================================*/
@@ -816,12 +901,25 @@ input[readonly] {
     margin:10px;
     text-align: center;
 }
-
-.infoDlgBody {
-    font-size: 1.2rem;
+.infoDlgBodyRow {
+    display: flex;
+	flex-direction:row;
+    align-items: center;
     margin-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
+}
+.infoDlgBody {
+    font-size: 1.2rem;
+    margin-left: 10px;
+}
+
+.infoIcon {
+    margin-left: 5px; 
+    margin-right: 10px;
+    height: 40px; 
+    width: 40px; 
+    background-color: white;
 }
 
 .infoDlg-OK-Btn {

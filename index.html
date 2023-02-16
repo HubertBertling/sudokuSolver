@@ -49,9 +49,6 @@
                         <div class="loaded-evaluations" id="loaded-evaluations">
 
                         </div>
-                        <!---     <div class="evaluations" id="evaluations">
-
-                        </div>  -->
                         <div class="progress-box" id="progress-box">
                             <div class="progress-block">
                                 <div class="step-count-box">
@@ -127,59 +124,59 @@
                             <button class="pc-btn btn-print btn-col-1-2-3-4-5-6" id="btn-print">Drucken</button>
                         </div>
                         <div class="eval-btn-block last-row">
-                            <fieldset>
-                                <legend>
+                            <fieldset class="eval-fieldset">
+                                <legend class="eval-legend">
                                     Kandidatenauswertung
                                 </legend>
-                                <label>
-                                    <input type="radio" class="eval-type" id="no-eval" name="auswertung" value="no-eval"
-                                        checked>Keine
-                                </label>
-                                <label>
-                                    <input type="radio" class="eval-type" id="lazy" name="auswertung" value="lazy">
-                                    Lazy
-                                </label>
-                                <label>
-                                    <input type="radio" class="eval-type" id="strict-plus" name="auswertung"
-                                        value="strict-plus">
-                                    Strikt +
-                                </label>
-                                <label>
-                                    <input type="radio" class="eval-type" id="strict-minus" name="auswertung"
-                                        value="strict-minus">
-                                    Strikt -
-                                </label>
-                            </fieldset>
-                        </div>
 
+                                <div id="pc-evaluation" name="pc-evaluation" class="pc-evaluation-options">
+                                    <div id="pcNoEval" class="pc-floatBlock">
+                                        <label for="pc-no-eval"> <input id="pc-no-eval" class="pc-eval-type" name="pc-auswertung" type="radio"
+                                                value="no-eval" checked /> Keine </label>
+                                    </div>
+                
+                                    <div id="pcLazy" class="pc-floatBlock">
+                                        <label for="pc-lazy"> <input id="pc-lazy" class="pc-eval-type" name="pc-auswertung" type="radio"
+                                                value="lazy" /> Lazy </label>
+                                    </div>
+                
+                                    <div id="pcStrictPlus" class="pc-floatBlock">
+                                        <label for="pc-strict-plus"> <input id="pc-strict-plus" class="pc-eval-type" name="pc-auswertung"
+                                                type="radio" value="strict-plus" /> Strikt + </label>
+                                        </div>
+                                    <div id="pcStrictMinus" class="pc-floatBlock">
+                                        <label for="pc-strict-minus"> <input id="pc-strict-minus" class="pc-eval-type" name="pc-auswertung"
+                                                type="radio" value="strict-minus" /> Strikt - </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="mobile-grid-container noprint">
 
-                <div class="mobile-evaluation">
-                    <div>
-                        <input type="radio" class="mobile-eval-type" id="mobile-no-eval" name="mobile-auswertung"
-                            value="no-eval" checked>
-                        <label for="mobile-no-eval">Keine</label>
+                <div id="mobile-evaluation" name="mobile-evaluation" class="mobile-evaluation-options">
+
+                    <div id="mNoEval" class="floatBlock">
+                        <label for="mobile-no-eval"> <input id="mobile-no-eval" class="mobile-eval-type" name="mobile-auswertung" type="radio"
+                                value="no-eval" checked /> Keine </label>
                     </div>
-                    <div>
-                        <input type="radio" class="mobile-eval-type" id="mobile-lazy" name="mobile-auswertung"
-                            value="lazy">
-                        <label for="mobile-lazy">Lazy</label>
+
+                    <div id="mLazy" class="floatBlock">
+                        <label for="mobile-lazy"> <input id="mobile-lazy" class="mobile-eval-type" name="mobile-auswertung" type="radio"
+                                value="lazy" /> Lazy </label>
                     </div>
-                    <!-- <div>
-                                <input type="radio" class="mobile-eval-type" id="mobile-strict-plus"
-                                    name="mobile-auswertung" value="strict-plus">
-                                <label for="mobile-strict-plus">S +</label>
-                            </div>
-                            -->
-                    <div>
-                        <input type="radio" class="mobile-eval-type" id="mobile-strict-minus" name="mobile-auswertung"
-                            value="strict-minus">
-                        <label for="mobile-strict-minus">Strikt</label>
+
+                    <div id="mStrict" class="floatBlock">
+                        <label for="mobile-strict-minus"> <input id="mobile-strict-minus" class="mobile-eval-type" name="mobile-auswertung"
+                                type="radio" value="strict-minus" /> Strikt </label>
                     </div>
+
                 </div>
+
+
+
                 <div class="mobile-store-btns">
                     <button class="mobile-interface mobile-btn mobile-btn-save" id="btn-save-mobile"><img
                             src="images/save.png" class="btn-image-save">
@@ -298,7 +295,7 @@
     </div>
     <!--Dialoge -->
     <div id="backstore" style="display: none">
-        <div id="contentSaveDlg">
+        <!--    <div id="contentSaveDlg">
             <form class="dlg-form">
                 <label for="puzzle-id">Neue Puzzle-Id:</label>
                 <input type="text" id="save-dlg-puzzle-id" name="puzzle-id"><br>
@@ -311,26 +308,50 @@
                 </div>
             </form>
         </div>
-        <div id="contentSuccessDlg">
-            <form class="successForm">
-                <img src="images/gueckwunsch.jfif" class="successImg">
-                <div class="further-row">
-                    <input type="checkbox" id="further" name="further" checked>
-                    <label for="further">Weitere Lösung suchen? </label>
-                </div>
-                <div class="success-ok-cancel-btns">
-                    <input type="button" class="main-btn successOkCancelBtn" id="btn-successOK" name="OK" value="OK" />
-                </div>
-            </form>
-        </div>
+    -->
     </div>
+
+
+    <dialog class="contentSaveDlg" id="contentSaveDlg">
+        <div class="contentSaveDlgHeader" id="contentSaveDlgHeader">
+            Puzzle speichern unter ...
+        </div>
+        <label for="puzzle-id" class="label-saveDlg">Neue Puzzle-Id:</label>
+        <input type="text" class="save-dlg-puzzle-id" id="save-dlg-puzzle-id" name="puzzle-id"><br>
+
+        <label for="puzzle-name" class="label-saveDlg">Neuer Puzzle-Name:</label>
+        <input type="text" class="save-dlg-puzzle-name" id="puzzle-name" name="puzzle-name"><br>
+
+        <div class="ok-cancel-btns">
+            <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageOK" name="OK" value="OK" />
+            <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageCancel" name="Cancel"
+                value="Abbrechen" />
+        </div>
+    </dialog>
+
+
+    <dialog class="successDlg" id="successDlg">
+        <div class="successDlgHeader" id="successDlgHeader">
+            Lösung gefunden
+        </div>
+        <img src="images/gueckwunsch.jfif" class="successImg">
+        <div class="further-row">
+            <input type="checkbox" id="further" name="further" checked>
+            <label for="further">Weitere Lösung suchen? </label>
+        </div>
+        <button class="successDlg-OK-Btn" id="successDlg-OK-Btn">OK</button>
+    </dialog>
+
 
     <dialog class="infoDlg" id="infoDlg">
         <div class="infoDlgHeader" id="infoDlgHeader">
             Information
         </div>
-        <div class="infoDlgBody" id="infoDlgBody">
-            Information
+        <div class="infoDlgBodyRow">
+            <img src="" class="infoIcon" id="infoIcon">
+            <div class="infoDlgBody" id="infoDlgBody">
+                Information
+            </div>
         </div>
         <button class="infoDlg-OK-Btn" id="infoDlg-OK-Btn">OK</button>
     </dialog>

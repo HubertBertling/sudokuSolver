@@ -449,21 +449,6 @@ input[type="radio"] {
     color: var(--delete-btn-color);
 }
 
-.mobile-evaluation {
-    margin-left: 1rem;
-    place-items: center;
-    grid-column: 1 / span 2;
-    display: flex;
-}
-
-
-label {
-    margin-left: 0.5rem;
-    margin-right: 1.0rem;
-    float: right;
-    font-size: 1.2rem;    
-}
-
 .btn-image {
     width: 1.8rem;
     height: 1.6rem;
@@ -477,6 +462,32 @@ label {
    
 }
 
+
+/* ======================================*/
+/* Evaluation block                       */
+/* ======================================*/
+
+label {
+    display: block;
+    font-size: 1rem;
+  }
+  
+  .floatBlock {
+    margin: 0 1.0em 0 0;
+  } 
+
+  .mobile-evaluation-options {
+    margin-left: 1rem;
+    place-items: center;
+    grid-column: 1 / span 2;
+      border: none;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      break-before: always;
+      margin: 0 0 1em 0;
+  }
+  
 /*======================================*/
 /* Progress block */
 /*======================================*/
@@ -599,70 +610,62 @@ label {
     line-height: 16px;
     vertical-align: center;
 }
+/*=======================================*/
+/* Success-Dialog 
+/*=======================================*/
+.successDlg::backdrop {
+    background: hsl(201 50% 40% /.5);
+}
+ 
+.successDlg {
+    width: 50%;
 
-
-.textInDlgs {
-    font-size: 1.6rem;
-    float: left;
-    width: 49%;
-    margin-right: 1%;
-    padding: 2px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
+  
+    position: absolute;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.textInDlgs:last-child {
-    margin-right: 0px;
-}
-
-.input-row {
+.successDlgHeader {
     font-size: 1.6rem;
-    margin: 10px;
+    font-weight: bold;
+    margin:5px;
+    text-align: center;
 }
-
-.ok-cancel-btns {
-    margin-top: 5px;
-    margin-left: 30px;
-    margin-right: 15px;
-}
-
-.success-ok-cancel-btns {
-    margin-top: 5px;
-    margin-left: 25px;
-    margin-right: 25px;
-    display: grid;
-    grid-template-columns: 1fr;
-}
-
-
-.successForm,
-.dlg-form {
-    margin-left: 5px;
-    margin-top: 10px;
-    font-size: 1rem;
-    display: grid;
-    grid-template-columns: 1fr;
-    width: 100px;
-}
-
 .further-row {
     display: flex;
+    margin-top: auto;
+    margin-left: 10px;
 }
-
+label {
+    margin-left: 10px;
+}
 .successImg {
-    margin-left: 30px;
-    height: 270px;
-    width: 180px;
+    margin-left: 10px; 
+    margin-right: auto;
+    height: 85%;
+    width: 85%;
+}
+
+.successDlg-OK-Btn {
+    width: 100px;
+    margin-top: 10px;
+    /* margin-left: auto; */
+    float: right;
+    margin-right: 10px;
+    margin-bottom: 10px;
 }
 
 
-.okCancelBtn {
-    padding: 1px 30px;
-}
 
 /*=======================================*/
 /* Info-Dialog 
 /*=======================================*/
-
 .infoDlg::backdrop {
     background: hsl(201 50% 40% /.5);
 }
@@ -687,12 +690,25 @@ label {
     margin:10px;
     text-align: center;
 }
-
-.infoDlgBody {
-    font-size: 1.2rem;
+.infoDlgBodyRow {
+    display: flex;
+	flex-direction:row;
+    align-items: center;
     margin-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
+}
+.infoDlgBody {
+    font-size: 1.2rem;
+    margin-left: 10px;
+}
+
+.infoIcon {
+    margin-left: 5px; 
+    margin-right: 5px;
+    height: 40px; 
+    width: 40px; 
+    background-color: white;
 }
 
 .infoDlg-OK-Btn {
@@ -703,6 +719,7 @@ label {
     margin-right: 10px;
     margin-bottom: 10px;
 }
+
 /*=======================================*/
 /* WinBox 
 /*=======================================*/

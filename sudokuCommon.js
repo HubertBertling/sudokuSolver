@@ -242,7 +242,7 @@ class SudokuSolverController {
 
         // Radio button eval type: No-evaluation, Lazy, Strikt+ oder Strikt-
         // desktop variant
-        let radioEvalNodes = document.querySelectorAll('.eval-type');
+        let radioEvalNodes = document.querySelectorAll('.pc-eval-type');
         radioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
                 this.evalTypeSelected(radioNode.value);
@@ -351,8 +351,6 @@ class SudokuSolverController {
             this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');
         } else {
             sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, puzzleName, tmpPuzzleDbElement);
-            // Wechsle in den DB-Reiter
-            // document.getElementById("puzzle-db-tab").click();
         }
     }
 
@@ -364,7 +362,6 @@ class SudokuSolverController {
         let puzzleId = this.mySolver.myGrid.loadedPuzzleId;
         if (puzzleId == '' || puzzleId == '-') {
             let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-            // this.myPuzzleSaveDialog.open(newPuzzelId, '');
             //Speichere den named Zustand
             sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzelId, 'Druck (' + new Date().toLocaleString('de-DE') + ')', playedPuzzleDbElement);
 
@@ -396,9 +393,9 @@ class SudokuSolverController {
                 }
                 sudoApp.mySolver.notify();
                 if (wrongCellSet) {
-                    this.myInfoDialog.open("Prüfergebnis", "Es gibt falsche Lösungsnummern, siehe rot umrandete Zellen!");
+                    this.myInfoDialog.open("Prüfergebnis", "negativ", "Es gibt falsche Lösungsnummern, siehe rot umrandete Zellen!");
                 } else {
-                    this.myInfoDialog.open('Prüfergebnis', 'Bisher sind alle Lösungsnummern korrekt!');
+                    this.myInfoDialog.open('Prüfergebnis', 'positiv','Bisher sind alle Lösungsnummern korrekt!');
                 }
             }
         }
@@ -596,10 +593,10 @@ class SudokuSolverView extends SudokuView {
     }
 
     displayEvalType(et) {
-        let noEvalNode = document.getElementById('no-eval');
-        let lazyNode = document.getElementById('lazy');
-        let strictPlusNode = document.getElementById('strict-plus');
-        let strictMinusNode = document.getElementById('strict-minus');
+        let noEvalNode = document.getElementById('pc-no-eval');
+        let lazyNode = document.getElementById('pc-lazy');
+        let strictPlusNode = document.getElementById('pc-strict-plus');
+        let strictMinusNode = document.getElementById('pc-strict-minus');
 
         let mobileNoEvalNode = document.getElementById('mobile-no-eval');
         let mobileLazyNode = document.getElementById('mobile-lazy');
@@ -619,7 +616,7 @@ class SudokuSolverView extends SudokuView {
                 strictPlusNode.checked = true;
                 break;
             }
-            case 'no-strict-minus': {
+            case 'strict-minus': {
                 strictMinusNode.checked = true;
                 mobileStrictMinusNode.checked = true;
                 break;
@@ -770,7 +767,7 @@ class SudokuCalculator extends SudokuModel {
         } else {
             if (this.myStepper.deadlockReached()) {
                 // Der Calculator braucht gar nicht in den Auto-Modus gesetzt werden
-                sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'Keine (weitere) Lösung gefunden!');
+                sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
                 // alert("Keine (weitere) Lösung gefunden!");
             } else {
                 // Der Calculator wird in den Auto-Modus gesetzt
@@ -791,7 +788,7 @@ class SudokuCalculator extends SudokuModel {
             if (this.myStepper.deadlockReached()) {
                 // Der Calculator braucht gar nicht in den Auto-Modus gesetzt werden
                 if (sudoApp instanceof SudokuMainApp) {
-                    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'Keine (weitere) Lösung gefunden!');
+                    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
 
                     // alert("Keine (weitere) Lösung gefunden!");
                 } else {
@@ -860,7 +857,7 @@ class SudokuCalculator extends SudokuModel {
             this.myStepper.executeSingleStep();
         } else {
             if (this.myStepper.deadlockReached()) {
-                sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'Keine (weitere) Lösung gefunden!');
+                sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
                 // alert("Keine (weitere) Lösung gefunden!");
             } else {
                 this.setInAutoExecMode();
@@ -1113,9 +1110,8 @@ class ProgressBar {
 
 class PuzzleSaveDialog {
     constructor() {
-        this.winBox;
         this.myOpen = false;
-
+        this.myContentSaveDlgNode = document.getElementById("contentSaveDlg")
         this.myPuzzleNameNode = document.getElementById("puzzle-name");
         this.myPuzzleIdNode = document.getElementById("save-dlg-puzzle-id");
         this.okNode = document.getElementById("btn-saveStorageOK");
@@ -1130,34 +1126,17 @@ class PuzzleSaveDialog {
         });
     }
     open(uid, name) {
-        if (window.screen.availWidth < 421) {
-            this.winBox = new WinBox("Puzzle speichern unter ...", {
-                x: "center",
-                y: "center",
-                width: "400px",
-                height: "280px",
-                mount: document.getElementById("contentSaveDlg")
-            });
-        } else {
-            this.winBox = new WinBox("Puzzle speichern unter ...", {
-                x: "center",
-                y: "center",
-                width: "300px",
-                height: "240px",
-                mount: document.getElementById("contentSaveDlg")
-            });
-        }
-
-        this.myOpen = true;
         this.myPuzzleIdNode.removeAttribute("readonly");
         this.myPuzzleIdNode.value = uid;
         this.myPuzzleIdNode.setAttribute("readonly", true);
         this.myPuzzleNameNode.value = name;
+        this.myOpen = true;
+        this.myContentSaveDlgNode.showModal();
     }
 
     close() {
         if (this.myOpen) {
-            this.winBox.close();
+            this.myContentSaveDlgNode.close();
             this.myOpen = false;
         }
     }
@@ -1171,40 +1150,24 @@ class PuzzleSaveDialog {
 
 class SuccessDialog {
     constructor() {
-        this.myWidth = 240;
-        this.myHeight = 390;
-        this.winBox;
+        this.successDlgNode = document.getElementById("successDlg");
+        this.checkBoxNode = document.getElementById('further');
+        this.okNode = document.getElementById("successDlg-OK-Btn");
+        this.checkBoxNode.checked = false;      
+        this.successDlgNode.close();
         this.myOpen = false;
-        this.okNode = document.getElementById("btn-successOK");
-        this.checkBoxNode = document.getElementById("further");
         this.okNode.addEventListener('click', () => {
             sudoApp.mySolverController.successDlgOKPressed();
         });
     }
     open() {
-        if (window.screen.availWidth < 421) {
-            this.winBox = new WinBox("Lösung gefunden", {
-                x: "center",
-                y: "center",
-                width: "255px",
-                height: "400px",
-                mount: document.getElementById("contentSuccessDlg")
-            });
-        } else {
-            this.winBox = new WinBox("Lösung gefunden", {
-                x: "center",
-                y: "center",
-                width: "255px",
-                height: "400px",
-                mount: document.getElementById("contentSuccessDlg")
-            });
-        }
         this.checkBoxNode.checked = false;
         this.myOpen = true;
+        this.successDlgNode.showModal();
     }
     close() {
         if (this.myOpen) {
-            this.winBox.close();
+            this.successDlgNode.close();
             this.myOpen = false;
         }
     }
@@ -1220,6 +1183,7 @@ class InfoDialog {
     constructor() {
         this.dlgNode = document.getElementById("infoDlg");
         this.infoDlgHeaderNode = document.getElementById("infoDlgHeader");
+        this.iconNode = document.getElementById("infoIcon");
         this.infoDlgBodyNode = document.getElementById("infoDlgBody");
         this.okNode = document.getElementById("infoDlg-OK-Btn");
         this.dlgNode.close();
@@ -1228,18 +1192,24 @@ class InfoDialog {
             sudoApp.mySolverController.infoDlgOKPressed();
         });
     }
-    open(headerText, bodyText) {
+    open(headerText, infoModus, bodyText) {
         this.infoDlgHeaderNode.innerHTML = headerText;
+        if (infoModus == 'positiv') {
+            this.iconNode.src="images/ok.png";
+        } else if (infoModus == 'negativ'){
+            this.iconNode.src="images/fail.png";
+        } else if (infoModus == 'info'){
+            this.iconNode.src="images/info.png";
+        }
         this.infoDlgBodyNode.innerHTML = bodyText;
-        // this.dlgNode.setAttribute('open', true);
-        this.dlgNode.showModal();
         this.myOpen = true;
-    }
+        this.dlgNode.showModal();
+       }
     close() {
         if (this.myOpen) {
-            // this.dlgNode.removeAttribute('open');
             this.dlgNode.close();
             this.myOpen = false;
+            this.iconNode.src="";
         }
     }
 }
@@ -1752,7 +1722,7 @@ class StepperOnGrid {
             }
             case 'fail': {
                 if (sudoApp instanceof SudokuMainApp) {
-                    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'Keine (weitere) Lösung gefunden!');
+                    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche','info', 'Keine (weitere) Lösung gefunden!');
                     //alert("Keine (weitere) Lösung gefunden!");
                 } else {
                     // Übertrage Stepper-Infos nach Grid-Infos.
@@ -3131,8 +3101,6 @@ class SudokuGrid extends SudokuModel {
         }
     }
 
-
-
     init() {
         // Speichert die aktuell selektierte Zelle und ihren Index
         this.selectedCell = undefined;
@@ -3301,18 +3269,6 @@ class SudokuGrid extends SudokuModel {
             }
         }
         puzzleRecord.preRunRecord = this.preRunRecord;
-        /*
-        puzzleRecord.preRunRecord.defCount = this.preRunRecord.defCount;
-        puzzleRecord.preRunRecord.level = this.preRunRecord.level;
-        puzzleRecord.preRunRecord.backTracks = this.preRunRecord.backTracks;
-
-        for (let i = 0; i < 81; i++) {
-            puzzleRecord.preRunRecord.solvedPuzzle.push({
-                cellValue: this.preRunRecord.solvedPuzzle[i].cellValue,
-                cellPhase: this.preRunRecord.solvedPuzzle[i].cellPhase
-            })
-        }
-        */
         return puzzleRecord;
     }
 
@@ -3463,22 +3419,13 @@ class SudokuGrid extends SudokuModel {
         this.loadedPuzzleName = puzzleRecordToLoad.name;
         this.difficulty = puzzleRecordToLoad.preRunRecord.level;
         this.backTracks = puzzleRecordToLoad.preRunRecord.backTracks;
-        // this.preRunRecord = puzzleRecordToLoad.preRunRecord;
+ 
         this.preRunRecord.defCount = puzzleRecordToLoad.preRunRecord.defCount;
         this.preRunRecord.stepsLazy = puzzleRecordToLoad.preRunRecord.stepsLazy;
         this.preRunRecord.stepsStrict = puzzleRecordToLoad.preRunRecord.stepsStrict;
         this.preRunRecord.level = puzzleRecordToLoad.preRunRecord.level;
         this.preRunRecord.backTracks = puzzleRecordToLoad.preRunRecord.backTracks;
         this.preRunRecord.solvedPuzzle = puzzleRecordToLoad.preRunRecord.solvedPuzzle;
-
-        /*  this.preRunRecord.solvedPuzzle = [];
-        for (let i = 0; i < 81; i++) {
-            this.preRunRecord.solvedPuzzle.push({
-                cellPhase: puzzleRecordToLoad.preRunRecord.solvedPuzzle[i].cellPhase,
-                cellValue: puzzleRecordToLoad.preRunRecord.solvedPuzzle[i].cellValue
-            })
-        }
-        */
 
         // Populate Grid 
         for (let i = 0; i < 81; i++) {
@@ -3496,21 +3443,12 @@ class SudokuGrid extends SudokuModel {
     }
 
     loadPreRunRecord(uid, preRunRecordToLoad) {
-        // this.preRunRecord = puzzleRecordToLoad.preRunRecord;
         this.preRunRecord.defCount = preRunRecordToLoad.defCount;
         this.preRunRecord.stepsLazy = preRunRecordToLoad.stepsLazy;
         this.preRunRecord.stepsStrict = preRunRecordToLoad.stepsStrict;
         this.preRunRecord.level = preRunRecordToLoad.level;
         this.preRunRecord.backTracks = preRunRecordToLoad.backTracks;
         this.preRunRecord.solvedPuzzle = preRunRecordToLoad.solvedPuzzle;
-        /*   this.preRunRecord.solvedPuzzle = [];
-           for (let i = 0; i < 81; i++) {
-               this.preRunRecord.solvedPuzzle.push({
-                   cellPhase: preRunRecordToLoad.solvedPuzzle[i].cellPhase,
-                   cellValue: preRunRecordToLoad.solvedPuzzle[i].cellValue
-               })
-           }
-           */
     }
 
     getPuzzleArray() {
@@ -5411,6 +5349,7 @@ class SudokuPuzzleDB {
     }
     mergePlayedPuzzle(puzzleId, puzzleName, puzzleRecord) {
         // Overwrite stored puzzle having the id puzzleId
+        
         this.savePuzzle(puzzleId, puzzleName, puzzleRecord);
     }
 
