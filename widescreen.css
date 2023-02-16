@@ -788,7 +788,7 @@ label {
 
 
 .label-saveDlg {
-    margin-top: 20px;
+    margin-top: 10px;
     margin-left: 10px;
     font-weight: bold;
     font-size: 1.4rem;
@@ -799,7 +799,7 @@ label {
     line-height: 2.0rem;
 }
 .save-dlg-puzzle-id, .save-dlg-puzzle-name{
-    width: 80%;
+    width: 70%;
     border: 1px solid black;
     margin: 10px;
     margin-left: 40px; 
@@ -808,7 +808,7 @@ label {
  }
 
 .ok-cancel-btns {
-    margin-top: 5px;
+    margin-top: 10px;
     margin-left: 25px;
     margin-right: 25px;
     display: grid;
@@ -816,7 +816,7 @@ label {
 }
 
 .okCancelBtn {
-    width: 85%;
+    width: 95%;
     margin-top: auto;
     margin-left: auto; 
     margin-right: auto;
