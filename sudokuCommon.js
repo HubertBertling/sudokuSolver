@@ -677,9 +677,9 @@ class SudokuSolverView extends SudokuView {
     }
 
     displayBenchmark(countBackwards) {
-        let evalNode = document.getElementById("evaluations");
+        let evalNode = document.getElementById("backward-count");
         evalNode.innerHTML =
-            '<b>Rückwärts:</b> &nbsp' + countBackwards;
+            '&nbsp <b>Rückwärts:</b> &nbsp' + countBackwards;
     }
 
 
