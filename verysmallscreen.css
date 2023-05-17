@@ -9,7 +9,7 @@
 
     --delete-btn-bg-color: #e91e63;
     --delete-btn-color: white;
-    --standard-btn-height: 24px;
+    --standard-btn-height: 28px;
     --help-color: #4e67c8;
 
     /* Cell colors */
@@ -469,24 +469,26 @@ input[type="radio"] {
 
 label {
     display: block;
-    font-size: 1rem;
-  }
-  
-  .floatBlock {
-    margin: 0 1.0em 0 0;
-  } 
+    /* font-size: 1rem; */
+}
 
-  .mobile-evaluation-options {
-    margin-left: 1rem;
-    place-items: center;
+.m-eval {
     grid-column: 1 / span 2;
-      border: none;
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      break-before: always;
-      margin: 0 0 1em 0;
-  }
+    margin-left: 0.1rem; 
+    
+}
+.mobile-evaluation-options {
+    margin-left: 0.1rem;
+    place-items: center;
+
+    border: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    break-before: always;
+    margin: 0 0 0.2rem 0;
+}
+
   
 /*======================================*/
 /* Progress block */
