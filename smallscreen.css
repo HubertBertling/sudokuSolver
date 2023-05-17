@@ -377,7 +377,7 @@ html {
 
 
 .mobile-grid-container {
-    margin-top: 0.3rem;
+   /* margin-top: 0.3rem; */
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.3rem;
@@ -469,30 +469,27 @@ input[type="radio"] {
 /* ======================================*/
 /* Evaluation block                       */
 /* ======================================*/
+.eval-legend {
+    font-weight: bold;
+    margin-left: 10px;
+}
 
 label {
     display: block;
-    /* font-size: 1rem; */
 }
 
-.floatBlock {
-    margin: 0 0.5rem 0 0;
-}
 .m-eval {
     grid-column: 1 / span 2;
     margin-left: 0.1rem; 
-    height: var(--standard-btn-height);
 }
 .mobile-evaluation-options {
-    margin-left: 0.3rem;
+    margin: 0.3rem;
     place-items: center;
-
     border: none;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    break-before: always;
-    margin: 0 0 0.3rem 0;
+    
 }
 
 /*======================================*/

@@ -378,7 +378,7 @@ html {
 
 
 .mobile-grid-container {
-    margin-top: 0.3rem;
+   /*  margin-top: 0.3rem; */
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.2rem;
@@ -467,9 +467,13 @@ input[type="radio"] {
 /* Evaluation block                       */
 /* ======================================*/
 
+.eval-legend {
+    font-weight: bold;
+    margin-left: 10px;
+    font-size: 0.9rem;
+}
 label {
     display: block;
-    /* font-size: 1rem; */
 }
 
 .m-eval {
@@ -478,15 +482,13 @@ label {
     
 }
 .mobile-evaluation-options {
-    margin-left: 0.1rem;
+    font-size: 0.9rem;
+    margin: 0.1rem;
     place-items: center;
-
     border: none;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    break-before: always;
-    margin: 0 0 0.2rem 0;
 }
 
   
