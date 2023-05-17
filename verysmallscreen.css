@@ -482,8 +482,8 @@ label {
     
 }
 .mobile-evaluation-options {
-    font-size: 0.9rem;
-    margin: 0.1rem;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
     place-items: center;
     border: none;
     display: flex;
