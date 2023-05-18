@@ -6,11 +6,11 @@ layout: default
 
 ## Ein Generator und Solver für klassisches Sudoku
 
-Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Puzzle, manchmal sogar nur als leicht klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man den HB-Sudoku-Trainer und den darin enthaltenen Solver nutzen, auf dem PC oder mit dem Smartphone. Mit der App kann man sich mögliche nächste Schritte anzeigen lassen oder darüber hinaus das Puzzle komplett lösen lassen.
+Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Puzzle, manchmal sogar nur als leicht klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man den HB-Sudoku-Trainer mögliche nächste Schritte anzeigen lassen oder darüber hinaus das Puzzle komplett lösen lassen.
 
-Die Besonderheit des HB-Sudoku-Solvers besteht darin, dass man ihm bei der Lösungssuche zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt. Die App ist also mehr ein Sudoku-Trainer als ein Sudoku-Solver. Zusammen mit der Lösung bestimmt der Solver den tatsächlichen Schwierigkeitsgrad des Sudokus. Sehr schwere Sudokus - Definition siehe unten - sind manuell kaum zu lösen. Sie sollten daher kein Grund für Frust sein. Konsequenz: Mit dem HB-Sudoku-Trainer kann man das Sudoku-lösen trainieren und Spaß dabei haben, auch wenn mal ein schweres Puzzle dabei ist.
+Die Besonderheit des HB-Sudoku-Solvers besteht darin, dass man ihm bei der Lösungssuche zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt. Die App ist also mehr ein Sudoku-Trainer als ein Sudoku-Solver.
 
-Der Generator generiert faire Puzzles mit den Schwierigkeitsgraden Leicht, Mittel und Schwer. Im Gegensatz zu Sehr Schweren oder Extrem Schweren Puzzles - Definition der Schwierigkeitsgrade erfolgt weiter unten - können die generierten Puzzles allein durch logisches Schließen gelöst werden. Sie benötigen kein "Backtracking", kein Raten und Probieren.
+Der Generator generiert faire Puzzles mit den Schwierigkeitsgraden Leicht, Mittel und Schwer. Im Gegensatz zu Sehr Schweren oder Extrem Schweren Puzzles - Definition der Schwierigkeitsgrade erfolgt weiter unten - können faire Puzzles allein durch logisches Schließen gelöst werden. Sie benötigen kein "Backtracking", kein Raten und Probieren.
 
 ## App-Überblick
 
@@ -48,7 +48,7 @@ Die nachfolgend verwendeten Begriffe sind im Laufe der Entwicklung dieses Solver
 |---------|---------|
 |<img src="./images/definedCell.png" width="100px"/>|**Eine gegebene Nummer (Given):** In der Definitionsphase gesetzte Nummer.|
 |<img src="./images/playedCell.png" width="100px"/>|**Eine Lösungsnummer:** In der Lösungsphase gesetzte Nummer. In dieser Zelle wurde in der Lösungsphase manuell oder automatisch die Nummer 1 gesetzt. Wenn sie automatisch gesetzt wurde, wurde die automatische Ausführung des Solvers inzwischen gestoppt. Mit dem Stoppen der automatischen Ausführung wird in den Lösungszellen die Information über die automatische Ausführung gelöscht.|
-|<img src="./images/auto1option.png" width="100px"/>|**Automatisch gesetzte Nummer (Nummer eindeutig):** Der Solver hat in dieser Zelle automatisch die Nummer 9 gesetzt. Und zwar in der 8. Setzung einer Nummer in der Tabelle.. Die Wahl der zu setzenden Nummer war eindeutig. D.h. Die Nummer war eine notwendige Nummer oder ein Single. Definitionen siehe weiter unten.|
+|<img src="./images/auto1option.png" width="100px"/>|**Automatisch gesetzte Nummer (Nummer eindeutig):** Der Solver hat in dieser Zelle automatisch die Nummer 9 gesetzt. Und zwar in der 8. Setzung einer Nummer in der Tabelle. Die Wahl der zu setzenden Nummer war eindeutig. D.h. Die Nummer war eine notwendige Nummer oder ein Single. Definitionen siehe weiter unten.|
 |<img src="./images/auto2option.png" width="100px"/>|**Automatisch gesetzte Nummer einer Auswahl (Erste Nummer von zwei Optionen):** Der Solver hat in dieser Zelle automatisch die Nummer 1 gesetzt. Und zwar in der 1. Setzung einer Nummer. Er musste zwischen den beiden Nummern 1 und 8 wählen. Der Solver wählt zunächst die Nummer 1. Wenn mit dieser Wahl die Lösung des Puzzles gelingt, kommt die zweite Nummer nicht mehr zum Zuge. Gelingt die Lösung nicht, kehrt der Automat zu dieser Zelle zurück und probiert die zweite Option 8. Die Option 8 wurde noch nicht probiert. Noch nicht abgearbeitete Nummern werden mit gelbem Hintergrund angezeigt.|
 |<img src="./images/auto3option.png" width="100px"/>|**Automatisch gesetzte Nummer einer Auswahl (Erste Nummer von mehr als zwei Optionen):** Der Solver hat in dieser Zelle automatisch die Nummer 2 gesetzt. Und zwar in der 12. Setzung einer Nummer. Er musste zwischen den Nummern 2, 3 und noch weiteren hier nicht sichtbaren durch den Stern repräsentierten Nummern wählen. Der Solver wählt zunächst die Nummer 2. Wenn die Lösung des Puzzles gelingt, kommt die zweite Nummer nicht mehr zum Zuge. Gelingt die Lösung nicht, kehrt der Automat zu dieser Zelle zurück und probiert die zweite Option 3. Nach und nach werden die nicht sichtbaren Optionen angezeigt. In der Praxis kommt der Versuch einer dritten Option so gut wie überhaupt nicht vor, weil zuvor schon eine Lösung gefunden wurde.|
 |<img src="./images/auto4option.png" width="100px"/>|**Automatisch gesetzte Nummer einer Auswahl (Zweite Nummer von zwei Optionen):** Der Solver hat in dieser Zelle automatisch die Nummer 8 gesetzt. Und zwar in der 1. Setzung einer Nummer. Nachdem die erste Option 1 nicht zum Erfolg geführt hat, hat er die zweite Option 8 gewählt. Jetzt sind alle Optionen dieser Zelle abgearbeitet.|
@@ -59,7 +59,7 @@ Die nachfolgend verwendeten Begriffe sind im Laufe der Entwicklung dieses Solver
 |<img src="./images/nochoice.png" width="100px"/><img src="./images/nochoice2.png" width="100px"/>|**Widerspruch - Überhaupt keine zulässige Nummer:** Für diese Zelle wurde noch keine Nummer gesetzt. Allerdings gibt es keine Kandidatnummer mehr, die noch gesetzt werden könnte. Die Nummern 4 und 8 sind unzulässig. In der zweiten dargestellten Zelle gibt es nicht mal mehr Kandidatnummern. D.h. das Sudoku ist widersprüchlich. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet der Solver in den Rückwärts-Modus um.|
 |<img src="./images/twoNeccessary.png" width="100px"/>|**Widerspruch - Gleichzeitig verschiedene notwendige Nummern:** Für diese Zelle wurde noch keine Nummer gesetzt. Kandidatnummern sind 1, 2 und 4. Jedoch hat der Solver zwei verschiedene notwendige Nummern für diese Zelle ermittelt: 1 und 2. Das geht natürlich nicht. Es können in einer Zelle nicht zwei Nummern gleichzeitig gesetzt werden. D.h. das Sudoku ist widersprüchlich. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet der Solver in den Rückwärts-Modus um.|
 |<img src="./images/conflct.png" width="100px"/>|**Widerspruch - Die Nummer 5 ist bereits einmal gesetzt:** Für diese Zelle wurde die Nummer 5 gesetzt. Diese Nummer ist direkt unzulässig, weil in der Spalte, Reihe oder dem Block dieser Zelle bereits eine 5 gesetzt ist. Das zweite oder dritte Auftreten der Nummer wird ebenfalls mit rotem Rand angezeigt.|
-||**Prüfen - Die Nummer ist falsch gesetzt, wie die Prüfen-Taste ermittelt hat:** Wenn ein Spieler ohne die Kandidaten-Nummern manuell die Nummern setzt, kann er jederzeit mittels der Prüfen-Taste ermitteln, ob alle seine bisherigen Nummern korrekt gesetzt sind. Alle nicht korrekten Setzungen werden wie der Widerspruch angezeigt.|
+|<img src="./images/conflct.png" width="100px"/>|**Prüfen - Die Nummer ist falsch gesetzt, wie die Prüfen-Taste ermittelt hat:** Wenn ein Spieler ohne die Kandidaten-Nummern manuell die Nummern setzt, kann er jederzeit mittels der Prüfen-Taste ermitteln, ob alle seine bisherigen Nummern korrekt gesetzt sind. Alle nicht korrekten Setzungen werden wie der Widerspruch angezeigt. In diesem Beispiel hat die Prüfung ergeben, dass die 5 falsch gesetzt ist.|
 
 ### Zwei Phasen
 
@@ -70,21 +70,22 @@ Die nachfolgend verwendeten Begriffe sind im Laufe der Entwicklung dieses Solver
 
 Hinweis: Gegebene Nummern, die Givens - dies sind blaue Nummern - können in der Lösungsphase nicht gelöscht werden. Falls Givens gelöscht werden sollen, muss man zuvor die Definieren-Taste drücken.
 
-### Manuelle Ausführung
+### Manuelle Ausführung ohne Kandidatenauswertung
 
-Manuelle Ausführung bedeutet, dass der Spieler die Lösungsnummern (grün) in den Zellen setzt. Die Lösungsphase kann alternativ auch automatisch durchgeführt werden. D.h. der Solver setzt die Lösungsnummern in den Zellen.
+Manuelle Ausführung bedeutet, dass der Spieler die Lösungsnummern (grün) in den Zellen setzt. Die Lösungsphase kann alternativ auch automatisch durchgeführt werden. Die automatische Lösungssuche kann jederzeit mit der Start-Taste gestartet werden. So können auch bereits manuell teilweise gelöste Puzzles automatisch komplett gelöst werden.
 
-### Manuelle Ausführung ohne Kandidatennummern
+Will man sich der Herausforderung einer manuellen Lösungssuche ernsthaft stellen, muss man die Kandidatenauswertung auf 'Keine' setzen. Indem man die Kandidatenauswertung auf 'Keine' setzt, wird die Kandidatenauswertung ausgeschaltet. Auf diese Weise kann man am Computer das Puzzle lösen wie auf einem Blatt Papier.
 
-Indem man die Kandidatenauswertung auf 'Keine' setzt, wird die Kandidatenanzeige ausgeschaltet. Auf diese Weise kann man am Computer das Puzzle lösen wie auf einem Blatt Papier.
+Ist hingegen die Kandidatenauswertung auf 'Lazy' gesetzt, zeigt der Solver unter anderem notwendige Kandidaten an. Diese notwendigen Kandidaten müssen ja in einer korrekten Lösung gesetzt werden. D.h. manuelles Lösen mit Kandidatenauswertung ist Lösen mit "Vorsagen", was üblicherweise als unsportlich abgelehnt wird.
 
+Wenn man beim echten manuellen Lösen nicht weiterkommt, kann man natürlich kurzzeitig die Kandidatenauswertung auf 'Lazy' setzen, um einen möglichen nächsten Schritt zu erkennen.
 ### Automatische Ausführung
 
 |Taste  |Bedeutung  |
 |---------|---------|
 |**Start**|Der Solver startet den automatischen Lösungssuchprozess. Zusätzlich wird ein Timer gestartet, der die Ausführung automatischer Suchschritte anstößt.|
 |**Pause**|Der Taktgeber der automatischen Ausführung wird angehalten, nicht jedoch der Suchprozess abgebrochen. Der Spieler kann jetzt weitere automatische Suchschritte mit der Schritt-Taste von Hand anstoßen. Oder er kann durch das erneute Drücken der Start-Taste die getaktete automatische Ausführung fortsetzen.|
-|**Stop**|Der Taktgeber der automatischen Ausführung wird angehalten und der aktuelle Suchprozess wird abgebrochen.|
+|**Stop**|Der Taktgeber der automatischen Ausführung wird angehalten und der aktuelle Suchprozess wird abgebrochen. In der Anzeige werden die Schrittinformationen ausgeblendet und nur noch die Lösungsnummern angezeigt.|
 |**Schritt**|Der Solver führt den nächsten automatischen Suchschritt aus. Falls noch nicht geschehen, startet er zuvor den Suchprozess überhaupt. Mit dieser Taste kann man den Solver Schritt für Schritt arbeiten lassen und so jeden einzelnen seiner Schritte beobachten und verstehen.|
 
 ### Puzzle-Operationen
@@ -111,7 +112,7 @@ Eine Kandidatnummer in einer Zelle ist notwendig, wenn die Nummer in ihrem Block
 
 **Direkt unzulässige Nummern** sind Nummern, die in einem Block, in einer Spalte oder Reihe bereits einmal existieren. Direkt unzulässige Nummern können keine Kandidaten sein. Es gibt jedoch auch unzulässige Kandidaten. **Unzulässige Kandidaten** werden in roter Schrift angezeigt. Eine Kandidatnummer ist (indirekt) unzulässig, wenn ihre Setzung in der Zelle das Puzzle widerspruchsvoll macht.
 
-In fairen Puzzles kann man unzulässige Kandidaten allein durch logisches Schließen unter Anwendung definierter Kriterien ohne Backtracking erkennen. In der Literatur werden zahlreiche Kriterien genannt. Grundsätzlich ist die rein logische Erkennung der Unzulässigkeit von Kandidaten unvollständig. D.h. es gibt so schwere Puzzles, dass nicht alle unzulässigen Kandidaten mittels der Anwendung von Kriterien erkannt werden können. Solche Sudokus können nur durch Backtracking gelöst werden. Der vorliegende Solver unterstützt nachfolgend beschriebene Kriterien für das Erkennen der Unzulässigkeit von Kandidaten. Falls diese für das Lösen eines konkreten Puzzles nicht ausreichen, löst der Solver das Puzzle durch Backtracking.
+In fairen Puzzles kann man unzulässige Kandidaten allein durch logisches Schließen unter Anwendung definierter Kriterien ohne Backtracking erkennen. In der Literatur werden zahlreiche Kriterien genannt. Grundsätzlich ist die rein logische Erkennung der Unzulässigkeit von Kandidaten unvollständig. D.h. es gibt so schwere Puzzles, dass nicht alle unzulässigen Kandidaten mittels der Anwendung von logischen Kriterien erkannt werden können. Solche Sudokus können nur durch Backtracking gelöst werden. Der vorliegende Solver unterstützt nachfolgend beschriebene logische Kriterien für das Erkennen der Unzulässigkeit von Kandidaten. Falls diese für das Lösen eines konkreten Puzzles nicht ausreichen, löst der Solver das Puzzle durch Backtracking.
 
 1. **Kriterium: Unzulässig wegen notwendiger Nummer.** Eine Kandidatnummer ist unzulässig wegen einer notwendigen Nummer, wenn sie in ihrer Spalte, Reihe oder ihrem Block auch als notwendige Nummer auftritt. Im nachfolgenden Beispiel sind die roten Nummern 1 wegen der grünen 1 unzulässig. Die grüne 1 ist notwendig, weil sie in ihrem Block einzig ist, also in dem Block kein weiteres mal zulässig ist.![Indirekt wegen notwendig](./images/indirektwgnotwendig.png)
 
@@ -143,6 +144,7 @@ Das nachfolgende Bild zeigt die vorige Tabelle im Strikt-Minus-Modus. Im Strikt-
 
 ![Strikt Minus](./images/striktminus.png)
 
+Hinweis: In der Smartphone-Version des Solvers gibt es aus Platzgründen nur die Auswertungsmethode 'Strikt'. 'Strikt' = 'Strikt - '.
 ### Vergleich der Auswertungsmodi Lazy und Strikt
 
 Wir vergleichen die jeweiligen Vorteile der Auswertungsmodi.
