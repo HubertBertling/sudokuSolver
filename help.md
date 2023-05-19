@@ -2,13 +2,13 @@
 layout: default
 ---
 
-# HB-Sudoku-Trainer
+# HB-Sudoku-Solver
 
-## Ein Generator und Solver für klassisches Sudoku
+## Ein Generator, Solver und Trainer für klassisches Sudoku
 
 Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Puzzle, manchmal sogar nur als leicht klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man den HB-Sudoku-Trainer mögliche nächste Schritte anzeigen lassen oder darüber hinaus das Puzzle komplett lösen lassen.
 
-Die Besonderheit des HB-Sudoku-Solvers besteht darin, dass man ihm bei der Lösungssuche zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt. Die App ist also mehr ein Sudoku-Trainer als ein Sudoku-Solver.
+Die Besonderheit des HB-Sudoku-Solvers besteht darin, dass man ihm bei der Lösungssuche zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt.
 
 Der Generator generiert faire Puzzles mit den Schwierigkeitsgraden Leicht, Mittel und Schwer. Im Gegensatz zu Sehr Schweren oder Extrem Schweren Puzzles - Definition der Schwierigkeitsgrade erfolgt weiter unten - können faire Puzzles allein durch logisches Schließen gelöst werden. Sie benötigen kein "Backtracking", kein Raten und Probieren.
 
@@ -55,7 +55,7 @@ Die nachfolgend verwendeten Begriffe sind im Laufe der Entwicklung dieses Solver
 |<img src="./images/optionCell.png" width="100px"/>|**Kandidaten:** Für diese Zelle wurde noch keine Nummer gesetzt. Nur noch eine der Nummern 1, 2, 4 und 5 kann gewählt werden. Das sind die Kandidaten der Zelle. Die nicht aufgeführten Nummern sind direkt unzulässig, weil sie bereits in einer anderen Zelle des Blocks, der Reihe oder Spalte gesetzt sind.|
 |<img src="./images/neccessary.png" width="100px"/>|**Notwendige Nummer:** Für die nebenstehende Zelle wurde noch keine Nummer gesetzt. Kandidatnummern sind die Nummern 2, 5, 6 und 7. Jedoch hat der Solver ermittelt, dass die Nummer 5 notwendig ist, damit das Sudoku lösbar bleibt. 5 ist eine notwendige Nummer für diese Zelle. Eine Nummer in einer Zelle ist notwendig, wenn die Nummer in ihrem Block, in ihrer Reihe oder Spalte einzig ist. D.h. sie kann nur noch hier gesetzt werden. Hinweis: Im Wikipedia-Artikel [Wikipedia](https://en.wikipedia.org/wiki/Glossary_of_Sudoku) werden notwendige Nummern werden als "Hidden Singles" bezeichnet. Wir wollen diese Bezeichnung hier nicht übernehmen, weil wir diese Bezeichnung schon anderweitig benutzen: siehe nachfolgende Definition 'Verstecktes Single'.|
 |<img src="./images/indirect.png" width="100px"/>|**Unzulässige Kandidatnummer:** Für die nebenstehende Zelle wurde noch keine Nummer gesetzt. Kandidaten dieser Zelle sind die drei Nummern 1, 3 und 6. Jedoch hat der Solver ermittelt, dass die 3 indirekt unzulässig ist. Wenn man sie setzen würde, würde der Solver sofort oder einige Schritte später die Widersprüchlichkeit des Puzzles feststellen. Zur Definition der Unzulässigkeit von Kandidaten siehe den entsprechenden Abschnitt dieser Hilfe.|
-|<img src="./images/direkterSingle.png" width="100px"/> <img src="./images/indirekterSingle.png" width="100px"/>| **Single:** Eine Single-Nummer ist der Kandidat in einer Zelle, wenn es keine weiteren Kandidaten in der Zelle gibt. In den beiden nebenstehenden Beispielen sind die 1 und die 9 Singles. Im Gegensatz zur 1 ist die 9 ein **Verstecktes Single**. Die 9 ist in dieser Zelle ein verstecktes Single, weil die anderen Kandidaten, die rote 5 und 6, indirekt unzulässig sind. |
+|<img src="./images/direkterSingle.png" width="100px"/> <img src="./images/indirekterSingle.png" width="100px"/>| **(Offenes) Single:** Eine Single-Nummer ist der Kandidat in einer Zelle, wenn es keine weiteren Kandidaten in der Zelle gibt. In den beiden nebenstehenden Beispielen sind die 1 und die 9 Singles. Im Gegensatz zur 1 ist die 9 ein **Verstecktes Single**. Die 9 ist in dieser Zelle ein verstecktes Single, weil die anderen Kandidaten, die rote 5 und 6, indirekt unzulässig sind. |
 |<img src="./images/nochoice.png" width="100px"/><img src="./images/nochoice2.png" width="100px"/>|**Widerspruch - Überhaupt keine zulässige Nummer:** Für diese Zelle wurde noch keine Nummer gesetzt. Allerdings gibt es keine Kandidatnummer mehr, die noch gesetzt werden könnte. Die Nummern 4 und 8 sind unzulässig. In der zweiten dargestellten Zelle gibt es nicht mal mehr Kandidatnummern. D.h. das Sudoku ist widersprüchlich. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet der Solver in den Rückwärts-Modus um.|
 |<img src="./images/twoNeccessary.png" width="100px"/>|**Widerspruch - Gleichzeitig verschiedene notwendige Nummern:** Für diese Zelle wurde noch keine Nummer gesetzt. Kandidatnummern sind 1, 2 und 4. Jedoch hat der Solver zwei verschiedene notwendige Nummern für diese Zelle ermittelt: 1 und 2. Das geht natürlich nicht. Es können in einer Zelle nicht zwei Nummern gleichzeitig gesetzt werden. D.h. das Sudoku ist widersprüchlich. Wenn das Sudoku noch erfolgreich gelöst werden soll, müssen ein oder mehrere der bisherigen Nummernsetzungen zurückgenommen werden. Tritt während der automatischen Ausführung eine solche Zelle auf, schaltet der Solver in den Rückwärts-Modus um.|
 |<img src="./images/conflct.png" width="100px"/>|**Widerspruch - Die Nummer 5 ist bereits einmal gesetzt:** Für diese Zelle wurde die Nummer 5 gesetzt. Diese Nummer ist direkt unzulässig, weil in der Spalte, Reihe oder dem Block dieser Zelle bereits eine 5 gesetzt ist. Das zweite oder dritte Auftreten der Nummer wird ebenfalls mit rotem Rand angezeigt.|
@@ -76,9 +76,9 @@ Manuelle Ausführung bedeutet, dass der Spieler die Lösungsnummern (grün) in d
 
 Will man sich der Herausforderung einer manuellen Lösungssuche ernsthaft stellen, muss man die Kandidatenauswertung auf 'Keine' setzen. Indem man die Kandidatenauswertung auf 'Keine' setzt, wird die Kandidatenauswertung ausgeschaltet. Auf diese Weise kann man am Computer das Puzzle lösen wie auf einem Blatt Papier.
 
-Ist hingegen die Kandidatenauswertung auf 'Lazy' gesetzt, zeigt der Solver unter anderem notwendige Kandidaten an. Diese notwendigen Kandidaten müssen ja in einer korrekten Lösung gesetzt werden. D.h. manuelles Lösen mit Kandidatenauswertung ist Lösen mit "Vorsagen", was üblicherweise als unsportlich abgelehnt wird.
+Ist hingegen die Kandidatenauswertung auf 'Lazy' gesetzt, zeigt der Solver unter anderem notwendige Kandidaten an. Diese notwendigen Kandidaten müssen in einer korrekten Lösung gesetzt werden. D.h. manuelles Lösen mit Kandidatenauswertung ist Lösen mit "Vorsagen", quasi unsportlich.
 
-Wenn man beim echten manuellen Lösen nicht weiterkommt, kann man natürlich kurzzeitig die Kandidatenauswertung auf 'Lazy' setzen, um einen möglichen nächsten Schritt zu erkennen.
+Wenn man beim echten manuellen Lösen nicht weiterkommt, kann man natürlich die Kandidatenauswertung auf 'Lazy' setzen, um einen möglichen nächsten Schritt zu erkennen und anschließend wieder zurück auf 'Keine' setzen.
 ### Automatische Ausführung
 
 |Taste  |Bedeutung  |
@@ -204,8 +204,8 @@ Der Solver zeigt die Anzahl der zurückgelegten Schritte an. Jedes Setzen einer 
 Der Solver sucht gemäß der folgenden Priorität die nächste offene Zelle und die zu setzende Nummer:
 
 1. **Zelle mit notwendiger Nummer:** Der Solver wählt in der Tabelle zunächst eine offene Zelle, die in der Menge ihrer Kandidaten eine notwendige Nummer hat. Diese notwendige Nummer wird dann in der Zelle gesetzt.
-1. **Zelle mit direkter Single**: Wenn es keine Zelle mit notwendiger Nummer mehr gibt, wählt der Solver eine Zelle mit einer Single-Nummer. Er setzt diese Nummer.
-1. **Zelle mit indirekter Single**: Wenn es keine Zelle mit notwendiger Nummer oder mit einer Single mehr gibt wählt der Solver eine Zelle mit versteckter Single.
+1. **Zelle mit offenem Single**: Wenn es keine Zelle mit notwendiger Nummer mehr gibt, wählt der Solver eine Zelle mit einer offenem Single-Nummer. Er setzt diese Nummer.
+1. **Zelle mit verstecktem Single**: Wenn es keine Zelle mit notwendiger Nummer oder mit offenem Single mehr gibt wählt der Solver eine Zelle mit versteckter Single.
 1. **Zelle mit minimaler Optionenmenge**. Sind keine Zellen mit notwendigen Nummern oder Singles mehr verfügbar, wählt der Solver eine Zelle mit minimaler Anzahl von Kandidaten. Die sogenannten **Optionen der Zelle**. Meist besteht die minimale Optionenmenge aus zwei Optionen. Die Selektion ist aber nicht eindeutig, d.h. es gibt in der Regel mehrere Zellen mit zwei Optionen. In dieser Menge wählt der Solver zufällig eine Zelle und setzt eine der beiden Optionennummern. Im Laufe der weiteren Suche kann sich herausstellen, dass diese Nummer keine Lösung des Sudokus erlaubt. Der Backtracking-Prozess kehrt im weiteren Verlauf zu dieser Zelle zurück und versucht dann mit der Wahl einer anderen Nummer aus der Optionenmenge die Lösung zu finden.
 
 ### Wie prüft der Solver die neu gesetzte Nummer?
@@ -223,8 +223,8 @@ Der Schwierigkeitsgrad eines Sudoku-Puzzles kann auf verschiedene Weisen definie
 Dieser Solver unterscheidet Schwierigkeitsgrade anhand der Komplexität der erforderlichen Lösungstechniken. Folgende Schwierigkeitsgrade werden unterschieden:
 
 1. **Leicht:** Nur durch die Bestimmung **notwendiger Nummern** kann die Lösung des Sudokus erreicht werden.
-1. **Mittel:** Durch die Bestimmung notwendiger Nummern und **mindestens eines direkten Singles** kann die Lösung des Sudokus erreicht werden.
-1. **Schwer:** Bei diesem Schwierigkeitsgrad benötigt der Solver **mindestens ein indirektes Single**. Für die Bestimmung von indirekten Singles müssen unzulässige Kandidaten (rot dargestellt) bestimmt werden. Dies unterscheidet diesen Schwierigkeitsgrad vom Schwierigkeitsgrad 'Mittel'. Zugleich ist dies der höchste Schwierigkeitsgrad, der ohne Backtracking auskommt.
+1. **Mittel:** Durch die Bestimmung notwendiger Nummern und **mindestens eines offenen Singles** kann die Lösung des Sudokus erreicht werden.
+1. **Schwer:** Bei diesem Schwierigkeitsgrad benötigt der Solver **mindestens ein verstecktes Single**. Für die Bestimmung von versteckten Singles müssen unzulässige Kandidaten (rot dargestellt) bestimmt werden. Dies unterscheidet diesen Schwierigkeitsgrad vom Schwierigkeitsgrad 'Mittel'. Zugleich ist dies der höchste Schwierigkeitsgrad, der ohne Backtracking auskommt.
 1. **Sehr Schwer:** Bei diesem Schwierigkeitsgrad muss der Solver für mindestens eine Zelle eine Nummer raten und ausprobieren. "**Backtracking**" ist das dazugehörige Stichwort. Der Solver führt für die Berechnung der Lösung unter Umständen zahlreiche Rückwärtsläufe durch.
 1. **Extrem Schwer**: 'Extrem schwer' sind Sudokus, die **mehrere Lösungen** haben. Sie haben keine eindeutige Lösung. Der Solver beherrscht auch Sudokus, die mehrere Lösungen haben. Nach der Erfolgsmeldung mit der ersten Lösung kann der Anwender nach der nächsten Lösung suchen lassen, solange bis der Solver meldet: "*Keine weitere Lösung gefunden*".
 
@@ -276,6 +276,9 @@ In der Smartphone-Version kann das aktuelle Puzzle gespeichert werden. Dabei wir
 
 Eine herausragende Seite für Sudoku-Interessierte ist die Seite von [Andrew Stuart](https://www.sudokuwiki.org/Main_Page). Dort findest Du einen kompletten Überblick über logische Lösungsstrategien für klassisches Sudoku und auch einen Überblick über nicht klassische Sudoku-Varianten.
 
-Stuarts Sudoku-Solver stellt die Anwendung logischer Lösungsstrategien in den Mittelpunkt. Ein Lösungsschritt besteht aus der Anwendung einer logischen Schlussregel. Das kann die Elimination von Kandidaten in mehreren Zellen sein aufgrund eines 'nackten Paares' oder die Setzung von 'versteckten Singles' (notwendigen Nummern) in mehreren Zellen gleichzeitig. Puzzles, die keine Lösung per logisches Schließen haben, löst der Solver (absichtlich) nicht. Echte Sudoku-Fans verzichten auf Backtracking.
+Stuarts Sudoku-Solver stellt die Anwendung logischer Lösungsstrategien in den Mittelpunkt. Ein Lösungsschritt besteht aus der Anwendung einer logischen Schlussregel. Das kann die Elimination von Kandidaten in mehreren Zellen sein aufgrund eines 'nackten Paares' oder die Setzung von 'versteckten Singles' (notwendigen Nummern) in mehreren Zellen gleichzeitig. Puzzles, die keine Lösung per logischem Schließen haben, löst der Solver (absichtlich) nicht. Echte Sudoku-Fans verzichten auf Backtracking.
+Stuarts Sudoku-Solver richtet sich an Sudoku-Strategie-Experten bzw. an solche, die es werden wollen. 
 
-Stuarts Sudoku-Solver richtet sich an Sudoku-Strategie-Experten bzw. an solche, die es werden wollen. Der von mir hier präsentierte Solver/Generator wendet sich an den Gelegenheits-Sudoku-Spieler, die ein Puzzle z.B. aus einer Zeitschrift lösen wollen. Sie bekommen auf jeden Fall eine Lösung ihres Puzzles sowie einen Lösungsweg und den Schwierigkeitsgrad des eingegebenen Puzzles.
+Der von mir hier präsentierte Solver/Generator wendet sich an den Gelegenheits-Sudoku-Spieler, die ein Puzzle z.B. aus einer Zeitschrift lösen wollen. Sie bekommen auf jeden Fall eine Lösung ihres Puzzles sowie einen Schritt für Schritt Lösungsweg und den Schwierigkeitsgrad des eingegebenen Puzzles.
+
+Mehr noch: dieser Solver zeigt im Lazy-Auswertungsmodus notwendige Nummern, offene Singles und versteckte Singles des aktuellen Puzzle-Bearbeitungsstands an und damit die mögliche Setzung einer nächsten Zelle. Der Spieler kann sogar die Begründung einer notwendigen Nummer oder einer indirekt unzulässigen Nummer erfragen. Der Spieler kann mit Hilfe dieser Funktionen seine Sudoku-Kompetenz trainieren. Gewöhnliche Sudoku-Solver liefern einfach nur die fertige Lösung eines Puzzles. Die vorliegende App ist damit nicht nur ein Sudoku-Solver sondern darüber hinaus ein Sudoku-Trainer.
