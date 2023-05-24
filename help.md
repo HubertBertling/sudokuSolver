@@ -6,11 +6,11 @@ layout: default
 
 ## Ein Generator, Solver und Trainer für klassisches Sudoku
 
-Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Puzzle, manchmal sogar nur als leicht klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man den HB-Sudoku-Trainer mögliche nächste Schritte anzeigen lassen oder darüber hinaus das Puzzle komplett lösen lassen.
+Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Puzzle, manchmal sogar nur als leicht klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man den HB-Sudoku-Solver mögliche nächste Schritte anzeigen lassen oder darüber hinaus das Puzzle komplett lösen lassen.
 
-Die Besonderheit des HB-Sudoku-Solvers besteht darin, dass man ihm bei der Lösungssuche zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt.
+Die Besonderheit des HB-Sudoku-Solvers besteht darin, dass man ihm bei der Lösungssuche zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt. Durch das Beobachten und Verstehen des Solvers kann der Spieler seine Fähigkeit,Sudokus zu lösen, trainieren.
 
-Der Generator generiert faire Puzzles mit den Schwierigkeitsgraden Leicht, Mittel und Schwer. Im Gegensatz zu Sehr Schweren oder Extrem Schweren Puzzles - Definition der Schwierigkeitsgrade erfolgt weiter unten - können faire Puzzles allein durch logisches Schließen gelöst werden. Sie benötigen kein "Backtracking", kein Raten und Probieren.
+Der Generator generiert faire Puzzles mit den Schwierigkeitsgraden 'Leicht', 'Mittel' und 'Schwer'. Im Gegensatz zu 'Sehr Schweren' oder 'Extrem Schweren' Puzzles - Definition der Schwierigkeitsgrade erfolgt weiter unten - können faire Puzzles allein durch logisches Schließen gelöst werden. Sie benötigen kein "Backtracking", kein Raten und Probieren.
 
 ## App-Überblick
 
@@ -76,9 +76,10 @@ Manuelle Ausführung bedeutet, dass der Spieler die Lösungsnummern (grün) in d
 
 Will man sich der Herausforderung einer manuellen Lösungssuche ernsthaft stellen, muss man die Kandidatenauswertung auf 'Keine' setzen. Indem man die Kandidatenauswertung auf 'Keine' setzt, wird die Kandidatenauswertung ausgeschaltet. Auf diese Weise kann man am Computer das Puzzle lösen wie auf einem Blatt Papier.
 
-Ist hingegen die Kandidatenauswertung auf 'Lazy' gesetzt, zeigt der Solver unter anderem notwendige Kandidaten an. Diese notwendigen Kandidaten müssen in einer korrekten Lösung gesetzt werden. D.h. manuelles Lösen mit Kandidatenauswertung ist Lösen mit "Vorsagen", quasi unsportlich.
+Ist hingegen die Kandidatenauswertung auf 'Lazy' gesetzt, zeigt der Solver unter anderem notwendige Kandidaten und Singles an. Da diese in einer korrekten Lösung gesetzt sein müssen, wird der Spieler nach und nach alle notwendigen Nummern und alle Singles manuell setzen. D.h. manuelles Lösen mit Kandidatenauswertung ist Lösen mit "Vorsagen". Dies ist für Trainingszwecke sicher in Ordnung. Ansonsten ist es aber offensichtlich eine unsportliche Art, ein Puzzle zu lösen.
 
-Wenn man beim echten manuellen Lösen nicht weiterkommt, kann man natürlich die Kandidatenauswertung auf 'Lazy' setzen, um einen möglichen nächsten Schritt zu erkennen und anschließend wieder zurück auf 'Keine' setzen.
+Wenn man beim echten manuellen Lösen (Kandidatenauswertung = 'Keine') nicht weiterkommt, kann man natürlich die Kandidatenauswertung temporär auf 'Lazy' setzen, um einen möglichen nächsten Schritt zu erkennen und anschließend wieder zurück auf 'Keine' setzen.
+
 ### Automatische Ausführung
 
 |Taste  |Bedeutung  |
@@ -95,7 +96,7 @@ Wenn man beim echten manuellen Lösen nicht weiterkommt, kann man natürlich die
 |**Init**|Durch das Drücken dieser Initialisierungstaste wird das aktuelle Puzzle des Solvers initialisiert. Danach ist die Sudoku-Tabelle leer.|
 |**Zurück**|Mittels dieser Taste wird das Puzzle des Solvers zurückgesetzt auf die Aufgabenstellung. D.h. alle in der Lösungsphase gesetzten Zellen, die grünen Zellen, werden gelöscht. Die Givens bleiben erhalten.|
 |**Neu**|Mittels dieser Taste kann ein neues Puzzle generiert werden.|
-|**Prüfen**|Die gesetzten Lösungsnummern werden geprüft. Wenn sie falsch gesetzt sind, werden sie als fehlerhaft gekennzeichnet. Diese Funktion ist dann nützlich, wenn man das Puzzle manuell lösen will und man vermutet, dass man bereits einen Fehler gemacht hat. Sie ist des weiteren nützlich, wenn man im Lazy-Modus entdeckt, dass die bisherige Setzung der Nummern widersprüchlich ist. Die Prüfung liefert dann die verursachenden falsch gesetzten Nummern.
+|**Prüfen**|Die gesetzten Lösungsnummern werden geprüft. Wenn sie falsch gesetzt sind, werden sie als fehlerhaft gekennzeichnet. Diese Funktion ist dann nützlich, wenn man das Puzzle manuell lösen will und man vermutet, dass man bereits einen Fehler gemacht hat.
 |**Speichern unter**|Mittels dieser Taste kann das aktuelle Puzzle in der Datenbank gespeichert werden.|
 |**Überschreiben**|Mittels dieser Taste können für ein aus der Datenbank geladenes Puzzle die Daten in der Datenbank aktualisiert werden. Die alten Daten werden durch die neuen Daten überschrieben. Falls das aktuelle Puzzle nicht aus der Datenbank geladen wurde, wird der Speicherdialog angestoßen.|
 
