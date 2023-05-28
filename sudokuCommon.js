@@ -696,8 +696,11 @@ class SudokuSolverView extends SudokuView {
         if (name == '') name = ' - ';
         let statusLineNode = document.getElementById('status-line');
         statusLineNode.innerHTML =
-            '<b>Puzzle-Id:</b> &nbsp' + uid + '; &nbsp'
+        '<b>Puzzle-Name:</b> &nbsp' + name;
+        /*
+        '<b>Puzzle-Id:</b> &nbsp' + uid + '; &nbsp'
             + '<b>Puzzle-Name:</b> &nbsp' + name;
+        */
     }
 
 }
@@ -5575,8 +5578,9 @@ class SudokuPuzzleDB {
     displayIdRow(uid, name, level) {
         let puzzleIdentityRow = document.getElementById('pz-id-row')
         puzzleIdentityRow.innerHTML =
-            '<b>Puzzle-Id:</b> &nbsp' + uid + '; &nbsp'
-            + '<b>Name:</b> &nbsp' + name + '; &nbsp'
+            // '<b>Puzzle-Id:</b> &nbsp' + uid + '; &nbsp'
+            // + 
+            '<b>Puzzle-Name:</b> &nbsp' + name + '; &nbsp'
             + '<b>Schwierigkeitsgrad:</b> &nbsp' + level + ';';
     }
     displayClearPZNr() {

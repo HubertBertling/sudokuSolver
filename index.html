@@ -277,7 +277,7 @@
             </div>
             <div class="puzzle-header">
                 <!--Die Überschrift zum aktuell geladenen Puzzle-->
-                <h1 class="noprint">Selektiertes Puzzle:</h1>
+                <h2 class="noprint">Selektiertes Puzzle:</h2>
                 <!--Id und Name des aktuell geladenen Puzzles werden als String via JS erzeugt-->
                 <div class="pz-id-row" id="pz-id-row">0</div>
             </div>
@@ -311,8 +311,10 @@
         <div class="contentSaveDlgHeader" id="contentSaveDlgHeader">
             Puzzle speichern unter ...
         </div>
-        <label for="puzzle-id" class="label-saveDlg">Neue Puzzle-Id:</label>
-        <input type="text" class="save-dlg-puzzle-id" id="save-dlg-puzzle-id" name="puzzle-id"><br>
+        <div style="display:none">
+            <label for="puzzle-id" class="label-saveDlg">Neue Puzzle-Id:</label>
+            <input type="text" class="save-dlg-puzzle-id" id="save-dlg-puzzle-id" name="puzzle-id"><br>
+        </div>
 
         <label for="puzzle-name" class="label-saveDlg">Neuer Puzzle-Name:</label>
         <input type="text" class="save-dlg-puzzle-name" id="puzzle-name" name="puzzle-name"><br>
