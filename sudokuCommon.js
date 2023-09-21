@@ -4266,7 +4266,9 @@ class SudokuCellView extends SudokuView {
             // Setze die Klassifizierung in der DOM-Zelle
             this.displayGamePhase(cell.myGamePhase);
             if (cell.myValueType == 'auto') {
-                this.displayAutoValue(cell.myValue);
+        //        this.displayAutoValue(cell.myValue);
+        //      The simpler view is more attractiv
+                this.displayMainValueNode(cell.myValue);      
             } else {
                 this.displayMainValueNode(cell.myValue);
             }
