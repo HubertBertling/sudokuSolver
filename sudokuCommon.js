@@ -310,7 +310,7 @@ class SudokuSolverController {
     autoStepBtnPressed() {
         if (this.mySolver.getGamePhase() == 'define') {
              this.mySolver.getPuzzlePreRunDataUsingWebworker();
-         }
+        }
         this.mySolver.executeSingleStep();
     }
 
@@ -824,12 +824,6 @@ class SudokuCalculator extends SudokuModel {
         // dass die Looper gestartet werden können.
         this.setGamePhase('play');
         this.isInAutoExecMode = true;
-        /*
-        if (this.myGrid.evalType == 'lazy-invisible') {
-            this.myGrid.setEvalType('lazy');
-            this.notifyAspect('evaluationType', 'lazy');
-        }
-        */
         this.myGrid.clearAutoExecCellInfos();
         this.myGrid.deselect();
         this.myStepper.init();
@@ -1008,13 +1002,15 @@ class SudokuSolver extends SudokuCalculator {
             // The solved puzzle is uploaded 
             // to the pre-run meta-data of the puzzle
             sudoApp.mySolver.loadPreRunRecord('-', response.value);
+
             sudoApp.mySolver.notify();
         }
         // The new web worker is sent the request message, 
         // which starts the fast solution of the puzzle.
         // The puzzle to be solved is given as an array parameter
         // in the request object.
-        let puzzleArray = sudoApp.mySolver.myGrid.getPuzzleArray();
+        // this.reset();
+        let puzzleArray = this.myGrid.getPuzzleArray();
         let request = {
             name: 'preRun',
             value: puzzleArray
@@ -1734,8 +1730,8 @@ class StepperOnGrid {
                 this.myGrid.backTracks = this.countBackwards;
                 this.myGrid.steps = this.goneSteps;
     //            //Übertragung in den preRunRecord
-    //            this.myGrid.preRunRecord.level = this.myGrid.difficulty;
-    //            this.myGrid.preRunRecord.backTracks = this.myGrid.backTracks;
+                this.myGrid.preRunRecord.level = this.myGrid.difficulty;
+                this.myGrid.preRunRecord.backTracks = this.myGrid.backTracks;
                 //
                 this.notifyLoopFinished();
                 break;
@@ -3218,6 +3214,8 @@ class SudokuGrid extends SudokuModel {
         this.difficulty = 'Keine Angabe';
         this.steps = 0;
         this.backTracks = 0;
+        
+        this.evalType = 'lazy-invisible';
         this.preRunRecord = {
             defCount: 0,
             stepsLazy: 0,
@@ -3236,11 +3234,7 @@ class SudokuGrid extends SudokuModel {
     // ========================================================
     setEvalType(et) {
         this.evalType = et;
-        /*
-         if (et == 'lazy-invisible') {
              this.myCalculator.autoExecStop();
-         }
-         */
         this.deselect();
         this.evaluateMatrix();
         let index = sudoApp.mySolver.myStepper.indexSelected;
@@ -3405,7 +3399,7 @@ class SudokuGrid extends SudokuModel {
         }
         if (this.puzzleSolved()) {
             puzzleRecord.status = 'gelöst';
-            if (this.evalType == 'lazy') {
+            if (this.evalType == 'lazy' || this.evalType == 'lazy-invisible') {
                 puzzleRecord.stepsLazy = this.steps;
             } else if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') {
                 puzzleRecord.stepsStrict = this.steps;
@@ -4741,9 +4735,7 @@ class SudokuCellView extends SudokuView {
 
 
 
-        } else if (sudoApp.mySolver.myGrid.evalType == 'lazy'
-            // || sudoApp.mySolver.myGrid.evalType == 'lazy-invisible'
-        ) {
+        } else if (sudoApp.mySolver.myGrid.evalType == 'lazy') {
             // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
             // wird die verursachende collection angezeigt.
 
@@ -4946,7 +4938,6 @@ class SudokuCell extends SudokuModel {
         // auch der Eventhandler der Zelle gesetzt
         // Speichert die Phase, die beim Setzen einer Nummer
         // in der Zelle aktuell war.
-        this.myGamePhase = '';
         this.myBlock;
         this.myRow;
         this.myCol;
@@ -4956,6 +4947,7 @@ class SudokuCell extends SudokuModel {
         // Die gesetzte Nummer dieser Zelle. 
         // Die Nummer '0' bedeutet ungesetzte Nummer.
         this.myValue = '0';
+        this.myGamePhase = '';
         this.wrong = false;
         this.myOptions = [];
         this.myAutoStepNumber = -1;
@@ -4964,7 +4956,6 @@ class SudokuCell extends SudokuModel {
         this.adMissibleIndexSelected = -1;
         // 'manual' oder 'auto'
         this.myValueType = 'manual';
-        this.myGamePhase = 'play';
         // Speichert die aktuell unzulässigen Zahlen für diese Zelle
         this.myLevel_0_inAdmissibles = new SudokuSet();
         this.myLevel_gt0_inAdmissibles = new SudokuSet();

@@ -12,7 +12,7 @@ function start() {
 // The Web Worker is assigned a message handler.
 self.onmessage = function (n) {
     let request = JSON.parse(n.data);
-    if (request.name == "preRun") {
+    if (request.name == 'preRun') {
         // If the message is "solve", the Web Worker solves the puzzle, given in the request
         sudoApp.myFastSolver.solvePuzzle(request.value);
         // The FastSolver returns the metadata of the puzzle obtained through a preliminary run
@@ -47,14 +47,18 @@ class SudokuFastSolver extends SudokuCalculator {
         super.init();
     }
 
+    init() {
+        super.init();
+        // sudoApp.myFastSolver.myGrid.evalType ='strict-plus';
+    }
     solvePuzzle(puzzleArray) {
-        this.init();
+        // this.init();
         // Löse dieses Sudoku mit einer nicht getakteten
         // und nicht beobachteten automatischen Ausführung
         // Create the puzzle from the supplied string
         // Load the puzzle into the solver
-        sudoApp.myFastSolver.myGrid.loadPuzzleArray(puzzleArray);
-
+        this.myGrid.loadPuzzleArray(puzzleArray);
+        this.myGrid.evaluateMatrix();
         this.startFastSolverSolutionLoop();
     }
 
