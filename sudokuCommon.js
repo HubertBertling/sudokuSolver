@@ -3091,6 +3091,19 @@ class SudokuGridView extends SudokuView {
                         }
                     });
                 }
+
+                // If there is no necessary and no single number the first hidden single number will be displayed       
+                if (!necessaryCandidateExists
+                    && !singleCandidateExists
+                    && !hiddenSingleCandidateExists) {
+                    grid.sudoCells.forEach(cell => {
+                        if (cell.getValue() == '0') {
+                            let cellView = cell.getMyView();
+                            cellView.upDateMultipleOptions();
+                            return true;
+                        }
+                    });
+                }
             }
         } else {
             grid.sudoBlocks.forEach(sudoBlock => {
@@ -4455,7 +4468,21 @@ class SudokuCellView extends SudokuView {
             admissibleNrElement.setAttribute('data-value', admissibleNr);
             admissibleNrElement.innerHTML = admissibleNr;
             this.getMyNode().appendChild(admissibleNrElement);
-            // sudoApp.mySolver.myView.displayTechnique('Hidden Single.');
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    upDateMultipleOptions() {
+        let myCell = this.getMyModel();
+        // Gebe Single Nummer aus oder leere Zelle
+        this.getMyNode().classList.add('nested');
+        let tmpAdmissibles = myCell.getTotalAdmissibles();
+        if (tmpAdmissibles.size > 1
+            && myCell.isSelected
+            && sudoApp.mySolver.myStepper.indexSelected > -1) {
+            this.displayAdmissiblesInDetail(tmpAdmissibles);
             return true;
         } else {
             return false;
@@ -4714,12 +4741,14 @@ class SudokuCellView extends SudokuView {
                     }
                 });
                 //   }
-                sudoApp.mySolver.myView.displayTechnique('Selektiert: ' + Array.from(tmpCell.myNecessarys)[0] +
+                sudoApp.mySolver.myView.displayTechnique('Selektieren: ' + Array.from(tmpCell.myNecessarys)[0] +
                     ' notwendig.');
             } else if (tmpCell.getAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
-                sudoApp.mySolver.myView.displayTechnique('Selektiert: ' + Array.from(tmpCell.getAdmissibles())[0] + ' Single.');
+                sudoApp.mySolver.myView.displayTechnique('Selektieren: ' + Array.from(tmpCell.getAdmissibles())[0] + ' Single.');
             } else if (tmpCell.getTotalAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
-                sudoApp.mySolver.myView.displayTechnique('Selektiert: ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' Hidden Single.');
+                sudoApp.mySolver.myView.displayTechnique('Selektieren: ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' Hidden Single.');
+            } else if (tmpCell.getTotalAdmissibles().size > 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
+                sudoApp.mySolver.myView.displayTechnique('Selektieren: Eine Nummer aus mehreren Kandidaten.');
             }
 
 
