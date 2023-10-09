@@ -309,7 +309,7 @@ class SudokuSolverController {
 
     autoStepBtnPressed() {
         if (this.mySolver.getGamePhase() == 'define') {
-             this.mySolver.getPuzzlePreRunDataUsingWebworker();
+            this.mySolver.getPuzzlePreRunDataUsingWebworker();
         }
         this.mySolver.executeSingleStep();
     }
@@ -1729,7 +1729,7 @@ class StepperOnGrid {
                 this.myGrid.difficulty = this.levelOfDifficulty;
                 this.myGrid.backTracks = this.countBackwards;
                 this.myGrid.steps = this.goneSteps;
-    //            //Übertragung in den preRunRecord
+                //            //Übertragung in den preRunRecord
                 this.myGrid.preRunRecord.level = this.myGrid.difficulty;
                 this.myGrid.preRunRecord.backTracks = this.myGrid.backTracks;
                 //
@@ -3040,7 +3040,6 @@ class SudokuGridView extends SudokuView {
         this.domExplainer.replaceChild(new_Node, old_Node);
         this.setMyNode(new_Node);
 
-        // this.displayDifficulty();
         // Die 9 Blöcke anzeigen
         let grid = this.getMyModel();
         if (sudoApp.mySolver.myGrid.evalType == 'lazy-invisible') {
@@ -3103,7 +3102,7 @@ class SudokuGridView extends SudokuView {
                 // Dem Block seine View geben
             });
         }
-       
+
 
         // Unlösbarkeit anzeigen.
         this.displayInsolvability();
@@ -3113,10 +3112,10 @@ class SudokuGridView extends SudokuView {
 
     displayDifficulty() {
         let evalNode = document.getElementById("loaded-evaluations");
-            evalNode.innerHTML =
-                '<b>Schwierigkeitsgrad:</b> &nbsp' + this.myModel.difficulty + '; &nbsp'
+        evalNode.innerHTML =
+            '<b>Schwierigkeitsgrad:</b> &nbsp' + this.myModel.difficulty + '; &nbsp'
     }
-      
+
     displaySelection() {
         let grid = this.getMyModel();
         if (grid.indexSelected == -1) {
@@ -3214,7 +3213,7 @@ class SudokuGrid extends SudokuModel {
         this.difficulty = 'Keine Angabe';
         this.steps = 0;
         this.backTracks = 0;
-        
+
         this.evalType = 'lazy-invisible';
         this.preRunRecord = {
             defCount: 0,
@@ -3234,7 +3233,7 @@ class SudokuGrid extends SudokuModel {
     // ========================================================
     setEvalType(et) {
         this.evalType = et;
-             this.myCalculator.autoExecStop();
+        this.myCalculator.autoExecStop();
         this.deselect();
         this.evaluateMatrix();
         let index = sudoApp.mySolver.myStepper.indexSelected;
@@ -3749,6 +3748,7 @@ class SudokuGrid extends SudokuModel {
         this.calculate_level_0_inAdmissibles();
 
         let inAdmissiblesAdded = true;
+
         while (inAdmissiblesAdded && !this.isInsolvable()) {
 
             if (this.calculateNecessarys()) return true;
@@ -4410,16 +4410,18 @@ class SudokuCellView extends SudokuView {
     upDateNecessary() {
         // Gebe notwendige Nummer aus oder leere Zelle
         let myCell = this.getMyModel();
-
-        if (myCell.myNecessarys.size > 0
+        if (myCell.myNecessarys.size > 1 ||
+            (myCell.myNecessarys.size == 1 
             && myCell.isSelected
-            && sudoApp.mySolver.myStepper.indexSelected > -1) {
-            let necessaryNr = Array.from(myCell.myNecessarys)[0]
-            let admissibleNrElement = document.createElement('div');
-            admissibleNrElement.setAttribute('data-value', necessaryNr);
-            admissibleNrElement.innerHTML = necessaryNr;
-            admissibleNrElement.classList.add('neccessary');
-            this.getMyNode().appendChild(admissibleNrElement);
+            && sudoApp.mySolver.myStepper.indexSelected > -1)){
+
+            myCell.myNecessarys.forEach(necessaryNr => {
+                let admissibleNrElement = document.createElement('div');
+                admissibleNrElement.setAttribute('data-value', necessaryNr);
+                admissibleNrElement.innerHTML = necessaryNr;
+                admissibleNrElement.classList.add('neccessary');
+                this.getMyNode().appendChild(admissibleNrElement);
+            })
             // sudoApp.mySolver.myView.displayTechnique('Notwendige Nummer.');
             return true;
         } else {
@@ -4498,10 +4500,8 @@ class SudokuCellView extends SudokuView {
         for (let i = 0; i < admissibleNodes.length; i++) {
             if (myNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
                 admissibleNodes[i].classList.add('neccessary');
-                return true;
             }
         }
-        return false;
     }
 
     displayLevel_gt0_inAdmissibles(myLevel_gt0_inAdmissibles, myNecessarys) {
@@ -4717,14 +4717,14 @@ class SudokuCellView extends SudokuView {
         if (sudoApp.mySolver.myGrid.evalType == 'lazy-invisible') {
 
             if (tmpCell.myNecessarys.size > 0 && sudoApp.mySolver.myStepper.indexSelected > -1) {
-                if (adMissibleNrSelected == Array.from(tmpCell.myNecessarys)[0]) {
+             //   if (adMissibleNrSelected == Array.from(tmpCell.myNecessarys)[0]) {
                     let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
                     collection.myCells.forEach(e => {
                         if (e !== tmpCell) {
                             e.myView.setBorderGreenSelected()
                         }
                     });
-                }
+             //   }
                 sudoApp.mySolver.myView.displayTechnique(Array.from(tmpCell.myNecessarys)[0] +
                     ' notwendig.');
             } else if (tmpCell.getAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
