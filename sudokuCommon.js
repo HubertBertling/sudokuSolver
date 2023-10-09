@@ -3231,13 +3231,6 @@ class SudokuGrid extends SudokuModel {
     // ========================================================
     setEvalType(et) {
         this.evalType = et;
-        this.myCalculator.autoExecStop();
-        this.deselect();
-        this.evaluateMatrix();
-        let index = sudoApp.mySolver.myStepper.indexSelected;
-        if (index > -1) {
-            this.indexSelect(index);
-        }
     }
 
     setSolvedToGiven() {
