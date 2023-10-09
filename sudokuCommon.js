@@ -303,7 +303,6 @@ class SudokuSolverController {
         // After switching to the play phase, the puzzles meta-data are calculated in the background.
         // This includes the solution of the puzzle. The latter allows, the user to have 
         // his current number settings checked. There is a call button for this check.
-
         this.mySolver.getPuzzlePreRunDataUsingWebworker();
     }
 
@@ -888,8 +887,7 @@ class SudokuCalculator extends SudokuModel {
         this.myStepper.stopAsyncLoop();
         // 2. Der ExecMode des Calculators wird abgeschaltet.
         this.isInAutoExecMode = false;
-        // ?????
-        this.myGrid.deselect();
+        // this.myGrid.deselect();
         this.myGrid.clearAutoExecCellInfos();
         this.myStepper.init();
     }
@@ -1002,7 +1000,6 @@ class SudokuSolver extends SudokuCalculator {
             // The solved puzzle is uploaded 
             // to the pre-run meta-data of the puzzle
             sudoApp.mySolver.loadPreRunRecord('-', response.value);
-
             sudoApp.mySolver.notify();
         }
         // The new web worker is sent the request message, 
@@ -1609,9 +1606,7 @@ class StepperOnGrid {
     }
 
     init() {
-        // ????
-        /// this.indexSelected = this.myGrid.indexSelected;
-        this.indexSelected = -1;
+        this.indexSelected = this.myGrid.indexSelected;
         this.myResult = '';
         this.goneSteps = 0;
         this.countBackwards = 0;
@@ -3028,7 +3023,6 @@ class SudokuGridView extends SudokuView {
         super(suGrid);
         // Das bisherige DOM-Modell löschen
         this.domExplainer = document.getElementById("grid-plus-explainer");
-        this.firstNeccesaryDisplayed = false;
     }
     upDate() {
         // Das bisherige DOM-Modell löschen
@@ -3748,7 +3742,6 @@ class SudokuGrid extends SudokuModel {
         this.calculate_level_0_inAdmissibles();
 
         let inAdmissiblesAdded = true;
-
         while (inAdmissiblesAdded && !this.isInsolvable()) {
 
             if (this.calculateNecessarys()) return true;
@@ -4374,7 +4367,8 @@ class SudokuCellView extends SudokuView {
             // Setze die Klassifizierung in der DOM-Zelle
             this.displayGamePhase(cell.myGamePhase);
             if (cell.myValueType == 'auto') {
-                // this.displayAutoValue(cell.myValue);
+                //        this.displayAutoValue(cell.myValue);
+                //      The simpler view is more attractiv
                 this.displayMainValueNode(cell.myValue);
             } else {
                 this.displayMainValueNode(cell.myValue);
@@ -4411,9 +4405,9 @@ class SudokuCellView extends SudokuView {
         // Gebe notwendige Nummer aus oder leere Zelle
         let myCell = this.getMyModel();
         if (myCell.myNecessarys.size > 1 ||
-            (myCell.myNecessarys.size == 1 
-            && myCell.isSelected
-            && sudoApp.mySolver.myStepper.indexSelected > -1)){
+            (myCell.myNecessarys.size == 1
+                && myCell.isSelected
+                && sudoApp.mySolver.myStepper.indexSelected > -1)) {
 
             myCell.myNecessarys.forEach(necessaryNr => {
                 let admissibleNrElement = document.createElement('div');
@@ -4481,7 +4475,7 @@ class SudokuCellView extends SudokuView {
             // Angezeigte inAdmissibles sind zunächst einmal Zulässige
             // und dürfen jetzt nicht mehr angezeigt werden
             this.displayAdmissiblesInDetail(cell.getTotalAdmissibles());
-        };
+        }
     }
 
     displayAdmissiblesInDetail(admissibles) {
@@ -4518,7 +4512,6 @@ class SudokuCellView extends SudokuView {
                 }
             }
         }
-
     }
 
     displayGamePhase(gamePhase) {
@@ -4712,25 +4705,24 @@ class SudokuCellView extends SudokuView {
 
     setSelectStatus() {
         let tmpCell = this.getMyModel();
-        let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
         this.setSelected();
         if (sudoApp.mySolver.myGrid.evalType == 'lazy-invisible') {
 
             if (tmpCell.myNecessarys.size > 0 && sudoApp.mySolver.myStepper.indexSelected > -1) {
-             //   if (adMissibleNrSelected == Array.from(tmpCell.myNecessarys)[0]) {
-                    let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
-                    collection.myCells.forEach(e => {
-                        if (e !== tmpCell) {
-                            e.myView.setBorderGreenSelected()
-                        }
-                    });
-             //   }
-                sudoApp.mySolver.myView.displayTechnique(Array.from(tmpCell.myNecessarys)[0] +
+                //   if (adMissibleNrSelected == Array.from(tmpCell.myNecessarys)[0]) {
+                let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
+                collection.myCells.forEach(e => {
+                    if (e !== tmpCell) {
+                        e.myView.setBorderGreenSelected()
+                    }
+                });
+                //   }
+                sudoApp.mySolver.myView.displayTechnique('Selektiert: ' + Array.from(tmpCell.myNecessarys)[0] +
                     ' notwendig.');
             } else if (tmpCell.getAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
-                sudoApp.mySolver.myView.displayTechnique(Array.from(tmpCell.getAdmissibles())[0] + ' Single.');
+                sudoApp.mySolver.myView.displayTechnique('Selektiert: ' + Array.from(tmpCell.getAdmissibles())[0] + ' Single.');
             } else if (tmpCell.getTotalAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
-                sudoApp.mySolver.myView.displayTechnique(Array.from(tmpCell.getTotalAdmissibles())[0] + ' Hidden Single.');
+                sudoApp.mySolver.myView.displayTechnique('Selektiert: ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' Hidden Single.');
             }
 
 
@@ -4738,12 +4730,14 @@ class SudokuCellView extends SudokuView {
         } else if (sudoApp.mySolver.myGrid.evalType == 'lazy') {
             // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
             // wird die verursachende collection angezeigt.
-
+            let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
             // Anzeige initialisieren
-            // sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
+            sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
             // sudoApp.mySolver.myView.displayTechnique(' ');
 
-            if (tmpCell.myNecessarys.size > 0 && sudoApp.mySolver.myStepper.indexSelected > -1) {
+            if (tmpCell.myNecessarys.size > 0
+                // && sudoApp.mySolver.myStepper.indexSelected > -1
+            ) {
                 if (adMissibleNrSelected == Array.from(tmpCell.myNecessarys)[0]) {
                     let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
                     collection.myCells.forEach(e => {
@@ -4869,9 +4863,11 @@ class SudokuCellView extends SudokuView {
     unsetSelectStatus() {
         this.unsetSelected();
         this.unsetBorderSelected();
-        // sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
-        sudoApp.mySolver.myView.displayTechnique(' ');
-
+        if (sudoApp.mySolver.myGrid.evalType == 'lazy-invisible') {
+            sudoApp.mySolver.myView.displayTechnique('');
+        } else {
+            sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
+        }
     }
     displayWrongNumber() {
         let cell = this.getMyModel();
