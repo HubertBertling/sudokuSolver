@@ -887,7 +887,7 @@ class SudokuCalculator extends SudokuModel {
         this.myStepper.stopAsyncLoop();
         // 2. Der ExecMode des Calculators wird abgeschaltet.
         this.isInAutoExecMode = false;
-        // this.myGrid.deselect();
+        this.myGrid.deselect();
         this.myGrid.clearAutoExecCellInfos();
         this.myStepper.init();
     }
@@ -969,6 +969,7 @@ class SudokuSolver extends SudokuCalculator {
         // sends a message containing the generated puzzle as a string.
         webworkerPuzzleGenerator.onmessage = function (e) {
             // Create the puzzle from the supplied string
+            let tmpEvalType = sudoApp.mySolver.myGrid.evalType;
             let response = JSON.parse(e.data);
             // Load the puzzle into the solver
             sudoApp.mySolver.loadPuzzle('-', response.value);
@@ -977,6 +978,7 @@ class SudokuSolver extends SudokuCalculator {
             sudoApp.mySolver.reset();
             sudoApp.mySolver.notify();
             sudoApp.myTabView.openGrid();
+            sudoApp.mySolver.evalTypeSelected(tmpEvalType);
             // The rotating loader icon is stopped
             sudoApp.mySolver.notifyAspect('puzzleGenerator', 'finished');
         }
@@ -989,7 +991,9 @@ class SudokuSolver extends SudokuCalculator {
         let str_request = JSON.stringify(request);
         webworkerPuzzleGenerator.postMessage(str_request);
     }
-
+    getActualEvalType() {
+        return this.myGrid
+    }
     getPuzzlePreRunDataUsingWebworker() {
         // A new web worker that performs the fast solution of this puzzle, is created.
         let webworkerFastSolver = new Worker("./fastSolverApp.js");
