@@ -5310,7 +5310,8 @@ class SudokuCell extends SudokuModel {
             // 1) Die Nummer ist bereits einmal gesetzt.
             (this.getValue() !== '0' && this.myDirectInAdmissibles().has(this.getValue())) ||
             // 2) Überhaupt keine zulässige Kandidaten mehr
-            (this.getValue() == '0' && this.getTotalAdmissibles().size == 0) ||
+         //   (this.getValue() == '0' && this.getTotalAdmissibles().size == 0) ||
+            (this.getValue() == '0' && this.getAdmissibles().size == 0) ||
             // 3) Gleichzeitig verschiedene notwendige Nummern
             (this.getValue() == '0' && this.myNecessarys.size > 1));
         // Das nachfolgende Kriterium ist nicht effektiv. Es kostet nur Laufzeit.
