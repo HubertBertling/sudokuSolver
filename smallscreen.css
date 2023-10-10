@@ -118,7 +118,9 @@ html {
     display: grid;
     grid-template-columns: repeat(1, auto);
 }
-
+.m-eval {
+    display: none;
+}
 
 .main-sudoku-grid {
     display: grid;
@@ -371,15 +373,14 @@ html {
 /* Button block                  */
 /*======================================*/
 .game-col2 {
-    display:
-        none;
+    display: none;
 }
 
 
 .mobile-grid-container {
    /* margin-top: 0.3rem; */
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 0.3rem;
     font-size: 1.0rem;
 }
@@ -389,6 +390,9 @@ input[type="radio"] {
     height: 1.1rem;
     width: 1.1rem;
     grid-column: 1 / span 2;
+}
+.btn-run, .btn-autoStep {
+    grid-column: 4 / span 2;
 }
 
 .mobile-btn {
@@ -418,7 +422,7 @@ input[type="radio"] {
     height: var(--standard-btn-height);
     border-radius: 0.3rem;
     border: none;
-    font-size: 1.2rem;
+   
 
 }
 
@@ -453,9 +457,9 @@ input[type="radio"] {
 
 
 .btn-image {
-    width: 1.8rem;
+    width: 1.6rem;
     height: 1.6rem;
-    margin-right: 1rem;
+    margin-right: 0.5rem;
 
 }
 
@@ -476,21 +480,22 @@ input[type="radio"] {
 
 label {
     display: block;
-}
+    font-size: 1.2rem;
+  }
+  .pc-floatBlock {
+    margin: 0.8em 0.8em 0 0;
+  } 
 
-.m-eval {
-    grid-column: 1 / span 2;
-    margin-left: 0.1rem; 
-}
-.mobile-evaluation-options {
-    margin: 0.3rem;
+.pc-evaluation-options {
+    margin-left: 1rem;
     place-items: center;
-    border: none;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    
-}
+      border: none;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      break-before: always;
+      margin: 0 0 1em 0;
+  }
 
 /*======================================*/
 /* Progress block */
@@ -757,7 +762,7 @@ label {
     display: none;
     position: absolute;
     left: 25%;
-    top: 10%;
+    top: 250%;
     z-index: 2;
     width: 200px;
     height: 200px;

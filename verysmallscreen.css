@@ -120,7 +120,6 @@ html {
     grid-template-columns: repeat(1, auto);
 }
 
-
 .main-sudoku-grid {
     display: grid;
     grid-template-columns: repeat(3, auto);
@@ -392,6 +391,10 @@ input[type="radio"] {
     font-size: 0.6rem;
     grid-column: 1 / span 2;
 }
+.btn-run, .btn-autoStep {
+    grid-column: 4 / span 2;
+}
+
 
 .mobile-btn {
     background-color: var(--standard-btn-bg-color);
@@ -417,7 +420,7 @@ input[type="radio"] {
     height: var(--standard-btn-height);
     border-radius: 0.3rem;
     border: none;
-    font-size: 1.2rem;
+    
 
 }
 
@@ -470,26 +473,27 @@ input[type="radio"] {
 .eval-legend {
     font-weight: bold;
     margin-left: 10px;
-    font-size: 0.9rem;
-}
-label {
-    display: block;
 }
 
-.m-eval {
-    grid-column: 1 / span 2;
-    margin-left: 0.1rem; 
-    
-}
-.mobile-evaluation-options {
-    font-size: 1rem;
-    margin-bottom: 0.2rem;
+label {
+    display: block;
+    font-size: 1.2rem;
+  }
+  .pc-floatBlock {
+    margin: 0.4em 0.4em 0 0;
+  } 
+
+.pc-evaluation-options {
+    margin-left: 1rem;
     place-items: center;
-    border: none;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-}
+      border: none;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      break-before: always;
+      margin: 0 0 0.5em 0;
+  }
+
 
   
 /*======================================*/
@@ -748,7 +752,7 @@ label {
     display: none;
     position: absolute;
     left: 25%;
-    top: 10%;
+    top: 25%;
     z-index: 2;
     width: 200px;
     height: 200px;
