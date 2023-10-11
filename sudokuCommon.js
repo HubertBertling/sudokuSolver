@@ -797,17 +797,17 @@ class SudokuCalculator extends SudokuModel {
         } else {
             if (this.myStepper.deadlockReached()) {
                 // Der Calculator braucht gar nicht in den Auto-Modus gesetzt werden
-                if (sudoApp instanceof SudokuMainApp) {
-                    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
+                //if (sudoApp instanceof SudokuMainApp) {
+                //    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
 
                     // alert("Keine (weitere) Lösung gefunden!");
-                } else {
+              //  } else {
                     // Übertrage Stepper-Infos nach Grid-Infos.
                     this.myGrid.difficulty = 'unlösbar';
                     this.myGrid.backTracks = this.countBackwards;
                     this.myGrid.steps = this.goneSteps;
                     this.notifyLoopFinished();
-                }
+              //  }
             } else {
                 // Der Calculator wird in den Auto-Modus gesetzt
                 // und die Loop wird gestartet.
@@ -3461,7 +3461,6 @@ class SudokuGrid extends SudokuModel {
     // Other methods
     // ========================================================
     evaluateMatrix() {
-        // if (this.evalType == 'no-eval') this.clearEvaluations();
         if (this.evalType == 'lazy-invisible') this.evaluateGridLazy();
         if (this.evalType == 'lazy') this.evaluateGridLazy();
         if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') this.evaluateGridStrict();
@@ -4740,14 +4739,14 @@ class SudokuCellView extends SudokuView {
                     }
                 });
                 //   }
-                sudoApp.mySolver.myView.displayTechnique('Selektieren: ' + Array.from(tmpCell.myNecessarys)[0] +
-                    ' notwendig.');
+                sudoApp.mySolver.myView.displayTechnique('Notwendige ' + Array.from(tmpCell.myNecessarys)[0] +
+                    ' in dieser Gruppe selektieren.');
             } else if (tmpCell.getAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
-                sudoApp.mySolver.myView.displayTechnique('Selektieren: ' + Array.from(tmpCell.getAdmissibles())[0] + ' Single.');
+                sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle selektieren.');
             } else if (tmpCell.getTotalAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
-                sudoApp.mySolver.myView.displayTechnique('Selektieren: ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' Hidden Single.');
+                sudoApp.mySolver.myView.displayTechnique('Hidden Single ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' in dieser Zelle selektieren.');
             } else if (tmpCell.getTotalAdmissibles().size > 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
-                sudoApp.mySolver.myView.displayTechnique('Selektieren: Eine Nummer aus mehreren Kandidaten.');
+                sudoApp.mySolver.myView.displayTechnique('Aus mehreren Kandidaten eine Nummer selektieren.');
             }
 
 
