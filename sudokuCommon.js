@@ -3242,6 +3242,7 @@ class SudokuGrid extends SudokuModel {
     // ========================================================
     setEvalType(et) {
         this.evalType = et;
+        this.evaluateMatrix();
     }
 
     setSolvedToGiven() {
