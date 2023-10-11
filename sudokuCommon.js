@@ -2183,14 +2183,6 @@ class SudokuGroupView extends SudokuView {
         }
         */
     }
-
-    // displayError() {
-    //    this.myNode.classList.add('err');
-    /*    this.myNode.classList.add('cell-err');
-        setTimeout(() => {
-            this.myNode.classList.remove('cell-err');
-        }, 500); */
-    // }
 }
 class SudokuGroup extends SudokuModel {
     // Abstrakte Klasse, deren konkrete Instanzen
@@ -3116,7 +3108,9 @@ class SudokuGridView extends SudokuView {
 
 
         // Unlösbarkeit anzeigen.
-        this.displayInsolvability();
+        if (this.myModel.isInsolvable()){
+            this.displayInsolvability();
+        }
         this.displayWrongNumbers();
         this.displaySelection();
     }
