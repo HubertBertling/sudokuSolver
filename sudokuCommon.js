@@ -2246,7 +2246,8 @@ class SudokuGroup extends SudokuModel {
         let myNumbers = new SudokuSet();
         this.myCells.forEach(cell => {
             if (cell.getValue() == '0') {
-                myNumbers = myNumbers.union(cell.getTotalAdmissibles());
+                // myNumbers = myNumbers.union(cell.getTotalAdmissibles());
+                myNumbers = myNumbers.union(cell.getAdmissibles());
             } else {
                 myNumbers.add(cell.getValue());
             }
@@ -2615,7 +2616,8 @@ class SudokuGroup extends SudokuModel {
                 // Denn, wenn eine der Konfliktzellen geschlossen wäre, würde
                 // die noch offene Zelle ohne zulässige Nummer sein. Eine offene Zelle
                 // ohne zulässige Nummer fangen wir schon an anderer Stelle ab.
-                let permNumbers = this.myCells[i].getTotalAdmissibles();
+                // let permNumbers = this.myCells[i].getTotalAdmissibles();
+                let permNumbers = this.myCells[i].getAdmissibles();
                 if (permNumbers.size == 1) {
                     permNumbers.forEach(nr => {
                         intSingle = parseInt(nr);
@@ -3110,6 +3112,8 @@ class SudokuGridView extends SudokuView {
         // Unlösbarkeit anzeigen.
         if (this.myModel.isInsolvable()){
             this.displayInsolvability();
+        } else {
+            sudoApp.mySolver.getMyView().displayReasonInsolvability('');
         }
         this.displayWrongNumbers();
         this.displaySelection();
