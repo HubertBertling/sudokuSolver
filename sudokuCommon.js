@@ -800,14 +800,14 @@ class SudokuCalculator extends SudokuModel {
                 //if (sudoApp instanceof SudokuMainApp) {
                 //    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
 
-                    // alert("Keine (weitere) Lösung gefunden!");
-              //  } else {
-                    // Übertrage Stepper-Infos nach Grid-Infos.
-                    this.myGrid.difficulty = 'unlösbar';
-                    this.myGrid.backTracks = this.countBackwards;
-                    this.myGrid.steps = this.goneSteps;
-                    this.notifyLoopFinished();
-              //  }
+                // alert("Keine (weitere) Lösung gefunden!");
+                //  } else {
+                // Übertrage Stepper-Infos nach Grid-Infos.
+                this.myGrid.difficulty = 'unlösbar';
+                this.myGrid.backTracks = this.countBackwards;
+                this.myGrid.steps = this.goneSteps;
+                this.notifyLoopFinished();
+                //  }
             } else {
                 // Der Calculator wird in den Auto-Modus gesetzt
                 // und die Loop wird gestartet.
@@ -2148,19 +2148,20 @@ class SudokuGroupView extends SudokuView {
         return this.myModel;
     }
     displayInsolvability() {
-        // Die Widersprüchlichkeit des Puzzles steht schon fest, wenn in einer Gruppe, also einem Block, 
-        // einer Reihe oder einer Spalte an verschiedenen Stellen das gleiche Single auftritt.
-        let intSingle = this.getMyGroup().withConflictingSingles();
-        if (intSingle > 0) {
-            this.displayError();
-            sudoApp.mySolver.getMyView().displayReasonInsolvability('Zwei gleiche Singles: ' + intSingle);
-            return true;
-        }
         // Analog die Widerspruchserkennung durch zwei gleiche notwendige Nummern in der Gruppe.
         let intNecessary = this.getMyGroup().withConflictingNecessaryNumbers();
         if (intNecessary > 0) {
             this.displayError();
-            sudoApp.mySolver.getMyView().displayReasonInsolvability('Zwei gleiche notwendige Nummern: ' + intNecessary);
+            sudoApp.mySolver.getMyView().displayReasonInsolvability('In der Gruppe zwei gleiche notwendige Nummern: ' + intNecessary);
+            return true;
+        }
+        // Die Widersprüchlichkeit des Puzzles steht schon fest, wenn in einer Gruppe, also einem Block, 
+        // einer Reihe oder einer Spalte an verschiedenen Stellen das gleiche Single auftritt.
+        let intSingle = this.getMyGroup().withConflictingSingles();
+        if (intSingle > 0) {
+
+            this.displayError();
+            sudoApp.mySolver.getMyView().displayReasonInsolvability('In der Gruppe zwei gleiche Singles: ' + intSingle);
             return true;
         }
         // Widerspruchserkennung durch eine fehlende Nummer in der Gruppe.
@@ -2168,7 +2169,7 @@ class SudokuGroupView extends SudokuView {
         if (missingNumbers.size > 0) {
             this.displayError();
             const [missingNr] = missingNumbers;
-            sudoApp.mySolver.getMyView().displayReasonInsolvability('Fehlende Nummer: ' + missingNr);
+            sudoApp.mySolver.getMyView().displayReasonInsolvability('In der Gruppe fehlt die Nummer: ' + missingNr);
             return true;
         }
         return false;
@@ -2721,6 +2722,23 @@ class SudokuBlockView extends SudokuGroupView {
         return super.getMyModel();
     }
 
+    displayInsolvability() {
+        let tmp = super.displayInsolvability();
+        if (sudoApp.mySolver.myGrid.evalType == 'lazy-invisible') {
+            if (tmp) {
+                // Inhalte der Gruppe dennoch anzeigen
+                this.getMyBlock().myCells.forEach(sudoCell => {
+                    if (sudoCell.getValue() == '0') {
+                        sudoCell.myView.displayAdmissiblesInDetail(sudoCell.getAdmissibles());
+
+                        sudoCell.myView.displayNecessary(sudoCell.myNecessarys);
+                    }
+                })
+            }
+        }
+        return tmp;
+    }
+
     displayError() {
         this.getMyBlock().myCells.forEach(sudoCell => {
             sudoCell.myView.displayColError();
@@ -2972,6 +2990,22 @@ class SudokuRowView extends SudokuGroupView {
         return super.getMyModel();
     }
 
+    displayInsolvability() {
+        let tmp = super.displayInsolvability();
+        if (sudoApp.mySolver.myGrid.evalType == 'lazy-invisible') {
+            if (tmp) {
+                // Inhalte der Gruppe dennoch anzeigen
+                this.getMyRow().myCells.forEach(sudoCell => {
+                    if (sudoCell.getValue() == '0') {
+                        sudoCell.myView.displayAdmissiblesInDetail(sudoCell.getAdmissibles());
+                        sudoCell.myView.displayNecessary(sudoCell.myNecessarys);
+                    }
+                })
+            }
+        }
+        return tmp;
+    }
+
     displayError() {
         this.getMyRow().myCells.forEach(sudoCell => {
             sudoCell.myView.displayRowError();
@@ -2995,9 +3029,26 @@ class SudokuColView extends SudokuGroupView {
         super(col);
     }
 
+    displayInsolvability() {
+        let tmp = super.displayInsolvability();
+        if (sudoApp.mySolver.myGrid.evalType == 'lazy-invisible') {
+            if (tmp) {
+                // Inhalte der Gruppe dennoch anzeigen
+                this.getMyCol().myCells.forEach(sudoCell => {
+                    if (sudoCell.getValue() == '0') {
+                        sudoCell.myView.displayAdmissiblesInDetail(sudoCell.getAdmissibles());
+                        sudoCell.myView.displayNecessary(sudoCell.myNecessarys);
+                    }
+                })
+            }
+        }
+        return tmp;
+    }
+
     getMyCol() {
         return super.getMyModel();
     }
+
 
     displayError() {
         this.getMyCol().myCells.forEach(sudoCell => {
@@ -3110,7 +3161,7 @@ class SudokuGridView extends SudokuView {
 
 
         // Unlösbarkeit anzeigen.
-        if (this.myModel.isInsolvable()){
+        if (this.myModel.isInsolvable()) {
             this.displayInsolvability();
         } else {
             sudoApp.mySolver.getMyView().displayReasonInsolvability('');
@@ -3152,13 +3203,13 @@ class SudokuGridView extends SudokuView {
             if (myGrid.sudoCells[i].getMyView().displayInsolvability()) return;
         }
         for (let i = 0; i < 9; i++) {
+            if (myGrid.sudoBlocks[i].getMyView().displayInsolvability()) return;
+        }
+        for (let i = 0; i < 9; i++) {
             if (myGrid.sudoRows[i].getMyView().displayInsolvability()) return;
         }
         for (let i = 0; i < 9; i++) {
             if (myGrid.sudoCols[i].getMyView().displayInsolvability()) return;
-        }
-        for (let i = 0; i < 9; i++) {
-            if (myGrid.sudoBlocks[i].getMyView().displayInsolvability()) return;
         }
     }
     displayWrongNumbers() {
@@ -4383,6 +4434,7 @@ class SudokuCellView extends SudokuView {
             }
         }
     }
+
     upDateNumber() {
         let tmpCellNode = document.createElement("div");
         tmpCellNode.setAttribute("class", "sudoku-grid-cell");
@@ -4424,7 +4476,6 @@ class SudokuCellView extends SudokuView {
                 admissibleNrElement.classList.add('neccessary');
                 this.getMyNode().appendChild(admissibleNrElement);
             })
-            // sudoApp.mySolver.myView.displayTechnique('Notwendige Nummer.');
             return true;
         } else {
             // Leere Zelle anzeigen
@@ -4677,26 +4728,14 @@ class SudokuCellView extends SudokuView {
 
     displayCellError() {
         this.myNode.classList.add('err');
-        /*   setTimeout(() => {
-               this.myNode.classList.remove('cell-err');
-           }, 500); */
     }
 
     displayRowError() {
         this.myNode.classList.add('row-err');
-        /*    this.myNode.classList.add('cell-err');
-            setTimeout(() => {
-                this.myNode.classList.remove('cell-err');
-            }, 500); */
-
     }
 
     displayColError() {
         this.myNode.classList.add('col-err');
-        /*    this.myNode.classList.add('cell-err');
-            setTimeout(() => {
-                this.myNode.classList.remove('cell-err');
-            }, 500); */
     }
 
     setSelected() {
@@ -4918,7 +4957,8 @@ class SudokuCellView extends SudokuView {
         }
         // 2) Die Widersprüchlichkeit steht schon fest, wenn es überhaupt keinen zulässigen Kandidaten 
         // mehr gibt.
-        if (cell.getValue() == '0' && cell.getTotalAdmissibles().size == 0) {
+        // if (cell.getValue() == '0' && cell.getTotalAdmissibles().size == 0) { 
+        if (cell.getValue() == '0' && cell.getAdmissibles().size == 0) {
             this.displayCellError();
             mySolverView.displayReasonInsolvability('Überhaupt keine zulässige Nummer.');
             return true;
@@ -5308,7 +5348,7 @@ class SudokuCell extends SudokuModel {
             // 1) Die Nummer ist bereits einmal gesetzt.
             (this.getValue() !== '0' && this.myDirectInAdmissibles().has(this.getValue())) ||
             // 2) Überhaupt keine zulässige Kandidaten mehr
-         //   (this.getValue() == '0' && this.getTotalAdmissibles().size == 0) ||
+            //   (this.getValue() == '0' && this.getTotalAdmissibles().size == 0) ||
             (this.getValue() == '0' && this.getAdmissibles().size == 0) ||
             // 3) Gleichzeitig verschiedene notwendige Nummern
             (this.getValue() == '0' && this.myNecessarys.size > 1));
