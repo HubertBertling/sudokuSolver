@@ -378,6 +378,8 @@ class SudokuSolverController {
         }
     }
     showWrongNumbersBtnPressed() {
+        // Kennzeichnet falsch gesetzte Zahlen
+        // und prüft auf Widerspruch
         if (this.mySolver.getGamePhase() == 'play') {
             // Hier die falschen Zellen markieren
             let wrongCellSet = false;
@@ -403,6 +405,7 @@ class SudokuSolverController {
                     this.myInfoDialog.open('Prüfergebnis', 'positiv', 'Bisher sind alle Lösungsnummern korrekt!');
                 }
             }
+             
         }
     }
 
@@ -776,6 +779,8 @@ class SudokuCalculator extends SudokuModel {
             this.myStepper.startAsyncLoop();
         } else {
             if (this.myStepper.deadlockReached()) {
+                this.setInAutoExecMode();
+                sudoApp.mySolver.notify();
                 // Der Calculator braucht gar nicht in den Auto-Modus gesetzt werden
                 sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
                 // alert("Keine (weitere) Lösung gefunden!");
@@ -817,6 +822,11 @@ class SudokuCalculator extends SudokuModel {
         }
     }
 
+    notifyLoopFinished() {
+        if (this.myGrid.myCalculator.isStepExecutionObserver) {
+            this.myGrid.myCalculator.onLoopFinish();
+        }
+    }
 
     setInAutoExecMode() {
         // Calculator in autoExecMode setzen, so
@@ -863,6 +873,8 @@ class SudokuCalculator extends SudokuModel {
             this.myStepper.executeSingleStep();
         } else {
             if (this.myStepper.deadlockReached()) {
+                this.setInAutoExecMode();
+                sudoApp.mySolver.notify();
                 sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
                 // alert("Keine (weitere) Lösung gefunden!");
             } else {
@@ -1627,11 +1639,14 @@ class StepperOnGrid {
         }
     }
 
+    /*
+
     notifyLoopFinished() {
         if (this.myGrid.myCalculator.isStepExecutionObserver) {
             this.myGrid.myCalculator.onLoopFinish();
         }
     }
+    */
 
     // =============================================================
     // Getter
@@ -1679,7 +1694,6 @@ class StepperOnGrid {
         if (this.indexSelected !== this.myGrid.indexSelected && this.indexSelected !== -1) {
             this.myGrid.indexSelect(this.indexSelected);
         }
-
         if (!this.isRunningAsyncLoop()) {
             this.timer = window.setInterval(() => {
                 if (this.myResult == '' || this.myResult == 'inProgress') {
@@ -3092,6 +3106,8 @@ class SudokuGridView extends SudokuView {
                 let tmpBlockView = sudoBlock.getMyView();
                 tmpBlockView.upDateNumbers();
             });
+          if (sudoApp.mySolver.isInAutoExecMode) {
+      
             if (!grid.isFinished()) {
                 let necessaryCandidateExists = false;
                 let singleCandidateExists = false;
@@ -3150,6 +3166,7 @@ class SudokuGridView extends SudokuView {
                     });
                 }
             }
+        }
         } else {
             grid.sudoBlocks.forEach(sudoBlock => {
                 // Jeden Block anzeigen.
@@ -3161,10 +3178,10 @@ class SudokuGridView extends SudokuView {
 
 
         // Unlösbarkeit anzeigen.
-        if (this.myModel.isInsolvable()) {
-            this.displayInsolvability();
-        } else {
-            sudoApp.mySolver.getMyView().displayReasonInsolvability('');
+        if (sudoApp.mySolver.isInAutoExecMode) {
+                // Die Unlösbarkeit wird nur angezeigt und geprüft
+                // wenn der Automat läuft
+                this.displayInsolvability();
         }
         this.displayWrongNumbers();
         this.displaySelection();
@@ -4496,7 +4513,6 @@ class SudokuCellView extends SudokuView {
             admissibleNrElement.setAttribute('data-value', admissibleNr);
             admissibleNrElement.innerHTML = admissibleNr;
             this.getMyNode().appendChild(admissibleNrElement);
-            // sudoApp.mySolver.myView.displayTechnique('Single.');
             return true;
         } else {
             return false;
@@ -4795,8 +4811,8 @@ class SudokuCellView extends SudokuView {
             // wird die verursachende collection angezeigt.
             let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
             // Anzeige initialisieren
-            sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
-            // sudoApp.mySolver.myView.displayTechnique(' ');
+            // sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
+            sudoApp.mySolver.myView.displayTechnique(' ');
 
             if (tmpCell.myNecessarys.size > 0
                 // && sudoApp.mySolver.myStepper.indexSelected > -1
