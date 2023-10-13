@@ -380,7 +380,7 @@ html {
 .mobile-grid-container {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    /* grid-template-rows: repeat(5, 8rem); */
+    grid-template-rows: repeat(5, 1fr);
     gap: 0.3rem;
  /*   font-size: 1.0rem;*/
 }
@@ -389,11 +389,13 @@ html {
 .mobile-grid-container{
    
   grid-template-columns: [first] 40px [line2] 50px [line3] auto [col4-start] 50px [five] 40px [end];
-  grid-template-rows: [row1-start] 25% [row1-end] 100px [third-line] auto [last-line];
+  grid-template-rows: [row1-start] 25% [row1-end] 100px [second-line] auto [last-line];
 }
 */
 
 .mobile-btn {
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
     background-color: var(--standard-btn-bg-color);
     text-align: center;
     border-radius: 0.3rem;
