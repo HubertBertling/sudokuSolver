@@ -513,7 +513,7 @@ class SudokuSolverView extends SudokuView {
         super(solver);
         this.progressBar = new ProgressBar();
         // this.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
-        this.displayTechnique(' ');
+        this.displayTechnique('');
         this.displayReasonInsolvability('');
 
     }
@@ -4813,7 +4813,7 @@ class SudokuCellView extends SudokuView {
             let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
             // Anzeige initialisieren
             // sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
-            sudoApp.mySolver.myView.displayTechnique(' ');
+            sudoApp.mySolver.myView.displayTechnique('');
 
             if (tmpCell.myNecessarys.size > 0
                 // && sudoApp.mySolver.myStepper.indexSelected > -1
