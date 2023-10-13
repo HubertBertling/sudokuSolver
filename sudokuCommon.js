@@ -514,6 +514,7 @@ class SudokuSolverView extends SudokuView {
         this.progressBar = new ProgressBar();
         // this.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
         this.displayTechnique(' ');
+        this.displayReasonInsolvability('');
 
     }
 

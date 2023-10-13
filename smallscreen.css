@@ -383,7 +383,6 @@ html {
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(5, 1fr);
     gap: 0.3rem;
- /*   font-size: 1.0rem;*/
 }
 
 /*
@@ -492,7 +491,7 @@ label {
     padding-top: 5px;
     padding-bottom: 5px;
     color: var(--screen-color);
-    font-size: 1.0rem;
+    font-size: 1.2rem;
 }
 
 .progress-block {
