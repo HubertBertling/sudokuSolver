@@ -378,6 +378,7 @@ html {
 
 
 .mobile-grid-container {
+    margin-top: 5px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(5, 1fr);
