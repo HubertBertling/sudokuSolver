@@ -511,6 +511,7 @@ class SudokuModel {
 class SudokuSolverView extends SudokuView {
     constructor(solver) {
         super(solver);
+        this.mySolver = solver;
         this.progressBar = new ProgressBar();
         // this.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
         this.displayTechnique('');
@@ -662,14 +663,14 @@ class SudokuSolverView extends SudokuView {
     displayTechnique(tech) {
         let myGrid = this.getMyModel().getMyGrid();
         let evalNode = document.getElementById("technique");
-        if (myGrid.evalType == 'lazy') {
+        if (this.mySolver.getActualEvalType() == 'lazy') {
             if (tech.includes('notwendig, weil')) {
                 evalNode.style.color = 'darkgreen';
             } else {
                 evalNode.style.color = 'Crimson';
             }
             evalNode.innerHTML = '<b>Erläuterung:</b> &nbsp' + tech;
-        } else if (myGrid.evalType == 'lazy-invisible') {
+        } else if (this.mySolver.getActualEvalType() == 'lazy-invisible') {
             evalNode.style.color = 'darkgreen';
             evalNode.innerHTML = tech;
         }
@@ -728,6 +729,7 @@ class SudokuCalculator extends SudokuModel {
         this.myGrid = new SudokuGrid(this);
         //Die Calculator kennt zwei Betriebs-Phasen 'play' or 'define'
         this.currentPhase = 'play';
+        this.currentEvalType = 'lazy-invisible';
         // Der Calculator kennt zwei Ausführungsmodi: 
         // manuelle oder automatische Ausführung
         this.isInAutoExecMode = false;
@@ -906,7 +908,8 @@ class SudokuCalculator extends SudokuModel {
     }
 
     evalTypeSelected(value) {
-        this.myGrid.setEvalType(value);
+        this.currentEvalType = value;
+        // this.myGrid.setEvalType(value);
     }
 
     setAutoDirection(direction) {
@@ -931,7 +934,9 @@ class SudokuCalculator extends SudokuModel {
     getGamePhase() {
         return this.currentPhase;
     }
-
+    getActualEvalType () {
+        return this.currentEvalType;
+    }
     // =================================================
     // Setter
     // =================================================
@@ -982,7 +987,7 @@ class SudokuSolver extends SudokuCalculator {
         // sends a message containing the generated puzzle as a string.
         webworkerPuzzleGenerator.onmessage = function (e) {
             // Create the puzzle from the supplied string
-            let tmpEvalType = sudoApp.mySolver.myGrid.evalType;
+            let tmpEvalType = sudoApp.mySolver.currentEvalType;
             let response = JSON.parse(e.data);
             // Load the puzzle into the solver
             sudoApp.mySolver.loadPuzzle('-', response.value);
@@ -1005,8 +1010,12 @@ class SudokuSolver extends SudokuCalculator {
         webworkerPuzzleGenerator.postMessage(str_request);
     }
     getActualEvalType() {
-        return this.myGrid
+        return super.getActualEvalType();
     }
+    setActualEvalType(et) {
+        super.currentEvalType = et;
+    }
+    
     getPuzzlePreRunDataUsingWebworker() {
         // A new web worker that performs the fast solution of this puzzle, is created.
         let webworkerFastSolver = new Worker("./fastSolverApp.js");
@@ -2739,7 +2748,7 @@ class SudokuBlockView extends SudokuGroupView {
 
     displayInsolvability() {
         let tmp = super.displayInsolvability();
-        if (sudoApp.mySolver.myGrid.evalType == 'lazy-invisible') {
+        if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
             if (tmp) {
                 // Inhalte der Gruppe dennoch anzeigen
                 this.getMyBlock().myCells.forEach(sudoCell => {
@@ -3007,7 +3016,7 @@ class SudokuRowView extends SudokuGroupView {
 
     displayInsolvability() {
         let tmp = super.displayInsolvability();
-        if (sudoApp.mySolver.myGrid.evalType == 'lazy-invisible') {
+        if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
             if (tmp) {
                 // Inhalte der Gruppe dennoch anzeigen
                 this.getMyRow().myCells.forEach(sudoCell => {
@@ -3046,7 +3055,7 @@ class SudokuColView extends SudokuGroupView {
 
     displayInsolvability() {
         let tmp = super.displayInsolvability();
-        if (sudoApp.mySolver.myGrid.evalType == 'lazy-invisible') {
+        if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
             if (tmp) {
                 // Inhalte der Gruppe dennoch anzeigen
                 this.getMyCol().myCells.forEach(sudoCell => {
@@ -3100,7 +3109,7 @@ class SudokuGridView extends SudokuView {
 
         // Die 9 Blöcke anzeigen
         let grid = this.getMyModel();
-        if (sudoApp.mySolver.myGrid.evalType == 'lazy-invisible') {
+        if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
             // Gesetzte Nummern anzeigen
             grid.sudoBlocks.forEach(sudoBlock => {
                 // Jeden Block anzeigen.
@@ -3268,7 +3277,7 @@ class SudokuGrid extends SudokuModel {
         this.sudoRows = [];
         this.sudoCols = [];
 
-        this.evalType = 'lazy-invisible';
+        // this.evalType = 'lazy-invisible';
         this.preRunRecord = {
             defCount: 0,
             stepsLazy: 0,
@@ -3292,7 +3301,7 @@ class SudokuGrid extends SudokuModel {
         this.steps = 0;
         this.backTracks = 0;
 
-        this.evalType = 'lazy-invisible';
+        // this.evalType = 'lazy-invisible';
         this.preRunRecord = {
             defCount: 0,
             stepsLazy: 0,
@@ -3310,7 +3319,8 @@ class SudokuGrid extends SudokuModel {
     // Setter
     // ========================================================
     setEvalType(et) {
-        this.evalType = et;
+        // this.evalType = et;
+        sudoApp.mySolver.setActualEvalType(et)
         this.evaluateMatrix();
     }
 
@@ -3433,9 +3443,9 @@ class SudokuGrid extends SudokuModel {
         }
         if (this.puzzleSolved()) {
             puzzleRecord.status = 'gelöst';
-            if (this.evalType == 'lazy') {
+            if (this.myCalculator.currentEvalType == 'lazy') {
                 puzzleRecord.stepsLazy = this.steps;
-            } else if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') {
+            } else if (this.myCalculator.currentEvalType == 'strict-plus' || this.myCalculator.currentEvalType == 'strict-minus') {
                 puzzleRecord.stepsStrict = this.steps;
             }
         }
@@ -3470,9 +3480,9 @@ class SudokuGrid extends SudokuModel {
         }
         if (this.puzzleSolved()) {
             puzzleRecord.status = 'gelöst';
-            if (this.evalType == 'lazy' || this.evalType == 'lazy-invisible') {
+            if (this.myCalculator.currentEvalType == 'lazy' || this.myCalculator.currentEvalType == 'lazy-invisible') {
                 puzzleRecord.stepsLazy = this.steps;
-            } else if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') {
+            } else if (this.myCalculator.currentEvalType == 'strict-plus' || this.myCalculator.currentEvalType == 'strict-minus') {
                 puzzleRecord.stepsStrict = this.steps;
             }
         }
@@ -3530,9 +3540,9 @@ class SudokuGrid extends SudokuModel {
     // Other methods
     // ========================================================
     evaluateMatrix() {
-        if (this.evalType == 'lazy-invisible') this.evaluateGridLazy();
-        if (this.evalType == 'lazy') this.evaluateGridLazy();
-        if (this.evalType == 'strict-plus' || this.evalType == 'strict-minus') this.evaluateGridStrict();
+        if (this.myCalculator.currentEvalType == 'lazy-invisible') this.evaluateGridLazy();
+        if (this.myCalculator.currentEvalType == 'lazy') this.evaluateGridLazy();
+        if (this.myCalculator.currentEvalType == 'strict-plus' || this.myCalculator.currentEvalType == 'strict-minus') this.evaluateGridStrict();
     }
 
     clearAutoExecCellInfos() {
@@ -4558,7 +4568,7 @@ class SudokuCellView extends SudokuView {
 
     displayAdmissibles() {
         let cell = this.getMyModel();
-        let inAdmissiblesVisible = (sudoApp.mySolver.myGrid.evalType == 'lazy' || sudoApp.mySolver.myGrid.evalType == 'strict-plus');
+        let inAdmissiblesVisible = (sudoApp.mySolver.getActualEvalType() == 'lazy' || sudoApp.mySolver.getActualEvalType() == 'strict-plus');
         if (inAdmissiblesVisible) {
             this.displayAdmissiblesInDetail(cell.getAdmissibles());
         } else {
@@ -4784,7 +4794,7 @@ class SudokuCellView extends SudokuView {
     setSelectStatus() {
         let tmpCell = this.getMyModel();
         this.setSelected();
-        if (sudoApp.mySolver.myGrid.evalType == 'lazy-invisible') {
+        if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
 
             if (tmpCell.myNecessarys.size > 0 && sudoApp.mySolver.myStepper.indexSelected > -1) {
                 //   if (adMissibleNrSelected == Array.from(tmpCell.myNecessarys)[0]) {
@@ -4807,7 +4817,7 @@ class SudokuCellView extends SudokuView {
 
 
 
-        } else if (sudoApp.mySolver.myGrid.evalType == 'lazy') {
+        } else if (sudoApp.mySolver.getActualEvalType() == 'lazy') {
             // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
             // wird die verursachende collection angezeigt.
             let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
@@ -4943,7 +4953,7 @@ class SudokuCellView extends SudokuView {
     unsetSelectStatus() {
         this.unsetSelected();
         this.unsetBorderSelected();
-        if (sudoApp.mySolver.myGrid.evalType == 'lazy-invisible') {
+        if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
             sudoApp.mySolver.myView.displayTechnique('');
         } else {
             sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
