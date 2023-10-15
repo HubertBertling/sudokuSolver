@@ -3307,7 +3307,7 @@ class SudokuGrid extends SudokuModel {
     // ========================================================
     // Setter
     // ========================================================
-     setSolvedToGiven() {
+    setSolvedToGiven() {
         // Vom Generator verwendete Funktion
         // Alle gelöste Zellen werden in Givens umgewandelt
         this.initCurrentSelection();
@@ -5354,33 +5354,25 @@ class SudokuCell extends SudokuModel {
     }
 
     isInsolvable() {
-        return (
-            // 1) Die Nummer ist bereits einmal gesetzt.
-            (this.getValue() !== '0' && this.myDirectInAdmissibles().has(this.getValue())) ||
-            // 2) Überhaupt keine zulässige Kandidaten mehr
-            (this.getValue() == '0' && this.getAdmissibles().size == 0) ||
-            // 3) Gleichzeitig verschiedene notwendige Nummern
-            (this.getValue() == '0' && this.myNecessarys.size > 1));
-        // Das nachfolgende Kriterium ist nicht effektiv. Es kostet nur Laufzeit.
-        // 4) Eine notwendige Nummer ist gleichzeitig unzulässig       
-        /*    (this.getValue() == '0' &&
-                this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0));
-                */
-    }
 
-    isStrictInsolvable() {
-        return (
-            // 1) Die Nummer ist bereits einmal gesetzt.
-            (this.getValue() !== '0' && this.myDirectInAdmissibles().has(this.getValue())) ||
-            // 2) Überhaupt keine zulässige Kandidaten mehr
-            (this.getValue() == '0' && this.getTotalAdmissibles().size == 0) ||
-            // 3) Gleichzeitig verschiedene notwendige Nummern
-            (this.getValue() == '0' && this.myNecessarys.size > 1));
-        // Das nachfolgende Kriterium ist nicht effektiv. Es kostet nur Laufzeit.
-        // 4) Eine notwendige Nummer ist gleichzeitig unzulässig       
-        /*    (this.getValue() == '0' &&
-                this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0));
-                */
+        if (this.myGrid.myCalculator.currentEvalType == 'lazy-invisible' || this.myGrid.myCalculator.currentEvalType == 'lazy')
+            return (
+                // 1) Die Nummer ist bereits einmal gesetzt.
+                (this.getValue() !== '0' && this.myDirectInAdmissibles().has(this.getValue())) ||
+                // 2) Überhaupt keine zulässige Kandidaten mehr
+                (this.getValue() == '0' && this.getAdmissibles().size == 0) ||
+                // 3) Gleichzeitig verschiedene notwendige Nummern
+                (this.getValue() == '0' && this.myNecessarys.size > 1));
+
+        else if (this.myGrid.myCalculator.currentEvalType == 'strict-plus' || this.myGrid.myCalculator.currentEvalType == 'strict-minus')
+
+            return (
+                // 1) Die Nummer ist bereits einmal gesetzt.
+                (this.getValue() !== '0' && this.myDirectInAdmissibles().has(this.getValue())) ||
+                // 2) Überhaupt keine zulässige Kandidaten mehr
+                (this.getValue() == '0' && this.getTotalAdmissibles().size == 0) ||
+                // 3) Gleichzeitig verschiedene notwendige Nummern
+                (this.getValue() == '0' && this.myNecessarys.size > 1));
     }
 
     init() {
