@@ -245,7 +245,7 @@ class SudokuSolverController {
         let radioEvalNodes = document.querySelectorAll('.pc-eval-type');
         radioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
-                this.evalTypeSelected(radioNode.value);
+                this.mySolver.setActualEvalType(radioNode.value);
             })
         });
         // Radio button eval type: No-evaluation, Lazy, Strikt+ oder Strikt-
@@ -253,7 +253,7 @@ class SudokuSolverController {
         let mobileRadioEvalNodes = document.querySelectorAll('.mobile-eval-type');
         mobileRadioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
-                this.evalTypeSelected(radioNode.value);
+                this.mySolver.setActualEvalType(radioNode.value);
             })
         });
     }
@@ -405,13 +405,8 @@ class SudokuSolverController {
                     this.myInfoDialog.open('Prüfergebnis', 'positiv', 'Bisher sind alle Lösungsnummern korrekt!');
                 }
             }
-             
-        }
-    }
 
-    evalTypeSelected(value) {
-        this.mySolver.evalTypeSelected(value);
-        this.mySolver.notify();
+        }
     }
 
     savePuzzleDlgOKPressed() {
@@ -907,9 +902,9 @@ class SudokuCalculator extends SudokuModel {
         this.myStepper.init();
     }
 
-    evalTypeSelected(value) {
+    setActualEvalType(value) {
         this.currentEvalType = value;
-        // this.myGrid.setEvalType(value);
+        this.myGrid.evaluateMatrix();
     }
 
     setAutoDirection(direction) {
@@ -934,7 +929,7 @@ class SudokuCalculator extends SudokuModel {
     getGamePhase() {
         return this.currentPhase;
     }
-    getActualEvalType () {
+    getActualEvalType() {
         return this.currentEvalType;
     }
     // =================================================
@@ -996,7 +991,7 @@ class SudokuSolver extends SudokuCalculator {
             sudoApp.mySolver.reset();
             sudoApp.mySolver.notify();
             sudoApp.myTabView.openGrid();
-            sudoApp.mySolver.evalTypeSelected(tmpEvalType);
+            sudoApp.mySolver.setActualEvalType(tmpEvalType);
             // The rotating loader icon is stopped
             sudoApp.mySolver.notifyAspect('puzzleGenerator', 'finished');
         }
@@ -1013,9 +1008,10 @@ class SudokuSolver extends SudokuCalculator {
         return super.getActualEvalType();
     }
     setActualEvalType(et) {
-        super.currentEvalType = et;
+        super.setActualEvalType(et);
+        this.notify();
     }
-    
+
     getPuzzlePreRunDataUsingWebworker() {
         // A new web worker that performs the fast solution of this puzzle, is created.
         let webworkerFastSolver = new Worker("./fastSolverApp.js");
@@ -1093,11 +1089,6 @@ class SudokuSolver extends SudokuCalculator {
 
     reset() {
         super.reset();
-        this.notify();
-    }
-
-    evalTypeSelected(value) {
-        super.evalTypeSelected(value);
         this.notify();
     }
 
@@ -3116,67 +3107,67 @@ class SudokuGridView extends SudokuView {
                 let tmpBlockView = sudoBlock.getMyView();
                 tmpBlockView.upDateNumbers();
             });
-          if (sudoApp.mySolver.isInAutoExecMode) {
-      
-            if (!grid.isFinished()) {
-                let necessaryCandidateExists = false;
-                let singleCandidateExists = false;
-                let hiddenSingleCandidateExists = false;
+            if (sudoApp.mySolver.isInAutoExecMode) {
 
-                // Jetzt nur noch über die Zellen iterieren
-                grid.sudoCells.forEach(cell => {
-                    if (cell.getValue() == '0') {
-                        let cellView = cell.getMyView();
-                        if (!necessaryCandidateExists) {
-                            if (cellView.upDateNecessary()) {
-                                necessaryCandidateExists = true;
-                                return true;
+                if (!grid.isFinished()) {
+                    let necessaryCandidateExists = false;
+                    let singleCandidateExists = false;
+                    let hiddenSingleCandidateExists = false;
+
+                    // Jetzt nur noch über die Zellen iterieren
+                    grid.sudoCells.forEach(cell => {
+                        if (cell.getValue() == '0') {
+                            let cellView = cell.getMyView();
+                            if (!necessaryCandidateExists) {
+                                if (cellView.upDateNecessary()) {
+                                    necessaryCandidateExists = true;
+                                    return true;
+                                }
                             }
                         }
+                    });
+
+                    // If there is no necessary number the first single number will be displayed
+                    if (!necessaryCandidateExists) {
+                        grid.sudoCells.forEach(cell => {
+                            if (cell.getValue() == '0') {
+                                let cellView = cell.getMyView();
+                                if (cellView.upDateSingle()) {
+                                    singleCandidateExists = true;
+                                    return true;
+                                }
+                            }
+                        });
                     }
-                });
 
-                // If there is no necessary number the first single number will be displayed
-                if (!necessaryCandidateExists) {
-                    grid.sudoCells.forEach(cell => {
-                        if (cell.getValue() == '0') {
-                            let cellView = cell.getMyView();
-                            if (cellView.upDateSingle()) {
-                                singleCandidateExists = true;
+                    // If there is no necessary and no single number the first hidden single number will be displayed       
+                    if (!necessaryCandidateExists && !singleCandidateExists) {
+                        grid.sudoCells.forEach(cell => {
+                            // Jede Zelle des Blocks anzeigen.
+                            if (cell.getValue() == '0') {
+                                let cellView = cell.getMyView();
+                                if (cellView.upDateHiddenSingle()) {
+                                    hiddenSingleCandidateExists = true;
+                                    return true;
+                                }
+                            }
+                        });
+                    }
+
+                    // If there is no necessary and no single number the first hidden single number will be displayed       
+                    if (!necessaryCandidateExists
+                        && !singleCandidateExists
+                        && !hiddenSingleCandidateExists) {
+                        grid.sudoCells.forEach(cell => {
+                            if (cell.getValue() == '0') {
+                                let cellView = cell.getMyView();
+                                cellView.upDateMultipleOptions();
                                 return true;
                             }
-                        }
-                    });
-                }
-
-                // If there is no necessary and no single number the first hidden single number will be displayed       
-                if (!necessaryCandidateExists && !singleCandidateExists) {
-                    grid.sudoCells.forEach(cell => {
-                        // Jede Zelle des Blocks anzeigen.
-                        if (cell.getValue() == '0') {
-                            let cellView = cell.getMyView();
-                            if (cellView.upDateHiddenSingle()) {
-                                hiddenSingleCandidateExists = true;
-                                return true;
-                            }
-                        }
-                    });
-                }
-
-                // If there is no necessary and no single number the first hidden single number will be displayed       
-                if (!necessaryCandidateExists
-                    && !singleCandidateExists
-                    && !hiddenSingleCandidateExists) {
-                    grid.sudoCells.forEach(cell => {
-                        if (cell.getValue() == '0') {
-                            let cellView = cell.getMyView();
-                            cellView.upDateMultipleOptions();
-                            return true;
-                        }
-                    });
+                        });
+                    }
                 }
             }
-        }
         } else {
             grid.sudoBlocks.forEach(sudoBlock => {
                 // Jeden Block anzeigen.
@@ -3189,9 +3180,9 @@ class SudokuGridView extends SudokuView {
 
         // Unlösbarkeit anzeigen.
         if (sudoApp.mySolver.isInAutoExecMode) {
-                // Die Unlösbarkeit wird nur angezeigt und geprüft
-                // wenn der Automat läuft
-                this.displayInsolvability();
+            // Die Unlösbarkeit wird nur angezeigt und geprüft
+            // wenn der Automat läuft
+            this.displayInsolvability();
         }
         this.displayWrongNumbers();
         this.displaySelection();
@@ -3277,7 +3268,6 @@ class SudokuGrid extends SudokuModel {
         this.sudoRows = [];
         this.sudoCols = [];
 
-        // this.evalType = 'lazy-invisible';
         this.preRunRecord = {
             defCount: 0,
             stepsLazy: 0,
@@ -3301,7 +3291,6 @@ class SudokuGrid extends SudokuModel {
         this.steps = 0;
         this.backTracks = 0;
 
-        // this.evalType = 'lazy-invisible';
         this.preRunRecord = {
             defCount: 0,
             stepsLazy: 0,
@@ -3318,13 +3307,7 @@ class SudokuGrid extends SudokuModel {
     // ========================================================
     // Setter
     // ========================================================
-    setEvalType(et) {
-        // this.evalType = et;
-        sudoApp.mySolver.setActualEvalType(et)
-        this.evaluateMatrix();
-    }
-
-    setSolvedToGiven() {
+     setSolvedToGiven() {
         // Vom Generator verwendete Funktion
         // Alle gelöste Zellen werden in Givens umgewandelt
         this.initCurrentSelection();
@@ -5375,7 +5358,6 @@ class SudokuCell extends SudokuModel {
             // 1) Die Nummer ist bereits einmal gesetzt.
             (this.getValue() !== '0' && this.myDirectInAdmissibles().has(this.getValue())) ||
             // 2) Überhaupt keine zulässige Kandidaten mehr
-            //   (this.getValue() == '0' && this.getTotalAdmissibles().size == 0) ||
             (this.getValue() == '0' && this.getAdmissibles().size == 0) ||
             // 3) Gleichzeitig verschiedene notwendige Nummern
             (this.getValue() == '0' && this.myNecessarys.size > 1));
@@ -5385,6 +5367,22 @@ class SudokuCell extends SudokuModel {
                 this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0));
                 */
     }
+
+    isStrictInsolvable() {
+        return (
+            // 1) Die Nummer ist bereits einmal gesetzt.
+            (this.getValue() !== '0' && this.myDirectInAdmissibles().has(this.getValue())) ||
+            // 2) Überhaupt keine zulässige Kandidaten mehr
+            (this.getValue() == '0' && this.getTotalAdmissibles().size == 0) ||
+            // 3) Gleichzeitig verschiedene notwendige Nummern
+            (this.getValue() == '0' && this.myNecessarys.size > 1));
+        // Das nachfolgende Kriterium ist nicht effektiv. Es kostet nur Laufzeit.
+        // 4) Eine notwendige Nummer ist gleichzeitig unzulässig       
+        /*    (this.getValue() == '0' &&
+                this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles).intersection(this.myNecessarys).size > 0));
+                */
+    }
+
     init() {
         this.myPuzzleSaveDialog.close();
     }
