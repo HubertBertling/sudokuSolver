@@ -44,12 +44,12 @@ class SudokuFastSolver extends SudokuCalculator {
     // um eine Methode, die Solve-Methode.
     constructor() {
         super();
-        super.init();
+        this.init();
     }
 
     init() {
         super.init();
-        // sudoApp.myFastSolver.myGrid.evalType ='strict-plus';
+        super.setActualEvalType('strict-plus');
     }
     solvePuzzle(puzzleArray) {
         // this.init();

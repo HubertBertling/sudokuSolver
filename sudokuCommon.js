@@ -528,6 +528,7 @@ class SudokuSolverView extends SudokuView {
         this.displayAutoDirection(myStepper.getAutoDirection());
         this.displayProgress();
         this.displayPuzzle(myGrid.loadedPuzzleId, myGrid.loadedPuzzleName);
+        this.displayEvalType(this.mySolver.getActualEvalType());
     }
 
     upDateAspect(aspect, aspectValue) {
@@ -604,18 +605,13 @@ class SudokuSolverView extends SudokuView {
         let strictPlusNode = document.getElementById('pc-strict-plus');
         let strictMinusNode = document.getElementById('pc-strict-minus');
 
-        let mobileNoEvalNode = document.getElementById('mobile-no-eval');
-        let mobileLazyNode = document.getElementById('mobile-lazy');
-        let mobileStrictMinusNode = document.getElementById('mobile-strict-minus');
         switch (et) {
             case 'lazy-invisible': {
                 noEvalNode.checked = true;
-                mobileNoEvalNode.checked = true;
                 break;
             }
             case 'lazy': {
                 lazyNode.checked = true;
-                mobileLazyNode.checked = true;
                 break;
             }
             case 'strict-plus': {
@@ -624,7 +620,6 @@ class SudokuSolverView extends SudokuView {
             }
             case 'strict-minus': {
                 strictMinusNode.checked = true;
-                mobileStrictMinusNode.checked = true;
                 break;
             }
             default: {
@@ -958,10 +953,12 @@ class SudokuSolver extends SudokuCalculator {
         this.myGridView = new SudokuGridView(this.myGrid);
         this.myGrid.setMyView(this.myGridView);
         super.setExecutionObserver();
+        this.init();
     }
 
     init() {
         super.init();
+        this.setActualEvalType('lazy-invisible');
         this.notify();
     }
 
@@ -4967,11 +4964,19 @@ class SudokuCellView extends SudokuView {
         }
         // 2) Die Widersprüchlichkeit steht schon fest, wenn es überhaupt keinen zulässigen Kandidaten 
         // mehr gibt.
-        // if (cell.getValue() == '0' && cell.getTotalAdmissibles().size == 0) { 
-        if (cell.getValue() == '0' && cell.getAdmissibles().size == 0) {
-            this.displayCellError();
-            mySolverView.displayReasonInsolvability('Überhaupt keine zulässige Nummer.');
-            return true;
+        if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible' || sudoApp.mySolver.getActualEvalType() == 'lazy') {
+            // if (cell.getValue() == '0' && cell.getTotalAdmissibles().size == 0) { 
+            if (cell.getValue() == '0' && cell.getAdmissibles().size == 0) {
+                this.displayCellError();
+                mySolverView.displayReasonInsolvability('Überhaupt keine zulässige Nummer.');
+                return true;
+            }
+        } else if (sudoApp.mySolver.getActualEvalType() == 'strict-plus' || sudoApp.mySolver.getActualEvalType() == 'strict-minus') {
+            if (cell.getValue() == '0' && cell.getTotalAdmissibles().size == 0) { 
+                this.displayCellError();
+                mySolverView.displayReasonInsolvability('Überhaupt keine zulässige Nummer.');
+                return true;
+            }
         }
         // 3) Ebenfalls steht die Widersprüchlichkeit schon fest, wenn in einer Zelle gleichzeitig
         // zwei verschiedene notwendige Nummern gesetzt werden sollen.

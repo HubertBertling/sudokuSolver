@@ -44,7 +44,11 @@ class SudokuGenerator extends SudokuCalculator {
     // um eine Methode, die Generierungsmethode.
     constructor() {
         super();
+        this.init();
+    }
+    init() {
         super.init();
+        super.setActualEvalType('strict-plus');
     }
 
     generatePuzzle() {
