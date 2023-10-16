@@ -5661,10 +5661,15 @@ class SudokuPuzzleDB {
         // Overwrite stored puzzle having the id puzzleId
         let storedPuzzle = this.getPuzzle(puzzleId);
         // Steps mischen
-        if (puzzleRecord.stepsLazy == 0) {
+        if (puzzleRecord.status == 'gelöst') {
+            if (puzzleRecord.stepsLazy == 0) {
+                puzzleRecord.stepsLazy = storedPuzzle.stepsLazy;
+            } else if (puzzleRecord.stepsStrict == 0) {
+                puzzleRecord.stepsStrict = storedPuzzle.stepsStrict;
+            }
+        } else {
             puzzleRecord.stepsLazy = storedPuzzle.stepsLazy;
-        } else if (puzzleRecord.stepsStrict == 0) {
-            puzzleRecord.stepsStrict = storedPuzzle.stepsStrict;
+            puzzleRecord.stepsStrict = storedPuzzle.stepsStrict;   
         }
         this.savePuzzle(puzzleId, puzzleName, puzzleRecord);
     }
