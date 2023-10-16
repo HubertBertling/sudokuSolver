@@ -356,6 +356,8 @@ class SudokuSolverController {
             this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');
         } else {
             sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, puzzleName, tmpPuzzleDbElement);
+            // Wechsle in den DB-Reiter
+            document.getElementById("puzzle-db-tab").click();
         }
     }
 
@@ -3423,7 +3425,7 @@ class SudokuGrid extends SudokuModel {
         }
         if (this.puzzleSolved()) {
             puzzleRecord.status = 'gelöst';
-            if (this.myCalculator.currentEvalType == 'lazy') {
+            if (this.myCalculator.currentEvalType == 'lazy-invisible' || this.myCalculator.currentEvalType == 'lazy') {
                 puzzleRecord.stepsLazy = this.steps;
             } else if (this.myCalculator.currentEvalType == 'strict-plus' || this.myCalculator.currentEvalType == 'strict-minus') {
                 puzzleRecord.stepsStrict = this.steps;
@@ -4972,7 +4974,7 @@ class SudokuCellView extends SudokuView {
                 return true;
             }
         } else if (sudoApp.mySolver.getActualEvalType() == 'strict-plus' || sudoApp.mySolver.getActualEvalType() == 'strict-minus') {
-            if (cell.getValue() == '0' && cell.getTotalAdmissibles().size == 0) { 
+            if (cell.getValue() == '0' && cell.getTotalAdmissibles().size == 0) {
                 this.displayCellError();
                 mySolverView.displayReasonInsolvability('Überhaupt keine zulässige Nummer.');
                 return true;
@@ -5657,7 +5659,13 @@ class SudokuPuzzleDB {
     }
     mergePlayedPuzzle(puzzleId, puzzleName, puzzleRecord) {
         // Overwrite stored puzzle having the id puzzleId
-
+        let storedPuzzle = this.getPuzzle(puzzleId);
+        // Steps mischen
+        if (puzzleRecord.stepsLazy == 0) {
+            puzzleRecord.stepsLazy = storedPuzzle.stepsLazy;
+        } else if (puzzleRecord.stepsStrict == 0) {
+            puzzleRecord.stepsStrict = storedPuzzle.stepsStrict;
+        }
         this.savePuzzle(puzzleId, puzzleName, puzzleRecord);
     }
 
