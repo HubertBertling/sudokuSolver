@@ -637,17 +637,6 @@ label {
       margin: 0 0 1em 0;
   }
 
-/*
-.eval-label {
-    font-size: 1.2rem;
-    font-weight: bold;
-    line-height: 1.4;
-    display: grid;
-    grid-template-columns: 1em auto;
-    gap: 0.5em;
-}
-*/
-
 .eval-type {
     font-size: 1.2rem;
  }
@@ -1026,10 +1015,6 @@ label {
     width: 140px;
 }
 
-.tabdatabase {
-    padding-bottom: 100px;
-}
-
 section {
     font-size: 1.0rem;
     position: relative;
@@ -1047,8 +1032,9 @@ section.positioned {
 }
 
 .container {
-    overflow-y: auto;
-    height: 200px;
+   overflow-y: auto;
+   height: 200px;
+
 }
 
 table {
