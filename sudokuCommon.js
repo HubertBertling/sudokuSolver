@@ -510,17 +510,17 @@ class SudokuSolverView extends SudokuView {
         super(solver);
         this.mySolver = solver;
         this.progressBar = new ProgressBar();
-        // this.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
         this.displayTechnique('');
         this.displayReasonInsolvability('');
-
     }
-
 
     upDate() {
         // Den kompletten Solver neu anzeigen
         let myGrid = this.getMyModel().getMyGrid();
         let myStepper = this.getMyModel().getMyStepper();
+
+        this.displayTechnique('');
+        this.displayReasonInsolvability('');
 
         myGrid.getMyView().upDate();
         this.displayGamePhase();
@@ -961,6 +961,10 @@ class SudokuSolver extends SudokuCalculator {
     init() {
         super.init();
         this.setActualEvalType('lazy-invisible');
+        this.notify();
+    }
+    loadPuzzle(uid, puzzle) {
+        super.loadPuzzle(uid, puzzle);
         this.notify();
     }
 
