@@ -380,8 +380,6 @@ html {
 .mobile-grid-container {
     margin-top: 5px;
     display: grid;
-   /* width: 100%; */
-    height: 32vh; 
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(5, 1fr);
     gap: 0.3rem;
@@ -397,8 +395,8 @@ html {
 */
 
 .mobile-btn {
-  /*  padding-top: 0.5rem;
-    padding-bottom: 0.5rem; */
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
     background-color: var(--standard-btn-bg-color);
     text-align: center;
     border-radius: 0.3rem;
