@@ -627,13 +627,8 @@ label {
   } 
 
   .pc-evaluation-options {
-    margin-left: 1rem;
-    place-items: center;
-      border: none;
       display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      break-before: always;
+      flex-direction:row;
       margin: 0 0 1em 0;
   }
 

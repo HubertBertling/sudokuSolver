@@ -71,6 +71,7 @@ html {
     display: none;
 }
 .sudoku-solver-in-tab {
+    margin: 5px;
     display: flex;
     flex-direction: column;
     height: 95vh;
@@ -445,15 +446,11 @@ label {
   } 
 
 .pc-evaluation-options {
-    margin-left: 1rem;
-    place-items: center;
       border: none;
       display: flex;
       flex-direction: row;
-      justify-content: flex-start;
-      break-before: always;
-      margin: 0 0 1em 0;
-  }
+      margin: 0 0 1em 0; 
+       }
 
   .loaded-evaluations, .technique{
     font-size: 1.2rem;
