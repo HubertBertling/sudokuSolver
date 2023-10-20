@@ -73,12 +73,10 @@ html {
 .sudoku-solver-in-tab {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 95vh;
 }
 
 .tabsolver {
-    /*  max-width: fit-content;
-    min-width:fit-content; */
     color: black;
     padding: 0.5rem;
 }

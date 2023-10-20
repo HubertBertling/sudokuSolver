@@ -61,45 +61,13 @@
 body,
 html {
     font-family: 'Open Sans', sans-serif;
-    height: 95vh;
     background-color: var(--screen-bg-color);
-    /* margin-top: 10px; */
-    display: flex;
-    flex-direction: column;
-    /* justify-content: center; */
-    align-items: center;
-
-}
-
-.app-content {
-    display: grid;
 }
 
 
-/* Style tab links */
-.tablink {
-    display: none;
-    background-color: #555;
-    color: white;
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    /* font-size: 17px; */
-    font-size: 1.8rem;
-    font-weight: bold;
-    width: 25%;
-}
-
-
-
-
-.tabdatabase,
-.tabhelp {
+.tablink-container {
     display: none;
 }
-
 
 .sudoku-solver-in-tab {
     display: flex;
@@ -108,8 +76,6 @@ html {
 }
 
 .tabsolver {
-    /*  max-width: fit-content;
-    min-width:fit-content; */
     color: black;
     padding: 0.5rem;
 }
