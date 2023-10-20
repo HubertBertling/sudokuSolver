@@ -61,6 +61,8 @@
 body,
 html {
     font-family: 'Open Sans', sans-serif;
+    background-color: var(--screen-bg-color);
+  
 }
 
 /* Style tab links */
