@@ -101,6 +101,11 @@ html {
 }
 
 
+.sudoku-solver-in-tab {
+    display: flex;
+    flex-direction: column;
+    height: 95vh;
+}
 
 .tabsolver {
     /*  max-width: fit-content;
@@ -375,9 +380,9 @@ html {
         none;
 }
 
-
 .mobile-grid-container {
     margin-top: 10px;
+    flex-grow: 1;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(5, 1fr);
