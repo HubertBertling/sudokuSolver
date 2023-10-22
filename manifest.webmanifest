@@ -6,7 +6,6 @@
         "type": "image/png"
       }
     ],
-    "start_url": "https://hubertbertling.github.io/sudokuSolver/",
     "display": "standalone"
   }
   
