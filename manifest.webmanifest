@@ -1,12 +1,24 @@
-{
+ 
+  {
     "name": "SudokuTrainer",
+    "short_name": "SudoTrain",
+    "description": "Github Page as a Progressive Web App",
+  
+    "scope": "/sudokuSolver/",
+    "start_url": "/sudokuSolver/",
+  
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+  
+    "display": "standalone", 
+    
     "icons": [
-      {
-        "src": "./images/icon.png",
-        "type": "image/png"
-      }
-    ],
-    "start_url": "https://hubertbertling.github.io/sudokuSolver/index.html",
-    "display": "standalone"
+        {
+          "src": "/sudokuSolver/img/icon.png",
+          "type": "image/png",
+          "sizes": "700x700"
+        }
+    ]
   }
+
   

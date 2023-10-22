@@ -10,7 +10,10 @@
     <link rel="shortcut icon" href="./images/icon.png" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="manifest" href="manifest.webmanifest" />
+   
+    <link rel="canonical" href="https://hubertbertling.github.io/sudokuSolver/" />
+    <link rel="manifest" href="/sudokuSolver/manifest.webmanifest">
+
     <script src="dist/winbox.bundle.js"></script>
     <link rel="stylesheet" media="screen and (max-width: 359px)" href="verysmallscreen.css">
     <link rel="stylesheet" media="screen and (min-width: 360px) and (max-width: 490px)" href="smallscreen.css">
@@ -345,6 +348,16 @@
 
     <script src="./sudokuCommon.js"></script>
     <script src="./sudokuMainApp.js"></script>
+
+    <script>
+        if (navigator.serviceWorker) {
+          navigator.serviceWorker.register (
+            '/sudokuSolver/sw.js',
+            {scope: '/sudokuSolver/'}
+          )
+        }
+    </script>
+
 </body>
 
 </html>
