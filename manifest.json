@@ -1,0 +1,12 @@
+{
+    "name": "SudokuTrainer",
+    "icons": [
+      {
+        "src": "./images/icon.png",
+        "type": "image/png"
+      }
+    ],
+    "start_url": "https://hubertbertling.github.io/sudokuSolver/",
+    "display": "standalone"
+  }
+  
