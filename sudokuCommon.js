@@ -980,7 +980,7 @@ class SudokuSolver extends SudokuCalculator {
         // The rotating loader icon is started
         this.notifyAspect('puzzleGenerator', 'started');
         // A new web worker that performs the generation, is created.
-        let webworkerPuzzleGenerator = new Worker("/generatorApp.js");
+        let webworkerPuzzleGenerator = new Worker("./generatorApp.js");
         // A message handler is given to the web worker. The web worker
         // sends a message containing the generated puzzle as a string.
         webworkerPuzzleGenerator.onmessage = function (e) {
