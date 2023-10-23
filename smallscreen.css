@@ -360,14 +360,11 @@ html {
     gap: 0.4rem;
 }
 
-/*
-.mobile-grid-container{
-   
-  grid-template-columns: [first] 40px [line2] 50px [line3] auto [col4-start] 50px [five] 40px [end];
-  grid-template-rows: [row1-start] 25% [row1-end] 100px [second-line] auto [last-line];
+.trainer-label {
+    flex-grow: 0;
+    font-size: 2.4rem;
+    text-align: center;
 }
-  height: calc(100% - 50px);
-*/
 
 .mobile-btn {
     background-color: var(--standard-btn-bg-color);

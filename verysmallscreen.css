@@ -355,6 +355,12 @@ html {
     gap: 0.4rem;
 }
 
+.trainer-label {
+    flex-grow: 0;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
 
 input[type="radio"] {
     height: 1.2rem;
