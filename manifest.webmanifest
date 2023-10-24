@@ -6,6 +6,9 @@
   
     "scope": "/sudokuSolver/",
     "start_url": "/sudokuSolver/",
+
+    "id": "/sudokuSolver/",
+    "installMode": "prefetch",
   
     "background_color": "#ffffff",
     "theme_color": "#ffffff",
