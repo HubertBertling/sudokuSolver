@@ -2001,20 +2001,31 @@ class StepperOnGrid {
 
     calculateNeccesarySelectionFrom(selectionList) {
         // Berechnet Selektion von Zellen, die eine notwendige Nummer enthalten.
-        for (let i = 0; i < selectionList.length; i++) {
-            if (selectionList[i].necessaryOnes.length > 0) {
-                return selectionList[i];
-            }
-        }
-        // Falls es keine Zellen mit notwendigen Nummern gibt
+        let minIndex = -1;
+        let min = 10;
+        
         let emptySelection = {
             index: -1,
             options: [],
-            //       indirectNecessaryOnes: [],
             necessaryOnes: [],
             level_0_singles: []
         }
-        return emptySelection;
+        for (let i = 0; i < selectionList.length; i++) {
+            if (selectionList[i].necessaryOnes.length > 0) {
+                // Kleinste notwendige Nummer zuerst
+                if (selectionList[i].necessaryOnes[0] < min) {
+                    min = selectionList[i].necessaryOnes[0];
+                    minIndex = i;
+                }
+            }
+        }
+        if (min < 10) {
+            return selectionList[minIndex];            
+        }
+        else {
+            // Falls es keine Zellen mit notwendigen Nummern gibt
+            return emptySelection;
+        }
     }
 
     calculateLevel_0_SinglesSelectionFrom(selectionList) {
@@ -5673,7 +5684,7 @@ class SudokuPuzzleDB {
             }
         } else {
             puzzleRecord.stepsLazy = storedPuzzle.stepsLazy;
-            puzzleRecord.stepsStrict = storedPuzzle.stepsStrict;   
+            puzzleRecord.stepsStrict = storedPuzzle.stepsStrict;
         }
         this.savePuzzle(puzzleId, puzzleName, puzzleRecord);
     }
