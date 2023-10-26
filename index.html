@@ -15,7 +15,6 @@
     <link rel="canonical" href="https://hubertbertling.github.io/sudokuSolver/" />
     <link rel="manifest" href="/sudokuSolver/manifest.webmanifest">
 
-    <script src="dist/winbox.bundle.js"></script>
     <link rel="stylesheet" media="screen and (max-width: 359px)" href="verysmallscreen.css">
     <link rel="stylesheet" media="screen and (min-width: 360px) and (max-width: 490px)" href="smallscreen.css">
     <link rel="stylesheet" media="screen and (min-width: 491px)" href="widescreen.css">
@@ -351,9 +350,7 @@
         <button class="infoDlg-OK-Btn" id="infoDlg-OK-Btn">OK</button>
     </dialog>
 
-
-    <script src="./sudokuCommon.js"></script>
-    <script src="./sudokuMainApp.js"></script>
+    <script src="dist/winbox.bundle.js"></script>
 
     <script>
         if (navigator.serviceWorker) {
@@ -363,6 +360,8 @@
           )
         }
     </script>
+    <script src="./sudokuCommon.js"></script>
+    <script src="./sudokuMainApp.js"></script>
 
 </body>
 
