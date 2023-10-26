@@ -1611,6 +1611,7 @@ class StepperOnGrid {
     // ein Rückwärtsschritt ist ein Paar (Zelle selektieren, gesetzte Nummer zurücknehmen)
 
     constructor(suGrid) {
+        this.lastNecessaryNumberSet = '0';
         this.indexSelected = -1;
         this.myResult = '';
         this.myGrid = suGrid;
@@ -1626,6 +1627,7 @@ class StepperOnGrid {
     }
 
     init() {
+        this.lastNecessaryNumberSet = '0';
         this.indexSelected = this.myGrid.indexSelected;
         this.myResult = '';
         this.goneSteps = 0;
@@ -1642,15 +1644,6 @@ class StepperOnGrid {
             this.myGrid.myCalculator.onStepExecution();
         }
     }
-
-    /*
-
-    notifyLoopFinished() {
-        if (this.myGrid.myCalculator.isStepExecutionObserver) {
-            this.myGrid.myCalculator.onLoopFinish();
-        }
-    }
-    */
 
     // =============================================================
     // Getter
@@ -2001,8 +1994,8 @@ class StepperOnGrid {
 
     calculateNeccesarySelectionFrom(selectionList) {
         // Berechnet Selektion von Zellen, die eine notwendige Nummer enthalten.
-        let minIndex = -1;
-        let min = 10;
+        let currentIndex = -1;
+        let currentNr = '0';
         
         let emptySelection = {
             index: -1,
@@ -2012,18 +2005,22 @@ class StepperOnGrid {
         }
         for (let i = 0; i < selectionList.length; i++) {
             if (selectionList[i].necessaryOnes.length > 0) {
-                // Kleinste notwendige Nummer zuerst
-                if (selectionList[i].necessaryOnes[0] < min) {
-                    min = selectionList[i].necessaryOnes[0];
-                    minIndex = i;
+                // Die zuletzt gesetzte notwendige Nummer noch einmal
+                if (selectionList[i].necessaryOnes[0] == this.lastNecessaryNumberSet) {
+                    return selectionList[i];               
+                } else {
+                    currentNr = selectionList[i].necessaryOnes[0];
+                    currentIndex = i;
                 }
             }
         }
-        if (min < 10) {
-            return selectionList[minIndex];            
+        if (currentNr !== '0') {
+            this.lastNecessaryNumberSet = currentNr;            
+            return selectionList[currentIndex];
         }
         else {
             // Falls es keine Zellen mit notwendigen Nummern gibt
+            this.lastNecessaryNumberSet = '0';
             return emptySelection;
         }
     }
