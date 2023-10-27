@@ -1996,13 +1996,16 @@ class StepperOnGrid {
         // Berechnet Selektion von Zellen, die eine notwendige Nummer enthalten.
         let currentIndex = -1;
         let currentNr = '0';
-        
+        let minIndex = -1;
+        let min = '10';
+
         let emptySelection = {
             index: -1,
             options: [],
             necessaryOnes: [],
             level_0_singles: []
         }
+        
         for (let i = 0; i < selectionList.length; i++) {
             if (selectionList[i].necessaryOnes.length > 0) {
                 // Die zuletzt gesetzte notwendige Nummer noch einmal
@@ -2011,12 +2014,17 @@ class StepperOnGrid {
                 } else {
                     currentNr = selectionList[i].necessaryOnes[0];
                     currentIndex = i;
+                    //Mit der kleinsten Nummer beginnen
+                    if (parseInt(currentNr) < parseInt(min)) {
+                        min = currentNr;
+                        minIndex = currentIndex;
+                    }
                 }
             }
         }
-        if (currentNr !== '0') {
-            this.lastNecessaryNumberSet = currentNr;            
-            return selectionList[currentIndex];
+        if (min !== '10') {
+            this.lastNecessaryNumberSet = min;            
+            return selectionList[minIndex];
         }
         else {
             // Falls es keine Zellen mit notwendigen Nummern gibt

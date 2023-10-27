@@ -1,8 +1,7 @@
- 
-  {
+   {
     "name": "SudokuTrainer",
-    "short_name": "SudoTrain",
-    "description": "Github Page as a Progressive Web App",
+    "short_name": "SudokuTrainer",
+    "description": "This is a Sudoku-solver, -generator and -trainer.",
   
     "scope": "/sudokuSolver/",
     "start_url": "/sudokuSolver/",
