@@ -1611,7 +1611,7 @@ class StepperOnGrid {
     // ein Rückwärtsschritt ist ein Paar (Zelle selektieren, gesetzte Nummer zurücknehmen)
 
     constructor(suGrid) {
-        this.lastNecessaryNumberSet = '0';
+        this.lastNumberSet = '0';
         this.indexSelected = -1;
         this.myResult = '';
         this.myGrid = suGrid;
@@ -1627,7 +1627,7 @@ class StepperOnGrid {
     }
 
     init() {
-        this.lastNecessaryNumberSet = '0';
+        this.lastNumberSet = '0';
         this.indexSelected = this.myGrid.indexSelected;
         this.myResult = '';
         this.goneSteps = 0;
@@ -1688,6 +1688,7 @@ class StepperOnGrid {
     // =============================================================
 
     startAsyncLoop() {
+        this.lastNumberSet = '0';
         if (this.indexSelected !== this.myGrid.indexSelected && this.indexSelected !== -1) {
             this.myGrid.indexSelect(this.indexSelected);
         }
@@ -1771,6 +1772,7 @@ class StepperOnGrid {
     }
 
     startSynchronousLoop() {
+        this.lastNumberSet = '0';
         if (this.indexSelected !== this.myGrid.indexSelected && this.indexSelected !== -1) {
             this.myGrid.indexSelect(this.indexSelected);
         }
@@ -1891,6 +1893,7 @@ class StepperOnGrid {
             // Aktion:
             // Setze die eindeutige Nummer
             this.atCurrentSelectionSetAutoNumber(currentStep);
+            this.lastNumberSet = currentStep.getValue();
             this.goneSteps++;
             // Falls die Nummernsetzung zur Unlösbarkeit führt
             // muss der Solver zurückgehen
@@ -2009,7 +2012,7 @@ class StepperOnGrid {
         for (let i = 0; i < selectionList.length; i++) {
             if (selectionList[i].necessaryOnes.length > 0) {
                 // Die zuletzt gesetzte notwendige Nummer noch einmal
-                if (selectionList[i].necessaryOnes[0] == this.lastNecessaryNumberSet) {
+                if (selectionList[i].necessaryOnes[0] == this.lastNumberSet) {
                     return selectionList[i];               
                 } else {
                     currentNr = selectionList[i].necessaryOnes[0];
@@ -2023,12 +2026,10 @@ class StepperOnGrid {
             }
         }
         if (min !== '10') {
-            this.lastNecessaryNumberSet = min;            
             return selectionList[minIndex];
         }
         else {
             // Falls es keine Zellen mit notwendigen Nummern gibt
-            this.lastNecessaryNumberSet = '0';
             return emptySelection;
         }
     }
@@ -2095,7 +2096,6 @@ class StepperOnGrid {
             let emptySelection = {
                 index: -1,
                 options: [],
-                ///             indirectNecessaryOnes: [],
                 necessaryOnes: [],
                 level_0_singles: []
             }
