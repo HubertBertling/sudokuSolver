@@ -1,8 +1,16 @@
 let sudoApp;
 function start() {
+
+    if (navigator.serviceWorker) {
+        navigator.serviceWorker.register(
+            '/sudokuSolver/sw.js',
+            { scope: '/sudokuSolver/' }
+        )
+    }
+
     sudoApp = new SudokuMainApp();
     sudoApp.init();
-    
+
 }
 class SudokuMainApp {
     constructor() {
@@ -28,7 +36,7 @@ class SudokuMainApp {
     }
 
     init() {
-        this.myPuzzleDB.migratePuzzleDB() 
+        this.myPuzzleDB.migratePuzzleDB()
         this.mySolver.init();
         this.mySolver.notify();
         this.myPuzzleDB.init();
