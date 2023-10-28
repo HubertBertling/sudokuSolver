@@ -13,7 +13,7 @@
     
     "icons": [
         {
-          "src": "/images/icon.png",
+          "src": "/sudokuSolver/images/icon.png",
           "type": "image/png",
           "sizes": "700x700"
         }
