@@ -44,8 +44,8 @@ class SudokuMainApp {
 // PWA
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register(
-        '/sw.js',
-        { scope: '/' }
+        '/sudokuSolver/sw.js',
+        { scope: '/sudokuSolver/' }
     )
 }
 
