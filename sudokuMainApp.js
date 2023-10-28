@@ -1,13 +1,6 @@
 let sudoApp;
 function start() {
 
-    if (navigator.serviceWorker) {
-        navigator.serviceWorker.register(
-            '/sudokuSolver/sw.js',
-            { scope: '/sudokuSolver/' }
-        )
-    }
-
     sudoApp = new SudokuMainApp();
     sudoApp.init();
 
@@ -48,5 +41,11 @@ class SudokuMainApp {
     }
 }
 
+if (navigator.serviceWorker) {
+    navigator.serviceWorker.register(
+        '/sudokuSolver/sw.js',
+        { scope: '/sudokuSolver/' }
+    )
+}
 // Launch and initialize the app
 start();
