@@ -3,12 +3,9 @@
     "short_name": "SudokuTrainer",
     "description": "This is a Sudoku-solver, -generator and -trainer.",
   
-    "scope": "/sudokuSolver/",
-    "start_url": "/sudokuSolver/",
+    "scope": "/",
+    "start_url": ".",
 
-    "id": "/sudokuSolver/",
-    "installMode": "prefetch",
-  
     "background_color": "#ffffff",
     "theme_color": "#ffffff",
   
@@ -16,7 +13,7 @@
     
     "icons": [
         {
-          "src": "/sudokuSolver/images/icon.png",
+          "src": "/images/icon.png",
           "type": "image/png",
           "sizes": "700x700"
         }
