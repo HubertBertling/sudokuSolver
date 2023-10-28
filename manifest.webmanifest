@@ -3,8 +3,8 @@
     "short_name": "SudokuTrainer",
     "description": "This is a Sudoku-solver, -generator and -trainer.",
   
-    "scope": "/",
-    "start_url": ".",
+    "scope": "/sudokuSolver/",
+    "start_url": "/sudokuSolver",
 
     "background_color": "#ffffff",
     "theme_color": "#ffffff",
