@@ -25,7 +25,7 @@ var URLS = [
   `${GHPATH}/smallscreen.css`,
   `${GHPATH}/verysmallscreen.css`,
   `${GHPATH}/print.css`,
-  `${GHPATH}/images/icon.png`,
+  `${GHPATH}/images/sudoku.png`,
   `${GHPATH}/images/ok.png`,
   `${GHPATH}/images/fail.png`,
   `${GHPATH}/README.md`,

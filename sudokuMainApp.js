@@ -41,13 +41,13 @@ class SudokuMainApp {
     }
 }
 
-// PWA
+/* PWA
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register(
         './sw.js',
         { scope: '/sudokuSolver/' }
     )
 }
-
+*/
 // Launch and initialize the app
 start();
