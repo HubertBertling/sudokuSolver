@@ -9,7 +9,7 @@ var APP_PREFIX = 'sudo_';
 // you need to change this version (version_01, version_02…). 
 // If you don't change the version, the service worker will give your
 // users the old files!
-var VERSION = 'version_05';
+var VERSION = 'version_06';
 
 // The files to make available for offline use. make sure to add 
 // others to this list
@@ -27,13 +27,16 @@ var URLS = [
   `${GHPATH}/print.css`,
   `${GHPATH}/images/sudoku.png`,
   `${GHPATH}/images/ok.png`,
-  `${GHPATH}/images/fail.png`
-  /*
-  ,
-  `${GHPATH}/README.md`,
-  `${GHPATH}/help.md`,
-  `${GHPATH}/_config.yml`
-  */
+  `${GHPATH}/images/fail.png`,
+  `${GHPATH}/images/pfeilrueckwaerts.png`,
+  `${GHPATH}/images/pfeilvorwaerts.png`,
+  `${GHPATH}/images/play-96.png`,
+  `${GHPATH}/images/pause-96.png`,
+  `${GHPATH}/images/stop-96.png`,
+  `${GHPATH}/images/step-96.png`,
+  `${GHPATH}/images/save.png`,
+  `${GHPATH}/images/oeffnen.png`,
+  `${GHPATH}/images/gueckwunsch.jfif`
 ]
 
 const CACHE_NAME = APP_PREFIX + VERSION
