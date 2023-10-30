@@ -3786,6 +3786,7 @@ class SudokuGrid extends SudokuModel {
                 // eine Neusetzung erfolgen
                 (this.selectedCell.getPhase() == currentPhase)
             ) {
+                this.selectedCell.unsetWrong();
                 this.selectedCell.manualSetValue(btnNumber, currentPhase);
                 this.deselect();
                 this.evaluateMatrix();
@@ -3803,6 +3804,7 @@ class SudokuGrid extends SudokuModel {
                 // eine Neusetzung erfolgen
                 (this.selectedCell.getPhase() == 'play')
             ) {
+                this.selectedCell.unsetWrong();
                 this.selectedCell.autoSetValue(currentStep);
                 this.deselect();
                 this.evaluateMatrix();
@@ -5085,6 +5087,9 @@ class SudokuCell extends SudokuModel {
     }
     setWrong() {
         this.wrong = true;
+    }
+    unsetWrong() {
+        this.wrong = false;
     }
 
     getMyIndex() {
