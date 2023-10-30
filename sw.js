@@ -1,6 +1,6 @@
 
 // Change this to your repository name
-var GHPATH = 'https://hubertbertling.github.io/sudokuSolver/';
+var GHPATH = 'https://hubertbertling.github.io/sudokuSolver';
 
 // Choose a different app prefix name
 var APP_PREFIX = 'sudo_';
@@ -9,7 +9,7 @@ var APP_PREFIX = 'sudo_';
 // you need to change this version (version_01, version_02…). 
 // If you don't change the version, the service worker will give your
 // users the old files!
-var VERSION = 'version_02';
+var VERSION = 'version_03';
 
 // The files to make available for offline use. make sure to add 
 // others to this list
