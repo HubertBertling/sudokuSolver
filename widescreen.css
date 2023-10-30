@@ -637,6 +637,9 @@ label {
       margin: 0 0 1em 0;
   }
 
+ .pc-floatBlock {
+    flex-grow: 1;
+}
 .eval-type {
     font-size: 1.2rem;
  }

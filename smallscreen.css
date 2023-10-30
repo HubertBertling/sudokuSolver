@@ -449,6 +449,10 @@ label {
       margin: 0 0 1em 0; 
        }
 
+       
+.pc-floatBlock {
+    flex-grow: 1;
+}
   .loaded-evaluations, .technique{
     font-size: 1.2rem;
   }
