@@ -27,11 +27,12 @@
 
 <body>
     <div class="app-content">
-        <div class= "col-3 app-header">
+        <div class="app-header">
             <div>
                 Sudoku Trainer
             </div>
-            <button class="pc-btn header-btn-help" id="header-btn-help">?</button>
+            <button class="header-btn-help" id="header-btn-help"> <img src="images/help.png"
+                    class="btn-image-help"></button>
         </div>
         <div class="sudoku-solver-container">
             <div class="gridArea" id="gridArea">
@@ -120,65 +121,14 @@
                 </div>
 
             </div>
-
-            <!-- <div class="game-col2">
-                  <div class="pc-grid-container noprint">
-
-                    <button class="pc-btn btn-col-1-2 btn-generate" id="btn-generate">Neu</button>
-                    <button class="pc-btn btn-col-3-4 btn-init" id="btn-init">Initialisieren</button>
-                    <button class="pc-btn btn-col-5-6 btn-reset" id="btn-reset">Zurück</button>
-                    <button class="pc-btn btn-col-1-2 btn-define" id="btn-define">Definieren</button>
-                    <button class="pc-btn btn-col-3-4 btn-play" id="btn-play">Lösen</button>
-                    <button class="pc-btn btn-col-5-6 btn-delete-cell" id="btn-delete-cell">X</button>
-                    <button class="pc-btn btn-col-1-2 number">1</button>
-                    <button class="pc-btn btn-col-3-4 number">2</button>
-                    <button class="pc-btn btn-col-5-6 number">3</button>
-                    <button class="pc-btn btn-col-1-2 number">4</button>
-                    <button class="pc-btn btn-col-3-4 number">5</button>
-                    <button class="pc-btn btn-col-5-6 number">6</button>
-                    <button class="pc-btn btn-col-1-2 number">7</button>
-                    <button class="pc-btn btn-col-3-4 number">8</button>
-                    <button class="pc-btn btn-col-5-6 number">9</button>
-                    <button class="pc-btn btn-col-1-2-3-4-5-6 btn-showWrongNumbers">Prüfen</button>
-
-                    <button class="pc-btn btn-automatic btn-col-1-2 btn-run" id="btn-run"><img src="images/play-96.png"
-                            class="btn-image">
-                        <span>Start</span>
-                    </button>
-                    <button class="pc-btn btn-automatic btn-col-3-4 btn-pause" id="btn-pause"><img
-                            src="images/pause-96.png" class="btn-image">
-                        <span>Pause</span>
-                    </button>
-                    <button class="pc-btn btn-automatic btn-col-5-6 btn-stop" id="btn-stop"><img
-                            src="images/stop-96.png" class="btn-image">
-                        <span>Stop</span>
-                    </button>
-                    <button class="pc-btn btn-autoStep btn-col-1-2-3-4-5-6" id="btn-autoStep">
-                        <img src="images/step-96.png" class="btn-image">
-                        <span>Schritt</span>
-                    </button>
-
-                    <button class="pc-btn btn-save btn-col-1-2-3" id="btn-save"><img src="images/save.png"
-                            class="btn-image-save">
-                    </button>
-                    <button class="pc-btn btn-col-4-5-6" id="btn-open-db"><img src="images/oeffnen.png"
-                            class="btn-image-open"></button>
-
-                    <!--  <button class="pc-btn btn-save btn-col-1-2-3" id="btn-save">Speichern unter</button>
-                            <button class="pc-btn btn-col-4-5-6 btn-overwrite" id="btn-overwrite">Überschreiben</button> 
-                    <button class="pc-btn btn-print btn-col-1-2-3-4-5-6" id="btn-print">Drucken</button>
-                </div>
-            </div>
-        -->
-
             <div class="mobile-btn-container">
 
                 <button class="mobile-interface mobile-btn btn-generate">Neu</button>
                 <button class="mobile-interface mobile-btn btn-init">Init</button>
                 <button class="mobile-interface mobile-btn btn-reset">Zurück</button>
                 <button class="mobile-interface mobile-btn btn-showWrongNumbers">Prüfen</button>
-                <button class="mobile-interface mobile-btn" id="mobile-btn-print"><img
-                    src="images/drucker.png" class="btn-image-print">
+                <button class="mobile-interface mobile-btn" id="mobile-btn-print"><img src="images/drucker.png"
+                        class="btn-image-print">
                 </button>
 
                 <button class="mobile-interface mobile-btn btn-define">Def.</button>
@@ -188,7 +138,7 @@
                 <button class="mobile-interface mobile-btn mobile-btn-save" id="btn-save-mobile"><img
                         src="images/save.png" class="btn-image-save">
                 </button>
-                <button class="mobile-interface mobile-btn mobile-btn-restore" id="btn-restore-mobile"><img
+                <button class="mobile-interface mobile-btn btn-db-open" id="btn-db-open"><img
                         src="images/oeffnen.png" class="btn-image-open"></button>
 
 
@@ -222,89 +172,28 @@
 
             </div>
         </div>
-        <div class="trainer-label">
-            Sudoku Trainer
+        <div class="app-footer">
+            <div>
+
+            </div>
         </div>
-    <!--Der Inhalt des Reiters Puzzle-Datenbank-->
-        <!--
-        <div id="puzzle-db" class="tabcontent tabdatabase">
-            <section class="noprint">
-                <div class="container" id="table-container">
-                    <table class="puzzle-db-table " id="puzzle-db-table">
-                        <thead class="puzzle-db-thead">
-                            <tr>
-                                <th style="cursor:pointer">Puzzle-Id <div>Puzzle-Id</div>
-                                </th>
-                                <th id="col-name" style="cursor:pointer">Puzzle-Name <div>Puzzle-Name</div>
-                                </th>
-                                <th id="col-defCount" style="cursor:pointer">Def. Zellen<div>Def. Zellen</div>
-                                </th>
-                                <th id="col-status" style="cursor:pointer">Status<div>Status</div>
-                                </th>
-                                <th id="col-steps-lazy" style="cursor:pointer">Schritte (lazy)<div>Schritte (lazy)
-                                    </div>
-                                </th>
-                                <th id="col-steps-strict" style="cursor:pointer">Schritte (strikt)<div>Schritte
-                                        (strikt)
-                                    </div>
-                                </th>
-                                <th id="col-level" style="cursor:pointer">Level<div>Level</div>
-                                </th>
-                                <th id="col-backTracks" style="cursor:pointer">#Rückwärts<div>#Rückwärts</div>
-                                </th>
-                                <th id="col-date" style="cursor:pointer">Datum<div>Datum</div>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="puzzle-db-tbody" id="puzzle-db-tbody">
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-            <div class="puzzle-btns ">
-                <button class="pc-btn noprint" id="pz-btn-load">Laden
-                </button>
-                <button class="pc-btn noprint" id="pz-btn-previous"
-                    onclick="sudoApp.myPuzzleDBController.previousBtnPressed()"><img src="images/pfeilrueckwaerts.png"
-                        class="forward-backward-image"></button>
-                <button class="pc-btn noprint" id="pz-btn-next"
-                    onclick="sudoApp.myPuzzleDBController.nextBtnPressed()"><img src="images/pfeilvorwaerts.png"
-                        class="forward-backward-image"></button>
-                <button class="pc-btn noprint" id="pz-btn-delete"
-                    onclick="sudoApp.myPuzzleDBController.deleteBtnPressed()">Löschen</button>
-            </div>
-            <div class="puzzle-header">
-                <h2 class="noprint">Selektiertes Puzzle:</h2>
-                <div class="pz-id-row" id="pz-id-row">0</div>
-            </div>
-            <div class="puzzle-line">
-                <div class="pz-table" id="screen-puzzle">
-                </div>
-                <div class="pz-table" id="print-puzzle">
-                </div>
-            </div>
-            <button class="pc-btn noprint" id="pz-btn-print"
-                onclick="sudoApp.myPuzzleDBController.printBtnPressed()">Drucken</button>
-        </div>
-    -->
+
     </div>
-    </div>
-    </div>
-    </div>
+
     <!--Dialoge -->
 
     <dialog class="puzzle-db-dialog" id="puzzle-db-dialog">
 
         <div class="puzzle-btns ">
             <!--Die 4 buttons unterhalb der Puzzle-Datenbanktabelle -->
-            <button class="pc-btn noprint" id="pz-btn-load">Laden</button>
-            <button class="pc-btn noprint" id="pz-btn-edit">Bearbeiten</button>
-            <button class="pc-btn noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
+            <button class="mobile-btn noprint" id="pz-btn-load">Laden</button>
+            <button class="mobile-btn noprint" id="pz-btn-edit">Bearbeiten</button>
+            <button class="mobile-btn noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
                     class="forward-backward-image"></button>
-            <button class="pc-btn noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
+            <button class="mobile-btn noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
                     class="forward-backward-image"></button>
-            <button class="pc-btn noprint" id="pz-btn-delete">Löschen</button>
-            <button class="pc-btn noprint" id="pz-btn-ok">Schließen</button>
+            <button class="mobile-btn noprint" id="pz-btn-delete">Löschen</button>
+            <button class="mobile-btn noprint" id="pz-btn-ok">Schließen</button>
 
 
         </div>

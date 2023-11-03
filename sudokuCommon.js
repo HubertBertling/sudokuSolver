@@ -139,19 +139,8 @@ class SudokuSolverController {
             this.saveBtnPressed();
         });
 
-        document.getElementById('btn-restore-mobile').addEventListener('click', () => {
+        document.getElementById('btn-db-open').addEventListener('click', () => {
             this.openDBBtnPressed();
-        });
-
-
-        // Click-Event for save button mobile
-        document.getElementById('btn-save-mobile').addEventListener('click', () => {
-            // Stop automatic execution that may be running
-            this.mySolver.myStepper.stopAsyncLoop();
-            // Close possibly open success dialogue
-            this.mySuccessDialog.close();
-            // Save puzzle 
-            this.savePuzzleMobile();
         });
 
         // Overwrite puzzle data in the puzzle database, 
@@ -161,8 +150,6 @@ class SudokuSolverController {
         });
         */
 
-        // Save and print puzzle data, 
-        // only available in the desktop variant
         document.getElementById('mobile-btn-print').addEventListener('click', () => {
             this.printBtnPressed();
         });
@@ -175,14 +162,6 @@ class SudokuSolverController {
             })
         });
 
-        // Radio button eval type: No-evaluation, Lazy, Strikt+ oder Strikt-
-        // desktop variant
-        let radioEvalNodes = document.querySelectorAll('.pc-eval-type');
-        radioEvalNodes.forEach(radioNode => {
-            radioNode.addEventListener('click', () => {
-                this.mySolver.setActualEvalType(radioNode.value);
-            })
-        });
         // Radio button eval type: No-evaluation, Lazy, Strikt+ oder Strikt-
         // mobile variant
         let mobileRadioEvalNodes = document.querySelectorAll('.mobile-eval-type');
@@ -280,7 +259,7 @@ class SudokuSolverController {
     }
 
     openDBBtnPressed() {
-        
+        sudoApp.myPuzzleDB.notify();
         sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();    
     }
     overwriteBtnPressed() {
@@ -932,7 +911,6 @@ class SudokuSolver extends SudokuCalculator {
             // the puzzle must be reset at this point.
             sudoApp.mySolver.reset();
             sudoApp.mySolver.notify();
-            sudoApp.myTabView.openGrid();
             sudoApp.mySolver.setActualEvalType(tmpEvalType);
             // The rotating loader icon is stopped
             sudoApp.mySolver.notifyAspect('puzzleGenerator', 'finished');
@@ -5423,12 +5401,7 @@ class SudokuPuzzleDBController {
             this.closeBtnPressed();
         });
 
-
-        document.getElementById('btn-restore-mobile').addEventListener('click', () => {
-            this.mobileRestoreBtnPressed();
-
-        });
-    }
+       }
 
     // ===============================================================
     // DB-Event handler
@@ -5446,7 +5419,7 @@ class SudokuPuzzleDBController {
             let uid = this.myPuzzleDB.getSelectedUid();
             sudoApp.mySolver.loadPuzzle(uid, puzzle);
             sudoApp.mySolver.notify();
-            sudoApp.myTabView.openGrid();
+            this.myPuzzleDBDialog.close();
         }
     }
 
