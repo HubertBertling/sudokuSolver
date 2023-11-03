@@ -23,9 +23,10 @@ class SudokuMainApp {
         // 2. The database component
         this.myPuzzleDB = new SudokuPuzzleDB();
         this.myPuzzleDBController = new SudokuPuzzleDBController(this.myPuzzleDB);
-
-        // 3. The tab view component
-        this.myTabView = new SudokuTabView();
+        this.myPuzzleDBView = new SudokuPuzzleDBView(this.myPuzzleDB);
+      //  this.myMobilePuzzleDBView = new SudokuMobilePuzzleDBView(this.myPuzzleDB);
+        this.myPuzzleDB.attach(this.myPuzzleDBView);
+     //   this.myPuzzleDB.attach(this.myMobilePuzzleDBView);
     }
 
     init() {
@@ -33,7 +34,6 @@ class SudokuMainApp {
         this.mySolver.init();
         this.mySolver.notify();
         this.myPuzzleDB.init();
-        this.myTabView.init();
     }
 
     helpFunktion() {
@@ -41,13 +41,5 @@ class SudokuMainApp {
     }
 }
 
-/* PWA
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register(
-        './sw.js',
-        { scope: '/sudokuSolver/' }
-    )
-}
-*/
 // Launch and initialize the app
 start();

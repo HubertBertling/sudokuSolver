@@ -1,81 +1,3 @@
-
-class SudokuTabView {
-    // The tab view component
-    constructor() {
-        this.myPages = [];
-        // 1. The tab "Sudoku Solver"
-        this.myPages.push(new SudokuGridPage("sudoku-grid-tab", "sudoku-solver"));
-        // 2. The tab "Puzzle Database"
-        this.myPages.push(new SudokuDatabasePage("puzzle-db-tab", "puzzle-db"));
-        // 3. the help tab
-        this.myPages.push(new SudokuHelpPage("puzzle-help-tab", "help"));
-    }
-    open(pageToOpen) {
-        // Close all tabs
-        this.myPages.forEach(page => {
-            page.close();
-        })
-        pageToOpen.open();
-    }
-    openGrid() {
-        // Close all tabs
-        this.myPages.forEach(page => {
-            page.close();
-        })
-        // Open the solver tab (the first tab)
-        this.myPages[0].open();
-    }
-    init() {
-        this.openGrid();
-    }
-}
-class SudokuTabbedPage {
-    // Abstract class for the tabbed page
-    constructor(linkNodeId, contentNodeId) {
-        this.myLinkNode = document.getElementById(linkNodeId);
-        this.myContentNode = document.getElementById(contentNodeId);
-        this.myLinkNode.addEventListener('click', () => {
-            sudoApp.myTabView.open(this);
-        })
-        this.close();
-    }
-    close() {
-        this.myContentNode.style.display = "none";
-        this.myLinkNode.style.backgroundColor = "";
-        this.myLinkNode.style.color = "";
-    }
-    open() {
-        this.myContentNode.style.display = "block";
-        this.myLinkNode.style.backgroundColor = 'rgb(195, 185, 185)';
-        this.myLinkNode.style.color = 'black';
-    }
-}
-class SudokuGridPage extends SudokuTabbedPage {
-    constructor(tabId, contentId) {
-        super(tabId, contentId);
-    }
-    open() {
-        sudoApp.mySolver.notify();
-        super.open();
-    }
-} class SudokuDatabasePage extends SudokuTabbedPage {
-    constructor(tabId, contentId) {
-        super(tabId, contentId);
-    }
-    open() {
-        super.open();
-        sudoApp.myPuzzleDB.display();
-    }
-}
-class SudokuHelpPage extends SudokuTabbedPage {
-    constructor(tabId, contentId) {
-        super(tabId, contentId);
-    }
-    open() {
-        super.open();
-    }
-}
-
 class SudokuSolverController {
     constructor(solver) {
         // The solver model
@@ -206,11 +128,22 @@ class SudokuSolverController {
                 this.generateBtnPressed();
             })
         });
+        
+        document.getElementById('header-btn-help').addEventListener('click', () => {
+            sudoApp.helpFunktion();
+        });
+
 
         // Click-Event for save button desktop
-        document.getElementById('btn-save').addEventListener('click', () => {
+        document.getElementById('btn-save-mobile').addEventListener('click', () => {
             this.saveBtnPressed();
         });
+
+        document.getElementById('btn-restore-mobile').addEventListener('click', () => {
+            this.openDBBtnPressed();
+        });
+
+
         // Click-Event for save button mobile
         document.getElementById('btn-save-mobile').addEventListener('click', () => {
             // Stop automatic execution that may be running
@@ -220,15 +153,17 @@ class SudokuSolverController {
             // Save puzzle 
             this.savePuzzleMobile();
         });
+
         // Overwrite puzzle data in the puzzle database, 
         // only available in the desktop variant
-        document.getElementById('btn-overwrite').addEventListener('click', () => {
+        /* document.getElementById('btn-overwrite').addEventListener('click', () => {
             this.overwriteBtnPressed();
         });
+        */
 
         // Save and print puzzle data, 
         // only available in the desktop variant
-        document.getElementById('btn-print').addEventListener('click', () => {
+        document.getElementById('mobile-btn-print').addEventListener('click', () => {
             this.printBtnPressed();
         });
 
@@ -344,6 +279,10 @@ class SudokuSolverController {
         this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');
     }
 
+    openDBBtnPressed() {
+        
+        sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();    
+    }
     overwriteBtnPressed() {
         this.mySolver.autoExecStop();
         this.mySuccessDialog.close();
@@ -1134,6 +1073,24 @@ class ProgressBar {
     }
 }
 
+class PuzzleDBDialog {
+    constructor() {
+        this.myOpen = false;
+        this.myPuzzleDBDialogNode = document.getElementById("puzzle-db-dialog")
+    }
+
+    open() {
+        this.myOpen = true;
+        this.myPuzzleDBDialogNode.showModal();
+    }
+
+    close() {
+        if (this.myOpen) {
+            this.myPuzzleDBDialogNode.close();
+            this.myOpen = false;
+        }
+    }
+}
 
 class PuzzleSaveDialog {
     constructor() {
@@ -2008,12 +1965,12 @@ class StepperOnGrid {
             necessaryOnes: [],
             level_0_singles: []
         }
-        
+
         for (let i = 0; i < selectionList.length; i++) {
             if (selectionList[i].necessaryOnes.length > 0) {
                 // Die zuletzt gesetzte notwendige Nummer noch einmal
                 if (selectionList[i].necessaryOnes[0] == this.lastNumberSet) {
-                    return selectionList[i];               
+                    return selectionList[i];
                 } else {
                     currentNr = selectionList[i].necessaryOnes[0];
                     currentIndex = i;
@@ -5416,12 +5373,14 @@ class SudokuPuzzleDBController {
     constructor(puzzleDb) {
         // Der Save-Dialog
         this.myPuzzleDB = puzzleDb;
+        this.myPuzzleDBDialog = new PuzzleDBDialog();
+    
 
         //Click-Event für die Spaltenköpfe
         document.getElementById('col-name').addEventListener('click', () => {
             this.myPuzzleDB.sort('name');
         });
-        document.getElementById('col-defCount').addEventListener('click', () => {
+/*        document.getElementById('col-defCount').addEventListener('click', () => {
             this.myPuzzleDB.sort('defCount');
         });
         document.getElementById('col-status').addEventListener('click', () => {
@@ -5432,7 +5391,7 @@ class SudokuPuzzleDBController {
         });
         document.getElementById('col-steps-strict').addEventListener('click', () => {
             this.myPuzzleDB.sort('steps-strict');
-        });
+        });   */
         document.getElementById('col-level').addEventListener('click', () => {
             this.myPuzzleDB.sort('level');
         });
@@ -5447,6 +5406,23 @@ class SudokuPuzzleDBController {
         document.getElementById('pz-btn-load').addEventListener('click', () => {
             this.loadBtnPressed();
         });
+         // Click-Event for save button desktop
+        document.getElementById('pz-btn-edit').addEventListener('click', () => {
+            this.editBtnPressed();
+        });
+        document.getElementById('pz-btn-previous').addEventListener('click', () => {
+            this.previousBtnPressed();
+        });
+        document.getElementById('pz-btn-next').addEventListener('click', () => {
+            this.nextBtnPressed();
+        });
+        document.getElementById('pz-btn-delete').addEventListener('click', () => {
+            this.deleteBtnPressed();
+        });
+        document.getElementById('pz-btn-ok').addEventListener('click', () => {
+            this.closeBtnPressed();
+        });
+
 
         document.getElementById('btn-restore-mobile').addEventListener('click', () => {
             this.mobileRestoreBtnPressed();
@@ -5457,6 +5433,12 @@ class SudokuPuzzleDBController {
     // ===============================================================
     // DB-Event handler
     // ===============================================================
+    setSelected(trNode) {
+        // this.myPuzzleDB.selectedIndex = this.myPuzzleDB.getIndex(trNode.cells[0].innerText);
+        this.myPuzzleDB.selectedIndex = trNode.cells[0].innerText - 1;
+        this.myPuzzleDB.notify();
+    }
+
 
     loadBtnPressed() {
         if (this.myPuzzleDB.getSize() > 0) {
@@ -5466,6 +5448,10 @@ class SudokuPuzzleDBController {
             sudoApp.mySolver.notify();
             sudoApp.myTabView.openGrid();
         }
+    }
+
+    editBtnPressed() {
+        sudoApp.mySolverController.saveBtnPressed();
     }
 
     mobileRestoreBtnPressed() {
@@ -5495,13 +5481,13 @@ class SudokuPuzzleDBController {
 
     nextBtnPressed() {
         if (this.myPuzzleDB.getSize() > 0) {
-            this.myPuzzleDB.nextPZ();
+            this.myPuzzleDB.selectNextPZ();
         }
     }
     previousBtnPressed() {
         if (this.myPuzzleDB.getSize() > 0) {
             // Select previous Puzzle
-            this.myPuzzleDB.previousPZ();
+            this.myPuzzleDB.selectPreviousPZ();
         }
     }
 
@@ -5511,10 +5497,267 @@ class SudokuPuzzleDBController {
 
         }
     }
+    closeBtnPressed() {
+        this.myPuzzleDBDialog.close();
+    }
+}
+
+class SudokuPuzzleDBView extends SudokuView {
+    constructor(sudokuDB) {
+        super(sudokuDB);
+        this.myDB = sudokuDB;
+    }
+    upDate() {
+        this.displayPuzzleDB();
+        // this.displayCurrentPZ()
+    }
+
+    displayPuzzleDB() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        let tbNode = document.getElementById('puzzle-db-tbody');
+        let container = document.getElementById('table-container')
+        while (tbNode.childElementCount > 0) {
+            tbNode.removeChild(tbNode.lastChild);
+        }
+
+        if (puzzleMap.size > 0) {
+
+            let i = 0;
+            let selectedTr = null;
+            for (let [key, pzRecord] of puzzleMap) {
+                let tr = document.createElement('tr');
+                tr.setAttribute("onClick", "sudoApp.myPuzzleDBController.setSelected(this)");
+                tr.setAttribute("style", "cursor:pointer");
+                tr.classList.add('item')
+                if (i == this.myDB.selectedIndex) {
+                    tr.classList.add('selected');
+                    selectedTr = tr;
+                }
+                i++;
+
+          /*      let td_key = document.createElement('td');
+                td_key.innerText = key;
+                tr.appendChild(td_key); */
+
+                let td_Nr = document.createElement('td');
+                td_Nr.innerText = i;
+                tr.appendChild(td_Nr);
+
+                let td_name = document.createElement('td');
+                td_name.innerText = pzRecord.name;
+                tr.appendChild(td_name);
+
+         /*       let td_defCount = document.createElement('td');
+                td_defCount.innerText = pzRecord.preRunRecord.defCount;
+                tr.appendChild(td_defCount);
+
+                let td_status = document.createElement('td');
+                td_status.innerText = pzRecord.status;
+                tr.appendChild(td_status);
+
+                let td_steps_lazy = document.createElement('td');
+                td_steps_lazy.innerText = pzRecord.stepsLazy;
+                tr.appendChild(td_steps_lazy);
+
+                let td_steps_strict = document.createElement('td');
+                td_steps_strict.innerText = pzRecord.stepsStrict;
+                tr.appendChild(td_steps_strict);  */
+
+                let td_level = document.createElement('td');
+                td_level.innerText = pzRecord.preRunRecord.level;
+                tr.appendChild(td_level);
+
+                let td_backTracks = document.createElement('td');
+                td_backTracks.innerText = pzRecord.preRunRecord.backTracks;
+                tr.appendChild(td_backTracks);
+
+                let td_date = document.createElement('td');
+                td_date.innerText = (new Date(pzRecord.date)).toLocaleDateString();
+                tr.appendChild(td_date);
+
+                tbNode.appendChild(tr);
+            }
+            this.scrollToBeVisible(selectedTr, container);
+        }
+    }
+
+    scrollToBeVisible(ele, container) {
+        const eleTop = ele.offsetTop;
+        const eleBottom = eleTop + ele.clientHeight;
+
+        const containerTop = container.scrollTop;
+        const containerBottom = containerTop + container.clientHeight;
+
+        if (eleTop < containerTop) {
+            // Scroll to the top of container
+            container.scrollTop -= containerTop - eleTop;
+        } else if (eleBottom > containerBottom) {
+            // Scroll to the bottom of container
+            container.scrollTop += eleBottom - containerBottom;
+        }
+    };
+
+    displayClear() {
+        this.displayClearPZNr();
+        this.displayClearTable('screen-puzzle');
+        // this.displayClearTable('solution');
+    }
+
+
+    displayCurrentPZ() {
+        this.displayClear()
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        if (puzzleMap.size > 0) {
+            let key = Array.from(puzzleMap.keys())[this.myDB.selectedIndex];
+            let selectedPZ = puzzleMap.get(key);
+            this.displayIdRow(key, selectedPZ.name, selectedPZ.preRunRecord.level);
+            this.displayTable('screen-puzzle', selectedPZ.puzzle);
+            // this.displayDefineCounter(selectedPZ);
+        }
+    }
+    displayIdRow(uid, name, level) {
+        let puzzleIdentityRow = document.getElementById('pz-id-row')
+        puzzleIdentityRow.innerHTML =
+            // '<b>Puzzle-Id:</b> &nbsp' + uid + '; &nbsp'
+            // + 
+            '<b>Puzzle-Name:</b> &nbsp' + name + '; &nbsp'
+            + '<b>Schwierigkeitsgrad:</b> &nbsp' + level + ';';
+    }
+    displayClearPZNr() {
+        let nrElem = document.getElementById('pz-id-row')
+        nrElem.innerHTML = "";
+    }
+
+    displayDefineCounter(selectedPZ) {
+        let defineCounter = 0;
+        selectedPZ.puzzle.forEach(nr => {
+            if (nr !== '0') {
+                defineCounter++;
+            }
+        })
+    }
+    /*
+        nextPZ() {
+            let displayRows = document.getElementById('puzzle-db-tbody').rows;
+            for (let i = 0; i < displayRows.length - 1; i++) {
+                if (displayRows[i].classList.contains('selected')) {
+                    displayRows[i].classList.remove('selected');
+                    displayRows[i + 1].classList.add('selected');
+                    displayRows[i + 1].scrollIntoView();
+                    this.myDB.selectedIndex = this.getIndex(displayRows[i + 1].cells[0].innerText);
+                    this.displayCurrentPZ();
+                    return;
+                }
+            }
+        }
+    
+        previousPZ() {
+            let displayRows = document.getElementById('puzzle-db-tbody').rows;
+            for (let i = 1; i < displayRows.length; i++) {
+                if (displayRows[i].classList.contains('selected')) {
+                    displayRows[i].classList.remove('selected');
+                    displayRows[i - 1].classList.add('selected');
+                    displayRows[i - 1].scrollIntoView();
+                    this.myDB.selectedIndex = this.getIndex(displayRows[i - 1].cells[0].innerText);
+                    this.displayCurrentPZ();
+                    return;
+                }
+            }
+        }
+        */
+
+
+
+    displayTable(nodeId, tableArray) {
+        let table = document.getElementById(nodeId);
+        let k = 0;
+        for (let row = 0; row < 9; row++) {
+            for (let col = 0; col < 9; col++) {
+                let cellField = document.createElement('div')
+                cellField.classList.add('cell-field');
+                if (tableArray[k].cellValue == '0') {
+                    let currentText = document.createTextNode('');
+                    cellField.appendChild(currentText);
+                } else {
+                    let currentText = document.createTextNode(tableArray[k].cellValue);
+                    cellField.appendChild(currentText);
+                    if (tableArray[k].cellPhase == 'define') {
+                        cellField.style.color = 'blue';
+                        cellField.style.fontWeight = 'bold';
+                    }
+                }
+
+                cellField.style.border = "1px solid darkgrey";
+                if (row === 2 || row === 5) {
+                    cellField.style.borderBottom = "2px solid black";
+                }
+                if (col === 2 || col === 5) {
+                    cellField.style.borderRight = "2px solid black";
+                }
+                table.appendChild(cellField);
+                k++;
+            }
+        }
+    }
+
+    displayTablePrint(nodeId, tableArray) {
+        this.displayClearTable('print-puzzle');
+        let table = document.getElementById(nodeId);
+        let k = 0;
+        for (let row = 0; row < 9; row++) {
+            for (let col = 0; col < 9; col++) {
+                let cellField = document.createElement('div')
+                cellField.classList.add('cell-field');
+                if (tableArray[k].cellValue == '0') {
+                    let currentText = document.createTextNode('');
+                    cellField.appendChild(currentText);
+                } else {
+                    let currentText = document.createTextNode(tableArray[k].cellValue);
+                    cellField.appendChild(currentText);
+                    if (tableArray[k].cellPhase == 'define') {
+                        cellField.style.color = 'blue';
+                        cellField.style.fontWeight = 'bold';
+                    }
+                }
+                cellField.style.border = "1px solid darkgrey";
+                if (row === 2 || row === 5) {
+                    cellField.style.borderBottom = "2px solid black";
+                }
+                if (col === 2 || col === 5) {
+                    cellField.style.borderRight = "2px solid black";
+                }
+                table.appendChild(cellField);
+                k++;
+            }
+        }
+    }
+
+    displayClearTable(nodeId) {
+        let node = document.getElementById(nodeId);
+        while (node.firstChild) {
+            node.removeChild(node.lastChild);
+        }
+    }
+
 
 }
-class SudokuPuzzleDB {
+
+class SudokuMobilePuzzleDBView extends SudokuView {
+    constructor(sudokuDB) {
+        super(sudokuDB);
+        this.myDB = sudokuDB;
+    }
+    upDate() {
+        this.displayPuzzleDB();
+        this.displayCurrentPZ()
+    }
+}
+
+class SudokuPuzzleDB extends SudokuModel {
     constructor() {
+        super();
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         if (puzzleMap.size > 0) {
@@ -5670,7 +5913,7 @@ class SudokuPuzzleDB {
         let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
         this.selectedIndex = this.getIndex(selectedKey);
-        this.display();
+        this.notify();
     }
 
     saveMobilePuzzle(puzzleRecord) {
@@ -5749,7 +5992,7 @@ class SudokuPuzzleDB {
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
         //Clear loaded puzzle info, if loaded puzzle is deleted
         sudoApp.mySolver.clearLoadedPuzzleInfo(key);
-        this.display();
+        this.notify();
     }
 
     selectedPZ() {
@@ -5767,39 +6010,32 @@ class SudokuPuzzleDB {
         return key;
     }
 
-    nextPZ() {
-        let displayRows = document.getElementById('puzzle-db-tbody').rows;
-        for (let i = 0; i < displayRows.length - 1; i++) {
-            if (displayRows[i].classList.contains('selected')) {
-                displayRows[i].classList.remove('selected');
-                displayRows[i + 1].classList.add('selected');
-                displayRows[i + 1].scrollIntoView();
-                this.selectedIndex = this.getIndex(displayRows[i + 1].cells[0].innerText);
-                this.displayCurrentPZ();
-                return;
+    selectNextPZ() {
+        let size = this.getSize();
+        if (size > 0) {
+            if (this.selectedIndex < (size - 1)) {
+                this.selectedIndex++;
             }
+        } else {
+            this.selectedIndex = -1;
         }
+        this.notify();
     }
 
-    previousPZ() {
-        let displayRows = document.getElementById('puzzle-db-tbody').rows;
-        for (let i = 1; i < displayRows.length; i++) {
-            if (displayRows[i].classList.contains('selected')) {
-                displayRows[i].classList.remove('selected');
-                displayRows[i - 1].classList.add('selected');
-                displayRows[i - 1].scrollIntoView();
-                this.selectedIndex = this.getIndex(displayRows[i - 1].cells[0].innerText);
-                this.displayCurrentPZ();
-                return;
+    selectPreviousPZ() {
+        let size = this.getSize();
+        if (size > 0) {
+            if (this.selectedIndex > 0) {
+                this.selectedIndex--;
             }
+        } else {
+            this.selectedIndex = -1;
         }
+        this.notify();
     }
 
-    display() {
-        this.displayPuzzleDB();
-        this.displayCurrentPZ()
-    }
 
+    /*
     setSelected(trNode) {
         let displayRows = document.getElementById('puzzle-db-tbody').rows;
         for (let i = 0; i < displayRows.length; i++) {
@@ -5811,6 +6047,8 @@ class SudokuPuzzleDB {
         this.selectedIndex = this.getIndex(trNode.cells[0].innerText);
         this.displayCurrentPZ();
     }
+  */
+
 
     migratePuzzleDB() {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
@@ -5830,184 +6068,6 @@ class SudokuPuzzleDB {
                 let update_str_puzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
                 localStorage.setItem("localSudokuDB", update_str_puzzleMap);
             }
-        }
-    }
-
-    displayPuzzleDB() {
-        let str_puzzleMap = localStorage.getItem("localSudokuDB");
-        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-        let tbNode = document.getElementById('puzzle-db-tbody');
-        while (tbNode.childElementCount > 0) {
-            tbNode.removeChild(tbNode.lastChild);
-        }
-
-        if (puzzleMap.size > 0) {
-
-            let i = 0;
-            let selectedTr = null;
-            for (let [key, pzRecord] of puzzleMap) {
-                let tr = document.createElement('tr');
-                tr.setAttribute("onClick", "sudoApp.myPuzzleDB.setSelected(this)");
-                tr.setAttribute("style", "cursor:pointer");
-                tr.classList.add('item')
-                if (i == this.selectedIndex) {
-                    tr.classList.add('selected');
-                    selectedTr = tr;
-                }
-                i++;
-
-                let td_key = document.createElement('td');
-                td_key.innerText = key;
-                tr.appendChild(td_key);
-
-                let td_name = document.createElement('td');
-                td_name.innerText = pzRecord.name;
-                tr.appendChild(td_name);
-
-                let td_defCount = document.createElement('td');
-                td_defCount.innerText = pzRecord.preRunRecord.defCount;
-                tr.appendChild(td_defCount);
-
-                let td_status = document.createElement('td');
-                td_status.innerText = pzRecord.status;
-                tr.appendChild(td_status);
-
-                let td_steps_lazy = document.createElement('td');
-                td_steps_lazy.innerText = pzRecord.stepsLazy;
-                tr.appendChild(td_steps_lazy);
-
-                let td_steps_strict = document.createElement('td');
-                td_steps_strict.innerText = pzRecord.stepsStrict;
-                tr.appendChild(td_steps_strict);
-
-                let td_level = document.createElement('td');
-                td_level.innerText = pzRecord.preRunRecord.level;
-                tr.appendChild(td_level);
-
-                let td_backTracks = document.createElement('td');
-                td_backTracks.innerText = pzRecord.preRunRecord.backTracks;
-                tr.appendChild(td_backTracks);
-
-                let td_date = document.createElement('td');
-                td_date.innerText = (new Date(pzRecord.date)).toLocaleDateString();
-                tr.appendChild(td_date);
-
-                tbNode.appendChild(tr);
-            }
-            selectedTr.scrollIntoView();
-        }
-    }
-
-
-    displayClear() {
-        this.displayClearPZNr();
-        this.displayClearTable('screen-puzzle');
-        // this.displayClearTable('solution');
-    }
-
-
-    displayCurrentPZ() {
-        this.displayClear()
-        let str_puzzleMap = localStorage.getItem("localSudokuDB");
-        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-        if (puzzleMap.size > 0) {
-            let key = Array.from(puzzleMap.keys())[this.selectedIndex];
-            let selectedPZ = puzzleMap.get(key);
-            this.displayIdRow(key, selectedPZ.name, selectedPZ.preRunRecord.level);
-            this.displayTable('screen-puzzle', selectedPZ.puzzle);
-            // this.displayDefineCounter(selectedPZ);
-        }
-    }
-    displayIdRow(uid, name, level) {
-        let puzzleIdentityRow = document.getElementById('pz-id-row')
-        puzzleIdentityRow.innerHTML =
-            // '<b>Puzzle-Id:</b> &nbsp' + uid + '; &nbsp'
-            // + 
-            '<b>Puzzle-Name:</b> &nbsp' + name + '; &nbsp'
-            + '<b>Schwierigkeitsgrad:</b> &nbsp' + level + ';';
-    }
-    displayClearPZNr() {
-        let nrElem = document.getElementById('pz-id-row')
-        nrElem.innerHTML = "";
-    }
-
-    displayDefineCounter(selectedPZ) {
-        let defineCounter = 0;
-        selectedPZ.puzzle.forEach(nr => {
-            if (nr !== '0') {
-                defineCounter++;
-            }
-        })
-    }
-
-    displayTable(nodeId, tableArray) {
-        let table = document.getElementById(nodeId);
-        let k = 0;
-        for (let row = 0; row < 9; row++) {
-            for (let col = 0; col < 9; col++) {
-                let cellField = document.createElement('div')
-                cellField.classList.add('cell-field');
-                if (tableArray[k].cellValue == '0') {
-                    let currentText = document.createTextNode('');
-                    cellField.appendChild(currentText);
-                } else {
-                    let currentText = document.createTextNode(tableArray[k].cellValue);
-                    cellField.appendChild(currentText);
-                    if (tableArray[k].cellPhase == 'define') {
-                        cellField.style.color = 'blue';
-                        cellField.style.fontWeight = 'bold';
-                    }
-                }
-
-                cellField.style.border = "1px solid darkgrey";
-                if (row === 2 || row === 5) {
-                    cellField.style.borderBottom = "2px solid black";
-                }
-                if (col === 2 || col === 5) {
-                    cellField.style.borderRight = "2px solid black";
-                }
-                table.appendChild(cellField);
-                k++;
-            }
-        }
-    }
-
-    displayTablePrint(nodeId, tableArray) {
-        this.displayClearTable('print-puzzle');
-        let table = document.getElementById(nodeId);
-        let k = 0;
-        for (let row = 0; row < 9; row++) {
-            for (let col = 0; col < 9; col++) {
-                let cellField = document.createElement('div')
-                cellField.classList.add('cell-field');
-                if (tableArray[k].cellValue == '0') {
-                    let currentText = document.createTextNode('');
-                    cellField.appendChild(currentText);
-                } else {
-                    let currentText = document.createTextNode(tableArray[k].cellValue);
-                    cellField.appendChild(currentText);
-                    if (tableArray[k].cellPhase == 'define') {
-                        cellField.style.color = 'blue';
-                        cellField.style.fontWeight = 'bold';
-                    }
-                }
-                cellField.style.border = "1px solid darkgrey";
-                if (row === 2 || row === 5) {
-                    cellField.style.borderBottom = "2px solid black";
-                }
-                if (col === 2 || col === 5) {
-                    cellField.style.borderRight = "2px solid black";
-                }
-                table.appendChild(cellField);
-                k++;
-            }
-        }
-    }
-
-    displayClearTable(nodeId) {
-        let node = document.getElementById(nodeId);
-        while (node.firstChild) {
-            node.removeChild(node.lastChild);
         }
     }
 

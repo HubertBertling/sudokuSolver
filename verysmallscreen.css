@@ -69,7 +69,7 @@ html {
     display: none;
 }
 
-.sudoku-solver-in-tab {
+.sudoku-solver-container {
     display: flex;
     flex-direction: column;
     height: 95vh;
@@ -346,7 +346,7 @@ html {
         none;
 }
 
-.mobile-grid-container {
+.mobile-btn-container {
     margin-top: 10px;
     flex-grow: 1;
     display: grid;
