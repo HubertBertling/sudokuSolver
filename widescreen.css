@@ -130,7 +130,7 @@ html {
 .app-header,
 .app-footer {
     margin-top: 0.5rem;
-    font-size: 1.8rem;
+    font-size: var(--font-size-xl);
     font-weight: bold;
     padding: 1rem;
     text-align: center;
@@ -142,7 +142,7 @@ html {
 }
 
 .puzzle-db-header {
-    font-size: 1.8rem;
+    font-size: var(--font-size-xl);
     font-weight: bold;
     padding: 1rem;
     text-align: center;
@@ -389,7 +389,7 @@ html {
 }
 
 .loaded-evaluations {
-    font-size: 1.0rem;
+    font-size: var(--font-size);
     display: flex;
     padding-top: 5px;
 }
@@ -401,7 +401,7 @@ html {
 .technique,
 .reasonInsolvability {
     height: 22px;
-    font-size: 1.2rem;
+    font-size: var(--font-size);
     display: flex;
     padding-top: 5px;
     padding-left: 2px;
@@ -429,7 +429,7 @@ html {
 }
 
 .footer-trainer-label {
-    font-size: 2.4rem;
+    font-size: var(--font-size-xl);
     text-align: center;
 }
 
@@ -511,7 +511,7 @@ html {
 
 label {
     display: block;
-    font-size: 1.2rem;
+    font-size: var(--font-size);
 }
 
 .pc-floatBlock {
@@ -521,7 +521,7 @@ label {
 .pc-evaluation-options {
     display: flex;
     flex-direction: row;
-    margin: 0 0 1em 0;
+    /* margin: 0 0 0.5rem 0; */
 }
 
 .pc-floatBlock {
@@ -529,7 +529,7 @@ label {
 }
 
 .eval-type {
-    font-size: 1.2rem;
+    font-size: var(--font-size);
 }
 
 
@@ -542,7 +542,7 @@ label {
     padding-top: 5px;
     padding-bottom: 10px;
     color: var(--screen-color);
-    font-size: 1.0rem;
+    font-size: var(--font-size);
 }
 
 .progress-block {
@@ -594,7 +594,7 @@ label {
     position: relative;
     width: 100%;
     height: 16px;
-    font-size: 1.0rem;
+    font-size: var(--font-size);
     text-align: right;
     padding-right: 5px;
     background-color: var(--nested-cell-bg-color);
@@ -633,7 +633,7 @@ label {
 /*=======================================*/
 
 .puzzle-header {
-    font-size: 1.6rem;
+    font-size: var(--font-size-xl);
     display: inline-block;
     color: black;
     margin-top: 20px;
@@ -670,14 +670,14 @@ label {
 }
 
 .dlg-header {
-    font-size: 1.8rem;
+    font-size: var(--font-size-lg);
     font-weight: bold;
     margin: 5px;
     text-align: center;
 }
 
 label {
-    font-size: 1.4rem;
+    font-size: var(--font-size);
     margin-left: 1.2rem;
     margin-bottom: 1.2rem;
 }
@@ -686,7 +686,7 @@ label {
     width: 90%;
     margin-left: 1.2rem;
     padding: 0.8rem;
-    font-size: 1.4rem;
+    font-size: var(--font-size);
 }
 
 .ok-cancel-btns {
@@ -726,7 +726,7 @@ label {
 }
 
 .dlg-header {
-    font-size: 2.4rem;
+    font-size: var(--font-size-lg);
     font-weight: bold;
     margin: 1.2rem;
     text-align: center;
@@ -780,7 +780,7 @@ label {
 }
 
 .infoDlgHeader {
-    font-size: 1.6rem;
+    font-size: var(--font-size-lg);
     font-weight: bold;
     margin: 10px;
     text-align: center;
@@ -796,7 +796,7 @@ label {
 }
 
 .infoDlgBody {
-    font-size: 1.2rem;
+    font-size: var(--font-size);
     margin-left: 10px;
 }
 
@@ -823,13 +823,17 @@ label {
 /*=======================================*/
 .container-puzzle-buttons {
     background: #500;
-    border: 5px solid #500;
+    border-top: 5px solid #ddd;
+    border-bottom: 5px solid #500;
+    border-left: 5px solid #500;
+    border-right: 5px solid #500;
+    
 }
 
 .puzzle-db-button {
-    background-color: white;
+    background-color:  #ddd;;
     text-align: center;
-    border-radius: 0.3rem;
+    border-radius: 0.5rem;
     border: none;
     margin: 1.6rem 1.2rem 1.2rem 1.2rem;
     padding-top: 0.4rem;
@@ -838,21 +842,26 @@ label {
     padding-right: 0.6rem;
 }
 
+.puzzle-db-button:active {
+    transform: translate(2px, 2px);
+}
+
 .puzzle-btns {
- /*   border-bottom: 5px solid black; */
+    /*   border-bottom: 5px solid black; */
     background: #500;
     padding-bottom: 1rem;
     margin-left: 1rem;
-    margin-top: 0.5rem; 
+    margin-top: 0.5rem;
     display: flex;
     flex-direction: row;
     gap: gap 1rem;
 }
+
 /* ========================================*/
 
 .status-line {
 
-    font-size: 1.0rem;
+    font-size: var(--font-size);
     color: black;
     padding-top: 5px;
     margin-top: 5px;
@@ -870,7 +879,7 @@ label {
 }
 
 .puzzle-line {
-    font-size: 1.0rem;
+    font-size: var(--font-size);
     color: black;
     margin-top: 10px;
     display: flex;
@@ -901,7 +910,7 @@ label {
 }
 
 .cell-field {
-    font-size: 1.4rem;
+    font-size: var(--font-size);
     position: relative;
     width: 20px;
     height: 20px;
@@ -916,7 +925,7 @@ label {
 }
 
 section {
-    font-size: 1.0rem;
+    font-size: var(--font-size);
     position: relative;
     /* border: 1px solid #000; */
     padding-top: 37px;

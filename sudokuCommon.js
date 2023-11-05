@@ -157,7 +157,7 @@ class SudokuSolverController {
 
         // Radio button eval type: No-evaluation, Lazy, Strikt+ oder Strikt-
         // mobile variant
-        let mobileRadioEvalNodes = document.querySelectorAll('.mobile-eval-type');
+        let mobileRadioEvalNodes = document.querySelectorAll('.pc-eval-type');
         mobileRadioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
                 this.mySolver.setActualEvalType(radioNode.value);
