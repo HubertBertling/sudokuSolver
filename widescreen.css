@@ -507,15 +507,12 @@ html {
 .eval-legend {
     font-weight: bold;
     margin-left: 10px;
-}
-
-label {
-    display: block;
     font-size: var(--font-size);
 }
 
-.pc-floatBlock {
-    margin: 0.8em 0.8em 0 0;
+
+label {
+    display: block;
 }
 
 .pc-evaluation-options {
@@ -525,13 +522,15 @@ label {
 }
 
 .pc-floatBlock {
+    margin: 1.2rem 1.2rem 0 1.2rem;
     flex-grow: 1;
 }
 
-.eval-type {
-    font-size: var(--font-size);
+.pc-eval-type {
+    height: var(--font-size-lg);
+    width: var(--font-size-lg);
+    vertical-align: middle;
 }
-
 
 /*======================================*/
 /* Progress block */
@@ -549,7 +548,7 @@ label {
     margin-top: 5px;
     line-height: 16px;
     display: grid;
-    grid-template-columns: 0.25fr 0.1fr 1fr;
+    grid-template-columns: 1fr 0.2fr 1fr;
     gap: 2px;
 }
 
@@ -563,7 +562,8 @@ label {
     height: 16px;
     display: flex;
     margin-right: 5px;
-    width: 145px;
+    /*  width: 145px; */
+    width: 100%;
 }
 
 .forward-backward-image {
