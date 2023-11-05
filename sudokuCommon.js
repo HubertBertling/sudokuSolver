@@ -128,7 +128,7 @@ class SudokuSolverController {
                 this.generateBtnPressed();
             })
         });
-        
+
         document.getElementById('header-btn-help').addEventListener('click', () => {
             sudoApp.helpFunktion();
         });
@@ -142,13 +142,6 @@ class SudokuSolverController {
         document.getElementById('btn-db-open').addEventListener('click', () => {
             this.openDBBtnPressed();
         });
-
-        // Overwrite puzzle data in the puzzle database, 
-        // only available in the desktop variant
-        /* document.getElementById('btn-overwrite').addEventListener('click', () => {
-            this.overwriteBtnPressed();
-        });
-        */
 
         document.getElementById('mobile-btn-print').addEventListener('click', () => {
             this.printBtnPressed();
@@ -254,29 +247,26 @@ class SudokuSolverController {
 
     saveBtnPressed() {
         this.mySuccessDialog.close();
-        let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-        this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');
-    }
-
-    openDBBtnPressed() {
+        sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
         sudoApp.myPuzzleDB.notify();
-        sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();    
-    }
-    overwriteBtnPressed() {
-        this.mySolver.autoExecStop();
-        this.mySuccessDialog.close();
         let tmpPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
 
         let puzzleId = this.mySolver.myGrid.loadedPuzzleId;
         let puzzleName = this.mySolver.myGrid.loadedPuzzleName;
         if (puzzleId == '' || puzzleId == '-') {
+            //Neues Puzzle abfragen
             let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
             this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');
         } else {
+            //Aktuelles Puzzel ist aus der Datenbank überschreiben
+
             sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, puzzleName, tmpPuzzleDbElement);
-            // Wechsle in den DB-Reiter
-            document.getElementById("puzzle-db-tab").click();
         }
+    }
+
+    openDBBtnPressed() {
+        sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
+        sudoApp.myPuzzleDB.notify();
     }
 
     printBtnPressed() {
@@ -331,20 +321,15 @@ class SudokuSolverController {
 
     savePuzzleDlgOKPressed() {
         this.myPuzzleSaveDialog.close();
-        // Der Name unter dem der aktuelle Zustand gespeichert werden soll
-        let puzzleId = this.myPuzzleSaveDialog.getPuzzleId();
+        sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
+        let puzzleId = Date.now().toString(36) + Math.random().toString(36).substr(2);
         let puzzleName = this.myPuzzleSaveDialog.getPuzzleName();
         let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
         //Speichere den named Zustand
         sudoApp.myPuzzleDB.saveNamedPuzzle(puzzleId, puzzleName, playedPuzzleDbElement);
-        // Wechsle in den DB-Reiter
-        document.getElementById("puzzle-db-tab").click();
-    }
+        // Wechsle in den DB-Dialog
+        sudoApp.myPuzzleDB.notify();
 
-    savePuzzleMobile() {
-        let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
-        //Speichere den named Zustand
-        sudoApp.myPuzzleDB.saveMobilePuzzle(playedPuzzleDbElement);
     }
 
     savePuzzleDlgCancelPressed() {
@@ -401,6 +386,17 @@ class SudokuModel {
         // sie sind nicht als Beobachter eingetragen.
         this.myObservers.push(view);
     }
+    detach(view) {
+        this.myObservers.forEach(observer => {
+            if (observer == view) {
+                let myIndex = this.myObservers.indexOf(view);
+                if (myIndex !== -1) {
+                    this.myObservers.splice(myIndex, 1);
+                }
+            }
+        });
+    }
+
     setMyView(view) {
         this.myView = view;
     }
@@ -1060,12 +1056,15 @@ class PuzzleDBDialog {
     open() {
         this.myOpen = true;
         this.myPuzzleDBDialogNode.showModal();
+        this.myPuzzleDBView = new SudokuPuzzleDBView(sudoApp.myPuzzleDB);
+        sudoApp.myPuzzleDB.attach(this.myPuzzleDBView);
     }
 
     close() {
         if (this.myOpen) {
             this.myPuzzleDBDialogNode.close();
             this.myOpen = false;
+            sudoApp.myPuzzleDB.detach(this.myPuzzleDBView);
         }
     }
 }
@@ -1088,9 +1087,6 @@ class PuzzleSaveDialog {
         });
     }
     open(uid, name) {
-        this.myPuzzleIdNode.removeAttribute("readonly");
-        this.myPuzzleIdNode.value = uid;
-        this.myPuzzleIdNode.setAttribute("readonly", true);
         this.myPuzzleNameNode.value = name;
         this.myOpen = true;
         this.myContentSaveDlgNode.showModal();
@@ -1109,6 +1105,42 @@ class PuzzleSaveDialog {
         return this.myPuzzleNameNode.value;
     }
 }
+
+
+
+class PuzzleRenameDialog {
+    constructor() {
+        this.myOpen = false;
+        this.myRenameDlgNode = document.getElementById("puzzle-rename-dlg")
+        this.myPuzzleNameNode = document.getElementById("puzzle-name-renamed");
+        this.okNode = document.getElementById("pz-rename-ok-btn");
+        this.cancelNode = document.getElementById("pz-rename-cancel-btn");
+        // Mit der Erzeugung des Wrappers werden 
+        // auch der Eventhandler OK und Abbrechen gesetzt
+        this.okNode.addEventListener('click', () => {
+            sudoApp.myPuzzleDBController.renamePuzzleDlgOKPressed();
+        });
+        this.cancelNode.addEventListener('click', () => {
+            sudoApp.myPuzzleDBController.renamePuzzleDlgCancelPressed();
+        });
+    }
+    open(name) {
+        this.myPuzzleNameNode.value = name;
+        this.myOpen = true;
+        this.myRenameDlgNode.showModal();
+    }
+
+    close() {
+        if (this.myOpen) {
+            this.myRenameDlgNode.close();
+            this.myOpen = false;
+        }
+    }
+    getPuzzleName() {
+        return this.myPuzzleNameNode.value;
+    }
+}
+
 
 class SuccessDialog {
     constructor() {
@@ -5352,24 +5384,25 @@ class SudokuPuzzleDBController {
         // Der Save-Dialog
         this.myPuzzleDB = puzzleDb;
         this.myPuzzleDBDialog = new PuzzleDBDialog();
-    
+        this.myPuzzleRenameDialog = new PuzzleRenameDialog();
+
 
         //Click-Event für die Spaltenköpfe
         document.getElementById('col-name').addEventListener('click', () => {
             this.myPuzzleDB.sort('name');
         });
-/*        document.getElementById('col-defCount').addEventListener('click', () => {
-            this.myPuzzleDB.sort('defCount');
-        });
+        /*        document.getElementById('col-defCount').addEventListener('click', () => {
+                    this.myPuzzleDB.sort('defCount');
+                }); */
         document.getElementById('col-status').addEventListener('click', () => {
             this.myPuzzleDB.sort('status');
         });
-        document.getElementById('col-steps-lazy').addEventListener('click', () => {
-            this.myPuzzleDB.sort('steps-lazy');
-        });
-        document.getElementById('col-steps-strict').addEventListener('click', () => {
-            this.myPuzzleDB.sort('steps-strict');
-        });   */
+        /*        document.getElementById('col-steps-lazy').addEventListener('click', () => {
+                    this.myPuzzleDB.sort('steps-lazy');
+                });
+                document.getElementById('col-steps-strict').addEventListener('click', () => {
+                    this.myPuzzleDB.sort('steps-strict');
+                });   */
         document.getElementById('col-level').addEventListener('click', () => {
             this.myPuzzleDB.sort('level');
         });
@@ -5384,10 +5417,14 @@ class SudokuPuzzleDBController {
         document.getElementById('pz-btn-load').addEventListener('click', () => {
             this.loadBtnPressed();
         });
-         // Click-Event for save button desktop
-        document.getElementById('pz-btn-edit').addEventListener('click', () => {
-            this.editBtnPressed();
+        // Click-Event for save button desktop
+      
+        document.getElementById('pz-btn-rename').addEventListener('click', () => {
+            this.myPuzzleRenameDialog.open(
+                sudoApp.myPuzzleDB.getSelectedPuzzle().name
+            );
         });
+       
         document.getElementById('pz-btn-previous').addEventListener('click', () => {
             this.previousBtnPressed();
         });
@@ -5401,7 +5438,7 @@ class SudokuPuzzleDBController {
             this.closeBtnPressed();
         });
 
-       }
+    }
 
     // ===============================================================
     // DB-Event handler
@@ -5423,22 +5460,20 @@ class SudokuPuzzleDBController {
         }
     }
 
-    editBtnPressed() {
-        sudoApp.mySolverController.saveBtnPressed();
+    renamePuzzleDlgOKPressed() {
+        this.myPuzzleRenameDialog.close();
+        // Der Name unter dem der aktuelle Zustand gespeichert werden soll
+        let puzzleId = sudoApp.myPuzzleDB.getSelectedUid();
+        let puzzleName = this.myPuzzleRenameDialog.getPuzzleName();
+        //Speichere den named Zustand
+        sudoApp.myPuzzleDB.saveRenamedPuzzle(puzzleId, puzzleName);
+        // Wechsle in den DB-Dialog
+        sudoApp.myPuzzleDB.notify()
     }
 
-    mobileRestoreBtnPressed() {
-        if (this.myPuzzleDB.getSize() > 0) {
-            let uid = 'l2rcvi2mobile8h05azkg';
-            if (!sudoApp.myPuzzleDB.has(uid)) {
-                uid = this.myPuzzleDB.getSelectedUid();
-            }
-            let puzzle = this.myPuzzleDB.getPuzzle(uid);
-            sudoApp.mySolver.init();
-            sudoApp.mySolver.myGrid.loadPuzzle(uid, puzzle);
-            sudoApp.mySolver.setGamePhase('play');
-            sudoApp.mySolver.notify();
-        }
+    renamePuzzleDlgCancelPressed() {
+        this.myPuzzleRenameDialog.close();
+        sudoApp.myPuzzleDB.notify()
     }
 
     printBtnPressed() {
@@ -5509,9 +5544,9 @@ class SudokuPuzzleDBView extends SudokuView {
                 }
                 i++;
 
-          /*      let td_key = document.createElement('td');
-                td_key.innerText = key;
-                tr.appendChild(td_key); */
+                /*      let td_key = document.createElement('td');
+                      td_key.innerText = key;
+                      tr.appendChild(td_key); */
 
                 let td_Nr = document.createElement('td');
                 td_Nr.innerText = i;
@@ -5521,21 +5556,21 @@ class SudokuPuzzleDBView extends SudokuView {
                 td_name.innerText = pzRecord.name;
                 tr.appendChild(td_name);
 
-         /*       let td_defCount = document.createElement('td');
-                td_defCount.innerText = pzRecord.preRunRecord.defCount;
-                tr.appendChild(td_defCount);
+                /*       let td_defCount = document.createElement('td');
+                       td_defCount.innerText = pzRecord.preRunRecord.defCount;
+                       tr.appendChild(td_defCount); */
 
                 let td_status = document.createElement('td');
                 td_status.innerText = pzRecord.status;
                 tr.appendChild(td_status);
 
-                let td_steps_lazy = document.createElement('td');
-                td_steps_lazy.innerText = pzRecord.stepsLazy;
-                tr.appendChild(td_steps_lazy);
-
-                let td_steps_strict = document.createElement('td');
-                td_steps_strict.innerText = pzRecord.stepsStrict;
-                tr.appendChild(td_steps_strict);  */
+                /*         let td_steps_lazy = document.createElement('td');
+                         td_steps_lazy.innerText = pzRecord.stepsLazy;
+                         tr.appendChild(td_steps_lazy);
+         
+                         let td_steps_strict = document.createElement('td');
+                         td_steps_strict.innerText = pzRecord.stepsStrict;
+                         tr.appendChild(td_steps_strict);  */
 
                 let td_level = document.createElement('td');
                 td_level.innerText = pzRecord.preRunRecord.level;
@@ -5716,18 +5751,6 @@ class SudokuPuzzleDBView extends SudokuView {
 
 
 }
-
-class SudokuMobilePuzzleDBView extends SudokuView {
-    constructor(sudokuDB) {
-        super(sudokuDB);
-        this.myDB = sudokuDB;
-    }
-    upDate() {
-        this.displayPuzzleDB();
-        this.displayCurrentPZ()
-    }
-}
-
 class SudokuPuzzleDB extends SudokuModel {
     constructor() {
         super();
@@ -5889,12 +5912,6 @@ class SudokuPuzzleDB extends SudokuModel {
         this.notify();
     }
 
-    saveMobilePuzzle(puzzleRecord) {
-        let puzzleId = 'l2rcvi2mobile8h05azkg';
-        puzzleRecord.name = 'mobile';
-        this.savePuzzle(puzzleId, 'mobile', puzzleRecord);
-    }
-
     saveNamedPuzzle(id, name, puzzleRecord) {
         this.savePuzzle(id, name, puzzleRecord);
     }
@@ -5913,6 +5930,7 @@ class SudokuPuzzleDB extends SudokuModel {
             puzzleRecord.stepsStrict = storedPuzzle.stepsStrict;
         }
         this.savePuzzle(puzzleId, puzzleName, puzzleRecord);
+        this.notify();
     }
 
     savePuzzle(puzzleId, puzzleName, puzzleRecord) {
@@ -5927,6 +5945,23 @@ class SudokuPuzzleDB extends SudokuModel {
         let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
         this.selectedIndex = this.getIndex(puzzleId);
+        this.notify();
+    }
+
+    saveRenamedPuzzle(puzzleId, puzzleName) {
+        // Hole den Speicher als ein Objekt
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        // Füge das Puzzle in das Speicherobjekt ein
+        let puzzleDbElement = puzzleMap.get(puzzleId);
+        puzzleDbElement.name = puzzleName;
+        puzzleMap.set(puzzleId, puzzleDbElement);
+        // Kreiere die JSON-Version des Speicherobjektes
+        // und speichere sie.
+        let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
+        localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+        this.selectedIndex = this.getIndex(puzzleId);
+        this.notify();
     }
 
     getPuzzle(uid) {

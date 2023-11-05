@@ -63,9 +63,9 @@ html {
     background-color: var(--screen-bg-color);
     margin-top: 10px;
     display: flex;
-	flex-direction: column;
-	/* justify-content: center; */
-	align-items: center;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
 }
 
 /*======================================*/
@@ -127,7 +127,8 @@ html {
 
 /* App-header */
 
-.app-header, .app-footer {
+.app-header,
+.app-footer {
     margin-top: 0.5rem;
     font-size: 1.8rem;
     font-weight: bold;
@@ -136,10 +137,18 @@ html {
     background-color: DimGray;
     color: white;
     border-radius: 0.3rem;
-    display: grid; 
-    grid-template-columns: 1fr auto;   
+    display: grid;
+    grid-template-columns: 1fr auto;
 }
 
+.puzzle-db-header {
+    font-size: 1.8rem;
+    font-weight: bold;
+    padding: 1rem;
+    text-align: center;
+    background-color: DimGray;
+    color: white;
+}
 
 .header-btn-help {
     background-color: white;
@@ -411,7 +420,7 @@ html {
 
 .mobile-btn-container {
     margin: 5px;
-    height:fit-content;
+    height: fit-content;
     /* align-self:center; */
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -469,7 +478,7 @@ html {
 .btn-image {
     width: 1.2rem;
     height: 1.2rem;
-    margin-right: 1rem; 
+    margin-right: 1rem;
 }
 
 
@@ -503,24 +512,25 @@ html {
 label {
     display: block;
     font-size: 1.2rem;
-  }
-  
-  .pc-floatBlock {
+}
+
+.pc-floatBlock {
     margin: 0.8em 0.8em 0 0;
-  } 
+}
 
-  .pc-evaluation-options {
-      display: flex;
-      flex-direction:row;
-      margin: 0 0 1em 0;
-  }
+.pc-evaluation-options {
+    display: flex;
+    flex-direction: row;
+    margin: 0 0 1em 0;
+}
 
- .pc-floatBlock {
+.pc-floatBlock {
     flex-grow: 1;
 }
+
 .eval-type {
     font-size: 1.2rem;
- }
+}
 
 
 /*======================================*/
@@ -618,11 +628,6 @@ label {
     vertical-align: center;
 }
 
-
-.mobile-help {
-    display: none;
-}
-
 /*=======================================*/
 /* DB-Dialog 
 /*=======================================*/
@@ -635,83 +640,66 @@ label {
 }
 
 
-
-
-
-.puzzle-db-dialog {
+.puzzle-table-dlg {
     position: absolute;
     margin-top: auto;
     margin-bottom: auto;
     margin-left: auto;
     margin-right: auto
 }
-.puzzle-db-dialog::backdrop {
+
+.puzzle-dlg {
+    position: relative;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 1.4rem;
+}
+
+.puzzle-dlg::backdrop {
     background: hsl(201 50% 40% /.5);
-  }
-
-
+}
 
 /*=======================================*/
 /* Save-Dialog 
 /*=======================================*/
 
-.contentSaveDlg::backdrop {
+.puzzle-dlg::backdrop {
     background: hsl(201 50% 40% /.5);
 }
- 
-.contentSaveDlg {
-    width: 35%;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-  
-    position: absolute;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-left: auto;
-    margin-right: auto;
-}
 
-.contentSaveDlgHeader {
+.dlg-header {
     font-size: 1.8rem;
     font-weight: bold;
-    margin:5px;
+    margin: 5px;
     text-align: center;
 }
 
+label {
+    font-size: 1.4rem;
+    margin-left: 1.2rem;
+    margin-bottom: 1.2rem;
+}
 
-.label-saveDlg {
-    margin-top: 10px;
-    margin-left: 10px;
-    font-weight: bold;
+.puzzle-name-input-dlg {
+    width: 90%;
+    margin-left: 1.2rem;
+    padding: 0.8rem;
     font-size: 1.4rem;
 }
 
-.save-dlg-puzzle-id[readonly] {
-    background-color: lightgray;
-    line-height: 2.0rem;
-}
-.save-dlg-puzzle-id, .save-dlg-puzzle-name{
-    width: 70%;
-    border: 1px solid black;
-    margin: 10px;
-    margin-left: 40px; 
-    padding: 5px; 
-    font-size: 1.2rem;
- }
-
 .ok-cancel-btns {
-    margin-top: 10px;
-    margin-left: 25px;
-    margin-right: 25px;
+    margin: 2.4rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
 }
 
 .okCancelBtn {
-    width: 95%;
+    width: 50%;
     margin-top: auto;
-    margin-left: auto; 
+    margin-left: auto;
     margin-right: auto;
     margin-bottom: 15px;
 }
@@ -722,14 +710,14 @@ label {
 .successDlg::backdrop {
     background: hsl(201 50% 40% /.5);
 }
- 
+
 .successDlg {
     width: 20%;
 
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-  
+
     position: absolute;
     margin-top: auto;
     margin-bottom: auto;
@@ -737,22 +725,25 @@ label {
     margin-right: auto;
 }
 
-.successDlgHeader {
-    font-size: 1.6rem;
+.dlg-header {
+    font-size: 2.4rem;
     font-weight: bold;
-    margin:5px;
+    margin: 1.2rem;
     text-align: center;
 }
+
 .further-row {
     display: flex;
     margin-top: auto;
     margin-left: 10px;
 }
+
 label {
     margin-left: 10px;
 }
+
 .successImg {
-    margin-left: 10px; 
+    margin-left: 10px;
     margin-right: auto;
     height: 85%;
     width: 85%;
@@ -773,14 +764,14 @@ label {
 .infoDlg::backdrop {
     background: hsl(201 50% 40% /.5);
 }
- 
+
 .infoDlg {
     width: 30%;
 
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-  
+
     position: absolute;
     margin-top: auto;
     margin-bottom: auto;
@@ -791,27 +782,29 @@ label {
 .infoDlgHeader {
     font-size: 1.6rem;
     font-weight: bold;
-    margin:10px;
+    margin: 10px;
     text-align: center;
 }
+
 .infoDlgBodyRow {
     display: flex;
-	flex-direction:row;
+    flex-direction: row;
     align-items: center;
     margin-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
 }
+
 .infoDlgBody {
     font-size: 1.2rem;
     margin-left: 10px;
 }
 
 .infoIcon {
-    margin-left: 5px; 
+    margin-left: 5px;
     margin-right: 10px;
-    height: 40px; 
-    width: 40px; 
+    height: 40px;
+    width: 40px;
     background-color: white;
 }
 
@@ -828,15 +821,34 @@ label {
 /*=======================================*/
 /* Puzzle-Datenbank 
 /*=======================================*/
+.container-puzzle-buttons {
+    background: #500;
+    border: 5px solid #500;
+}
+
+.puzzle-db-button {
+    background-color: white;
+    text-align: center;
+    border-radius: 0.3rem;
+    border: none;
+    margin: 1.6rem 1.2rem 1.2rem 1.2rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
+}
 
 .puzzle-btns {
-   /* border-bottom: 5px solid black;*/
-    padding-bottom: 10px;
-    margin-top: 5px;
+ /*   border-bottom: 5px solid black; */
+    background: #500;
+    padding-bottom: 1rem;
+    margin-left: 1rem;
+    margin-top: 0.5rem; 
     display: flex;
     flex-direction: row;
-    gap: 5px;
+    gap: gap 1rem;
 }
+/* ========================================*/
 
 .status-line {
 
@@ -845,7 +857,7 @@ label {
     padding-top: 5px;
     margin-top: 5px;
 
-    line-height:normal;
+    line-height: normal;
     display: flex;
     width: 100%;
 }
@@ -906,7 +918,7 @@ label {
 section {
     font-size: 1.0rem;
     position: relative;
-    border: 1px solid #000;
+    /* border: 1px solid #000; */
     padding-top: 37px;
     background: #500;
 }
@@ -920,9 +932,9 @@ section.positioned {
 }
 
 .container {
-   overflow-y: auto;
-   height: 200px;
-
+    overflow-y: auto;
+    /* Höhe der sichtbaren Puzzle-Tabelle hier einstellen. */
+    height: 25vh;
 }
 
 table {
@@ -939,7 +951,8 @@ th {
     border-bottom: 1px solid #eee;
     background: #ddd;
     color: #000;
-    padding: 5px 5px;
+    /* Zeilenhöhe der Tabelle mit erstem Parameter einstellen. */
+    padding: 10px 5px;
 }
 
 .puzzle-db-table th {

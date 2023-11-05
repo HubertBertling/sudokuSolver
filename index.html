@@ -138,8 +138,8 @@
                 <button class="mobile-interface mobile-btn mobile-btn-save" id="btn-save-mobile"><img
                         src="images/save.png" class="btn-image-save">
                 </button>
-                <button class="mobile-interface mobile-btn btn-db-open" id="btn-db-open"><img
-                        src="images/oeffnen.png" class="btn-image-open"></button>
+                <button class="mobile-interface mobile-btn btn-db-open" id="btn-db-open"><img src="images/oeffnen.png"
+                        class="btn-image-open"></button>
 
 
                 <button class="mobile-interface mobile-btn mobile-number">1</button>
@@ -182,22 +182,10 @@
 
     <!--Dialoge -->
 
-    <dialog class="puzzle-db-dialog" id="puzzle-db-dialog">
-
-        <div class="puzzle-btns ">
-            <!--Die 4 buttons unterhalb der Puzzle-Datenbanktabelle -->
-            <button class="mobile-btn noprint" id="pz-btn-load">Laden</button>
-            <button class="mobile-btn noprint" id="pz-btn-edit">Bearbeiten</button>
-            <button class="mobile-btn noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
-                    class="forward-backward-image"></button>
-            <button class="mobile-btn noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
-                    class="forward-backward-image"></button>
-            <button class="mobile-btn noprint" id="pz-btn-delete">Löschen</button>
-            <button class="mobile-btn noprint" id="pz-btn-ok">Schließen</button>
-
-
+    <dialog class="puzzle-table-dlg" id="puzzle-db-dialog">
+        <div class="puzzle-db-header">
+                Puzzle Datenbank
         </div>
-
         <section class="noprint">
             <div class="container" id="table-container">
                 <table class="puzzle-db-table " id="puzzle-db-table">
@@ -209,9 +197,10 @@
                             <th id="col-name" style="cursor:pointer">Puzzle-Name <div>Puzzle-Name</div>
                             </th>
                             <!--         <th id="col-defCount" style="cursor:pointer">Def. Zellen<div>Def. Zellen</div>
-                            </th>
+                            </th> -->
                             <th id="col-status" style="cursor:pointer">Status<div>Status</div>
                             </th>
+                            <!--
                             <th id="col-steps-lazy" style="cursor:pointer">Schritte (lazy)<div>Schritte (lazy)
                                 </div>
                             </th>
@@ -233,31 +222,54 @@
                 </table>
             </div>
         </section>
+        <div class="container-puzzle-buttons">
+            <div class="puzzle-btns ">
+                <!--Die 4 buttons unterhalb der Puzzle-Datenbanktabelle -->
+                <button class="puzzle-db-button noprint" id="pz-btn-load">Laden</button>
+                <button class="puzzle-db-button noprint" id="pz-btn-rename">Umbenennen</button>
+                <button class="puzzle-db-button noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
+                        class="forward-backward-image"></button>
+                <button class="puzzle-db-button noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
+                        class="forward-backward-image"></button>
+                <button class="puzzle-db-button noprint" id="pz-btn-delete">Löschen</button>
+                <button class="puzzle-db-button noprint" id="pz-btn-ok">Schließen</button>
+            </div>
+        </div>
 
     </dialog>
 
-    <dialog class="contentSaveDlg" id="contentSaveDlg">
-        <div class="contentSaveDlgHeader" id="contentSaveDlgHeader">
+    <dialog class="puzzle-dlg" id="contentSaveDlg">
+        <div class="dlg-header" id="contentSaveDlgHeader">
             Puzzle speichern unter ...
         </div>
-        <div style="display:none">
-            <label for="puzzle-id" class="label-saveDlg">Neue Puzzle-Id:</label>
-            <input type="text" class="save-dlg-puzzle-id" id="save-dlg-puzzle-id" name="puzzle-id"><br>
-        </div>
-
-        <label for="puzzle-name" class="label-saveDlg">Neuer Puzzle-Name:</label>
-        <input type="text" class="save-dlg-puzzle-name" id="puzzle-name" name="puzzle-name"><br>
+        <label for="puzzle-name">Puzzle-Name:</label>
+        <input type="text" class="puzzle-name-input-dlg" id="puzzle-name" name="puzzle-name"><br>
 
         <div class="ok-cancel-btns">
-            <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageOK" name="OK" value="OK" />
-            <input type="button" class="main-btn okCancelBtn" id="btn-saveStorageCancel" name="Cancel"
+            <input type="button" class="main-btn ok-cancel-btn" id="btn-saveStorageOK" name="OK" value="OK" />
+            <input type="button" class="main-btn ok-cancel-btn" id="btn-saveStorageCancel" name="Cancel"
+                value="Abbrechen" />
+        </div>
+    </dialog>
+
+    <dialog class="puzzle-dlg" id="puzzle-rename-dlg">
+        <div class="dlg-header" id="puzzle-rename-dlg-header">
+            Puzzle umbenennen ...
+        </div>
+       
+        <label for="puzzle-name" class="label-dlg">Neuer Puzzle-Name:</label>
+        <input type="text" class="puzzle-name-input-dlg" id="puzzle-name-renamed" name="puzzle-name"><br>
+
+        <div class="ok-cancel-btns">
+            <input type="button" class="main-btn ok-cancel-btn" id="pz-rename-ok-btn" name="OK" value="OK" />
+            <input type="button" class="main-btn ok-cancel-btn" id="pz-rename-cancel-btn" name="Cancel"
                 value="Abbrechen" />
         </div>
     </dialog>
 
 
     <dialog class="successDlg" id="successDlg">
-        <div class="successDlgHeader" id="successDlgHeader">
+        <div class="dlg-header" id="successDlgHeader">
             Lösung gefunden
         </div>
         <img src="images/gueckwunsch.jfif" class="successImg">
@@ -270,7 +282,7 @@
 
 
     <dialog class="infoDlg" id="infoDlg">
-        <div class="infoDlgHeader" id="infoDlgHeader">
+        <div class="dlg-header" id="infoDlgHeader">
             Information
         </div>
         <div class="infoDlgBodyRow">
@@ -282,9 +294,7 @@
         <button class="infoDlg-OK-Btn" id="infoDlg-OK-Btn">OK</button>
     </dialog>
 
-    <script src="dist/winbox.bundle.js"></script>
-
-    <script>
+     <script>
         if (navigator.serviceWorker) {
             navigator.serviceWorker.register(
                 '/sudokuSolver/sw.js',

@@ -23,10 +23,8 @@ class SudokuMainApp {
         // 2. The database component
         this.myPuzzleDB = new SudokuPuzzleDB();
         this.myPuzzleDBController = new SudokuPuzzleDBController(this.myPuzzleDB);
-        this.myPuzzleDBView = new SudokuPuzzleDBView(this.myPuzzleDB);
-      //  this.myMobilePuzzleDBView = new SudokuMobilePuzzleDBView(this.myPuzzleDB);
-        this.myPuzzleDB.attach(this.myPuzzleDBView);
-     //   this.myPuzzleDB.attach(this.myMobilePuzzleDBView);
+        // this.myPuzzleDBView = new SudokuPuzzleDBView(this.myPuzzleDB);
+        // this.myMobilePuzzleDBView = new SudokuMobilePuzzleDBView(this.myPuzzleDB);
     }
 
     init() {
