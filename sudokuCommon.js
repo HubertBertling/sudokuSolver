@@ -256,7 +256,7 @@ class SudokuSolverController {
         if (puzzleId == '' || puzzleId == '-') {
             //Neues Puzzle abfragen
             let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-            this.myPuzzleSaveDialog.open(newPuzzelId, 'Gespeichert am (' + new Date().toLocaleString('de-DE') + ')');
+            this.myPuzzleSaveDialog.open(newPuzzelId, 'Puzzle (' + new Date().toLocaleString('de-DE') + ')');
         } else {
             //Aktuelles Puzzel ist aus der Datenbank überschreiben
 
@@ -5536,6 +5536,7 @@ class SudokuPuzzleDBView extends SudokuView {
             for (let [key, pzRecord] of puzzleMap) {
                 let tr = document.createElement('tr');
                 tr.setAttribute("onClick", "sudoApp.myPuzzleDBController.setSelected(this)");
+                tr.setAttribute("ondblclick", "sudoApp.myPuzzleDBController.loadBtnPressed()");
                 tr.setAttribute("style", "cursor:pointer");
                 tr.classList.add('item')
                 if (i == this.myDB.selectedIndex) {
