@@ -443,7 +443,7 @@ class SudokuSolverView extends SudokuView {
         this.displayGoneSteps(myStepper.getGoneSteps());
         this.displayAutoDirection(myStepper.getAutoDirection());
         this.displayProgress();
-        this.displayPuzzle(myGrid.loadedPuzzleId, myGrid.loadedPuzzleName);
+        // this.displayPuzzle(myGrid.loadedPuzzleId, myGrid.loadedPuzzleName);
         this.displayEvalType(this.mySolver.getActualEvalType());
         sudoApp.mySolver.myGridView.displayNameAndDifficulty();
     }
