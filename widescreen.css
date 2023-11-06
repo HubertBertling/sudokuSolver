@@ -168,7 +168,6 @@ html {
     gap: 10px;
 }
 
-
 /*======================================*/
 /* Sudoku grid block */
 /*======================================*/
@@ -897,12 +896,15 @@ label {
     margin-right: 20px;
 }
 
-#print-puzzle {
-    display: none;
+
+/*======================================*/
+/* Print */
+/*======================================*/
+.print-content {
+    display:none;
 }
 
-.pz-table,
-.solution-table {
+.pz-table {
     margin-left: 30px;
     margin-right: 5px;
     display: grid;
@@ -916,12 +918,6 @@ label {
     height: 20px;
     display: grid;
     place-items: center;
-}
-
-#pz-btn-print {
-    margin-top: 10px;
-    margin-left: 50px;
-    width: 140px;
 }
 
 section {

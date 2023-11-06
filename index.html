@@ -26,7 +26,7 @@
 </head>
 
 <body>
-    <div class="app-content">
+    <div class="app-content noprint">
         <div class="app-header">
             <div>
                 Sudoku Trainer
@@ -114,7 +114,7 @@
                         </div>
                     </div>
                 </div>
-        </div>
+            </div>
             <div class="mobile-btn-container">
 
                 <button class="mobile-interface mobile-btn btn-generate">Neu</button>
@@ -176,9 +176,9 @@
 
     <!--Dialoge -->
 
-    <dialog class="puzzle-table-dlg" id="puzzle-db-dialog">
+    <dialog class="puzzle-table-dlg noprint" id="puzzle-db-dialog">
         <div class="puzzle-db-header">
-                Puzzle Datenbank
+            Puzzle Datenbank
         </div>
         <section class="noprint">
             <div class="container" id="table-container">
@@ -226,13 +226,17 @@
                 <button class="puzzle-db-button noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
                         class="forward-backward-image"></button>
                 <button class="puzzle-db-button noprint" id="pz-btn-delete">Löschen</button>
+                <button class="puzzle-db-button" id="puzzle-db-btn-print"><img src="images/drucker.png"
+                    class="btn-image-print">
+            </button>
+
                 <button class="puzzle-db-button noprint" id="pz-btn-ok">Schließen</button>
             </div>
         </div>
 
     </dialog>
 
-    <dialog class="puzzle-dlg" id="contentSaveDlg">
+    <dialog class="puzzle-dlg noprint" id="contentSaveDlg">
         <div class="dlg-header" id="contentSaveDlgHeader">
             Puzzle speichern unter ...
         </div>
@@ -246,11 +250,11 @@
         </div>
     </dialog>
 
-    <dialog class="puzzle-dlg" id="puzzle-rename-dlg">
+    <dialog class="puzzle-dlg noprint" id="puzzle-rename-dlg">
         <div class="dlg-header" id="puzzle-rename-dlg-header">
             Puzzle umbenennen ...
         </div>
-       
+
         <label for="puzzle-name" class="label-dlg">Neuer Puzzle-Name:</label>
         <input type="text" class="puzzle-name-input-dlg" id="puzzle-name-renamed" name="puzzle-name"><br>
 
@@ -262,7 +266,7 @@
     </dialog>
 
 
-    <dialog class="successDlg" id="successDlg">
+    <dialog class="successDlg noprint" id="successDlg">
         <div class="dlg-header" id="successDlgHeader">
             Lösung gefunden
         </div>
@@ -275,7 +279,7 @@
     </dialog>
 
 
-    <dialog class="infoDlg" id="infoDlg">
+    <dialog class="infoDlg noprint" id="infoDlg">
         <div class="dlg-header" id="infoDlgHeader">
             Information
         </div>
@@ -288,7 +292,18 @@
         <button class="infoDlg-OK-Btn" id="infoDlg-OK-Btn">OK</button>
     </dialog>
 
-     <script>
+    <div class="print-content">
+        <div class="puzzle-header">
+            <!--Id und Name des aktuell geladenen Puzzles werden als String via JS erzeugt-->
+            <div class="pz-id-row" id="pz-id-row">0</div>
+        </div>
+        <div class="puzzle-line">
+            <div class="pz-table" id="print-puzzle">
+            </div>
+        </div>
+    </div>
+
+    <script>
         if (navigator.serviceWorker) {
             navigator.serviceWorker.register(
                 '/sudokuSolver/sw.js',

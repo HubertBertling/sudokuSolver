@@ -9,10 +9,9 @@
         display: none; 
     }
 
-    #screen-puzzle {
-        display: none;
+    .print-content {
+        margin: 40px;
     }
-
     .puzzle-line {
         font-size: 2.4rem;
         color: black;
