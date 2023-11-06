@@ -445,6 +445,7 @@ class SudokuSolverView extends SudokuView {
         this.displayProgress();
         this.displayPuzzle(myGrid.loadedPuzzleId, myGrid.loadedPuzzleName);
         this.displayEvalType(this.mySolver.getActualEvalType());
+        sudoApp.mySolver.myGridView.displayNameAndDifficulty();
     }
 
     upDateAspect(aspect, aspectValue) {
@@ -615,6 +616,8 @@ class SudokuSolverView extends SudokuView {
         let statusLineNode = document.getElementById('status-line');
         statusLineNode.innerHTML =
             '<b>Puzzle-Name:</b> &nbsp' + name;
+
+
         /*
         '<b>Puzzle-Id:</b> &nbsp' + uid + '; &nbsp'
             + '<b>Puzzle-Name:</b> &nbsp' + name;
@@ -3174,10 +3177,13 @@ class SudokuGridView extends SudokuView {
         this.displaySelection();
     }
 
-    displayDifficulty() {
+    displayNameAndDifficulty() {
         let evalNode = document.getElementById("loaded-evaluations");
-        evalNode.innerHTML =
-            '<b>Schwierigkeitsgrad:</b> &nbsp' + this.myModel.difficulty + '; &nbsp'
+        let name = this.myModel.loadedPuzzleName;
+        if (name == '') name = '-';
+        evalNode.innerHTML = 
+            '<b>Puzzle:</b> &nbsp' + name + '; &nbsp' +
+            '<b>Schwierigkeitsgrad:</b> &nbsp' + this.myModel.preRunRecord.level + '; &nbsp'
     }
 
     displaySelection() {

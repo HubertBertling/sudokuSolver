@@ -6,7 +6,7 @@
     /* Mit der Klasse noprint werden Screen-Elemente markiert,
         die nicht gedruckt werden sollen. */
     .noprint {
-        display: none;
+        display: none; 
     }
 
     #screen-puzzle {
