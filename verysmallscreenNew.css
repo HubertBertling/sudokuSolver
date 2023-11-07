@@ -60,7 +60,7 @@ body,
 
 html {
     font-family: 'Open Sans', sans-serif;
-    height: 95vh;
+    height: 90vh;
     background-color: var(--screen-bg-color);
     margin-top: 10px;
     display: flex;
@@ -192,7 +192,7 @@ html {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: 95vh;
+    height: 90vh;
 }
 
 /*======================================*/
@@ -571,8 +571,8 @@ label {
 
 .progress-box {
     border-bottom: 3px solid #0d1117;
-    padding-top: 5px;
-    padding-bottom: 10px;
+    padding-top: 3px;
+    padding-bottom: 3px;
     color: var(--screen-color);
     font-size: var(--font-size);
 }

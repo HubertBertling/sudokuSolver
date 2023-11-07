@@ -59,7 +59,7 @@ body,
 
 html {
     font-family: 'Open Sans', sans-serif;
-    height: 95vh;
+    height: 92vh;
     background-color: var(--screen-bg-color);
     margin-top: 10px;
     display: flex;
@@ -191,7 +191,7 @@ html {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: 95vh;
+    height: 92vh;
 }
 
 /*======================================*/
@@ -507,7 +507,7 @@ html {
 .btn-image {
     width: 1.2rem;
     height: 1.2rem;
-    margin-right: 1rem;
+    margin-right: 0.4rem;
 }
 
 
