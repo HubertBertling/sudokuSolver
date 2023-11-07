@@ -129,9 +129,13 @@ class SudokuSolverController {
             })
         });
 
-        document.getElementById('header-btn-help').addEventListener('click', () => {
-            sudoApp.helpFunktion();
+        this.btns = document.querySelectorAll('.help-button');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                sudoApp.helpFunktion();
+            })
         });
+
 
 
         // Click-Event for save button desktop
@@ -5503,7 +5507,7 @@ class SudokuPuzzleDBController {
         }
     }
 
-    
+
     printSelectedPuzzle() {
         // Button on the solver view
         let myPrintView = new SudokuPrintView();

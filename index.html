@@ -20,21 +20,25 @@
     <meta name="pwa-capable" content="yes">
 
     <link rel="stylesheet" media="screen and (max-width: 359px)" href="verysmallscreen.css">
-    <link rel="stylesheet" media="screen and (min-width: 360px) and (max-width: 490px)" href="smallscreen.css">
+    <link rel="stylesheet" media="screen and (min-width: 360px) and (max-width: 490px)" href="smallscreenNew.css">
     <link rel="stylesheet" media="screen and (min-width: 491px)" href="widescreen.css">
     <link rel="stylesheet" media="print" type="text/css" href="print.css" />
 </head>
 
 <body>
-    <div class="app-content noprint">
-        <div class="app-header">
-            <div>
-                Sudoku Trainer
-            </div>
-            <button class="header-btn-help" id="header-btn-help"> <img src="images/help.png"
-                    class="btn-image-help"></button>
-        </div>
+    <div class="app-content noprint">     
         <div class="sudoku-solver-container">
+            <div class="app-name-header pc-element">
+                <div class="h-text">
+                    Sudoku Trainer
+                </div>
+                <button class="help-button btn" > ? </button>
+            </div>
+            <div class="app-empty-header mobile-element">
+                <div>
+    
+                </div>
+            </div>    
             <div class="gridArea" id="gridArea">
                 <div class="pc-eval">
                     <fieldset class="eval-fieldset">
@@ -69,7 +73,6 @@
                     </fieldset>
 
                 </div>
-
                 <div class="grid-plus-explainer" id="grid-plus-explainer">
                     <div id="loader"></div>
 
@@ -84,7 +87,6 @@
 
                     </div>
                 </div>
-
                 <div class="loaded-evaluations" id="loaded-evaluations">
 
                 </div>
@@ -165,13 +167,17 @@
                 </button>
 
             </div>
-        </div>
-        <div class="app-footer">
-            <div>
-
+            <div class="app-name-footer mobile-element">
+                <div class="h-text">
+                    Sudoku Trainer
+                </div>
+                <button class="help-button btn" > ? </button>
+            </div>
+            <div class="app-empty-footer pc-element">
+                <div>
+                </div>
             </div>
         </div>
-
     </div>
 
     <!--Dialoge -->
@@ -219,18 +225,20 @@
         <div class="container-puzzle-buttons">
             <div class="puzzle-btns ">
                 <!--Die 4 buttons unterhalb der Puzzle-Datenbanktabelle -->
-                <button class="puzzle-db-button noprint" id="pz-btn-load">Laden</button>
-                <button class="puzzle-db-button noprint" id="pz-btn-rename">Umbenennen</button>
+                <button class="puzzle-db-button noprint" id="pz-btn-load"><img src="images/upload.png"
+                    class="btn-image-upload"></button>
+                <button class="puzzle-db-button noprint" id="pz-btn-rename"><img src="images/rename.png"
+                    class="btn-image-rename"></button>
                 <button class="puzzle-db-button noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
                         class="forward-backward-image"></button>
                 <button class="puzzle-db-button noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
                         class="forward-backward-image"></button>
-                <button class="puzzle-db-button noprint" id="pz-btn-delete">Löschen</button>
+                <button class="puzzle-db-button noprint" id="pz-btn-delete">X</button>
                 <button class="puzzle-db-button" id="puzzle-db-btn-print"><img src="images/drucker.png"
                     class="btn-image-print">
             </button>
 
-                <button class="puzzle-db-button noprint" id="pz-btn-ok">Schließen</button>
+                <button class="puzzle-db-button noprint" id="pz-btn-ok">OK</button>
             </div>
         </div>
 
