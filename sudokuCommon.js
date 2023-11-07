@@ -5569,6 +5569,8 @@ class SudokuPrintView extends SudokuView {
                         if (tableArray[k].cellPhase == 'define') {
                             cellField.style.color = 'blue';
                             cellField.style.fontWeight = 'bold';
+                        } else {
+                            cellField.style.color = 'grey';
                         }
                     }
                     cellField.style.border = "1px solid darkgrey";
