@@ -59,7 +59,7 @@ body,
 
 html {
     font-family: 'Open Sans', sans-serif;
-    height: 94vh;
+    height: 95vh;
     background-color: var(--screen-bg-color);
     margin-top: 10px;
     display: flex;
@@ -191,7 +191,7 @@ html {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: 94vh;
+    height: 95vh;
 }
 
 /*======================================*/
