@@ -281,11 +281,11 @@ class SudokuSolverController {
         let puzzleId = this.mySolver.myGrid.loadedPuzzleId;
         if (puzzleId == '' || puzzleId == '-') {
             let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-            sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
+            // sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
             sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzelId, 'Druck (' + new Date().toLocaleString('de-DE') + ')', playedPuzzleDbElement);
             sudoApp.myPuzzleDBController.printSelectedPuzzle();
         } else {
-            sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
+            //sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
             sudoApp.myPuzzleDBController.printSelectedPuzzle();
         }
     }

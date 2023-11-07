@@ -9,7 +9,7 @@ var APP_PREFIX = 'sudo_';
 // you need to change this version (version_01, version_02…). 
 // If you don't change the version, the service worker will give your
 // users the old files!
-var VERSION = 'version_09';
+var VERSION = 'version_10';
 
 // The files to make available for offline use. make sure to add 
 // others to this list
@@ -17,14 +17,13 @@ var URLS = [
   `${GHPATH}/`,
   `${GHPATH}/index.html`,
   `${GHPATH}/help.html`,
-  `${GHPATH}/dist/winbox.bundle.js`,
   `${GHPATH}/sudokuMainApp.js`,
   `${GHPATH}/fastSolverApp.js`,
   `${GHPATH}/generatorApp.js`,
   `${GHPATH}/sudokuCommon.js`,
   `${GHPATH}/widescreen.css`,
-  `${GHPATH}/smallscreen.css`,
-  `${GHPATH}/verysmallscreen.css`,
+  `${GHPATH}/smallscreenNew.css`,
+  `${GHPATH}/verysmallscreenNew.css`,
   `${GHPATH}/print.css`,
   `${GHPATH}/images/sudoku.png`,
   `${GHPATH}/images/ok.png`,
@@ -37,8 +36,11 @@ var URLS = [
   `${GHPATH}/images/step-96.png`,
   `${GHPATH}/images/save.png`,
   `${GHPATH}/images/oeffnen.png`,
-  `${GHPATH}/images/gueckwunsch.jfif`
-]
+  `${GHPATH}/images/gueckwunsch.jfif`,
+  `${GHPATH}/images/upload.png`,
+  `${GHPATH}/images/rename.png`,
+  `${GHPATH}/images/drucker.png`
+  ]
 
 const CACHE_NAME = APP_PREFIX + VERSION
 self.addEventListener('fetch', function (e) {
