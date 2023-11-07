@@ -147,7 +147,7 @@ html {
 }
 
 .h-text {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-xl);
     font-weight: bold;
     text-align: center;
     border: none;
@@ -155,7 +155,7 @@ html {
 }
 
 .help-button {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-xl);
     font-weight: bold;
     text-align: center;
     border: 1px solid grey;
