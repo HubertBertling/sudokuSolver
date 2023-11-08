@@ -885,13 +885,20 @@ label {
 
 .puzzle-btns {
     /*   border-bottom: 5px solid black; */
-    background: #500;
+    /* background: #500;
     padding-bottom: 1rem;
     margin-left:0.1rem;
     margin-top: 0.5rem;
+
     display: flex;
     flex-direction: row;
-    gap: 0.1rem;
+    gap: 0.1rem; */
+
+    margin-left: 0.2rem;
+    margin-right: 0.2rem;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.2rem;
 }
 
 /* ========================================*/
@@ -976,7 +983,7 @@ section.positioned {
 .container {
     overflow-y: auto;
     /* Höhe der sichtbaren Puzzle-Tabelle hier einstellen. */
-    height: 60vh;
+    height:75vh;
 }
 
 table {
