@@ -5441,12 +5441,12 @@ class SudokuPuzzleDBController {
             );
         });
 
-        document.getElementById('pz-btn-previous').addEventListener('click', () => {
+     /*   document.getElementById('pz-btn-previous').addEventListener('click', () => {
             this.previousBtnPressed();
         });
         document.getElementById('pz-btn-next').addEventListener('click', () => {
             this.nextBtnPressed();
-        });
+        }); */
         document.getElementById('pz-btn-delete').addEventListener('click', () => {
             this.deleteBtnPressed();
         });

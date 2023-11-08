@@ -855,6 +855,23 @@ label {
 /*=======================================*/
 /* Puzzle-Datenbank 
 /*=======================================*/
+
+.puzzle-db-root {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+puzzle-db-header-outmost {
+    background-color: #500;
+    flex-grow: 1;
+}
+
+puzzle-db-footer-outmost {
+    background-color: #500;
+    flex-grow: 1;
+}
+
+
 .container-puzzle-buttons {
     background: #500;
     border-top: 5px solid #ddd;
