@@ -31,7 +31,7 @@
             <div class="h-text">
                 Sudoku Trainer
             </div>
-            <button class="help-button btn"> ? </button>
+            <button class="help-button btn" > ? </button>
         </div>
         <div class="sudoku-solver-container">
             <div class="gridArea" id="gridArea">
@@ -166,7 +166,7 @@
                 <div class="h-text">
                     Sudoku Trainer
                 </div>
-                <button class="help-button btn"> ? </button>
+                <button class="help-button btn" > ? </button>
             </div>
         </div>
         <div class="app-empty-footer pc-element">
@@ -178,10 +178,10 @@
     <!--Dialoge -->
 
     <dialog class="puzzle-table-dlg noprint" id="puzzle-db-dialog">
-                    <div class="puzzle-db-header">
-                Puzzle Datenbank
-            </div>
-            <section class="noprint">
+        <div class="puzzle-db-header">
+            Puzzle Datenbank
+        </div>
+        <section class="noprint">
             <div class="container" id="table-container">
                 <table class="puzzle-db-table " id="puzzle-db-table">
                     <!--Die Datenbanktabelle-->
@@ -216,25 +216,25 @@
                     </tbody>
                 </table>
             </div>
-            </section>
-            <div class="container-puzzle-buttons">
-                <div class="puzzle-btns ">
-                    <!--Die buttons unterhalb der Puzzle-Datenbanktabelle -->
-                    <button class="puzzle-db-button noprint" id="pz-btn-load"><img src="images/upload.png"
-                            class="btn-image-upload"></button>
-                    <button class="puzzle-db-button noprint" id="pz-btn-rename"><img src="images/rename.png"
-                            class="btn-image-rename"></button>
-                    <button class="puzzle-db-button noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
-                            class="forward-backward-image"></button>
-                    <button class="puzzle-db-button noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
-                            class="forward-backward-image"></button>
-                    <button class="puzzle-db-button noprint" id="pz-btn-delete">X</button>
-                    <button class="puzzle-db-button" id="puzzle-db-btn-print"><img src="images/drucker.png"
-                            class="btn-image-print">
-                    </button>
+        </section>
+        <div class="container-puzzle-buttons">
+            <div class="puzzle-btns ">
+                <!--Die buttons unterhalb der Puzzle-Datenbanktabelle -->
+                <button class="puzzle-db-button noprint" id="pz-btn-load"><img src="images/upload.png"
+                    class="btn-image-upload"></button>
+                <button class="puzzle-db-button noprint" id="pz-btn-rename"><img src="images/rename.png"
+                    class="btn-image-rename"></button>
+                <button class="puzzle-db-button noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
+                        class="forward-backward-image"></button>
+                <button class="puzzle-db-button noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
+                        class="forward-backward-image"></button>
+                <button class="puzzle-db-button noprint" id="pz-btn-delete">X</button>
+                <button class="puzzle-db-button" id="puzzle-db-btn-print"><img src="images/drucker.png"
+                    class="btn-image-print">
+            </button>
 
-                    <button class="puzzle-db-button noprint" id="pz-btn-ok">OK</button>
-                            </div>
+                <button class="puzzle-db-button noprint" id="pz-btn-ok">OK</button>
+            </div>
         </div>
 
     </dialog>
@@ -296,12 +296,12 @@
     </dialog>
 
     <div class="print-content">
-        <div class="puzzle-header-print">
+        <div class="puzzle-header">
             <!--Id und Name des aktuell geladenen Puzzles werden als String via JS erzeugt-->
             <div class="pz-id-row" id="pz-id-row">0</div>
         </div>
-        <div class="puzzle-line-print">
-            <div class="pz-table-print" id="print-puzzle">
+        <div class="puzzle-line">
+            <div class="pz-table" id="print-puzzle">
             </div>
         </div>
     </div>
@@ -318,5 +318,5 @@
     <script src="./sudokuMainApp.js"></script>
 
 </body>
-
+ 
 </html>
