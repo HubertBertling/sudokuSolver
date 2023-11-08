@@ -673,13 +673,19 @@ label {
 }
 
 
+
 .puzzle-table-dlg {
+    
     position: absolute;
     margin-top: auto;
     margin-bottom: auto;
     margin-left: auto;
     margin-right: auto
 }
+
+/* ===================================================*/
+/*  Save and rename dialogs                           */
+/*====================================================*/
 
 .puzzle-dlg {
     position: relative;
@@ -693,10 +699,6 @@ label {
 .puzzle-dlg::backdrop {
     background: hsl(201 50% 40% /.5);
 }
-
-/*=======================================*/
-/* Save-Dialog 
-/*=======================================*/
 
 .puzzle-dlg::backdrop {
     background: hsl(201 50% 40% /.5);
@@ -922,14 +924,6 @@ label {
 
 }
 
-.puzzle-line {
-    font-size: var(--font-size);
-    color: black;
-    margin-top: 10px;
-    display: flex;
-    flex-direction: row;
-    line-height: normal;
-}
 
 .pz-nr {
     margin-left: 10px;
@@ -949,7 +943,24 @@ label {
     display:none;
 }
 
-.pz-table {
+.puzzle-header-print {
+    font-size: var(--font-size-xl);
+    display: inline-block;
+    color: black;
+    margin-top: 10px;
+}
+
+.puzzle-line-print {
+    font-size: var(--font-size);
+    color: black;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    line-height: normal;
+}
+
+
+.pz-table-print {
     margin-left: 30px;
     margin-right: 5px;
     display: grid;
@@ -983,7 +994,7 @@ section.positioned {
 .container {
     overflow-y: auto;
     /* Höhe der sichtbaren Puzzle-Tabelle hier einstellen. */
-    height:85vh;
+    height:75vh;
 }
 
 table {

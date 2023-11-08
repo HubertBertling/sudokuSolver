@@ -192,7 +192,7 @@ html {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: 90vh;
+    height: 75vh;
 }
 
 /*======================================*/
@@ -973,7 +973,7 @@ section.positioned {
 .container {
     overflow-y: auto;
     /* Höhe der sichtbaren Puzzle-Tabelle hier einstellen. */
-    height: 60vh;
+    height: 75vh;
 }
 
 table {
