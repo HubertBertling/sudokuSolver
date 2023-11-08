@@ -890,10 +890,10 @@ puzzle-db-footer-outmost {
     border-radius: 0.5rem;
     border: none;
     margin: 0.8rem 0.6rem 0.6rem 0.6rem;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;
-    padding-left: 0.8rem;
-    padding-right: 0.8rem;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
 }
 
 .puzzle-db-button:active {
