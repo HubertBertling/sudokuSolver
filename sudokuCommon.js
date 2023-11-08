@@ -259,8 +259,11 @@ class SudokuSolverController {
         let puzzleName = this.mySolver.myGrid.loadedPuzzleName;
         if (puzzleId == '' || puzzleId == '-') {
             //Neues Puzzle abfragen
-            let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-            this.myPuzzleSaveDialog.open(newPuzzelId, 'Puzzle (' + new Date().toLocaleString('de-DE') + ')');
+            let newPuzzleId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+            let newPuzzleName = 'Puzzle (' + new Date().toLocaleString('de-DE') + ')';
+            // this.myPuzzleSaveDialog.open(newPuzzelId, 'Puzzle (' + new Date().toLocaleString('de-DE') + ')');
+            sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzleId, newPuzzleName, playedPuzzleDbElement);
+       
         } else {
             //Aktuelles Puzzel ist aus der Datenbank überschreiben
 
