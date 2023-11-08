@@ -31,7 +31,7 @@
             <div class="h-text">
                 Sudoku Trainer
             </div>
-            <button class="help-button btn" > ? </button>
+            <button class="help-button btn"> ? </button>
         </div>
         <div class="sudoku-solver-container">
             <div class="gridArea" id="gridArea">
@@ -166,7 +166,7 @@
                 <div class="h-text">
                     Sudoku Trainer
                 </div>
-                <button class="help-button btn" > ? </button>
+                <button class="help-button btn"> ? </button>
             </div>
         </div>
         <div class="app-empty-footer pc-element">
@@ -178,24 +178,26 @@
     <!--Dialoge -->
 
     <dialog class="puzzle-table-dlg noprint" id="puzzle-db-dialog">
-        <div class="puzzle-db-header">
-            Puzzle Datenbank
-        </div>
-        <section class="noprint">
-            <div class="container" id="table-container">
-                <table class="puzzle-db-table " id="puzzle-db-table">
-                    <!--Die Datenbanktabelle-->
-                    <thead class="puzzle-db-thead">
-                        <tr>
-                            <th style="cursor:pointer">Nr<div>Nr</div>
-                            </th>
-                            <th id="col-name" style="cursor:pointer">Puzzle-Name <div>Puzzle-Name</div>
-                            </th>
-                            <!--         <th id="col-defCount" style="cursor:pointer">Def. Zellen<div>Def. Zellen</div>
+        <div class="puzzle-db-root">
+            <div class="puzzle-db-header-outmost"></div>
+            <div class="puzzle-db-header">
+                Puzzle Datenbank
+            </div>
+            <section class="noprint">
+                <div class="container" id="table-container">
+                    <table class="puzzle-db-table " id="puzzle-db-table">
+                        <!--Die Datenbanktabelle-->
+                        <thead class="puzzle-db-thead">
+                            <tr>
+                                <th style="cursor:pointer">Nr<div>Nr</div>
+                                </th>
+                                <th id="col-name" style="cursor:pointer">Puzzle-Name <div>Puzzle-Name</div>
+                                </th>
+                                <!--         <th id="col-defCount" style="cursor:pointer">Def. Zellen<div>Def. Zellen</div>
                             </th> -->
-                            <th id="col-status" style="cursor:pointer">Status<div>Status</div>
-                            </th>
-                            <!--
+                                <th id="col-status" style="cursor:pointer">Status<div>Status</div>
+                                </th>
+                                <!--
                             <th id="col-steps-lazy" style="cursor:pointer">Schritte (lazy)<div>Schritte (lazy)
                                 </div>
                             </th>
@@ -203,40 +205,41 @@
                                     (strikt)
                                 </div>
                             </th>  -->
-                            <th id="col-level" style="cursor:pointer">Level<div>Level</div>
-                            </th>
-                            <th id="col-backTracks" style="cursor:pointer">#RL<div>#RL</div>
-                            </th>
-                            <th id="col-date" style="cursor:pointer">Datum<div>Datum</div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="puzzle-db-tbody" id="puzzle-db-tbody">
-                        <!--Der Inhalt der Datenbanktabelle wird per JS aus dem Local-Store geladen-->
-                    </tbody>
-                </table>
-            </div>
-        </section>
-        <div class="container-puzzle-buttons">
-            <div class="puzzle-btns ">
-                <!--Die buttons unterhalb der Puzzle-Datenbanktabelle -->
-                <button class="puzzle-db-button noprint" id="pz-btn-load"><img src="images/upload.png"
-                    class="btn-image-upload"></button>
-                <button class="puzzle-db-button noprint" id="pz-btn-rename"><img src="images/rename.png"
-                    class="btn-image-rename"></button>
-                <button class="puzzle-db-button noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
-                        class="forward-backward-image"></button>
-                <button class="puzzle-db-button noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
-                        class="forward-backward-image"></button>
-                <button class="puzzle-db-button noprint" id="pz-btn-delete">X</button>
-                <button class="puzzle-db-button" id="puzzle-db-btn-print"><img src="images/drucker.png"
-                    class="btn-image-print">
-            </button>
+                                <th id="col-level" style="cursor:pointer">Level<div>Level</div>
+                                </th>
+                                <th id="col-backTracks" style="cursor:pointer">#RL<div>#RL</div>
+                                </th>
+                                <th id="col-date" style="cursor:pointer">Datum<div>Datum</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="puzzle-db-tbody" id="puzzle-db-tbody">
+                            <!--Der Inhalt der Datenbanktabelle wird per JS aus dem Local-Store geladen-->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <div class="container-puzzle-buttons">
+                <div class="puzzle-btns ">
+                    <!--Die buttons unterhalb der Puzzle-Datenbanktabelle -->
+                    <button class="puzzle-db-button noprint" id="pz-btn-load"><img src="images/upload.png"
+                            class="btn-image-upload"></button>
+                    <button class="puzzle-db-button noprint" id="pz-btn-rename"><img src="images/rename.png"
+                            class="btn-image-rename"></button>
+                    <button class="puzzle-db-button noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
+                            class="forward-backward-image"></button>
+                    <button class="puzzle-db-button noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
+                            class="forward-backward-image"></button>
+                    <button class="puzzle-db-button noprint" id="pz-btn-delete">X</button>
+                    <button class="puzzle-db-button" id="puzzle-db-btn-print"><img src="images/drucker.png"
+                            class="btn-image-print">
+                    </button>
 
-                <button class="puzzle-db-button noprint" id="pz-btn-ok">OK</button>
+                    <button class="puzzle-db-button noprint" id="pz-btn-ok">OK</button>
+                </div>
             </div>
+            <div class="puzzle-db-footer-outmost"></div>
         </div>
-
     </dialog>
 
     <dialog class="puzzle-dlg noprint" id="contentSaveDlg">
@@ -318,5 +321,5 @@
     <script src="./sudokuMainApp.js"></script>
 
 </body>
- 
+
 </html>

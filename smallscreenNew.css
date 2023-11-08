@@ -856,6 +856,21 @@ label {
 /*=======================================*/
 /* Puzzle-Datenbank 
 /*=======================================*/
+.puzzle-db-root {
+    display: flex;
+    flex-direction: column;
+    height: 95vh;
+}
+puzzle-db-header-outmost {
+    background-color: #500;
+    flex-grow: 1;
+}
+
+puzzle-db-footer-outmost {
+    background-color: #500;
+    flex-grow: 1;
+}
+
 .container-puzzle-buttons {
     background: #500;
     border-top: 5px solid #ddd;
@@ -990,9 +1005,7 @@ section.positioned {
     left: 50px;
     box-shadow: 0 0 15px #333;
 }
-.puzzle-table-dlg {
-    width: 100%;
-}
+
 .container {
     overflow-y: auto;
     /* Höhe der sichtbaren Puzzle-Tabelle hier einstellen. */
