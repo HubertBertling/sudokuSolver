@@ -279,6 +279,8 @@ class SudokuSolverController {
         let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
 
         let puzzleId = this.mySolver.myGrid.loadedPuzzleId;
+        let puzzleName = this.mySolver.myGrid.loadedPuzzleName;
+       
         if (puzzleId == '' || puzzleId == '-') {
             let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
             // sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
@@ -286,6 +288,8 @@ class SudokuSolverController {
             sudoApp.myPuzzleDBController.printSelectedPuzzle();
         } else {
             //sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
+            let tmpPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
+            sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, puzzleName, tmpPuzzleDbElement);
             sudoApp.myPuzzleDBController.printSelectedPuzzle();
         }
     }
