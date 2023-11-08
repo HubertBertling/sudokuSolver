@@ -983,7 +983,7 @@ section.positioned {
 .container {
     overflow-y: auto;
     /* Höhe der sichtbaren Puzzle-Tabelle hier einstellen. */
-    height:90vh;
+    height:85vh;
 }
 
 table {

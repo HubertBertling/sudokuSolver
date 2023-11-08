@@ -261,6 +261,7 @@ class SudokuSolverController {
             //Neues Puzzle abfragen
             let newPuzzleId = Date.now().toString(36) + Math.random().toString(36).substr(2);
             let newPuzzleName = 'Puzzle (' + new Date().toLocaleString('de-DE') + ')';
+            let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();   
             // this.myPuzzleSaveDialog.open(newPuzzelId, 'Puzzle (' + new Date().toLocaleString('de-DE') + ')');
             sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzleId, newPuzzleName, playedPuzzleDbElement);
        
