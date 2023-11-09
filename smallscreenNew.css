@@ -35,7 +35,7 @@
     --sudoku-cell-size: 9.8vw;
     --border-radius: 5px;
     --space-y: 20px;
-    --font-size-btn: 0.8rem;
+    --font-size-btn: 1.4rem;
 
     --font-size-sm: 0.8rem;
     --font-size: 1.1rem;
@@ -597,7 +597,7 @@ label {
     display: grid;
     grid-template-columns: 1fr 1fr;
     background-color: var(--screen-bg-color);
-    font-size: var(--font-size);
+    font-size: var(--font-size-lg);
 }
 
 .forward.checked,
@@ -694,7 +694,7 @@ label {
 }
 
 label {
-    font-size: var(--font-size);
+    font-size: var(--font-size-lg);
     margin-left: 1.2rem;
     margin-bottom: 1.2rem;
 }
