@@ -59,7 +59,7 @@ body,
 
 html {
     font-family: 'Open Sans', sans-serif;
-    height: 95vh;
+    /* height: 95vh; */
     background-color: var(--screen-bg-color);
     margin-top: 10px;
     display: flex;
@@ -111,6 +111,7 @@ html {
     display: flex;
     flex-direction: column;
     gap: 10px;
+
 }
 
 /* App-header */
@@ -146,27 +147,6 @@ html {
     flex-grow: 1;
 }
 
-.h-text {
-    font-size: 2.4rem;
-    font-weight: bold;
-    text-align: center;
-    border: none;
-    color: black;
-}
-
-.help-button {
-    font-size: 2.4rem;
-    font-weight: bold;
-    text-align: center;
-    border: 1px solid grey;
-    color: black;
-    background-color: #F2E2F2;
-    border-radius: 0.6rem;
-    padding-left: 1.2rem;
-    padding-right: 1.2rem;
-    margin-right: 0.5rem;
-}
-
 .app-name-footer {
     margin-left: 1rem;
     margin-right: 1rem;
@@ -182,7 +162,7 @@ html {
     font-weight: bold;
     padding: 1rem;
     text-align: center;
-    background-color: #500;;
+    background-color: #500;
     color: white;
 }
 
@@ -500,7 +480,7 @@ html {
 #btn-autoStep {
     grid-column-start: 5;
     grid-column-end: 5;
-    grid-row-start: 3;
+    grid-row-start: 4;
     grid-row-end: 6;
 }
 
@@ -889,7 +869,7 @@ puzzle-db-footer-outmost {
     font-size: var(--font-size-xl);
     border-radius: 0.5rem;
     border: none;
-    margin: 0.8rem 0.6rem 0.6rem 0.6rem;
+    margin: 1.2rem 1.2rem 1.2rem 1.2rem;
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;
     padding-left: 1.2rem;

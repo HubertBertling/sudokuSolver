@@ -140,42 +140,6 @@ html {
     display: none;
 }
 
-.h-text {
-    flex-grow: 9;
-}
-.help-button {
-    flex-grow: 1;
-}
-
-.h-text {
-    font-size: var(--font-size-lg);
-    font-weight: bold;
-    text-align: center;
-    border: none;
-    color: black;
-}
-
-.help-button {
-    font-size: var(--font-size-lg);
-    font-weight: bold;
-    text-align: center;
-    border: 1px solid grey;
-    color: black;
-    background-color: #F2E2F2;
-    border-radius: 0.6rem;
-    padding-left: 1.2rem;
-    padding-right: 1.2rem;
-    margin-right: 0.5rem;
-}
-
-.app-name-footer {
-    margin-left: 1rem;
-    margin-right: 1rem;
-    display: flex;
-    flex-direction: row;
-    gap:5px;
-}   
-
 /*==============================================*/
 
 .puzzle-db-header {
@@ -192,7 +156,7 @@ html {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: 75vh;
+    height: 95vh;
 }
 
 /*======================================*/
@@ -501,7 +465,7 @@ html {
 #btn-autoStep {
     grid-column-start: 5;
     grid-column-end: 5;
-    grid-row-start: 3;
+    grid-row-start: 4;
     grid-row-end: 6;
 }
 

@@ -123,6 +123,7 @@ html {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    height: 95vh;
 }
 
 /* App-header */
@@ -133,25 +134,6 @@ html {
 
 .h-text {
     flex-grow: 9;
-}
-
-.help-button {
-    flex-grow: 1;
-}
-
-.h-text,
-.help-button {
-    font-size: var(--font-size-xl);
-    font-weight: bold;
-    text-align: center;
-    border: none;
-    background-color: DimGray;
-    color: white;
-    border-radius: 0.6rem;
-    padding-left: 1.2rem;
-    padding-right: 1.2rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
 }
 
 .app-name-header {
@@ -495,7 +477,7 @@ html {
 #btn-autoStep {
     grid-column-start: 5;
     grid-column-end: 5;
-    grid-row-start: 3;
+    grid-row-start: 4;
     grid-row-end: 6;
 }
 
