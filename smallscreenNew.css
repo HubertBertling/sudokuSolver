@@ -839,7 +839,7 @@ label {
 .puzzle-db-root {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 95vh;
 }
 puzzle-db-header-outmost {
     background-color: #500;
