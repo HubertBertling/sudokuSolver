@@ -142,7 +142,9 @@ html {
     gap: 5px;
 }
 
-.app-empty-footer {
+
+
+.app-empty-footer, .app-name-header {
     margin-top: 0.5rem;
     font-size: var(--font-size-xl);
     font-weight: bold;
