@@ -36,6 +36,7 @@
     --border-radius: 5px;
     --space-y: 20px;
     --font-size-btn: 0.8rem;
+
     --font-size-sm: 0.8rem;
     --font-size: 1.1rem;
     --font-size-lg: 1.4rem;
@@ -104,6 +105,7 @@ html {
     background-color: var(--standard-btn-bg-color);
     text-align: center;
     border-radius: 0.3rem;
+    font-size: var(--font-size-btn);
     border: none;
 }
 
@@ -118,7 +120,7 @@ html {
 
 
 .puzzle-db-button {
-    background-color:  #ddd;
+    background-color: #ddd;
     text-align: center;
     font-size: var(--font-size);
     border-radius: 0.5rem;
@@ -701,7 +703,7 @@ label {
     width: 90%;
     margin-left: 1.2rem;
     padding: 0.8rem;
-    font-size: var(--font-size);
+    font-size: var(--font-size-lg);
 }
 
 .ok-cancel-btns {
