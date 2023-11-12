@@ -105,17 +105,13 @@ html {
     text-align: center;
     border-radius: 0.3rem;
     border: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    place-items: center;
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;
     padding-left: 0.8rem;
     padding-right: 0.8rem;
-}
-
-
-.btn-image {
-    margin-right: 0.1rem;
-    width: 1.2rem;
-    height: 1.2rem;
 }
 
 
@@ -157,15 +153,6 @@ html {
 
 /*==============================================*/
 
-.puzzle-db-header {
-    font-size: var(--font-size-xl);
-    font-weight: bold;
-    padding: 1rem;
-    text-align: center;
-    background-color: #500;
-    ;
-    color: white;
-}
 
 .sudoku-solver-container {
     display: flex;
@@ -185,7 +172,7 @@ html {
 
 .main-sudoku-grid {
     display: grid;
-    grid-template-columns: repeat(3, auto);
+grid-template-columns: repeat(3, auto);
     background-color: black;
     margin: 0.1em;
 }
@@ -206,7 +193,7 @@ html {
     height: 45px;
     width: 45px;
     display: grid;
-    font-size: 2rem;
+    font-size: var(--font-size-lg);
     place-items: center;
     margin: 0.05rem;
 }
@@ -437,12 +424,6 @@ html {
     text-align: center;
 }
 
-.mobile-btn {
-    background-color: var(--standard-btn-bg-color);
-    text-align: center;
-    border-radius: 0.3rem;
-    border: none;
-}
 
 .btn-define {
     background-color: var(--defined-cell-bg-color);
@@ -483,12 +464,8 @@ html {
     grid-row-end: 6;
 }
 
-.btn-image-save,
-.btn-image-open,
-.btn-image-print,
-.btn-image-rename,
-.btn-image-upload {
-    margin-top: 0.5rem;
+.btn-image {
+    margin-bottom: 0.5rem;
     width: 1.9rem;
     height: 1.9rem;
 
@@ -641,22 +618,12 @@ label {
     margin-top: 20px;
 }
 
-
-.puzzle-table-dlg {
-    position: absolute;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-left: auto;
-    margin-right: auto
-}
-
 .puzzle-dlg {
     position: relative;
     margin-top: auto;
     margin-bottom: auto;
     margin-left: auto;
     margin-right: auto;
-    border-radius: 1.4rem;
 }
 
 .puzzle-dlg::backdrop {
@@ -823,42 +790,113 @@ label {
 /*=======================================*/
 /* Puzzle-Datenbank 
 /*=======================================*/
-.container-puzzle-buttons {
-    background: #500;
-    border-top: 5px solid #ddd;
-    border-bottom: 5px solid #500;
-    border-left: 5px solid #500;
-    border-right: 5px solid #500;
+
+/* 1. Dialogebene */
+.puzzle-table-dlg {
+    background-color: #500;
+    position: relative;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 2.4rem;
+    border: none;
+   
+  }
+
+/* 1.1 Wurzel im Dialog */
+.puzzle-db-root {
+    display: flex;
+    flex-direction: column;
+    height: 65vh;
+}
+
+/* 1.1.1 Äußere Klammer auf */
+.puzzle-db-header-outmost {
+    flex-grow: 1;
+    /* background-color: #500; */
+
+}
+/* 1.1.2 Innere Klammer auf */
+.puzzle-db-header {
+    flex-grow: 0;
+  
+    font-size: var(--font-size-xl);
+        font-weight: bold;
+        padding: 1rem;
+        text-align: center;
+    /*    background-color: #500; */
+         color: white;    
+}
+
+/* 1.1.3 Section enthält DB-Tabelle */
+section {
+    flex-grow: 0;
+    font-size: var(--font-size);
+    position: relative;
+    padding-top: 37px;
+    /* background: #500; */
+}
+
+section.positioned {
+    position: absolute;
+    top: 30px;
+    left: 50px;
+    width: 600px;
+    box-shadow: 0 0 15px #333;
+}
+/* 1.1.3.1 Container */
+.container {
+    overflow-y: auto;
+    /* Höhe der sichtbaren Puzzle-Tabelle hier einstellen. */
+    height: 40vh;
+}
+
+
+
+/* 1.1.4 container-puzzle-buttons */ 
+.container-puzzle-buttons{
+    margin: 20px;
+    flex-grow: 0;
+    /* background-color: #500; */
 
 }
 
+.puzzle-btns {
+    /* background: #500; */
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    /*  grid-template-rows: repeat(5, 1fr); */
+    gap: 1rem;
+}
+
+/* 1.1.4.1 Die Buttons des Dialogs           */
+
 .puzzle-db-button {
     background-color: #ddd;
-    ;
     text-align: center;
-    border-radius: 0.5rem;
+    border-radius: 0.3rem;
     border: none;
-    margin: 1.6rem 1.2rem 1.2rem 1.2rem;
-    padding-top: 0.4rem;
-    padding-bottom: 0.4rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    place-items: center;
+    padding: 0%;
 }
 
 .puzzle-db-button:active {
     transform: translate(2px, 2px);
 }
 
-.puzzle-btns {
-    /*   border-bottom: 5px solid black; */
-    background: #500;
-    padding-bottom: 1rem;
-    margin-left: 1rem;
-    margin-top: 0.5rem;
-    display: flex;
-    flex-direction: row;
-    gap: gap 1rem;
+
+
+/* 1.1.5 Äußere Klammer zu */
+.puzzle-db-footer-outmost {
+    flex-grow: 1;
+   /* background-color: #500; */
 }
+
+
+
 
 /* ========================================*/
 
@@ -908,6 +946,8 @@ label {
     display: none;
 }
 
+
+
 .pz-table {
     margin-left: 30px;
     margin-right: 5px;
@@ -924,27 +964,7 @@ label {
     place-items: center;
 }
 
-section {
-    font-size: var(--font-size);
-    position: relative;
-    /* border: 1px solid #000; */
-    padding-top: 37px;
-    background: #500;
-}
 
-section.positioned {
-    position: absolute;
-    top: 100px;
-    left: 100px;
-    width: 600px;
-    box-shadow: 0 0 15px #333;
-}
-
-.container {
-    overflow-y: auto;
-    /* Höhe der sichtbaren Puzzle-Tabelle hier einstellen. */
-    height: 25vh;
-}
 
 table {
     border-spacing: 0;

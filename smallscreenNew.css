@@ -37,6 +37,7 @@
     --space-y: 20px;
     --font-size-btn: 1.4rem;
 
+    --font-size-xsm: 0.4rem;
     --font-size-sm: 0.8rem;
     --font-size: 1.1rem;
     --font-size-lg: 1.4rem;
@@ -107,6 +108,11 @@ html {
     border-radius: 0.3rem;
     font-size: var(--font-size-btn);
     border: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    place-items: center;
+
+
 }
 
 .app-content {
@@ -126,10 +132,7 @@ html {
     border-radius: 0.5rem;
     border: none;
     margin: 0.8rem 0.6rem 0.6rem 0.6rem;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;
-    padding-left: 0.2rem;
-    padding-right: 0.2rem;
+    padding: 0.2rem;
 }
 
 .puzzle-db-button:active {
@@ -158,15 +161,6 @@ html {
 }   
 
 /*==============================================*/
-
-.puzzle-db-header {
-    font-size: var(--font-size-xl);
-    font-weight: bold;
-    padding: 1rem;
-    text-align: center;
-    background-color: #500;
-    color: white;
-}
 
 
 .sudoku-solver-container {
@@ -440,13 +434,6 @@ html {
     text-align: center;
 }
 
-.mobile-btn {
-    background-color: var(--standard-btn-bg-color);
-    text-align: center;
-    border-radius: 0.3rem;
-    border: none;
-}
-
 .btn-define {
     background-color: var(--defined-cell-bg-color);
     color: var(--defined-cell-color);
@@ -487,22 +474,9 @@ html {
 }
 
 .btn-image {
-    width: 1.2rem;
-    height: 1.2rem;
-    margin-right: 0.4rem;
-}
-
-
-.btn-image-save,
-.btn-image-open,
-.btn-image-print,
-.btn-image-help,
-.btn-image-rename,
-.btn-image-upload
- {
-    margin-top: 0.5rem;
-    width: 1.9rem;
-    height: 1.9rem;
+    margin-top: 3px;
+    width: 1.4rem;
+    height:1.4rem;
 
 }
 
@@ -655,16 +629,6 @@ label {
 }
 
 
-
-.puzzle-table-dlg {
-    
-    position: absolute;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-left: auto;
-    margin-right: auto
-}
-
 /* ===================================================*/
 /*  Save and rename dialogs                           */
 /*====================================================*/
@@ -676,10 +640,6 @@ label {
     margin-left: auto;
     margin-right: auto;
     border-radius: 1.4rem;
-}
-
-.puzzle-dlg::backdrop {
-    background: hsl(201 50% 40% /.5);
 }
 
 .puzzle-dlg::backdrop {
@@ -838,44 +798,85 @@ label {
 /*=======================================*/
 /* Puzzle-Datenbank 
 /*=======================================*/
+/* 1. Dialogebene */
+.puzzle-table-dlg {
+    background-color: #500;
+    position: relative;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 1.4rem;
+    border: none;
+   
+  }
+
+/* 1.1 Wurzel im Dialog */
 .puzzle-db-root {
     display: flex;
     flex-direction: column;
     height: 95vh;
 }
-puzzle-db-header-outmost {
-    background-color: #500;
+
+/* 1.1.1 Äußere Klammer auf */
+.puzzle-db-header-outmost {
     flex-grow: 1;
 }
-
-puzzle-db-footer-outmost {
-    background-color: #500;
-    flex-grow: 1;
-}
-
-.container-puzzle-buttons {
-    background: #500;
-    border-top: 5px solid #ddd;
-    border-bottom: 5px solid #500;
-    border-left: 5px solid #500;
-    border-right: 5px solid #500;
-    
-}
-#pz-btn-delete {
-    padding-left: 1.2rem;
-    padding-right: 1.2rem;
-}
-.puzzle-db-button {
-    background-color:  #ddd;;
-    text-align: center;
+/* 1.1.2 Innere Klammer auf */
+.puzzle-db-header {
+    flex-grow: 0;
+  
     font-size: var(--font-size-xl);
-    border-radius: 0.5rem;
+        font-weight: bold;
+        padding: 1rem;
+        text-align: center;
+         color: white;    
+}
+
+/* 1.1.3 Section enthält DB-Tabelle */
+section {
+    flex-grow: 0;
+    font-size: var(--font-size);
+    position: relative;
+    padding-top: 37px;
+}
+
+section.positioned {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    box-shadow: 0 0 15px #333;
+}
+
+/* 1.1.3.1 Container */
+.container {
+    overflow-y: auto;
+    /* Höhe der sichtbaren Puzzle-Tabelle hier einstellen. */
+    height: 65vh;
+}
+
+
+
+/* 1.1.4 container-puzzle-buttons */ 
+.container-puzzle-buttons{
+    margin:5px;
+    flex-grow: 0;
+   
+}
+/* 1.1.4.1 Die Buttons des Dialogs           */
+
+.puzzle-db-button {
+    background-color: #ddd;
+    text-align: center;
+    border-radius: 0.3rem;
     border: none;
-    margin: 1.2rem 1.2rem 1.2rem 1.2rem;
-    padding-top: 0.8rem;
-    padding-bottom: 0.8rem;
-    padding-left: 1.2rem;
-    padding-right: 1.2rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    place-items: center;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
 }
 
 .puzzle-db-button:active {
@@ -883,22 +884,20 @@ puzzle-db-footer-outmost {
 }
 
 .puzzle-btns {
-    /*   border-bottom: 5px solid black; */
-    /* background: #500;
-    padding-bottom: 1rem;
-    margin-left:0.1rem;
-    margin-top: 0.5rem;
-
-    display: flex;
-    flex-direction: row;
-    gap: 0.1rem; */
-
-    margin-left: 0.2rem;
-    margin-right: 0.2rem;
+    margin: 0.5rem;;
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.2rem;
+    grid-template-columns: repeat(4, 1fr);
+  /*  grid-template-rows: repeat(5, 1fr); */
+    gap: 0.1rem;
 }
+
+
+/* 1.1.5 Äußere Klammer zu */
+.puzzle-db-footer-outmost {
+    flex-grow: 1;
+}
+
+
 
 /* ========================================*/
 
@@ -973,26 +972,6 @@ puzzle-db-footer-outmost {
     place-items: center;
 }
 
-section {
-    font-size: var(--font-size);
-    position: relative;
-    /* border: 1px solid #000; */
-    padding-top: 37px;
-    background: #500;
-}
-
-section.positioned {
-    position: absolute;
-    top: 50px;
-    left: 50px;
-    box-shadow: 0 0 15px #333;
-}
-
-.container {
-    overflow-y: auto;
-    /* Höhe der sichtbaren Puzzle-Tabelle hier einstellen. */
-    height:75vh;
-}
 
 table {
     border-spacing: 0;

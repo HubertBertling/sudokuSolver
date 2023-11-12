@@ -121,50 +121,55 @@
                 <button class="mobile-interface mobile-btn btn-play">Lösen</button>
                 <button class="mobile-interface mobile-btn btn-delete-cell">X</button>
 
-                <button class="mobile-interface mobile-btn mobile-btn-save" id="btn-save-mobile"><img
-                        src="images/save.png" class="btn-image-save">
+                <button class="mobile-interface mobile-btn mobile-btn-save" id="btn-save-mobile">
+                    <img src="images/save.png" class="btn-image">
+                    Speichern
                 </button>
-                <button class="mobile-interface mobile-btn btn-db-open" id="btn-db-open"><img src="images/oeffnen.png"
-                        class="btn-image-open"></button>
+                <button class="mobile-interface mobile-btn btn-db-open" id="btn-db-open">
+                    <img src="images/datenbank.png" class="btn-image">
+                    Datenbank
+                </button>
 
 
                 <button class="mobile-interface mobile-btn mobile-number">1</button>
                 <button class="mobile-interface mobile-btn mobile-number">2</button>
                 <button class="mobile-interface mobile-btn mobile-number">3</button>
-                <button class="mobile-interface mobile-btn btn-run" id="btn-run"><img src="images/play-96.png"
-                        class="btn-image">
-                    <span>Start</span>
+                <button class="mobile-interface mobile-btn btn-run" id="btn-run">
+                    <img src="images/play-96.png" class="btn-image">
+                    Start
                 </button>
 
-                <button class="mobile-interface mobile-btn" id="mobile-btn-print"><img src="images/drucker.png"
-                    class="btn-image-print">
-            </button>
-               
+                <button class="mobile-interface mobile-btn" id="mobile-btn-print" >
+                <img src="images/drucker.png" class="btn-image">
+                    Drucken
+                </button>
+
 
                 <button class="mobile-interface mobile-btn mobile-number">4</button>
                 <button class="mobile-interface mobile-btn mobile-number">5</button>
                 <button class="mobile-interface mobile-btn mobile-number">6</button>
 
-                <button class="mobile-interface mobile-btn btn-pause"><img src="images/pause-96.png" class="btn-image">
-                    <span>Pause</span>
+                <button class="mobile-interface mobile-btn btn-pause">
+                    <img src="images/pause-96.png" class="btn-image">
+                    Pause
                 </button>
                 <button class="mobile-interface mobile-btn mobile-number">7</button>
 
                 <button class="mobile-interface mobile-btn mobile-number">8</button>
                 <button class="mobile-interface mobile-btn mobile-number">9</button>
-                <button class="mobile-interface mobile-btn btn-stop"><img src="images/stop-96.png" class="btn-image">
-                    <span>Stop</span>
+                <button class="mobile-interface mobile-btn btn-stop">
+                    <img src="images/stop-96.png" class="btn-image">
+                    Stop
                 </button>
 
                 <button class="mobile-interface mobile-btn btn-automatic btn-autoStep" id="btn-autoStep">
-
                     <img src="images/step-96.png" class="btn-image" id="image-autostep">
-                    <span>Schritt</span>
+                    Schritt
                 </button>
             </div>
-         </div>
+        </div>
         <div class="app-empty-footer pc-element">
-           
+
         </div>
     </div>
 
@@ -173,6 +178,7 @@
     <dialog class="puzzle-table-dlg noprint" id="puzzle-db-dialog">
         <div class="puzzle-db-root">
             <div class="puzzle-db-header-outmost"></div>
+
             <div class="puzzle-db-header">
                 Puzzle Datenbank
             </div>
@@ -216,21 +222,22 @@
                 <div class="puzzle-btns ">
                     <!--Die buttons unterhalb der Puzzle-Datenbanktabelle -->
                     <button class="puzzle-db-button noprint" id="pz-btn-load"><img src="images/upload.png"
-                            class="btn-image-upload"></button>
+                            class="btn-image">Laden</button>
                     <button class="puzzle-db-button noprint" id="pz-btn-rename"><img src="images/rename.png"
-                            class="btn-image-rename"></button>
-              <!--  <button class="puzzle-db-button noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
-                            class="forward-backward-image"></button>
+                            class="btn-image">Umbenennen</button>
+                    <button class="puzzle-db-button noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
+                            class="btn-image"></button>
                     <button class="puzzle-db-button noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
-                            class="forward-backward-image"></button>  -->
+                            class="btn-image"></button>
                     <button class="puzzle-db-button noprint" id="pz-btn-delete">X</button>
                     <button class="puzzle-db-button" id="puzzle-db-btn-print"><img src="images/drucker.png"
-                            class="btn-image-print">
+                            class="btn-image">Drucken
                     </button>
 
                     <button class="puzzle-db-button noprint" id="pz-btn-ok">OK</button>
                 </div>
             </div>
+            
             <div class="puzzle-db-footer-outmost"></div>
         </div>
     </dialog>
@@ -255,8 +262,7 @@
         </div>
 
         <label for="puzzle-name" class="label-dlg">Neuer Puzzle-Name:</label>
-        <input type="text" class="puzzle-name-input-dlg" id="puzzle-name-renamed" 
-                name="puzzle-name" maxlength="30">
+        <input type="text" class="puzzle-name-input-dlg" id="puzzle-name-renamed" name="puzzle-name" maxlength="30">
 
         <div class="ok-cancel-btns">
             <input type="button" class="main-btn ok-cancel-btn" id="pz-rename-ok-btn" name="OK" value="OK" />
