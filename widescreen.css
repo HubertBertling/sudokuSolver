@@ -99,10 +99,56 @@ html {
     visibility: visible;
 }
 
+/*============================================================*/
+/* Dropdown button
+/*============================================================*/
+
+.dropbtn {
+    background-color: #3498DB;
+    font-size: var(--font-size);
+    border: none;
+    cursor: pointer;
+  }
+  
+  .dropbtn:hover, .dropbtn:focus {
+    background-color: grey;
+  }
+  
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  
+  .dropdown-option {
+    color: black;
+    padding: 12px 16px;
+    font-size: var(--font-size);
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown-option:hover {background-color: #ddd;}
+  
+  .show {display: block;}
+
+  /*=======================================================*/
+
+
 
 .mobile-btn {
     background-color: var(--standard-btn-bg-color);
     text-align: center;
+    font-size: var(--font-size);
     border-radius: 0.3rem;
     border: none;
     display: grid;

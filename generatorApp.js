@@ -13,7 +13,7 @@ self.onmessage = function (n) {
     let request = JSON.parse(n.data);
     if (request.name == "generate") {
         // If the message is "generate", the Web Worker generates a new puzzle
-        sudoApp.myGenerator.generatePuzzle();
+        sudoApp.myGenerator.generatePuzzle(request.level);
         // The generator returns the generated puzzle in the form of a database element
         let generatedPuzzle = sudoApp.myGenerator.myGrid.getGeneratedPuzzleRecord();
         let response = {
@@ -51,6 +51,14 @@ class SudokuGenerator extends SudokuCalculator {
         super.setActualEvalType('strict-plus');
     }
 
+    generatePuzzle(requestedLevel) {
+        let found = false;
+        while (!found) {
+            this.generatePuzzle();
+            found = (this.myGrid.difficulty == requestedLevel);
+        }
+    }
+    
     generatePuzzle() {
         this.init();
         // Setze in zufälliger Zelle eine zufällige Nummer
@@ -81,8 +89,8 @@ class SudokuGenerator extends SudokuCalculator {
     startGeneratorSolutionLoop() {
         super.startSyncLoop();
     }
-    takeBackSolvedCells() {
-        this.myGrid.takeBackSolvedCells();
+    takeBackSolvedCells(level) {
+        this.myGrid.takeBackSolvedCells(level);
     }
     setSolvedToGiven() {
         this.myGrid.setSolvedToGiven();

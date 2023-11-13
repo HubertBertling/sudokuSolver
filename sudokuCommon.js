@@ -122,13 +122,14 @@ class SudokuSolverController {
             })
         });
         // Click-Events for both generate buttons, desktop and mobile
+        /*
         this.btns = document.querySelectorAll('.btn-generate');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
                 this.generateBtnPressed();
             })
         });
-
+        */
         this.btns = document.querySelectorAll('.help-button');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -245,8 +246,8 @@ class SudokuSolverController {
         this.mySolver.reset();
     }
 
-    generateBtnPressed() {
-        this.mySolver.getGeneratedPuzzleUsingWebworker();
+    generateBtnPressed(level) {
+        this.mySolver.getGeneratedPuzzleUsingWebworker(level);
     }
 
     saveBtnPressed() {
@@ -261,10 +262,10 @@ class SudokuSolverController {
             //Neues Puzzle abfragen
             let newPuzzleId = Date.now().toString(36) + Math.random().toString(36).substr(2);
             let newPuzzleName = 'Puzzle (' + new Date().toLocaleString('de-DE') + ')';
-            let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();   
+            let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
             // this.myPuzzleSaveDialog.open(newPuzzelId, 'Puzzle (' + new Date().toLocaleString('de-DE') + ')');
             sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzleId, newPuzzleName, playedPuzzleDbElement);
-       
+
         } else {
             //Aktuelles Puzzel ist aus der Datenbank überschreiben
 
@@ -284,7 +285,7 @@ class SudokuSolverController {
 
         let puzzleId = this.mySolver.myGrid.loadedPuzzleId;
         let puzzleName = this.mySolver.myGrid.loadedPuzzleName;
-       
+
         if (puzzleId == '' || puzzleId == '-') {
             let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
             // sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
@@ -903,7 +904,7 @@ class SudokuSolver extends SudokuCalculator {
         }
     }
 
-    getGeneratedPuzzleUsingWebworker() {
+    getGeneratedPuzzleUsingWebworker(requestedLevel) {
         // The rotating loader icon is started
         this.notifyAspect('puzzleGenerator', 'started');
         // A new web worker that performs the generation, is created.
@@ -928,6 +929,7 @@ class SudokuSolver extends SudokuCalculator {
         // which starts the generation of the new puzzle. 
         let request = {
             name: 'generate',
+            level: requestedLevel,
             value: ''
         }
         let str_request = JSON.stringify(request);
@@ -3570,6 +3572,32 @@ class SudokuGrid extends SudokuModel {
                 this.deleteSelected('define', false);
                 // Werte die verbliebene Matrix strikt aus.
                 this.evaluateGridStrict();
+
+                /*
+                if (requestedLevel == 'Leicht') {
+                    if (!this.isMatrixWithNecessary()) {
+                        // Dann wird die Löschung zurückgenommen.
+                        this.select(this.sudoCells[k], k);
+                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
+                    }
+                } else if (requestedLevel == 'Mittel') {
+                    if (!this.isMatrixWithSingleOrNecessary()) {
+                        // Dann wird die Löschung zurückgenommen.
+                        this.select(this.sudoCells[k], k);
+                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
+                    }
+                } else if (requestedLevel == 'Schwer') {
+                    if (!this.isMatrixWithHiddenSingleOrSingleOrNecessary()) {
+                        // Dann wird die Löschung zurückgenommen.
+                        this.select(this.sudoCells[k], k);
+                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
+                    }
+            
+                } else {
+                    throw new Error('Unknown level of difficulty in takeBackSolvedCells(requestedLevel)!');
+                }
+                */
+
                 if (this.sudoCells[k].getNecessarys().size == 1) {
                     // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
                     // necessaryCondition
@@ -4401,6 +4429,36 @@ class SudokuGrid extends SudokuModel {
         })
         return tmpInfluencers;
     }
+
+    isMatrixWithNecessary() {
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].getNecessarys().size == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    isMatrixWithSingleOrNecessary() {
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].getNecessarys().size == 1
+                || this.sudoCells[i].getAdmissibles().size == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    isMatrixWithHiddenSingleOrSingleOrNecessary() {
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].getNecessarys().size == 1
+                || this.sudoCells[i].getTotalAdmissibles().size == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 class SudokuCellView extends SudokuView {
     constructor(cell) {

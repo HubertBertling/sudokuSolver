@@ -110,10 +110,17 @@
                     </div>
                 </div>
             </div>
-            <div class="mobile-btn-container">
-
-                <button class="mobile-interface mobile-btn btn-generate">Neu</button>
-                <button class="mobile-interface mobile-btn btn-init">Init</button>
+            <div class="mobile-btn-container dropdown">
+                <button onclick="myFunction()" class="mobile-btn dropbtn">Neu</button>
+                <div id="myDropdown" class="dropdown-content">
+                    <div class="dropdown-option" id="Leicht" onclick="sudoApp.mySolverController.generateBtnPressed('Leicht')">Leicht
+                    </div>
+                    <div class="dropdown-option" id="Mittel" onclick="sudoApp.mySolverController.generateBtnPressed('Mittel')">Mittel
+                    </div>
+                    <div class="dropdown-option" id="Schwer" onclick="sudoApp.mySolverController.generateBtnPressed('Schwer')">Schwer
+                    </div>
+                </div>
+                 <button class="mobile-interface mobile-btn btn-init">Init</button>
                 <button class="mobile-interface mobile-btn btn-reset">Zurück</button>
                 <button class="mobile-interface mobile-btn btn-showWrongNumbers">Prüfen</button>
                 <button class="mobile-interface mobile-btn help-button"> ? </button>
@@ -139,8 +146,8 @@
                     Start
                 </button>
 
-                <button class="mobile-interface mobile-btn" id="mobile-btn-print" >
-                <img src="images/drucker.png" class="btn-image">
+                <button class="mobile-interface mobile-btn" id="mobile-btn-print">
+                    <img src="images/drucker.png" class="btn-image">
                     Drucken
                 </button>
 
@@ -237,7 +244,7 @@
                     <button class="puzzle-db-button noprint" id="pz-btn-ok">OK</button>
                 </div>
             </div>
-            
+
             <div class="puzzle-db-footer-outmost"></div>
         </div>
     </dialog>
@@ -319,6 +326,29 @@
     </script>
     <script src="./sudokuCommon.js"></script>
     <script src="./sudokuMainApp.js"></script>
+
+    <script>
+        /* When the user clicks on the button, 
+        toggle between hiding and showing the dropdown content */
+        function myFunction() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
+
 
 </body>
 
