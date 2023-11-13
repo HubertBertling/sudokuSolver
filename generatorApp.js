@@ -54,12 +54,12 @@ class SudokuGenerator extends SudokuCalculator {
     generatePuzzle(requestedLevel) {
         let found = false;
         while (!found) {
-            this.generatePuzzle();
+            this.generatePuzzlePrivate();
             found = (this.myGrid.difficulty == requestedLevel);
         }
     }
     
-    generatePuzzle() {
+    generatePuzzlePrivate() {
         this.init();
         // Setze in zufälliger Zelle eine zufällige Nummer
         let randomCellIndex = Randomizer.getRandomIntInclusive(0, 80);
