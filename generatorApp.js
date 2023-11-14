@@ -51,15 +51,7 @@ class SudokuGenerator extends SudokuCalculator {
         super.setActualEvalType('strict-plus');
     }
 
-    generatePuzzle(requestedLevel) {
-        let found = false;
-        while (!found) {
-            this.generatePuzzlePrivate();
-            found = (this.myGrid.difficulty == requestedLevel);
-        }
-    }
-    
-    generatePuzzlePrivate() {
+   generatePuzzle(requestedLevel) {
         this.init();
         // Setze in zufälliger Zelle eine zufällige Nummer
         let randomCellIndex = Randomizer.getRandomIntInclusive(0, 80);
@@ -75,15 +67,9 @@ class SudokuGenerator extends SudokuCalculator {
         // Mache die gelösten Zellen zu Givens
         this.setSolvedToGiven();
 
-        // Setze das Puzzle in den Define-Mode
-        this.setGamePhase('define')
         // Lösche in der Lösung Nummern, solange
-        // wie das verbleibende Puzzle backtrack-frei bleibt.
-        this.takeBackSolvedCells();
-
-        // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
-        this.autoExecStop();
-        this.startGeneratorSolutionLoop();
+        // bis das verbleibende Puzzle den gewünschten Schwierigkeitsgrad hat.
+        this.takeBackSolvedCells(requestedLevel);
     }
 
     startGeneratorSolutionLoop() {
