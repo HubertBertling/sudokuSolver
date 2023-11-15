@@ -3555,119 +3555,61 @@ class SudokuGrid extends SudokuModel {
         this.evaluateMatrix();
     }
 
-    takeBackSolvedCells(requestedLevel) {
+
+    takeBackSolvedCells() {
         // Vom Generator verwendete Funktion
         // Löscht solange gelöste Zellen, wie das Grid 
         // eine eindeutige Lösung behält.
-        let requestedMatrixFound = false;
-        //  while (!requestedMatrixFound) {
         let randomCellOrder = Randomizer.getRandomNumbers(81, 0, 81);
-        let numberCount = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         for (let i = 0; i < 81; i++) {
-            // Setze das Puzzle in den Define-Mode
-            // console.log('i = ' + i);
-            sudoApp.myGenerator.setGamePhase('define')
             let k = randomCellOrder[i];
             if (this.sudoCells[k].getValue() !== '0') {
                 // Selektiere Zelle mit gesetzter Nummer
                 this.select(this.sudoCells[k], k);
                 // Notiere die gesetzte Nummer, um sie eventuell wiederherstellen zu können
                 let tmpNr = this.sudoCells[k].getValue();
-                if (numberCount[tmpNr] < 7) {
-                    // Lösche die gesetzte Nummer
-                    this.deleteSelected('define', false);
-                    this.evaluateGridStrict();
-                    if (this.sudoCells[k].getTotalAdmissibles().size == 1) {
-                        // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
-                        // Prüfe, den Schwierigkeitsgrad der erhaltenen Matrix
-                        // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
-                        sudoApp.myGenerator.autoExecStop();
-                        sudoApp.myGenerator.startGeneratorSolutionLoop();
-                        if (this.lessOrEqualLevel(this.difficulty, requestedLevel)) {
-                            // Wenn ok, prüfe ob offenereMatrix ebenfalls Ok
-                            // Dazu die gelöste Matrix zurücksetzen  
-                            this.reset();
-                            numberCount[tmpNr]++;
-                        } else {
-                            // Nimm geöffnete Zelle zurück.
-                            // Vorher die temporäre Lösung zurücksetzen
-                            // und in den Define-Phase umschalten.
-                            this.reset();
-                            sudoApp.myGenerator.setGamePhase('define')
-                            this.select(this.sudoCells[k], k);
-                            this.sudoCells[k].manualSetValue(tmpNr, 'define');
-                        }
-                    } else {
-                        // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
+                // Lösche die gesetzte Nummer
+                this.deleteSelected('define', false);
+                // Werte die verbliebene Matrix strikt aus.
+                this.evaluateGridStrict();
+
+                /*
+                if (requestedLevel == 'Leicht') {
+                    if (!this.isMatrixWithNecessary()) {
                         // Dann wird die Löschung zurückgenommen.
                         this.select(this.sudoCells[k], k);
                         this.sudoCells[k].manualSetValue(tmpNr, 'define');
                     }
+                } else if (requestedLevel == 'Mittel') {
+                    if (!this.isMatrixWithSingleOrNecessary()) {
+                        // Dann wird die Löschung zurückgenommen.
+                        this.select(this.sudoCells[k], k);
+                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
+                    }
+                } else if (requestedLevel == 'Schwer') {
+                    if (!this.isMatrixWithHiddenSingleOrSingleOrNecessary()) {
+                        // Dann wird die Löschung zurückgenommen.
+                        this.select(this.sudoCells[k], k);
+                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
+                    }
+            
+                } else {
+                    throw new Error('Unknown level of difficulty in takeBackSolvedCells(requestedLevel)!');
                 }
-            }
-        }
-        // Ausgangszustand wie bisher herstellen
-        sudoApp.myGenerator.autoExecStop();
-        sudoApp.myGenerator.startGeneratorSolutionLoop();
-        requestedMatrixFound = (this.difficulty == requestedLevel);
-        //   }
-    }
+                */
 
-    lessOrEqualLevel(la, lb) {
-        switch (la) {
-            case 'Keine Angabe': {
-                return true;
-            }
-            case 'Leicht': {
-                switch (lb) {
-                    case 'Keine Angabe': return false;
-                    case 'Leicht':
-                    case 'Mittel':
-                    case 'Schwer':
-                    case 'Sehr schwer': return true;
-                    default: {
-                        throw new Error('Unknown Puzzle Level: ' + lb);
-                    }
+                if (this.sudoCells[k].getNecessarys().size == 1) {
+                    // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
+                    // necessaryCondition
+                } else if (this.sudoCells[k].getTotalAdmissibles().size == 1) {
+                    // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
+                    // totalAdmissibleCondition
+                } else {
+                    // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
+                    // Dann wird die Löschung zurückgenommen.
+                    this.select(this.sudoCells[k], k);
+                    this.sudoCells[k].manualSetValue(tmpNr, 'define');
                 }
-            }
-            case 'Mittel': {
-                switch (lb) {
-                    case 'Keine Angabe':
-                    case 'Leicht': return false;
-                    case 'Mittel':
-                    case 'Schwer':
-                    case 'Sehr schwer': return true;
-                    default: {
-                        throw new Error('Unknown Puzzle Level: ' + lb);
-                    }
-                }
-            }
-            case 'Schwer': {
-                switch (lb) {
-                    case 'Keine Angabe':
-                    case 'Leicht':
-                    case 'Mittel': return false;
-                    case 'Schwer':
-                    case 'Sehr schwer': return true;
-                    default: {
-                        throw new Error('Unknown Puzzle Level: ' + lb);
-                    }
-                }
-            }
-            case 'Sehr schwer': {
-                switch (lb) {
-                    case 'Keine Angabe':
-                    case 'Leicht':
-                    case 'Mittel':
-                    case 'Schwer': return false;
-                    case 'Sehr schwer': return true;
-                    default: {
-                        throw new Error('Unknown Puzzle Level: ' + lb);
-                    }
-                }
-            }
-            default: {
-                throw new Error('Unknown Puzzle Level: ' + la);
             }
         }
     }
