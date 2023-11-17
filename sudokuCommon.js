@@ -3555,65 +3555,45 @@ class SudokuGrid extends SudokuModel {
         this.evaluateMatrix();
     }
 
-
     takeBackSolvedCells() {
         // Vom Generator verwendete Funktion
         // Löscht solange gelöste Zellen, wie das Grid 
         // eine eindeutige Lösung behält.
+        let myNumberCount = [9, 9, 9, 9, 9, 9, 9, 9, 9];
         let randomCellOrder = Randomizer.getRandomNumbers(81, 0, 81);
-        for (let i = 0; i < 81; i++) {
-            let k = randomCellOrder[i];
-            if (this.sudoCells[k].getValue() !== '0') {
-                // Selektiere Zelle mit gesetzter Nummer
-                this.select(this.sudoCells[k], k);
-                // Notiere die gesetzte Nummer, um sie eventuell wiederherstellen zu können
-                let tmpNr = this.sudoCells[k].getValue();
-                // Lösche die gesetzte Nummer
-                this.deleteSelected('define', false);
-                // Werte die verbliebene Matrix strikt aus.
-                this.evaluateGridStrict();
-
-                /*
-                if (requestedLevel == 'Leicht') {
-                    if (!this.isMatrixWithNecessary()) {
-                        // Dann wird die Löschung zurückgenommen.
+        let givenCount = 36;
+        let minNumberCount = Math.floor(givenCount/9);
+        let maxNumberCount = minNumberCount + 1;
+        
+        let takenBackNumbers = true;
+        while (takenBackNumbers) {
+            takenBackNumbers = false;
+            for (let i = 0; i < 81; i++) {
+                let k = randomCellOrder[i];
+                if (this.sudoCells[k].getValue() !== '0') {
+                    let deletedNr = this.sudoCells[k].getValue();
+                    let ncIndex = parseInt(this.sudoCells[k].getValue()) - 1;
+                    if (myNumberCount[ncIndex] > 3) {
+                        // Die letzten 3 Auftreten einer Nummer werden nicht gelöscht
                         this.select(this.sudoCells[k], k);
-                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
+                        this.deleteSelected('define', false);
+                        myNumberCount[ncIndex]--;
+                        this.evaluateGridStrict();
+                        if (this.sudoCells[k].getTotalAdmissibles().size > 1) {
+                            // Keine eindeutige Lösung hin zur bisherigen Nummer
+                            // Deshalb Zurücknahme der Löschung
+                            this.select(this.sudoCells[k], k);
+                            this.sudoCells[k].manualSetValue(deletedNr, 'define');
+                            myNumberCount[ncIndex]++;
+                            this.evaluateGridStrict();
+                        } else {
+                            takenBackNumbers = true;
+                        }
                     }
-                } else if (requestedLevel == 'Mittel') {
-                    if (!this.isMatrixWithSingleOrNecessary()) {
-                        // Dann wird die Löschung zurückgenommen.
-                        this.select(this.sudoCells[k], k);
-                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
-                    }
-                } else if (requestedLevel == 'Schwer') {
-                    if (!this.isMatrixWithHiddenSingleOrSingleOrNecessary()) {
-                        // Dann wird die Löschung zurückgenommen.
-                        this.select(this.sudoCells[k], k);
-                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
-                    }
-            
-                } else {
-                    throw new Error('Unknown level of difficulty in takeBackSolvedCells(requestedLevel)!');
-                }
-                */
-
-                if (this.sudoCells[k].getNecessarys().size == 1) {
-                    // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
-                    // necessaryCondition
-                } else if (this.sudoCells[k].getTotalAdmissibles().size == 1) {
-                    // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
-                    // totalAdmissibleCondition
-                } else {
-                    // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
-                    // Dann wird die Löschung zurückgenommen.
-                    this.select(this.sudoCells[k], k);
-                    this.sudoCells[k].manualSetValue(tmpNr, 'define');
                 }
             }
         }
     }
-
 
     loadPuzzle(uid, puzzleRecordToLoad) {
         this.loadedPuzzleId = uid;

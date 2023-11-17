@@ -52,11 +52,11 @@ class SudokuGenerator extends SudokuCalculator {
     }
 
     generatePuzzle(requestedLevel) {
-        let found = false;
-        while (!found) {
+     //   let found = false;
+     //   while (!found) {
             this.generatePuzzlePrivate();
-            found = (this.myGrid.difficulty == requestedLevel);
-        }
+     //       found = (this.myGrid.difficulty == requestedLevel);
+     //   }
     }
     
     generatePuzzlePrivate() {
@@ -80,7 +80,6 @@ class SudokuGenerator extends SudokuCalculator {
         // Lösche in der Lösung Nummern, solange
         // wie das verbleibende Puzzle backtrack-frei bleibt.
         this.takeBackSolvedCells();
-
         // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
         this.autoExecStop();
         this.startGeneratorSolutionLoop();
