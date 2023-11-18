@@ -886,7 +886,7 @@ section {
     font-size: var(--font-size);
     position: relative;
     padding-top: 37px;
-    width: 100%;
+    width: 95%;
 }
 
 section.positioned {

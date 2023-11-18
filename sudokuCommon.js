@@ -3326,6 +3326,21 @@ class SudokuGrid extends SudokuModel {
         this.evaluateMatrix();
     }
 
+    setGivenToSolved() {
+        // Vom Generator verwendete Funktion
+        // Alle Givens werden in Solved umgewandelt
+        this.initCurrentSelection();
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].getValue() !== '0') {
+                if (this.sudoCells[i].getPhase() == 'define') {
+                    this.sudoCells[i].clearAutoExecInfo();
+                    this.sudoCells[i].setPhase('play');
+                }
+            }
+        }
+        this.evaluateMatrix();
+    }
+
     setAdMissibleIndexSelected(nr) {
         this.adMissibleIndexSelected = nr;
     }
@@ -3565,15 +3580,15 @@ class SudokuGrid extends SudokuModel {
         let minNumberCount = Math.floor(givenCount/9);
         let maxNumberCount = minNumberCount + 1;
         
-        let takenBackNumbers = true;
-        while (takenBackNumbers) {
-            takenBackNumbers = false;
+      //  let takenBackNumbers = true;
+      //  while (takenBackNumbers) {
+      //      takenBackNumbers = false;
             for (let i = 0; i < 81; i++) {
                 let k = randomCellOrder[i];
                 if (this.sudoCells[k].getValue() !== '0') {
                     let deletedNr = this.sudoCells[k].getValue();
                     let ncIndex = parseInt(this.sudoCells[k].getValue()) - 1;
-                    if (myNumberCount[ncIndex] > 3) {
+                    if (myNumberCount[ncIndex] > 2) {
                         // Die letzten 3 Auftreten einer Nummer werden nicht gelöscht
                         this.select(this.sudoCells[k], k);
                         this.deleteSelected('define', false);
@@ -3587,12 +3602,12 @@ class SudokuGrid extends SudokuModel {
                             myNumberCount[ncIndex]++;
                             this.evaluateGridStrict();
                         } else {
-                            takenBackNumbers = true;
+                           // takenBackNumbers = true;
                         }
                     }
                 }
             }
-        }
+        //}
     }
 
     loadPuzzle(uid, puzzleRecordToLoad) {

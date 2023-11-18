@@ -52,13 +52,80 @@ class SudokuGenerator extends SudokuCalculator {
     }
 
     generatePuzzle(requestedLevel) {
-     //   let found = false;
-     //   while (!found) {
-            this.generatePuzzlePrivate();
-     //       found = (this.myGrid.difficulty == requestedLevel);
-     //   }
+        //   let found = false;
+        //   while (!found) {
+        this.generatePuzzlePrivate();
+        //       found = (this.myGrid.difficulty == requestedLevel);
+        //   }
     }
-    
+
+    generatePuzzleWithLevel(requestedLevel) {
+        // Zufälliger Anfangszustand
+        this.initializeGeneratedPuzzle();
+        // Generiere die ersten 20 Zellen
+        for (let i = 0; i < 21; i++) {
+            this.myGenerator.executeSingleStep();
+        }
+        while (!this.hiddenSingleSolvable()){
+            this.myGenerator.executeSingleStep();
+        }
+        let currentLevel = this.calculateLevel();
+        if (currentLevel == requestedLevel){
+            return;
+        }
+        
+        if (currentLevel == 'Schwer') {
+            
+        }
+       
+         // Mache die gelösten Zellen zu Givens
+         this.setSolvedToGiven();
+
+         // Prüfe Hidden Single Property
+         // Falls nicht gegeben berechne eine weitere belegte Zelle
+ 
+         //Falls Hidden Single Property gegeben
+         // Berechne Schwierigkeitsgrad
+ 
+         // Falls berechneter Schwierigkeitsgrad = gewünschter Schwierigkeitsgrad --> OK
+         // Falls nicht:
+         //      SWITCH berechneter Schwierigkeitsgrad
+         //      case schwer: berechne eine weitere belegte Zelle. Und prüfe erneut.
+         //      case leicht: nimm zuletzt berechnete Zelle zurück und wähle alternative Option
+ 
+
+    }
+
+    hiddenSingleSolvable() {
+        // The matrix is hidden-single-solvable, if all unset cells
+        // have an hidden single
+        this.setSolvedToGiven();
+        let hsSolvable = true;    
+        for (let i = 0; i < 81; i++) {
+            if (this.myGrid.sudoCells[i].getValue() !== '0'){
+                if (this.sudoCells[i].getTotalAdmissibles().size !== 1) {
+                    return false;
+                };
+            }
+        }     
+        this.setGivenToSolved();
+        return hsSolvable;
+    }
+
+
+
+
+
+    initializeGeneratedPuzzle() {
+        this.init();
+        // Setze in zufälliger Zelle eine zufällige Nummer
+        let randomCellIndex = Randomizer.getRandomIntInclusive(0, 80);
+        this.myGrid.indexSelect(randomCellIndex);
+        let randomCellContent = Randomizer.getRandomIntInclusive(1, 9).toString();
+        this.atCurrentSelectionSetNumber(randomCellContent);
+    }
+
+
     generatePuzzlePrivate() {
         this.init();
         // Setze in zufälliger Zelle eine zufällige Nummer
@@ -70,11 +137,13 @@ class SudokuGenerator extends SudokuCalculator {
 
         // Löse dieses Sudoku mit einer nicht getakteten
         // und nicht beobachteten automatischen Ausführung
+
+        // Berechne Puzzle mit gewünschtem Schwierigkeitsgrad
+        // Berechne 20 belegte Zellen
+        // Merke: zuletzt gesetzte Zelle und die gewählte Option
         this.startGeneratorSolutionLoop();
 
-        // Mache die gelösten Zellen zu Givens
-        this.setSolvedToGiven();
-
+       
         // Setze das Puzzle in den Define-Mode
         this.setGamePhase('define')
         // Lösche in der Lösung Nummern, solange
