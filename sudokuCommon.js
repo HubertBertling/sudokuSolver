@@ -717,20 +717,13 @@ class SudokuCalculator extends SudokuModel {
     }
 
 
-    startSyncLoop() {
+    startSyncLoop(requestedLevel) {
         if (this.isInAutoExecMode) {
             // Im automatischen Ausführungsmodus
             // muss lediglich die Loop gestartet werden.
-            this.myStepper.startSynchronousLoop();
+            this.myStepper.startSynchronousLoop(requestedLevel);
         } else {
             if (this.myStepper.deadlockReached()) {
-                // Der Calculator braucht gar nicht in den Auto-Modus gesetzt werden
-                //if (sudoApp instanceof SudokuMainApp) {
-                //    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
-
-                // alert("Keine (weitere) Lösung gefunden!");
-                //  } else {
-                // Übertrage Stepper-Infos nach Grid-Infos.
                 this.myGrid.difficulty = 'unlösbar';
                 this.myGrid.backTracks = this.countBackwards;
                 this.myGrid.steps = this.goneSteps;
@@ -740,7 +733,7 @@ class SudokuCalculator extends SudokuModel {
                 // Der Calculator wird in den Auto-Modus gesetzt
                 // und die Loop wird gestartet.
                 this.setInAutoExecMode();
-                this.myStepper.startSynchronousLoop();
+                this.myStepper.startSynchronousLoop(requestedLevel);
             }
         }
     }
@@ -1605,6 +1598,8 @@ class StepperOnGrid {
         this.levelOfDifficulty = 'Keine Angabe';
         this.countBackwards = 0;
         this.autoDirection = 'forward';
+        this.mySolutionTrack = [];
+        this.levelOfCurrSelectedStep = 'Keine Angabe';
         this.init();
     }
 
@@ -1614,6 +1609,8 @@ class StepperOnGrid {
         this.myResult = '';
         this.goneSteps = 0;
         this.countBackwards = 0;
+        this.mySolutionTrack = [];
+        this.levelOfCurrSelectedStep = 'Keine Angabe';
 
         this.autoDirection = 'forward';
         this.levelOfDifficulty = 'Keine Angabe';
@@ -1753,7 +1750,7 @@ class StepperOnGrid {
         }
     }
 
-    startSynchronousLoop() {
+    startSynchronousLoop(requestedLevel) {
         this.lastNumberSet = '0';
         if (this.indexSelected !== this.myGrid.indexSelected && this.indexSelected !== -1) {
             this.myGrid.indexSelect(this.indexSelected);
@@ -1762,8 +1759,122 @@ class StepperOnGrid {
         while (this.myResult == '' || this.myResult == 'inProgress') {
             this.myResult = this.synchronousHiddenStep();
         }
-        this.synchronousLoopFinished();
+        // solutionTrack auswerten
+        if (requestedLevel !== undefined) {
+            if (this.levelOfSolutionOf(this.mySolutionTrack) == requestedLevel) {
+                this.synchronousLoopFinished();
+            } else {
+                this.tryMoreSolutionsSynchronously(requestedLevel);
+            }
+        } else {
+            this.synchronousLoopFinished();
+        }
     }
+
+    tryMoreSolutionsSynchronously(requestedLevel) {
+        let tmpSolutionTrack = this.mySolutionTrack.slice();
+
+        // Lösche Zellen ungleich 'Sehr Schwer'
+        let k = tmpSolutionTrack.length - 1;
+        while (k > 0) {
+            if (tmpSolutionTrack[k].level !== 'Sehr schwer') {
+                this.myGrid.select(this.myGrid.sudoCells[k], k);
+                this.myGrid.deleteSelected('play', false);
+            }
+            k--;
+        }
+        // Mache die gelösten Zellen zu Givens
+        this.myGrid.setSolvedToGiven();
+        /*    
+                this.setAutoDirection('backward');
+                this.myResult = '';
+                this.startSynchronousLoop(requestedLevel); */
+    }
+
+    levelOfSolutionOf(solTrack) {
+        //Den Track rückwärts gehen bis erster step mit level 'Sehr schwer'
+        let tmpLevel = 'Keine Angabe';
+        let k = solTrack.length - 1;
+        while (k > 0) {
+            if (solTrack[k].level !== 'Sehr schwer') {
+                if (this.lessLevel(tmpLevel, solTrack[k].level)) {
+                    tmpLevel = solTrack[k].level;
+                }
+            }
+            k--;
+        }
+        return tmpLevel;
+    }
+
+
+    lessLevel(la, lb) {
+        switch (la) {
+            case 'Keine Angabe': {
+                switch (lb) {
+                    case 'Keine Angabe': return false;
+                    case 'Leicht':
+                    case 'Mittel':
+                    case 'Schwer':
+                    case 'Sehr schwer': return true;
+                    default: {
+                        throw new Error('Unknown Puzzle Level: ' + lb);
+                    }
+                }
+            }
+            case 'Leicht': {
+                switch (lb) {
+                    case 'Keine Angabe':
+                    case 'Leicht': return false;
+                    case 'Mittel':
+                    case 'Schwer':
+                    case 'Sehr schwer': return true;
+                    default: {
+                        throw new Error('Unknown Puzzle Level: ' + lb);
+                    }
+                }
+            }
+            case 'Mittel': {
+                switch (lb) {
+                    case 'Keine Angabe':
+                    case 'Leicht':
+                    case 'Mittel': return false;
+                    case 'Schwer':
+                    case 'Sehr schwer': return true;
+                    default: {
+                        throw new Error('Unknown Puzzle Level: ' + lb);
+                    }
+                }
+            }
+            case 'Schwer': {
+                switch (lb) {
+                    case 'Keine Angabe':
+                    case 'Leicht':
+                    case 'Mittel':
+                    case 'Schwer': return false;
+                    case 'Sehr schwer': return true;
+                    default: {
+                        throw new Error('Unknown Puzzle Level: ' + lb);
+                    }
+                }
+            }
+            case 'Sehr schwer': {
+                switch (lb) {
+                    case 'Keine Angabe':
+                    case 'Leicht':
+                    case 'Mittel':
+                    case 'Schwer':
+                    case 'Sehr schwer': return false;
+                    default: {
+                        throw new Error('Unknown Puzzle Level: ' + lb);
+                    }
+                }
+            }
+            default: {
+                throw new Error('Unknown Puzzle Level: ' + la);
+            }
+        }
+    }
+
 
     synchronousHiddenStep() {
         let result = this.autoStep();
@@ -1849,9 +1960,12 @@ class StepperOnGrid {
                 // Jetzt muss für diese Selektion eine Nummer bestimmt werden.
                 // Ergebnis wird sein: realStep mit Nummer
                 let tmpValue = '0';
-                if (tmpSelection.options.length == 1) { tmpValue = tmpSelection.options[0]; }
-                if (tmpSelection.necessaryOnes.length == 1) { tmpValue = tmpSelection.necessaryOnes[0]; }
-                // if (tmpSelection.indirectNecessaryOnes.length == 1) { tmpValue = tmpSelection.indirectNecessaryOnes[0]; }
+                if (tmpSelection.options.length == 1) {
+                    tmpValue = tmpSelection.options[0];
+                }
+                if (tmpSelection.necessaryOnes.length == 1) {
+                    tmpValue = tmpSelection.necessaryOnes[0];
+                }
                 if (!(tmpValue == '0')) {
                     // Die Selektion hat eine eindeutige Nummer. D.h. es geht eindeutig weiter.
                     // Lege neuen Realstep mit der eindeutigen Nummer an
@@ -1876,16 +1990,18 @@ class StepperOnGrid {
             // Setze die eindeutige Nummer
             this.atCurrentSelectionSetAutoNumber(currentStep);
             this.lastNumberSet = currentStep.getValue();
+
+            let solutionStep = {
+                level: this.levelOfCurrSelectedStep,
+                cellIndex: currentStep.getCellIndex(),
+                callValue: currentStep.getValue()
+            }
+            this.mySolutionTrack.push(solutionStep);
+
             this.goneSteps++;
             // Falls die Nummernsetzung zur Unlösbarkeit führt
             // muss der Solver zurückgehen
 
-            /*   if (this.deadlockReached()) {
-                this.setAutoDirection('backward');
-                this.countBackwards++;
-            }           
-            return 'inProgress';
-            */
             if (this.myGrid.isInsolvable()) {
                 this.setAutoDirection('backward');
                 this.countBackwards++;
@@ -1947,6 +2063,7 @@ class StepperOnGrid {
             // b) Die selektierte Zelle ist noch nicht gelöscht
             if (this.myGrid.sudoCells[currentStep.getCellIndex()].getValue() !== '0') {
                 this.goneSteps++;
+                this.mySolutionTrack.pop();
                 this.deleteSelected('play', false);
                 // Nach Löschen der Zelle den neuen aktuellen Schritt bestimmen
                 let prevStep = this.myBackTracker.previousStep();
@@ -2081,6 +2198,7 @@ class StepperOnGrid {
                 necessaryOnes: [],
                 level_0_singles: []
             }
+            this.levelOfCurrSelectedStep = 'Keine Angabe';
             return emptySelection;
         }
         //Bestimmt die nächste Zelle mit notwendiger Nummer unter den zulässigen Nummern
@@ -2095,6 +2213,7 @@ class StepperOnGrid {
                     // Schwierigkeitsgrad bleibt unverändert.
                 }
             }
+            this.levelOfCurrSelectedStep = 'Leicht';
             return tmpNeccessary;
         }
         // Bestimmt die nächste Zelle mit level-0 single
@@ -2110,6 +2229,7 @@ class StepperOnGrid {
                     // Schwierigkeitsgrad bleibt unverändert.
                 }
             }
+            this.levelOfCurrSelectedStep = 'Mittel';
             return tmpLevel_0_single;
         }
 
@@ -2128,6 +2248,7 @@ class StepperOnGrid {
                     // Schwierigkeitsgrad bleibt unverändert.
                 }
             }
+            this.levelOfCurrSelectedStep = 'Schwer';
             return oneOption;
         }
 
@@ -2148,6 +2269,7 @@ class StepperOnGrid {
                 // Schwierigkeitsgrad bleibt unverändert.
             }
         }
+        this.levelOfCurrSelectedStep = 'Sehr schwer';
         return tmpMin;
     }
 
@@ -3323,7 +3445,7 @@ class SudokuGrid extends SudokuModel {
                 }
             }
         }
-        this.evaluateMatrix();
+        // this.evaluateMatrix();
     }
 
     setAdMissibleIndexSelected(nr) {
@@ -3556,64 +3678,19 @@ class SudokuGrid extends SudokuModel {
     }
 
 
-    takeBackSolvedCells() {
+    takeBackSolvedCells(solTrack) {
         // Vom Generator verwendete Funktion
-        // Löscht solange gelöste Zellen, wie das Grid 
-        // eine eindeutige Lösung behält.
-        let randomCellOrder = Randomizer.getRandomNumbers(81, 0, 81);
-        for (let i = 0; i < 81; i++) {
-            let k = randomCellOrder[i];
-            if (this.sudoCells[k].getValue() !== '0') {
-                // Selektiere Zelle mit gesetzter Nummer
+        //Den Track rückwärts gehen bis erster step mit level 'Sehr schwer'
+        let k = solTrack.length - 1;
+        while (k > 0) {
+            if (solTrack[k].level !== 'Sehr schwer') {
                 this.select(this.sudoCells[k], k);
-                // Notiere die gesetzte Nummer, um sie eventuell wiederherstellen zu können
-                let tmpNr = this.sudoCells[k].getValue();
-                // Lösche die gesetzte Nummer
                 this.deleteSelected('define', false);
-                // Werte die verbliebene Matrix strikt aus.
                 this.evaluateGridStrict();
-
-                /*
-                if (requestedLevel == 'Leicht') {
-                    if (!this.isMatrixWithNecessary()) {
-                        // Dann wird die Löschung zurückgenommen.
-                        this.select(this.sudoCells[k], k);
-                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
-                    }
-                } else if (requestedLevel == 'Mittel') {
-                    if (!this.isMatrixWithSingleOrNecessary()) {
-                        // Dann wird die Löschung zurückgenommen.
-                        this.select(this.sudoCells[k], k);
-                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
-                    }
-                } else if (requestedLevel == 'Schwer') {
-                    if (!this.isMatrixWithHiddenSingleOrSingleOrNecessary()) {
-                        // Dann wird die Löschung zurückgenommen.
-                        this.select(this.sudoCells[k], k);
-                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
-                    }
-            
-                } else {
-                    throw new Error('Unknown level of difficulty in takeBackSolvedCells(requestedLevel)!');
-                }
-                */
-
-                if (this.sudoCells[k].getNecessarys().size == 1) {
-                    // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
-                    // necessaryCondition
-                } else if (this.sudoCells[k].getTotalAdmissibles().size == 1) {
-                    // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
-                    // totalAdmissibleCondition
-                } else {
-                    // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
-                    // Dann wird die Löschung zurückgenommen.
-                    this.select(this.sudoCells[k], k);
-                    this.sudoCells[k].manualSetValue(tmpNr, 'define');
-                }
             }
+            k--;
         }
     }
-
 
     loadPuzzle(uid, puzzleRecordToLoad) {
         this.loadedPuzzleId = uid;

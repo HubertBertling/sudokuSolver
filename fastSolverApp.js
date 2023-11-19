@@ -63,7 +63,7 @@ class SudokuFastSolver extends SudokuCalculator {
     }
 
     startFastSolverSolutionLoop() {
-        super.startSyncLoop();
+        super.startSyncLoop(undefined);
     }
 }
 

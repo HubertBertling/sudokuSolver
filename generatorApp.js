@@ -51,15 +51,8 @@ class SudokuGenerator extends SudokuCalculator {
         super.setActualEvalType('strict-plus');
     }
 
+       
     generatePuzzle(requestedLevel) {
-        let found = false;
-        while (!found) {
-            this.generatePuzzlePrivate();
-            found = (this.myGrid.difficulty == requestedLevel);
-        }
-    }
-    
-    generatePuzzlePrivate() {
         this.init();
         // Setze in zufälliger Zelle eine zufällige Nummer
         let randomCellIndex = Randomizer.getRandomIntInclusive(0, 80);
@@ -68,35 +61,27 @@ class SudokuGenerator extends SudokuCalculator {
         let randomCellContent = Randomizer.getRandomIntInclusive(1, 9).toString();
         this.atCurrentSelectionSetNumber(randomCellContent);
 
-        // Löse dieses Sudoku mit einer nicht getakteten
-        // und nicht beobachteten automatischen Ausführung
-        this.startGeneratorSolutionLoop();
-
-        // Mache die gelösten Zellen zu Givens
-        this.setSolvedToGiven();
-
-        // Setze das Puzzle in den Define-Mode
-        this.setGamePhase('define')
-        // Lösche in der Lösung Nummern, solange
-        // wie das verbleibende Puzzle backtrack-frei bleibt.
-        this.takeBackSolvedCells();
-
+        // Suche unter den Lösungen dieses Sudoku eine Lösung 
+        // mit dem vorgegebenen Schwierigkeitsgrad
+        this.startGeneratorSolutionLoop(requestedLevel);
+        if (this.myStepper.myResult !== 'success') {
+            throw new Error('Generator is not able to find a puzzle with given difficulty');
+        }
+        
         // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
-        this.autoExecStop();
-        this.startGeneratorSolutionLoop();
+        // this.autoExecStop();
+         // this.startGeneratorSolutionLoop(undefined);
     }
 
-    startGeneratorSolutionLoop() {
-        super.startSyncLoop();
+    startGeneratorSolutionLoop(requestedLevel) {
+        super.startSyncLoop(requestedLevel);
     }
-    takeBackSolvedCells(level) {
-        this.myGrid.takeBackSolvedCells(level);
+    takeBackSolvedCells(solTrack) {
+        this.myGrid.takeBackSolvedCells(solTrack);
     }
     setSolvedToGiven() {
         this.myGrid.setSolvedToGiven();
     }
 }
-
-
 // Launch and initialize the worker app
 start();
