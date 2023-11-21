@@ -248,9 +248,6 @@ class SudokuSolverController {
 
     generateBtnPressed(level) {
         // 3 Webworker in parallel are generating a puzzle with the desired level
-        this.mySolver.puzzleGenerated = false;
-        this.mySolver.getGeneratedPuzzleUsingWebworker(level);
-        this.mySolver.getGeneratedPuzzleUsingWebworker(level);
         this.mySolver.getGeneratedPuzzleUsingWebworker(level);
     }
 
@@ -884,7 +881,6 @@ class SudokuSolver extends SudokuCalculator {
     constructor() {
         super();
         // Die Matrix des Sudoku-Solver
-        this.puzzleGenerated = false;
         this.myGridView = new SudokuGridView(this.myGrid);
         this.myGrid.setMyView(this.myGridView);
         super.setExecutionObserver();
@@ -893,7 +889,6 @@ class SudokuSolver extends SudokuCalculator {
 
     init() {
         super.init();
-        this.puzzleGenerated = false;
         this.setActualEvalType('lazy-invisible');
         this.notify();
     }
@@ -913,29 +908,6 @@ class SudokuSolver extends SudokuCalculator {
     getGeneratedPuzzleUsingWebworker(requestedLevel) {
         // The rotating loader icon is started
         this.notifyAspect('puzzleGenerator', 'started');
-        // A new web worker that performs the generation, is created.
-        let webworkerPuzzleGenerator = new Worker("./generatorApp.js");
-        // A message handler is given to the web worker. The web worker
-        // sends a message containing the generated puzzle as a string.
-        webworkerPuzzleGenerator.onmessage = function (e) {
-         //   console.log('Puzzle generiert. Status Generierung: ' + 
-         //                         sudoApp.mySolver.puzzleGenerated );
-            if (!sudoApp.mySolver.puzzleGenerated) {
-                // Create the puzzle from the supplied string
-                let tmpEvalType = sudoApp.mySolver.currentEvalType;
-                let response = JSON.parse(e.data);
-                // Load the puzzle into the solver
-                sudoApp.mySolver.loadPuzzle('-', response.value);
-                // The delivered puzzle contains its solution along with other info. Therefore
-                // the puzzle must be reset at this point.
-                sudoApp.mySolver.reset();
-                sudoApp.mySolver.notify();
-                sudoApp.mySolver.setActualEvalType(tmpEvalType);
-                sudoApp.mySolver.puzzleGenerated = true;
-                // The rotating loader icon is stopped
-                sudoApp.mySolver.notifyAspect('puzzleGenerator', 'finished');
-            }
-        }
         // The new web worker is sent the request message, 
         // which starts the generation of the new puzzle. 
         let request = {
@@ -944,7 +916,35 @@ class SudokuSolver extends SudokuCalculator {
             value: ''
         }
         let str_request = JSON.stringify(request);
-        webworkerPuzzleGenerator.postMessage(str_request);
+        
+        if (typeof(generator_1) == "undefined") {
+            generator_1 = new Worker("./generatorApp.js");
+            generator_1.onmessage = generatorHandler;
+            generator_1.postMessage(str_request);
+        }
+        if (typeof(generator_2) == "undefined") {
+            generator_2 = new Worker("./generatorApp.js");
+            generator_2.onmessage = generatorHandler;
+            generator_2.postMessage(str_request);
+        }
+        if (typeof(generator_3) == "undefined") {
+            generator_3 = new Worker("./generatorApp.js");
+            generator_3.onmessage = generatorHandler;
+            generator_3.postMessage(str_request);
+        }
+        if (typeof(generator_4) == "undefined") {
+            generator_4 = new Worker("./generatorApp.js");
+            generator_4.onmessage = generatorHandler;
+            generator_4.postMessage(str_request);
+        }if (typeof(generator_5) == "undefined") {
+            generator_5 = new Worker("./generatorApp.js");
+            generator_5.onmessage = generatorHandler;
+            generator_5.postMessage(str_request);
+        }if (typeof(generator_6) == "undefined") {
+            generator_6 = new Worker("./generatorApp.js");
+            generator_6.onmessage = generatorHandler;
+            generator_6.postMessage(str_request);
+        }
     }
     getActualEvalType() {
         return super.getActualEvalType();

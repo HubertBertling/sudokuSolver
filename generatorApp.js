@@ -2,10 +2,12 @@
 importScripts('./sudokuCommon.js');
 
 let sudoApp;
+        
 function start() {
     //A worker app is assigned to the variable "sudoApp".
     sudoApp = new SudokuGeneratorApp();
     sudoApp.init();
+
 }
 
 // The Web Worker is assigned a message handler.

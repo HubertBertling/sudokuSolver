@@ -1,4 +1,33 @@
 let sudoApp;
+let generator_1 = undefined;
+let generator_2 = undefined;
+let generator_3 = undefined;
+let generator_4 = undefined;
+let generator_5 = undefined;
+let generator_6 = undefined;
+
+let generatorHandler = function (e) {
+        // Create the puzzle from the supplied string
+        let tmpEvalType = sudoApp.mySolver.currentEvalType;
+        let response = JSON.parse(e.data);
+        // Load the puzzle into the solver
+        sudoApp.mySolver.loadPuzzle('-', response.value);
+        // The delivered puzzle contains its solution along with other info. Therefore
+        // the puzzle must be reset at this point.
+        sudoApp.mySolver.reset();
+        sudoApp.mySolver.notify();
+        sudoApp.mySolver.setActualEvalType(tmpEvalType);
+        
+        generator_1.terminate(); generator_1 = undefined;
+        generator_2.terminate(); generator_2 = undefined;
+        generator_3.terminate(); generator_3 = undefined;
+        generator_4.terminate(); generator_4 = undefined;
+        generator_5.terminate(); generator_5 = undefined;
+        generator_6.terminate(); generator_6 = undefined;
+        // The rotating loader icon is stopped
+        sudoApp.mySolver.notifyAspect('puzzleGenerator', 'finished');
+}
+
 function start() {
 
     sudoApp = new SudokuMainApp();
