@@ -247,6 +247,10 @@ class SudokuSolverController {
     }
 
     generateBtnPressed(level) {
+        // 3 Webworker in parallel are generating a puzzle with the desired level
+        this.mySolver.puzzleGenerated = false;
+        this.mySolver.getGeneratedPuzzleUsingWebworker(level);
+        this.mySolver.getGeneratedPuzzleUsingWebworker(level);
         this.mySolver.getGeneratedPuzzleUsingWebworker(level);
     }
 
@@ -880,6 +884,7 @@ class SudokuSolver extends SudokuCalculator {
     constructor() {
         super();
         // Die Matrix des Sudoku-Solver
+        this.puzzleGenerated = false;
         this.myGridView = new SudokuGridView(this.myGrid);
         this.myGrid.setMyView(this.myGridView);
         super.setExecutionObserver();
@@ -888,6 +893,7 @@ class SudokuSolver extends SudokuCalculator {
 
     init() {
         super.init();
+        this.puzzleGenerated = false;
         this.setActualEvalType('lazy-invisible');
         this.notify();
     }
@@ -912,18 +918,23 @@ class SudokuSolver extends SudokuCalculator {
         // A message handler is given to the web worker. The web worker
         // sends a message containing the generated puzzle as a string.
         webworkerPuzzleGenerator.onmessage = function (e) {
-            // Create the puzzle from the supplied string
-            let tmpEvalType = sudoApp.mySolver.currentEvalType;
-            let response = JSON.parse(e.data);
-            // Load the puzzle into the solver
-            sudoApp.mySolver.loadPuzzle('-', response.value);
-            // The delivered puzzle contains its solution along with other info. Therefore
-            // the puzzle must be reset at this point.
-            sudoApp.mySolver.reset();
-            sudoApp.mySolver.notify();
-            sudoApp.mySolver.setActualEvalType(tmpEvalType);
-            // The rotating loader icon is stopped
-            sudoApp.mySolver.notifyAspect('puzzleGenerator', 'finished');
+         //   console.log('Puzzle generiert. Status Generierung: ' + 
+         //                         sudoApp.mySolver.puzzleGenerated );
+            if (!sudoApp.mySolver.puzzleGenerated) {
+                // Create the puzzle from the supplied string
+                let tmpEvalType = sudoApp.mySolver.currentEvalType;
+                let response = JSON.parse(e.data);
+                // Load the puzzle into the solver
+                sudoApp.mySolver.loadPuzzle('-', response.value);
+                // The delivered puzzle contains its solution along with other info. Therefore
+                // the puzzle must be reset at this point.
+                sudoApp.mySolver.reset();
+                sudoApp.mySolver.notify();
+                sudoApp.mySolver.setActualEvalType(tmpEvalType);
+                sudoApp.mySolver.puzzleGenerated = true;
+                // The rotating loader icon is stopped
+                sudoApp.mySolver.notifyAspect('puzzleGenerator', 'finished');
+            }
         }
         // The new web worker is sent the request message, 
         // which starts the generation of the new puzzle. 
