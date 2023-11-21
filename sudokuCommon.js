@@ -936,11 +936,13 @@ class SudokuSolver extends SudokuCalculator {
             generator_4 = new Worker("./generatorApp.js");
             generator_4.onmessage = generatorHandler;
             generator_4.postMessage(str_request);
-        }if (typeof(generator_5) == "undefined") {
+        }
+        if (typeof(generator_5) == "undefined") {
             generator_5 = new Worker("./generatorApp.js");
             generator_5.onmessage = generatorHandler;
             generator_5.postMessage(str_request);
-        }if (typeof(generator_6) == "undefined") {
+        }
+        if (typeof(generator_6) == "undefined") {
             generator_6 = new Worker("./generatorApp.js");
             generator_6.onmessage = generatorHandler;
             generator_6.postMessage(str_request);

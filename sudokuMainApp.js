@@ -7,25 +7,42 @@ let generator_5 = undefined;
 let generator_6 = undefined;
 
 let generatorHandler = function (e) {
-        // Create the puzzle from the supplied string
-        let tmpEvalType = sudoApp.mySolver.currentEvalType;
-        let response = JSON.parse(e.data);
-        // Load the puzzle into the solver
-        sudoApp.mySolver.loadPuzzle('-', response.value);
-        // The delivered puzzle contains its solution along with other info. Therefore
-        // the puzzle must be reset at this point.
-        sudoApp.mySolver.reset();
-        sudoApp.mySolver.notify();
-        sudoApp.mySolver.setActualEvalType(tmpEvalType);
-        
-        generator_1.terminate(); generator_1 = undefined;
-        generator_2.terminate(); generator_2 = undefined;
-        generator_3.terminate(); generator_3 = undefined;
-        generator_4.terminate(); generator_4 = undefined;
-        generator_5.terminate(); generator_5 = undefined;
-        generator_6.terminate(); generator_6 = undefined;
-        // The rotating loader icon is stopped
-        sudoApp.mySolver.notifyAspect('puzzleGenerator', 'finished');
+    // Create the puzzle from the supplied string
+    let tmpEvalType = sudoApp.mySolver.currentEvalType;
+    let response = JSON.parse(e.data);
+    // Load the puzzle into the solver
+    sudoApp.mySolver.loadPuzzle('-', response.value);
+    // The delivered puzzle contains its solution along with other info. Therefore
+    // the puzzle must be reset at this point.
+    sudoApp.mySolver.reset();
+    sudoApp.mySolver.notify();
+    sudoApp.mySolver.setActualEvalType(tmpEvalType);
+
+    /*    
+    console.log('Ein Generator erfolgreich');
+    console.log('typeof(generator_1): ' + typeof (generator_1));
+    console.log('typeof(generator_2): ' + typeof (generator_2));
+    console.log('typeof(generator_3): ' + typeof (generator_3));
+    console.log('typeof(generator_4): ' + typeof (generator_4));
+    console.log('typeof(generator_5): ' + typeof (generator_5));
+    console.log('typeof(generator_6): ' + typeof (generator_6));
+
+    if (typeof (generator_1) == "undefined") { console.log('generator_1 erfolgreich') }
+    if (typeof (generator_2) == "undefined") { console.log('generator_2 erfolgreich') }
+    if (typeof (generator_3) == "undefined") { console.log('generator_3 erfolgreich') }
+    if (typeof (generator_4) == "undefined") { console.log('generator_4 erfolgreich') }
+    if (typeof (generator_5) == "undefined") { console.log('generator_5 erfolgreich') }
+    if (typeof (generator_6) == "undefined") { console.log('generator_6 erfolgreich') }
+    */
+
+    generator_1.terminate(); generator_1 = undefined;
+    generator_2.terminate(); generator_2 = undefined;
+    generator_3.terminate(); generator_3 = undefined;
+    generator_4.terminate(); generator_4 = undefined;
+    generator_5.terminate(); generator_5 = undefined;
+    generator_6.terminate(); generator_6 = undefined;
+    // The rotating loader icon is stopped
+    sudoApp.mySolver.notifyAspect('puzzleGenerator', 'finished');
 }
 
 function start() {
