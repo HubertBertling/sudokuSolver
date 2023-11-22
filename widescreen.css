@@ -1076,6 +1076,14 @@ th {
     animation: spin 2s linear infinite;
 }
 
+#search-level {
+    left:30%;
+    top: 25%;
+    font-size: var(--font-size-lg);
+    color: black;
+    background-color: white;
+}
+
 /* Safari */
 @-webkit-keyframes spin {
     0% {

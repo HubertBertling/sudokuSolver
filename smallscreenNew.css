@@ -1077,8 +1077,8 @@ th {
 #loader {
     display: none;
     position: absolute;
-    left: 30%;
-    top: 20%;
+    left: 25%;
+    top: 25%;
     z-index: 2;
     width: 200px;
     height: 200px;
@@ -1089,6 +1089,14 @@ th {
     border-right: 48px solid var(--played-cell-bg-color);
     -webkit-animation: spin 2s linear infinite;
     animation: spin 2s linear infinite;
+}
+
+#search-level {
+    left:25%;
+    top: 25%;
+    font-size: var(--font-size-xl);
+    color: black;
+    background-color: white;
 }
 
 /* Safari */

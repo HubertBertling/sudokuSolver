@@ -378,10 +378,6 @@ class SudokuView {
     upDate() {
         throw new Error('You have to implement the method upDate()!');
     }
-    upDateAspect(aspect, aspectValue) {
-        throw new Error('You have to implement the method upDateAspect(aspect, aspectValue)!');
-    }
-
 }
 class SudokuModel {
     constructor() {
@@ -463,9 +459,9 @@ class SudokuSolverView extends SudokuView {
     upDateAspect(aspect, aspectValue) {
         switch (aspect) {
             case 'puzzleGenerator': {
-                switch (aspectValue) {
+                switch (aspectValue.op) {
                     case 'started': {
-                        this.startLoaderAnimation();
+                        this.startLoaderAnimation(aspectValue.rl);
                         break;
                     }
                     case 'finished': {
@@ -473,15 +469,15 @@ class SudokuSolverView extends SudokuView {
                         break;
                     }
                     default: {
-                        throw new Error('Unknown aspectValue: ' + aspectValue);
+                        throw new Error('Unknown aspectValue.op: ' + aspectValue.op);
                     }
                 }
                 break;
             }
-            case 'evaluationType': {
+         /*   case 'evaluationType': {
                 this.displayEvalType(aspectValue);
                 break;
-            }
+            } */
             default: {
                 throw new Error('Unknown aspect: ' + aspect);
             }
@@ -614,8 +610,10 @@ class SudokuSolverView extends SudokuView {
     }
 
 
-    startLoaderAnimation() {
+    startLoaderAnimation(requestedLevel) {
         // Der sich drehende Loader wird angezeigt
+        let slNode = document.getElementById("search-level");
+        slNode.innerText = 'Gesucht: ' + requestedLevel;
         document.getElementById("loader").style.display = "block";
     }
     stopLoaderAnimation() {
@@ -907,44 +905,60 @@ class SudokuSolver extends SudokuCalculator {
 
     getGeneratedPuzzleUsingWebworker(requestedLevel) {
         // The rotating loader icon is started
-        this.notifyAspect('puzzleGenerator', 'started');
+        let aspectValue = {
+            op: 'started',
+            rl: requestedLevel
+        }
+        this.notifyAspect('puzzleGenerator', aspectValue);
         // The new web worker is sent the request message, 
         // which starts the generation of the new puzzle. 
         let request = {
             name: 'generate',
             level: requestedLevel,
-            value: ''
+            value: '',
+            lfdNr:0
         }
-        let str_request = JSON.stringify(request);
-        
+       
         if (typeof(generator_1) == "undefined") {
             generator_1 = new Worker("./generatorApp.js");
             generator_1.onmessage = generatorHandler;
+            request.lfdNr = 1;
+            let str_request = JSON.stringify(request);
             generator_1.postMessage(str_request);
         }
         if (typeof(generator_2) == "undefined") {
             generator_2 = new Worker("./generatorApp.js");
             generator_2.onmessage = generatorHandler;
+            request.lfdNr = 2;
+            let str_request = JSON.stringify(request);
             generator_2.postMessage(str_request);
         }
         if (typeof(generator_3) == "undefined") {
             generator_3 = new Worker("./generatorApp.js");
             generator_3.onmessage = generatorHandler;
+            request.lfdNr = 3;
+            let str_request = JSON.stringify(request);
             generator_3.postMessage(str_request);
         }
         if (typeof(generator_4) == "undefined") {
             generator_4 = new Worker("./generatorApp.js");
             generator_4.onmessage = generatorHandler;
+            request.lfdNr = 4;
+            let str_request = JSON.stringify(request);
             generator_4.postMessage(str_request);
         }
         if (typeof(generator_5) == "undefined") {
             generator_5 = new Worker("./generatorApp.js");
             generator_5.onmessage = generatorHandler;
+            request.lfdNr = 5;
+            let str_request = JSON.stringify(request);
             generator_5.postMessage(str_request);
         }
         if (typeof(generator_6) == "undefined") {
             generator_6 = new Worker("./generatorApp.js");
             generator_6.onmessage = generatorHandler;
+            request.lfdNr = 6;
+            let str_request = JSON.stringify(request);
             generator_6.postMessage(str_request);
         }
     }

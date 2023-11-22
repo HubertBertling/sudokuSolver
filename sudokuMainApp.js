@@ -35,6 +35,8 @@ let generatorHandler = function (e) {
     if (typeof (generator_6) == "undefined") { console.log('generator_6 erfolgreich') }
     */
 
+    console.log('generator_' + response.lfdNr + ' erfolgreich.');
+
     generator_1.terminate(); generator_1 = undefined;
     generator_2.terminate(); generator_2 = undefined;
     generator_3.terminate(); generator_3 = undefined;
@@ -42,7 +44,11 @@ let generatorHandler = function (e) {
     generator_5.terminate(); generator_5 = undefined;
     generator_6.terminate(); generator_6 = undefined;
     // The rotating loader icon is stopped
-    sudoApp.mySolver.notifyAspect('puzzleGenerator', 'finished');
+    aspectValue = {
+        op: 'finished',
+        rl: ''
+    }
+    sudoApp.mySolver.notifyAspect('puzzleGenerator', aspectValue);
 }
 
 function start() {

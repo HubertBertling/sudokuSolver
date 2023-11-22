@@ -20,7 +20,8 @@ self.onmessage = function (n) {
         let generatedPuzzle = sudoApp.myGenerator.myGrid.getGeneratedPuzzleRecord();
         let response = {
             name: 'generated',
-            value: generatedPuzzle
+            value: generatedPuzzle,
+            lfdNr: request.lfdNr
         }
         let str_response = JSON.stringify(response);
         // The serialized puzzle is sent as a message to Main
