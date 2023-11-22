@@ -1100,6 +1100,8 @@ th {
 #search-level {
     left:20%;
     top: 20%;
+    margin-top: 20px;
+    padding: 2rem;
     font-size: var(--font-size-lg);
     color: black;
     background-color: white;

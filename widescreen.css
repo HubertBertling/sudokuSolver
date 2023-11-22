@@ -1078,7 +1078,9 @@ th {
 
 #search-level {
     left:30%;
-    top: 25%;
+    top: 20%;
+    margin-top: 20px;
+    padding: 1rem;
     font-size: var(--font-size-lg);
     color: black;
     background-color: white;

@@ -1094,6 +1094,8 @@ th {
 #search-level {
     left:25%;
     top: 25%;
+    margin-top: 20px;
+    padding: 1rem;
     font-size: var(--font-size-xl);
     color: black;
     background-color: white;
