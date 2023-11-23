@@ -18,23 +18,6 @@ let generatorHandler = function (e) {
     sudoApp.mySolver.notify();
     sudoApp.mySolver.setActualEvalType(tmpEvalType);
 
-    /*    
-    console.log('Ein Generator erfolgreich');
-    console.log('typeof(generator_1): ' + typeof (generator_1));
-    console.log('typeof(generator_2): ' + typeof (generator_2));
-    console.log('typeof(generator_3): ' + typeof (generator_3));
-    console.log('typeof(generator_4): ' + typeof (generator_4));
-    console.log('typeof(generator_5): ' + typeof (generator_5));
-    console.log('typeof(generator_6): ' + typeof (generator_6));
-
-    if (typeof (generator_1) == "undefined") { console.log('generator_1 erfolgreich') }
-    if (typeof (generator_2) == "undefined") { console.log('generator_2 erfolgreich') }
-    if (typeof (generator_3) == "undefined") { console.log('generator_3 erfolgreich') }
-    if (typeof (generator_4) == "undefined") { console.log('generator_4 erfolgreich') }
-    if (typeof (generator_5) == "undefined") { console.log('generator_5 erfolgreich') }
-    if (typeof (generator_6) == "undefined") { console.log('generator_6 erfolgreich') }
-    */
-
     console.log('generator_' + response.lfdNr + ' erfolgreich.');
 
     generator_1.terminate(); generator_1 = undefined;
