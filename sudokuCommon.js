@@ -613,7 +613,7 @@ class SudokuSolverView extends SudokuView {
     startLoaderAnimation(requestedLevel) {
         // Der sich drehende Loader wird angezeigt
         let slNode = document.getElementById("search-level");
-        slNode.innerText = 'Gesucht: ' + requestedLevel;
+        slNode.innerText = requestedLevel;
         document.getElementById("loader").style.display = "block";
     }
     stopLoaderAnimation() {
