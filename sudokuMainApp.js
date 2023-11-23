@@ -18,7 +18,7 @@ let generatorHandler = function (e) {
     sudoApp.mySolver.notify();
     sudoApp.mySolver.setActualEvalType(tmpEvalType);
 
-    console.log('generator_' + response.lfdNr + ' erfolgreich.');
+    // console.log('generator_' + response.lfdNr + ' erfolgreich.');
 
     generator_1.terminate(); generator_1 = undefined;
     generator_2.terminate(); generator_2 = undefined;
