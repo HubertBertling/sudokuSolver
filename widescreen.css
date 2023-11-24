@@ -145,22 +145,6 @@ html {
 
 
 
-.mobile-btn {
-    background-color: var(--standard-btn-bg-color);
-    text-align: center;
-    font-size: var(--font-size);
-    border-radius: 0.3rem;
-    border: none;
-    display: grid;
-    grid-template-columns: 1fr;
-    place-items: center;
-    padding-top: 0.8rem;
-    padding-bottom: 0.8rem;
-    padding-left: 0.8rem;
-    padding-right: 0.8rem;
-}
-
-
 .app-content {
     display: flex;
     flex-direction: column;
@@ -471,6 +455,22 @@ grid-template-columns: repeat(3, auto);
 }
 
 
+.mobile-btn {
+    background-color: var(--standard-btn-bg-color);
+    text-align: center;
+    font-size: var(--font-size-lg);
+    border-radius: 0.3rem;
+    border: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    place-items: center;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+}
+
+
 .btn-define {
     background-color: var(--defined-cell-bg-color);
     color: var(--defined-cell-color);
@@ -508,6 +508,9 @@ grid-template-columns: repeat(3, auto);
     grid-column-end: 5;
     grid-row-start: 4;
     grid-row-end: 6;
+}
+.btn-with-image {
+    font-size: var(--font-size);
 }
 
 .btn-image {
