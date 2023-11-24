@@ -226,7 +226,9 @@ class SudokuSolverController {
     }
 
     startBtnPressed() {
-        this.mySolver.getPuzzlePreRunDataUsingWebworker();
+        if (!this.mySolver.isInAutoExecution()){
+            this.mySolver.getPuzzlePreRunDataUsingWebworker();
+        }
         this.mySolver.startSolverLoop();
     }
 
@@ -474,10 +476,10 @@ class SudokuSolverView extends SudokuView {
                 }
                 break;
             }
-         /*   case 'evaluationType': {
-                this.displayEvalType(aspectValue);
-                break;
-            } */
+            /*   case 'evaluationType': {
+                   this.displayEvalType(aspectValue);
+                   break;
+               } */
             default: {
                 throw new Error('Unknown aspect: ' + aspect);
             }
@@ -916,45 +918,45 @@ class SudokuSolver extends SudokuCalculator {
             name: 'generate',
             level: requestedLevel,
             value: '',
-            lfdNr:0
+            lfdNr: 0
         }
-       
-        if (typeof(generator_1) == "undefined") {
+
+        if (typeof (generator_1) == "undefined") {
             generator_1 = new Worker("./generatorApp.js");
             generator_1.onmessage = generatorHandler;
             request.lfdNr = 1;
             let str_request = JSON.stringify(request);
             generator_1.postMessage(str_request);
         }
-        if (typeof(generator_2) == "undefined") {
+        if (typeof (generator_2) == "undefined") {
             generator_2 = new Worker("./generatorApp.js");
             generator_2.onmessage = generatorHandler;
             request.lfdNr = 2;
             let str_request = JSON.stringify(request);
             generator_2.postMessage(str_request);
         }
-        if (typeof(generator_3) == "undefined") {
+        if (typeof (generator_3) == "undefined") {
             generator_3 = new Worker("./generatorApp.js");
             generator_3.onmessage = generatorHandler;
             request.lfdNr = 3;
             let str_request = JSON.stringify(request);
             generator_3.postMessage(str_request);
         }
-        if (typeof(generator_4) == "undefined") {
+        if (typeof (generator_4) == "undefined") {
             generator_4 = new Worker("./generatorApp.js");
             generator_4.onmessage = generatorHandler;
             request.lfdNr = 4;
             let str_request = JSON.stringify(request);
             generator_4.postMessage(str_request);
         }
-        if (typeof(generator_5) == "undefined") {
+        if (typeof (generator_5) == "undefined") {
             generator_5 = new Worker("./generatorApp.js");
             generator_5.onmessage = generatorHandler;
             request.lfdNr = 5;
             let str_request = JSON.stringify(request);
             generator_5.postMessage(str_request);
         }
-        if (typeof(generator_6) == "undefined") {
+        if (typeof (generator_6) == "undefined") {
             generator_6 = new Worker("./generatorApp.js");
             generator_6.onmessage = generatorHandler;
             request.lfdNr = 6;
@@ -3822,8 +3824,7 @@ class SudokuGrid extends SudokuModel {
                 (this.selectedCell.getValue() == '0') ||
                 // Wenn die Zelle gefüllt ist, kann nur im gleichen Modus
                 // eine Neusetzung erfolgen
-                (this.selectedCell.getPhase() == currentPhase)
-            ) {
+                (this.selectedCell.getPhase() == currentPhase)) {
                 this.selectedCell.unsetWrong();
                 this.selectedCell.manualSetValue(btnNumber, currentPhase);
                 this.deselect();
