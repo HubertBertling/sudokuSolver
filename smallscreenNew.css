@@ -1056,6 +1056,24 @@ th {
     font-size: var(--font-size);
 }
 
+#col-status-given div {
+    background-color: var(--defined-cell-bg-color);
+    padding-right: 1rem;
+}
+
+#col-status-solved div {
+    background-color: var(--played-cell-bg-color);
+    color: black;
+    padding-right: 1rem;
+}
+
+#col-status-open div  {
+    background-color: var(--nested-cell-bg-color);
+    color: black;
+    padding-right: 1rem;
+}
+
+
 .puzzle-db-table th div {
     position: absolute;
     background: transparent;

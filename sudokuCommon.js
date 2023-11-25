@@ -226,7 +226,7 @@ class SudokuSolverController {
     }
 
     startBtnPressed() {
-        if (!this.mySolver.isInAutoExecution()){
+        if (!this.mySolver.isInAutoExecution()) {
             this.mySolver.getPuzzlePreRunDataUsingWebworker();
         }
         this.mySolver.startSolverLoop();
@@ -559,7 +559,7 @@ class SudokuSolverView extends SudokuView {
     displayProgress() {
         let myGrid = this.getMyModel().myGrid;
         let countDef = myGrid.numberOfGivens();
-        let countTotal = myGrid.numberOfSolvedCells();
+        let countTotal = myGrid.numberOfNonEmptyCells();
         this.progressBar.setValue(countDef, countTotal);
     }
 
@@ -3375,7 +3375,7 @@ class SudokuGrid extends SudokuModel {
         }
         return true;
     }
-    numberOfSolvedCells() {
+    numberOfNonEmptyCells() {
         let tmp = 0;
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() !== '0') {
@@ -3395,6 +3395,25 @@ class SudokuGrid extends SudokuModel {
         }
         return tmp;
     }
+
+    numberOfSolvedCells() {
+        let tmp = 0;
+        for (let i = 0; i < 81; i++) {
+            if (this.sudoCells[i].getValue() !== '0') {
+                if (this.sudoCells[i].getPhase() == 'play') {
+                    tmp++;
+                }
+            }
+        }
+        return tmp;
+    }
+
+    
+    numberOfOpenCells() {
+        return 81 - this.numberOfGivens()
+            - this.numberOfSolvedCells();
+    }
+
     getPuzzleStr() {
         let tmpPuzzle = [];
         for (let i = 0; i < 81; i++) {
@@ -3450,21 +3469,29 @@ class SudokuGrid extends SudokuModel {
         }
         let puzzleRecord = {
             name: '-',
-            status: 'ungelöst',
+            /* status: 'ungelöst',*/
+            status: {
+                given: -1,
+                solved: -1,
+                open: -1
+            },
             stepsLazy: 0,
             stepsStrict: 0,
             date: (new Date()).toJSON(),
             puzzle: [],
             preRunRecord: preRunRecord
         }
-        if (this.puzzleSolved()) {
-            puzzleRecord.status = 'gelöst';
+        // if (this.puzzleSolved()) {
+            /* puzzleRecord.status = 'gelöst'; */
+            puzzleRecord.status.given = this.numberOfGivens();
+            puzzleRecord.status.solved = this.numberOfSolvedCells();
+            puzzleRecord.status.open = this.numberOfOpenCells();;
             if (this.myCalculator.currentEvalType == 'lazy-invisible' || this.myCalculator.currentEvalType == 'lazy') {
                 puzzleRecord.stepsLazy = this.steps;
             } else if (this.myCalculator.currentEvalType == 'strict-plus' || this.myCalculator.currentEvalType == 'strict-minus') {
                 puzzleRecord.stepsStrict = this.steps;
             }
-        }
+        // }
         for (let i = 0; i < 81; i++) {
             puzzleRecord.puzzle[i] = {
                 cellValue: this.sudoCells[i].getValue(),
@@ -3487,21 +3514,30 @@ class SudokuGrid extends SudokuModel {
         }
         let puzzleRecord = {
             name: '-',
-            status: 'ungelöst',
+            //    status: 'ungelöst',
+            status: {
+                given: -1,
+                solved: -1,
+                open: -1
+            },
             stepsLazy: 0,
             stepsStrict: 0,
             date: (new Date()).toJSON(),
             puzzle: [],
             preRunRecord: preRunRecord
         }
-        if (this.puzzleSolved()) {
-            puzzleRecord.status = 'gelöst';
+        // if (this.puzzleSolved()) {
+            // puzzleRecord.status = 'gelöst';
+            puzzleRecord.status.given = this.numberOfGivens();
+            puzzleRecord.status.solved = this.numberOfSolvedCells();
+            puzzleRecord.status.open = this.numberOfOpenCells();;
+
             if (this.myCalculator.currentEvalType == 'lazy' || this.myCalculator.currentEvalType == 'lazy-invisible') {
                 puzzleRecord.stepsLazy = this.steps;
             } else if (this.myCalculator.currentEvalType == 'strict-plus' || this.myCalculator.currentEvalType == 'strict-minus') {
                 puzzleRecord.stepsStrict = this.steps;
             }
-        }
+        // }
         puzzleRecord.preRunRecord.defCount = 0;
         for (let i = 0; i < 81; i++) {
             puzzleRecord.puzzle.push({
@@ -5267,7 +5303,7 @@ class SudokuCell extends SudokuModel {
         this.myValue = nr;
         this.myValueType = 'manual';
         this.myGamePhase = gamePhase;
-        this.myAutoStepNumber = this.myGrid.numberOfSolvedCells() - this.myGrid.numberOfGivens();
+        this.myAutoStepNumber = this.myGrid.numberOfNonEmptyCells() - this.myGrid.numberOfGivens();
     }
 
     autoSetValue(currentStep) {
@@ -5275,7 +5311,7 @@ class SudokuCell extends SudokuModel {
         this.myValue = nr;
         this.myValueType = 'auto';
         this.myGamePhase = 'play';
-        this.myAutoStepNumber = this.myGrid.numberOfSolvedCells() - this.myGrid.numberOfGivens();
+        this.myAutoStepNumber = this.myGrid.numberOfNonEmptyCells() - this.myGrid.numberOfGivens();
         this.myOptions = currentStep.options();
     }
 
@@ -5496,10 +5532,20 @@ class SudokuPuzzleDBController {
         /*        document.getElementById('col-defCount').addEventListener('click', () => {
                     this.myPuzzleDB.sort('defCount');
                 }); */
-        document.getElementById('col-status').addEventListener('click', () => {
-            this.myPuzzleDB.sort('status');
+
+        document.getElementById('col-status-given').addEventListener('click', () => {
+            this.myPuzzleDB.sort('status-given');
         });
-        /*        document.getElementById('col-steps-lazy').addEventListener('click', () => {
+
+        document.getElementById('col-status-solved').addEventListener('click', () => {
+            this.myPuzzleDB.sort('status-solved');
+        });
+
+        document.getElementById('col-status-open').addEventListener('click', () => {
+            this.myPuzzleDB.sort('status-open');
+        });
+
+        /*document.getElementById('col-steps-lazy').addEventListener('click', () => {
                     this.myPuzzleDB.sort('steps-lazy');
                 });
                 document.getElementById('col-steps-strict').addEventListener('click', () => {
@@ -5724,7 +5770,7 @@ class SudokuPuzzleDBView extends SudokuView {
                 }
                 i++;
 
-                /*      let td_key = document.createElement('td');
+                /*    let td_key = document.createElement('td');
                       td_key.innerText = key;
                       tr.appendChild(td_key); */
 
@@ -5740,9 +5786,34 @@ class SudokuPuzzleDBView extends SudokuView {
                        td_defCount.innerText = pzRecord.preRunRecord.defCount;
                        tr.appendChild(td_defCount); */
 
-                let td_status = document.createElement('td');
-                td_status.innerText = pzRecord.status;
-                tr.appendChild(td_status);
+                let td_status_given = document.createElement('td');
+                if (pzRecord.status.given == undefined) {
+                    td_status_given.innerText = -1;
+                } else {
+                    td_status_given.innerText = pzRecord.status.given;
+                }
+                tr.appendChild(td_status_given);
+            
+
+                let td_status_solved = document.createElement('td');
+                if (pzRecord.status.solved == undefined) {
+                    td_status_solved.innerText = -1;
+                } else {
+                    td_status_solved.innerText = pzRecord.status.solved;
+                }
+                tr.appendChild(td_status_solved);
+            
+                let td_status_open = document.createElement('td');
+                if (pzRecord.status.open == undefined) {
+                    td_status_open.innerText = -1;
+                } else {
+                    td_status_open.innerText = pzRecord.status.open;
+                }
+                tr.appendChild(td_status_open);
+            
+
+
+
 
                 /*         let td_steps_lazy = document.createElement('td');
                          td_steps_lazy.innerText = pzRecord.stepsLazy;
@@ -5869,17 +5940,42 @@ class SudokuPuzzleDB extends SudokuModel {
                 }
                 break;
             }
-            case 'status': {
-                let statusSorted = this.sorted.get('status');
+            case 'status-given': {
+                let statusSorted = this.sorted.get('status-given');
                 if (statusSorted == '' || statusSorted == 'desc') {
-                    this.sorted.set('status', 'asc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (a[1].status > b[1].status ? 1 : -1)));
+                    this.sorted.set('status-given', 'asc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].status.given - b[1].status.given));
                 } else {
-                    this.sorted.set('status', 'desc');
-                    puzzleMap = new Map([...puzzleMap].sort((a, b) => (a[1].status > b[1].status ? -1 : 1)));
+                    this.sorted.set('status-given', 'desc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].status.given - b[1].status.given));
                 }
                 break;
             }
+
+            case 'status-solved': {
+                let statusSorted = this.sorted.get('status-solved');
+                if (statusSorted == '' || statusSorted == 'desc') {
+                    this.sorted.set('status-solved', 'asc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].status.solved - b[1].status.solved));
+                } else {
+                    this.sorted.set('status-solved', 'desc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].status.solved - b[1].status.solved));
+                }
+                break;
+            }
+
+            case 'status-open': {
+                let statusSorted = this.sorted.get('status-open');
+                if (statusSorted == '' || statusSorted == 'desc') {
+                    this.sorted.set('status-open', 'asc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].status.open - b[1].status.open));
+                } else {
+                    this.sorted.set('status-open', 'desc');
+                    puzzleMap = new Map([...puzzleMap].sort((a, b) => a[1].status.open - b[1].status.open));
+                }
+                break;
+            }
+
             case 'steps-lazy': {
                 let stepsSorted = this.sorted.get('steps-lazy');
                 if (stepsSorted == '' || stepsSorted == 'desc') {
@@ -5954,7 +6050,8 @@ class SudokuPuzzleDB extends SudokuModel {
         // Overwrite stored puzzle having the id puzzleId
         let storedPuzzle = this.getPuzzle(puzzleId);
         // Steps mischen
-        if (puzzleRecord.status == 'gelöst') {
+        //     if (puzzleRecord.status == 'gelöst') {
+        if (puzzleRecord.status.open == 0) {
             if (puzzleRecord.stepsLazy == 0) {
                 puzzleRecord.stepsLazy = storedPuzzle.stepsLazy;
             } else if (puzzleRecord.stepsStrict == 0) {

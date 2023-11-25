@@ -4,11 +4,28 @@ layout: default
 
 # Sudoku-Trainer
 
-## Ein Generator, Solver und Trainer für klassisches Sudoku
+## Ein Trainer mit Solver und Generator für klassisches Sudoku
 
 Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Puzzle, manchmal sogar nur als leicht klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man den Sudoku-Trainer mögliche nächste Schritte anzeigen lassen oder darüber hinaus das Puzzle komplett lösen lassen.
 
 Die Besonderheit des Sudoku-Trainers besteht darin, dass man ihm bei der Lösungssuche zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt. Durch das Beobachten und Verstehen des Solvers kann der Spieler seine Fähigkeit,Sudokus zu lösen, trainieren.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Der Generator generiert faire Puzzles mit den Schwierigkeitsgraden 'Leicht', 'Mittel' und 'Schwer'. Im Gegensatz zu 'Sehr Schweren' oder 'Extrem Schweren' Puzzles - Definition der Schwierigkeitsgrade erfolgt weiter unten - können faire Puzzles allein durch logisches Schließen gelöst werden. Sie benötigen kein "Backtracking", kein Raten und Probieren.
 
@@ -16,7 +33,7 @@ Der Generator generiert faire Puzzles mit den Schwierigkeitsgraden 'Leicht', 'Mi
 
 ![Anwendungsansicht](./images/AppView.png)
 
-Der Sudoku-Trainer besteht aus zwei Komponenten, dem Solver/Generator und der Puzzle-Datenbank. Mit Hilfe des Solvers kann man beliebige Sudoku-Puzzles manuell oder automatisch lösen. Mittels des Generators kann man neue Puzzles generieren. In der Puzzle-Datenbank können Puzzles mit ihren Eigenschaften, etwa dem Schwierigkeitsgrad, der Anzahl benötigter Lösungsschritte und der Lösung selbst gespeichert werden.
+Der Sudoku-Trainer besteht aus drei Komponenten, dem Solver, dem Generator und der Puzzle-Datenbank. Mit Hilfe des Solvers kann man beliebige Sudoku-Puzzles manuell oder automatisch lösen. Mittels des Generators kann man neue Puzzles generieren. In der Puzzle-Datenbank können Puzzles mit ihren Eigenschaften, etwa dem Schwierigkeitsgrad, der Anzahl benötigter Lösungsschritte und der Lösung selbst gespeichert werden.
 
 ## Der Solver
 

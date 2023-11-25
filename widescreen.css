@@ -108,40 +108,45 @@ html {
     font-size: var(--font-size);
     border: none;
     cursor: pointer;
-  }
-  
-  .dropbtn:hover, .dropbtn:focus {
+}
+
+.dropbtn:hover,
+.dropbtn:focus {
     background-color: grey;
-  }
-  
-  .dropdown {
+}
+
+.dropdown {
     position: relative;
     display: inline-block;
-  }
-  
-  .dropdown-content {
+}
+
+.dropdown-content {
     display: none;
     position: absolute;
     background-color: #f1f1f1;
     min-width: 160px;
     overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
-  }
-  
-  .dropdown-option {
+}
+
+.dropdown-option {
     color: black;
     padding: 12px 16px;
     font-size: var(--font-size);
     text-decoration: none;
     display: block;
-  }
-  
-  .dropdown-option:hover {background-color: #ddd;}
-  
-  .show {display: block;}
+}
 
-  /*=======================================================*/
+.dropdown-option:hover {
+    background-color: #ddd;
+}
+
+.show {
+    display: block;
+}
+
+/*=======================================================*/
 
 
 
@@ -170,7 +175,8 @@ html {
 
 
 
-.app-empty-footer, .app-name-header {
+.app-empty-footer,
+.app-name-header {
     margin-top: 0.5rem;
     font-size: var(--font-size-xl);
     font-weight: bold;
@@ -202,7 +208,7 @@ html {
 
 .main-sudoku-grid {
     display: grid;
-grid-template-columns: repeat(3, auto);
+    grid-template-columns: repeat(3, auto);
     background-color: black;
     margin: 0.1em;
 }
@@ -509,6 +515,7 @@ grid-template-columns: repeat(3, auto);
     grid-row-start: 4;
     grid-row-end: 6;
 }
+
 .btn-with-image {
     font-size: var(--font-size);
 }
@@ -850,8 +857,8 @@ label {
     margin-right: auto;
     border-radius: 2.4rem;
     border: none;
-   
-  }
+
+}
 
 /* 1.1 Wurzel im Dialog */
 .puzzle-db-root {
@@ -866,16 +873,17 @@ label {
     /* background-color: #500; */
 
 }
+
 /* 1.1.2 Innere Klammer auf */
 .puzzle-db-header {
     flex-grow: 0;
-  
+
     font-size: var(--font-size-xl);
-        font-weight: bold;
-        padding: 1rem;
-        text-align: center;
+    font-weight: bold;
+    padding: 1rem;
+    text-align: center;
     /*    background-color: #500; */
-         color: white;    
+    color: white;
 }
 
 /* 1.1.3 Section enthält DB-Tabelle */
@@ -894,6 +902,7 @@ section.positioned {
     width: 600px;
     box-shadow: 0 0 15px #333;
 }
+
 /* 1.1.3.1 Container */
 .container {
     overflow-y: auto;
@@ -903,8 +912,8 @@ section.positioned {
 
 
 
-/* 1.1.4 container-puzzle-buttons */ 
-.container-puzzle-buttons{
+/* 1.1.4 container-puzzle-buttons */
+.container-puzzle-buttons {
     margin: 20px;
     flex-grow: 0;
     /* background-color: #500; */
@@ -941,7 +950,7 @@ section.positioned {
 /* 1.1.5 Äußere Klammer zu */
 .puzzle-db-footer-outmost {
     flex-grow: 1;
-   /* background-color: #500; */
+    /* background-color: #500; */
 }
 
 
@@ -1043,6 +1052,25 @@ th {
     white-space: nowrap;
 }
 
+#col-status-given div {
+    background-color: var(--defined-cell-bg-color);
+    padding-right: 18px;
+}
+
+#col-status-solved div {
+    background-color: var(--played-cell-bg-color);
+    color: black;
+    padding-right: 18px;
+}
+
+#col-status-open div  {
+    background-color: var(--nested-cell-bg-color);
+    color: black;
+    padding-right: 18px;
+}
+
+
+
 .puzzle-db-table th div {
     position: absolute;
     background: transparent;
@@ -1066,7 +1094,7 @@ th {
     display: none;
     position: absolute;
     left: 30%;
-    top: 20%;
+    top: 30%;
     z-index: 2;
     width: 200px;
     height: 200px;
@@ -1080,7 +1108,7 @@ th {
 }
 
 #search-level {
-    left:30%;
+    left: 30%;
     top: 20%;
     margin-top: 20px;
     padding: 2.4rem;
