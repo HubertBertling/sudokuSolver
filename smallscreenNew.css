@@ -1058,18 +1058,19 @@ th {
 
 #col-status-given div {
     background-color: var(--defined-cell-bg-color);
+    color: var(--defined-cell-bg-color);
     padding-right: 1rem;
 }
 
 #col-status-solved div {
     background-color: var(--played-cell-bg-color);
-    color: black;
+    color: var(--played-cell-bg-color);
     padding-right: 1rem;
 }
 
 #col-status-open div  {
     background-color: var(--nested-cell-bg-color);
-    color: black;
+    color: var(--nested-cell-bg-color);
     padding-right: 1rem;
 }
 
