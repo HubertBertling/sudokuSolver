@@ -606,33 +606,27 @@ html {
 /* ======================================*/
 /* Evaluation block                       */
 /* ======================================*/
-.eval-legend {
-    font-weight: bold;
-    margin-left: 1rem;
-    font-size: var(--font-size);
-}
 
 
-label {
-    display: block;
-}
-
-.pc-evaluation-options {
-    display: flex;
-    flex-direction: row;
-    /* margin: 0 0 0.5rem 0; */
+.pc-eval {
+    margin-left: 1.2rem;
+    margin-right: 1.2rem;
 }
 
 .pc-floatBlock {
-    margin: 0.8rem 0.8rem 0 0.8rem;
-    flex-grow: 1;
+    font-size: 1.2rem;
+    padding: 1rem;
 }
 
-.pc-eval-type {
-    height: var(--font-size);
-    width: var(--font-size);
-    vertical-align: middle;
+/* ======================================*/
+/* Evaluation block                       */
+/* ======================================*/
+.eval-legend {
+    font-weight: bold;
+    margin-left: 10px;
+    font-size: var(--font-size);
 }
+
 
 /*======================================*/
 /* Progress block */
@@ -907,6 +901,30 @@ label {
     margin-right: 10px;
     margin-bottom: 10px;
 }
+
+.settings-dlg {
+    width: 50%;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    position: absolute;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#settings-dlg-close-btn {
+    width: 100px;
+    margin-top: 10px;
+    /* margin-left: auto; */
+    float: right;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
 
 
 /*=======================================*/
