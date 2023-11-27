@@ -533,6 +533,8 @@ html {
     border-radius: 0.3rem;
     font-size: var(--font-size-lg);
     border: none;
+    display: grid;
+    grid-template-columns: 1fr;
     place-items: center;
 }
 
@@ -582,9 +584,9 @@ html {
 }
 
 .btn-image {
-    margin-right: 0.4rem;
-    width: 1.2rem;
-    height:1.2rem;    
+    margin-top: 0.2rem;
+    width: 1.6rem;
+    height:1.6rem;    
 }
 
 .btn-with-image {
