@@ -23,17 +23,50 @@
     <link rel="stylesheet" media="screen and (min-width: 360px) and (max-width: 490px)" href="smallscreenNew.css">
     <link rel="stylesheet" media="screen and (min-width: 491px)" href="widescreen.css">
     <link rel="stylesheet" media="print" type="text/css" href="print.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 
 <body>
+
     <div class="app-content noprint">
-        <div class="app-name-header pc-element">
-            <div class="h-text">
-                Sudoku Trainer
+
+        <div id="mySidenav" class="sidenav">
+            <button class="dropdown-btn" id="dropdown-btn-new">
+                Neu
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-container" id="dropdown-container-btn-new">
+                <a href="#" onclick="sudoApp.mySolverController.generateBtnPressed('Leicht')">Leicht</a>
+                <a href="#" onclick="sudoApp.mySolverController.generateBtnPressed('Mittel')">Mittel</a>
+                <a href="#" onclick="sudoApp.mySolverController.generateBtnPressed('Schwer')">Schwer</a>
             </div>
+            <a href="#" onclick="sudoApp.mySolverController.saveBtnPressed()">Speichern</a>
+            <a href="#" onclick="sudoApp.mySolverController.printBtnPressed()">Drucken</a>
+            <a href="#" onclick="sudoApp.mySolverController.openDBBtnPressed()">Datenbank</a>
+            <a href="#" onclick="sudoApp.mySolverController.openSettingsDlgPressed()">Einstellungen</a>
+            <a href="#" onclick="closeNav()">Schließen</a>
+        </div>
+
+
+        <div class="app-name-header pc-element">
+            <div class="menu-icon" onclick="openNav()">
+                <div class="menu-icon-line"></div>
+                <div class="menu-icon-line"></div>
+                <div class="menu-icon-line"></div>
+            </div>
+
+            <div class="h-text">
+                <span>
+                    Sudoku Trainer
+                </span>
+            </div>
+            <button class="help-button" id="help-button"> ? </button>
+
         </div>
         <div class="sudoku-solver-container">
             <div class="gridArea" id="gridArea">
+                <!--
                 <div class="pc-eval">
                     <fieldset class="eval-fieldset">
                         <legend class="eval-legend">
@@ -67,6 +100,7 @@
                     </fieldset>
 
                 </div>
+            -->
                 <div class="grid-plus-explainer" id="grid-plus-explainer">
                     <div id="loader">
                         <div id="search-level"></div>
@@ -115,14 +149,17 @@
             <div class="mobile-btn-container dropdown">
                 <button onclick="myFunction()" class="mobile-btn dropbtn">Neu</button>
                 <div id="myDropdown" class="dropdown-content">
-                    <div class="dropdown-option" id="Leicht" onclick="sudoApp.mySolverController.generateBtnPressed('Leicht')">Leicht
+                    <div class="dropdown-option" id="Leicht"
+                        onclick="sudoApp.mySolverController.generateBtnPressed('Leicht')">Leicht
                     </div>
-                    <div class="dropdown-option" id="Mittel" onclick="sudoApp.mySolverController.generateBtnPressed('Mittel')">Mittel
+                    <div class="dropdown-option" id="Mittel"
+                        onclick="sudoApp.mySolverController.generateBtnPressed('Mittel')">Mittel
                     </div>
-                    <div class="dropdown-option" id="Schwer" onclick="sudoApp.mySolverController.generateBtnPressed('Schwer')">Schwer
+                    <div class="dropdown-option" id="Schwer"
+                        onclick="sudoApp.mySolverController.generateBtnPressed('Schwer')">Schwer
                     </div>
                 </div>
-                 <button class="mobile-interface mobile-btn btn-init">Init</button>
+                <button class="mobile-interface mobile-btn btn-init">Init</button>
                 <button class="mobile-interface mobile-btn btn-reset">Zurück</button>
                 <button class="mobile-interface mobile-btn btn-showWrongNumbers">Prüfen</button>
                 <button class="mobile-interface mobile-btn help-button"> ? </button>
@@ -209,7 +246,7 @@
                                 </th>
                                 <th id="col-status-open" style="cursor:pointer">U<div>U</div>
                                 </th>
-                           <!--
+                                <!--
                             <th id="col-steps-lazy" style="cursor:pointer">Schritte (lazy)<div>Schritte (lazy)
                                 </div>
                             </th>
@@ -311,6 +348,53 @@
         <button class="infoDlg-OK-Btn" id="infoDlg-OK-Btn">OK</button>
     </dialog>
 
+    <dialog class="settings-dlg noprint" id="settings-dlg">
+        <div class="dlg-header">
+            Einstellungen
+        </div>
+        <div class="pc-eval">
+            <fieldset class="eval-fieldset">
+                <legend class="eval-legend">
+                    Kandidatenauswertung
+                </legend>
+
+                <div id="pc-evaluation" name="pc-evaluation" class="pc-evaluation-options">
+                    <div id="pcNoEval" class="pc-floatBlock">
+                        <label for="pc-no-eval"> <input id="pc-no-eval" class="pc-eval-type" name="pc-auswertung"
+                                type="radio" value="lazy-invisible" checked />
+                            Keine
+                        </label>
+                    </div>
+
+                    <div id="pcLazy" class="pc-floatBlock">
+                        <label for="pc-lazy"> <input id="pc-lazy" class="pc-eval-type" name="pc-auswertung" type="radio"
+                                value="lazy" /> Lazy </label>
+                    </div>
+
+                    <div id="pcStrictPlus" class="pc-floatBlock">
+                        <label for="pc-strict-plus"> <input id="pc-strict-plus" class="pc-eval-type"
+                                name="pc-auswertung" type="radio" value="strict-plus" /> Strikt +
+                        </label>
+                    </div>
+                    <div id="pcStrictMinus" class="pc-floatBlock">
+                        <label for="pc-strict-minus"> <input id="pc-strict-minus" class="pc-eval-type"
+                                name="pc-auswertung" type="radio" value="strict-minus" /> Strikt -
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+
+        <button id="settings-dlg-close-btn">Schließen</button>
+
+    </dialog>
+
+
+
+
+
+
     <div class="print-content">
         <div class="puzzle-header">
             <!--Id und Name des aktuell geladenen Puzzles werden als String via JS erzeugt-->
@@ -335,7 +419,7 @@
 
     <script>
         /* When the user clicks on the button, 
-        toggle between hiding and showing the dropdown content */
+        toggle between hiding and showing the dropdown content 
         function myFunction() {
             document.getElementById("myDropdown").classList.toggle("show");
         }
@@ -353,6 +437,44 @@
                 }
             }
         }
+        */
+
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+
+        }
+
+        function closeNav() {
+            let dropdown = document.getElementById("dropdown-btn-new");
+            let dropdownContent = document.getElementById("dropdown-container-btn-new");
+            if (dropdownContent.style.display === "block") {
+                dropdown.click();
+            }
+            document.getElementById("mySidenav").style.width = "0";
+        }
+
+        /* Loop through all dropdown buttons to toggle between hiding and showing 
+        its dropdown content - This allows the user to have multiple dropdowns 
+        without any conflict */
+
+
+        var dropdown = document.getElementsByClassName("dropdown-btn");
+        var i;
+
+        for (i = 0; i < dropdown.length; i++) {
+            dropdown[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var dropdownContent = this.nextElementSibling;
+                if (dropdownContent.style.display === "block") {
+                    dropdownContent.style.display = "none";
+                } else {
+                    dropdownContent.style.display = "block";
+                }
+            });
+        }
+
+
+
     </script>
 
 

@@ -6,6 +6,7 @@ class SudokuSolverController {
         this.mySuccessDialog = new SuccessDialog();
         this.myPuzzleSaveDialog = new PuzzleSaveDialog();
         this.myInfoDialog = new InfoDialog();
+        this.mySettingsDialog = new SettingsDialog();
 
         // =============================================================
         // The events of the solver are set
@@ -249,11 +250,13 @@ class SudokuSolverController {
     }
 
     generateBtnPressed(level) {
+        closeNav();
         // 3 Webworker in parallel are generating a puzzle with the desired level
         this.mySolver.getGeneratedPuzzleUsingWebworker(level);
     }
 
     saveBtnPressed() {
+        closeNav();
         this.mySuccessDialog.close();
         sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
         sudoApp.myPuzzleDB.notify();
@@ -279,9 +282,17 @@ class SudokuSolverController {
     openDBBtnPressed() {
         sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
         sudoApp.myPuzzleDB.notify();
+        closeNav();
     }
+    openSettingsDlgPressed() {
+        sudoApp.mySolverController.mySettingsDialog.open();
+        sudoApp.mySolver.notify();
+        closeNav();
+    }
+    
 
     printBtnPressed() {
+        closeNav();
         this.mySolver.autoExecStop();
         this.mySuccessDialog.close();
         let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
@@ -358,6 +369,9 @@ class SudokuSolverController {
     }
     infoDlgOKPressed() {
         this.myInfoDialog.close();
+    }
+    settingsClosePressed() {
+        this.mySettingsDialog.close();
     }
 }
 
@@ -1251,6 +1265,28 @@ class InfoDialog {
         }
     }
 }
+
+class SettingsDialog {
+    constructor() {
+        this.dlgNode = document.getElementById("settings-dlg");
+        this.closeNode = document.getElementById("settings-dlg-close-btn");
+        this.myOpen = false;
+        this.closeNode.addEventListener('click', () => {
+            sudoApp.mySolverController.settingsClosePressed();
+        });
+    }
+    open() {
+        this.myOpen = true;
+        this.dlgNode.showModal();
+    }
+    close() {
+        if (this.myOpen) {
+            this.dlgNode.close();
+            this.myOpen = false;
+        }
+    }
+}
+
 
 class Randomizer {
     static getRandomIntInclusive(min, max) {
