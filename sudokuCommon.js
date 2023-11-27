@@ -25,7 +25,7 @@ class SudokuSolverController {
         this.number_inputs.forEach((e, index) => {
             e.addEventListener('click', () => {
                 // Notice: index + 1 = number on button
-                let btnNumber = (index + 1).toString();
+                let btnNumber = this.number_inputs[index].value.toString();
                 this.handleNumberPressed(btnNumber);
             })
         });
@@ -139,19 +139,6 @@ class SudokuSolverController {
         });
 
 
-
-        // Click-Event for save button desktop
-        document.getElementById('btn-save-mobile').addEventListener('click', () => {
-            this.saveBtnPressed();
-        });
-
-        document.getElementById('btn-db-open').addEventListener('click', () => {
-            this.openDBBtnPressed();
-        });
-
-        document.getElementById('mobile-btn-print').addEventListener('click', () => {
-            this.printBtnPressed();
-        });
 
         // Click-Events for both showWrongNumbers buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-showWrongNumbers');

@@ -65,6 +65,7 @@
 
         </div>
         <div class="sudoku-solver-container">
+            
             <div class="gridArea" id="gridArea">
                 <!--
                 <div class="pc-eval">
@@ -147,71 +148,41 @@
                 </div>
             </div>
             <div class="mobile-btn-container dropdown">
-                <button onclick="myFunction()" class="mobile-btn dropbtn">Neu</button>
-                <div id="myDropdown" class="dropdown-content">
-                    <div class="dropdown-option" id="Leicht"
-                        onclick="sudoApp.mySolverController.generateBtnPressed('Leicht')">Leicht
-                    </div>
-                    <div class="dropdown-option" id="Mittel"
-                        onclick="sudoApp.mySolverController.generateBtnPressed('Mittel')">Mittel
-                    </div>
-                    <div class="dropdown-option" id="Schwer"
-                        onclick="sudoApp.mySolverController.generateBtnPressed('Schwer')">Schwer
-                    </div>
-                </div>
                 <button class="mobile-interface mobile-btn btn-init">Init</button>
                 <button class="mobile-interface mobile-btn btn-reset">Zurück</button>
                 <button class="mobile-interface mobile-btn btn-showWrongNumbers">Prüfen</button>
-                <button class="mobile-interface mobile-btn help-button"> ? </button>
                 <button class="mobile-interface mobile-btn btn-define">Def.</button>
                 <button class="mobile-interface mobile-btn btn-play">Lösen</button>
+                
+                <button class="mobile-interface mobile-btn mobile-number" value="6">6</button>
+                <button class="mobile-interface mobile-btn mobile-number" value="7">7</button>
+                <button class="mobile-interface mobile-btn mobile-number" value="8">8</button>
+                <button class="mobile-interface mobile-btn mobile-number" value="9">9</button>
                 <button class="mobile-interface mobile-btn btn-delete-cell">X</button>
 
-                <button class="mobile-interface mobile-btn btn-with-image mobile-btn-save" id="btn-save-mobile">
-                    <img src="images/save.png" class="btn-image">
-                    Speichern
-                </button>
-                <button class="mobile-interface mobile-btn btn-with-image btn-db-open" id="btn-db-open">
-                    <img src="images/datenbank.png" class="btn-image">
-                    Datenbank
-                </button>
-
-
-                <button class="mobile-interface mobile-btn mobile-number">1</button>
-                <button class="mobile-interface mobile-btn mobile-number">2</button>
-                <button class="mobile-interface mobile-btn mobile-number">3</button>
+                <button class="mobile-interface mobile-btn mobile-number" value="1">1</button>
+                <button class="mobile-interface mobile-btn mobile-number" value="2">2</button>
+                <button class="mobile-interface mobile-btn mobile-number" value="3">3</button>
+                <button class="mobile-interface mobile-btn mobile-number" value="4">4</button>
+                <button class="mobile-interface mobile-btn mobile-number" value="5">5</button>
+              
                 <button class="mobile-interface mobile-btn btn-with-image btn-run" id="btn-run">
                     <img src="images/play-96.png" class="btn-image">
                     Start
                 </button>
-
-                <button class="mobile-interface mobile-btn btn-with-image" id="mobile-btn-print">
-                    <img src="images/drucker.png" class="btn-image">
-                    Drucken
-                </button>
-
-
-                <button class="mobile-interface mobile-btn mobile-number">4</button>
-                <button class="mobile-interface mobile-btn mobile-number">5</button>
-                <button class="mobile-interface mobile-btn mobile-number">6</button>
-
                 <button class="mobile-interface mobile-btn btn-with-image btn-pause">
                     <img src="images/pause-96.png" class="btn-image">
                     Pause
                 </button>
-                <button class="mobile-interface mobile-btn mobile-number">7</button>
-
-                <button class="mobile-interface mobile-btn mobile-number">8</button>
-                <button class="mobile-interface mobile-btn mobile-number">9</button>
-                <button class="mobile-interface mobile-btn btn-with-image btn-stop">
+                 <button class="mobile-interface mobile-btn btn-with-image btn-stop">
                     <img src="images/stop-96.png" class="btn-image">
                     Stop
                 </button>
-
                 <button class="mobile-interface mobile-btn btn-with-image btn-automatic btn-autoStep" id="btn-autoStep">
                     <img src="images/step-96.png" class="btn-image" id="image-autostep">
                     Schritt
                 </button>
+               
             </div>
         </div>
         <div class="app-empty-footer pc-element">
