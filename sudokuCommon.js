@@ -156,6 +156,13 @@ class SudokuSolverController {
                 this.mySolver.setActualEvalType(radioNode.value);
             })
         });
+
+        let mobileRadioPMNodes = document.querySelectorAll('.play-mode-type');
+        mobileRadioPMNodes.forEach(radioNode => {
+            radioNode.addEventListener('click', () => {
+                this.mySolver.setPlayMode(radioNode.value);
+            })
+        });
     }
 
     // ===============================================================
@@ -276,7 +283,7 @@ class SudokuSolverController {
         sudoApp.mySolver.notify();
         closeNav();
     }
-    
+
 
     printBtnPressed() {
         closeNav();
@@ -378,9 +385,6 @@ class SudokuView {
     getMyNode() {
         return this.myNode;
     }
-    upDate() {
-        throw new Error('You have to implement the method upDate()!');
-    }
 }
 class SudokuModel {
     constructor() {
@@ -456,6 +460,8 @@ class SudokuSolverView extends SudokuView {
         this.displayProgress();
         // this.displayPuzzle(myGrid.loadedPuzzleId, myGrid.loadedPuzzleName);
         this.displayEvalType(this.mySolver.getActualEvalType());
+        this.displayPlayModeType(this.mySolver.getPlayMode());
+
         sudoApp.mySolver.myGridView.displayNameAndDifficulty();
     }
 
@@ -477,14 +483,59 @@ class SudokuSolverView extends SudokuView {
                 }
                 break;
             }
-            /*   case 'evaluationType': {
-                   this.displayEvalType(aspectValue);
-                   break;
-               } */
+            case 'playMode': {
+                switch (aspectValue) {
+                    case 'training': {
+                        this.setTrainingButtons();
+                        break;
+                    }
+                    case 'solving': {
+                        this.setSolvingButtons();
+                        break;
+                    }
+                    default: {
+                        throw new Error('Unknown aspectValue playMode: ' + aspectValue);
+                    }
+                }
+                break;
+            }
             default: {
                 throw new Error('Unknown aspect: ' + aspect);
             }
         }
+    }
+
+    setTrainingButtons() {
+        let btnRun = document.getElementById('btn-run');
+        let btnPause = document.getElementById('btn-pause');
+        let btnStop = document.getElementById('btn-stop');
+        let btnStep = document.getElementById('btn-autoStep');
+
+        btnRun.style.display = 'none';
+        btnPause.style.display = 'none';
+        btnStop.style.display = 'none';
+
+        btnStep.style.gridColumnStart = 1;
+        btnStep.style.gridColumnEnd = 6;
+        btnStep.style.gridRowStart = 4;
+        btnStep.style.gridRowEnd = 4;
+      
+    }
+
+    setSolvingButtons() {
+        let btnRun = document.getElementById('btn-run');
+        let btnPause = document.getElementById('btn-pause');
+        let btnStop = document.getElementById('btn-stop');
+        let btnStep = document.getElementById('btn-autoStep');
+
+        btnRun.style.display = 'grid';
+        btnPause.style.display = 'grid';
+        btnStop.style.display = 'grid';
+
+        btnStep.style.gridColumnStart = 4;
+        btnStep.style.gridColumnEnd = 6;
+        btnStep.style.gridRowStart = 4;
+        btnStep.style.gridRowEnd = 4;
     }
 
     displayGamePhase() {
@@ -555,7 +606,24 @@ class SudokuSolverView extends SudokuView {
             }
         }
     }
+    displayPlayModeType(pt) {
+        let trainingNode = document.getElementById('pc-training');
+        let solvingNode = document.getElementById('pc-solving');
 
+        switch (pt) {
+            case 'training': {
+                trainingNode.checked = true;
+                break;
+            }
+            case 'solving': {
+                solvingNode.checked = true;
+                break;
+            }
+            default: {
+                throw new Error('Unknown play-mode: ' + pt);
+            }
+        }
+    }
 
     displayProgress() {
         let myGrid = this.getMyModel().myGrid;
@@ -884,8 +952,29 @@ class SudokuSolver extends SudokuCalculator {
         // Die Matrix des Sudoku-Solver
         this.myGridView = new SudokuGridView(this.myGrid);
         this.myGrid.setMyView(this.myGridView);
+        this.playMode = 'solving';
         super.setExecutionObserver();
         this.init();
+    }
+
+    setPlayMode(mode) {
+        switch (mode) {
+            case 'training': {
+                this.playMode = 'training';
+                break;
+            }
+            case 'solving': {
+                this.playMode = 'solving';
+                break;
+            }
+            default: {
+                throw new Error('Unknown playMode: ' + mode);
+            }
+        }
+        this.notifyAspect('playMode', mode);
+    }
+    getPlayMode() {
+        return this.playMode;
     }
 
     init() {
@@ -3431,7 +3520,7 @@ class SudokuGrid extends SudokuModel {
         return tmp;
     }
 
-    
+
     numberOfOpenCells() {
         return 81 - this.numberOfGivens()
             - this.numberOfSolvedCells();
@@ -3505,15 +3594,15 @@ class SudokuGrid extends SudokuModel {
             preRunRecord: preRunRecord
         }
         // if (this.puzzleSolved()) {
-            /* puzzleRecord.status = 'gelöst'; */
-            puzzleRecord.status.given = this.numberOfGivens();
-            puzzleRecord.status.solved = this.numberOfSolvedCells();
-            puzzleRecord.status.open = this.numberOfOpenCells();;
-            if (this.myCalculator.currentEvalType == 'lazy-invisible' || this.myCalculator.currentEvalType == 'lazy') {
-                puzzleRecord.stepsLazy = this.steps;
-            } else if (this.myCalculator.currentEvalType == 'strict-plus' || this.myCalculator.currentEvalType == 'strict-minus') {
-                puzzleRecord.stepsStrict = this.steps;
-            }
+        /* puzzleRecord.status = 'gelöst'; */
+        puzzleRecord.status.given = this.numberOfGivens();
+        puzzleRecord.status.solved = this.numberOfSolvedCells();
+        puzzleRecord.status.open = this.numberOfOpenCells();;
+        if (this.myCalculator.currentEvalType == 'lazy-invisible' || this.myCalculator.currentEvalType == 'lazy') {
+            puzzleRecord.stepsLazy = this.steps;
+        } else if (this.myCalculator.currentEvalType == 'strict-plus' || this.myCalculator.currentEvalType == 'strict-minus') {
+            puzzleRecord.stepsStrict = this.steps;
+        }
         // }
         for (let i = 0; i < 81; i++) {
             puzzleRecord.puzzle[i] = {
@@ -3550,16 +3639,16 @@ class SudokuGrid extends SudokuModel {
             preRunRecord: preRunRecord
         }
         // if (this.puzzleSolved()) {
-            // puzzleRecord.status = 'gelöst';
-            puzzleRecord.status.given = this.numberOfGivens();
-            puzzleRecord.status.solved = this.numberOfSolvedCells();
-            puzzleRecord.status.open = this.numberOfOpenCells();;
+        // puzzleRecord.status = 'gelöst';
+        puzzleRecord.status.given = this.numberOfGivens();
+        puzzleRecord.status.solved = this.numberOfSolvedCells();
+        puzzleRecord.status.open = this.numberOfOpenCells();;
 
-            if (this.myCalculator.currentEvalType == 'lazy' || this.myCalculator.currentEvalType == 'lazy-invisible') {
-                puzzleRecord.stepsLazy = this.steps;
-            } else if (this.myCalculator.currentEvalType == 'strict-plus' || this.myCalculator.currentEvalType == 'strict-minus') {
-                puzzleRecord.stepsStrict = this.steps;
-            }
+        if (this.myCalculator.currentEvalType == 'lazy' || this.myCalculator.currentEvalType == 'lazy-invisible') {
+            puzzleRecord.stepsLazy = this.steps;
+        } else if (this.myCalculator.currentEvalType == 'strict-plus' || this.myCalculator.currentEvalType == 'strict-minus') {
+            puzzleRecord.stepsStrict = this.steps;
+        }
         // }
         puzzleRecord.preRunRecord.defCount = 0;
         for (let i = 0; i < 81; i++) {
@@ -5816,7 +5905,7 @@ class SudokuPuzzleDBView extends SudokuView {
                     td_status_given.innerText = pzRecord.status.given;
                 }
                 tr.appendChild(td_status_given);
-            
+
 
                 let td_status_solved = document.createElement('td');
                 if (pzRecord.status.solved == undefined) {
@@ -5825,7 +5914,7 @@ class SudokuPuzzleDBView extends SudokuView {
                     td_status_solved.innerText = pzRecord.status.solved;
                 }
                 tr.appendChild(td_status_solved);
-            
+
                 let td_status_open = document.createElement('td');
                 if (pzRecord.status.open == undefined) {
                     td_status_open.innerText = -1;
@@ -5833,7 +5922,7 @@ class SudokuPuzzleDBView extends SudokuView {
                     td_status_open.innerText = pzRecord.status.open;
                 }
                 tr.appendChild(td_status_open);
-            
+
 
 
 

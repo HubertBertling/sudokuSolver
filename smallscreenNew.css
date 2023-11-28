@@ -534,8 +534,10 @@ html {
     font-size: var(--font-size-lg);
     border: none;
     display: grid;
+    gap: 5px;
     grid-template-columns: 1fr;
     place-items: center;
+    padding: 0.8rem;
 }
 
 
@@ -576,23 +578,23 @@ html {
     color: var(--delete-btn-color);
 }
 
+#btn-run, #btn-pause, #btn-stop {
+    display: none;
+}
+
+
+
 #btn-autoStep {
-    grid-column-start: 4;
+    grid-column-start: 1;
     grid-column-end: 6;
     grid-row-start: 4;
     grid-row-end: 4;
 }
 
 .btn-image {
-    margin-top: 0.2rem;
     width: 1.6rem;
     height:1.6rem;    
 }
-
-.btn-with-image {
-    font-size: var(--font-size);
-}
-
 
 /*======================================*/
 /* Evaluation radio buttons             */
@@ -608,7 +610,8 @@ html {
 /* ======================================*/
 
 
-.pc-eval {
+.pc-eval, .play-mode {
+    margin-top: 3rem;
     margin-left: 1.2rem;
     margin-right: 1.2rem;
 }
@@ -621,7 +624,7 @@ html {
 /* ======================================*/
 /* Evaluation block                       */
 /* ======================================*/
-.eval-legend {
+.eval-legend, play-mode-legend {
     font-weight: bold;
     margin-left: 10px;
     font-size: var(--font-size);
@@ -903,7 +906,7 @@ label {
 }
 
 .settings-dlg {
-    width: 50%;
+    width: 100%;
 
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;

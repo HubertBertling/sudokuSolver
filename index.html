@@ -67,41 +67,7 @@
         <div class="sudoku-solver-container">
             
             <div class="gridArea" id="gridArea">
-                <!--
-                <div class="pc-eval">
-                    <fieldset class="eval-fieldset">
-                        <legend class="eval-legend">
-                            Kandidatenauswertung
-                        </legend>
-
-                        <div id="pc-evaluation" name="pc-evaluation" class="pc-evaluation-options">
-                            <div id="pcNoEval" class="pc-floatBlock">
-                                <label for="pc-no-eval"> <input id="pc-no-eval" class="pc-eval-type"
-                                        name="pc-auswertung" type="radio" value="lazy-invisible" checked />
-                                    Keine
-                                </label>
-                            </div>
-
-                            <div id="pcLazy" class="pc-floatBlock">
-                                <label for="pc-lazy"> <input id="pc-lazy" class="pc-eval-type" name="pc-auswertung"
-                                        type="radio" value="lazy" /> Lazy </label>
-                            </div>
-
-                            <div id="pcStrictPlus" class="pc-floatBlock">
-                                <label for="pc-strict-plus"> <input id="pc-strict-plus" class="pc-eval-type"
-                                        name="pc-auswertung" type="radio" value="strict-plus" /> Strikt +
-                                </label>
-                            </div>
-                            <div id="pcStrictMinus" class="pc-floatBlock">
-                                <label for="pc-strict-minus"> <input id="pc-strict-minus" class="pc-eval-type"
-                                        name="pc-auswertung" type="radio" value="strict-minus" /> Strikt -
-                                </label>
-                            </div>
-                        </div>
-                    </fieldset>
-
-                </div>
-            -->
+          
                 <div class="grid-plus-explainer" id="grid-plus-explainer">
                     <div id="loader">
                         <div id="search-level"></div>
@@ -170,11 +136,11 @@
                     <img src="images/play-96.png" class="btn-image">
                     Start
                 </button>
-                <button class="mobile-interface mobile-btn btn-with-image btn-pause">
+                <button class="mobile-interface mobile-btn btn-with-image btn-pause" id="btn-pause">
                     <img src="images/pause-96.png" class="btn-image">
                     Pause
                 </button>
-                 <button class="mobile-interface mobile-btn btn-with-image btn-stop">
+                 <button class="mobile-interface mobile-btn btn-with-image btn-stop" id="btn-stop">
                     <img src="images/stop-96.png" class="btn-image">
                     Stop
                 </button>
@@ -350,6 +316,28 @@
                     <div id="pcStrictMinus" class="pc-floatBlock">
                         <label for="pc-strict-minus"> <input id="pc-strict-minus" class="pc-eval-type"
                                 name="pc-auswertung" type="radio" value="strict-minus" /> Strikt -
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="play-mode">
+            <fieldset class="play-mode-fieldset">
+                <legend class="play-mode-legend">
+                    Spielmodus
+                </legend>
+
+                <div id="pc-play-mode" name="pc-play-mode" class="pc-play-mode-options">
+                    <div id="pcTraining" class="pc-floatBlock">
+                        <label for="pc-training"> <input id="pc-training" class="play-mode-type" 
+                            name="pc-play-mode" type="radio" value="training" /> Trainieren (ohne den automatischen Solver)
+                        </label>
+                    </div>
+
+                    <div id="pcSolving" class="pc-floatBlock">
+                        <label for="pc-solving"> <input id="pc-solving" class="play-mode-type"
+                                name="pc-play-mode" type="radio" value="solving" checked /> Lösen (mit dem automatischen Solver)
                         </label>
                     </div>
                 </div>

@@ -60,6 +60,9 @@ class SudokuMainApp {
         this.myPuzzleDBController = new SudokuPuzzleDBController(this.myPuzzleDB);
         // this.myPuzzleDBView = new SudokuPuzzleDBView(this.myPuzzleDB);
         // this.myMobilePuzzleDBView = new SudokuMobilePuzzleDBView(this.myPuzzleDB);
+
+        // There are two play-modes 'training' and 'solving'.
+        this.playMode = 'solving';
     }
 
     init() {
@@ -67,10 +70,6 @@ class SudokuMainApp {
         this.mySolver.init();
         this.mySolver.notify();
         this.myPuzzleDB.init();
-    }
-
-    helpFunktion() {
-        window.open('./help.html');
     }
 }
 

@@ -267,7 +267,7 @@ app-empty-footer {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    height: 90vh;
+    height: 85vh;
 }
 
 /*======================================*/
@@ -533,12 +533,14 @@ app-empty-footer {
 .mobile-btn {
     background-color: var(--standard-btn-bg-color);
     text-align: center;
+    font-size: var(--font-size-lg);
     border-radius: 0.3rem;
-    font-size: var(--font-size);
     border: none;
     display: grid;
+    gap: 5px;
     grid-template-columns: 1fr;
     place-items: center;
+    padding: 0.8rem;
 }
 
 
@@ -587,13 +589,12 @@ app-empty-footer {
 }
 
 .btn-image {
-    margin-right: 0.3rem;
-    width: 1.2rem;
-    height: 1.2rem;
+    width: 0.8rem;
+    height: 0.8rem;
 
 }
 .btn-with-image {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size);
 }
 
 /*======================================*/
@@ -601,7 +602,7 @@ app-empty-footer {
 /*======================================*/
 
 .eval-btn-block {
-    margin-top: 10px;
+    margin-top: 0.6rem;
     font-size: 1.2rem;
 }
 
@@ -610,7 +611,8 @@ app-empty-footer {
 /* ======================================*/
 
 
-.pc-eval {
+.pc-eval, .play-mode {
+    margin-top: 2rem;
     margin-left: 1.2rem;
     margin-right: 1.2rem;
 }
@@ -623,7 +625,7 @@ app-empty-footer {
 /* ======================================*/
 /* Evaluation block                       */
 /* ======================================*/
-.eval-legend {
+.eval-legend, .play-mode-legend {
     font-weight: bold;
     margin-left: 10px;
     font-size: var(--font-size);
@@ -905,7 +907,7 @@ label {
 }
 
 .settings-dlg {
-    width: 50%;
+    width: 100%;
 
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
