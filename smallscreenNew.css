@@ -935,6 +935,7 @@ label {
 /*=======================================*/
 /* 1. Dialogebene */
 .puzzle-table-dlg {
+    width: 100%;
     background-color: #500;
     position: relative;
     margin-top: auto;

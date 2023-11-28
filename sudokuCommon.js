@@ -240,7 +240,12 @@ class SudokuSolverController {
     }
 
     resetBtnPressed() {
-        this.mySolver.reset();
+        let text = "Willst Du das Puzzle wirklich vollständig zurücksetzen?";
+        if (confirm(text) == true) {
+            this.mySolver.reset();
+        } /* else {
+          text = "You canceled!";
+        } */
     }
 
     generateBtnPressed(level) {
@@ -519,7 +524,7 @@ class SudokuSolverView extends SudokuView {
         btnStep.style.gridColumnEnd = 6;
         btnStep.style.gridRowStart = 4;
         btnStep.style.gridRowEnd = 4;
-      
+
     }
 
     setSolvingButtons() {
@@ -980,6 +985,7 @@ class SudokuSolver extends SudokuCalculator {
     init() {
         super.init();
         this.setActualEvalType('lazy-invisible');
+        this.setPlayMode('solving');
         this.notify();
     }
     loadPuzzle(uid, puzzle) {

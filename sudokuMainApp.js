@@ -71,6 +71,10 @@ class SudokuMainApp {
         this.mySolver.notify();
         this.myPuzzleDB.init();
     }
+
+    helpFunktion() {
+        window.open('./help.html');
+    }
 }
 
 // Launch and initialize the app
