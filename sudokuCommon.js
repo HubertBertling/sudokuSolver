@@ -6,6 +6,7 @@ class SudokuSolverController {
         this.mySuccessDialog = new SuccessDialog();
         this.myPuzzleSaveDialog = new PuzzleSaveDialog();
         this.myInfoDialog = new InfoDialog();
+        this.myResetConfirmDlg = new ConfirmDialog();
         this.mySettingsDialog = new SettingsDialog();
 
         // =============================================================
@@ -240,13 +241,28 @@ class SudokuSolverController {
     }
 
     resetBtnPressed() {
-        let text = "Willst Du das Puzzle wirklich vollständig zurücksetzen?";
-        if (confirm(text) == true) {
-            this.mySolver.reset();
-        } /* else {
-          text = "You canceled!";
-        } */
+        this.myResetConfirmDlg.open("Willst Du das Puzzle wirklich vollständig zurücksetzen?");
     }
+
+    confirmDlgOKPressed() {
+        this.myResetConfirmDlg.close();
+        this.mySolver.reset();
+    }
+
+
+    confirmDlgCancelPressed() {
+        this.myResetConfirmDlg.close();
+    }
+    /*
+        resetBtnPressed() {
+            let text = "Willst Du das Puzzle wirklich vollständig zurücksetzen?";
+            if (confirm(text) == true) {
+                this.mySolver.reset();
+            }  else {
+              text = "You canceled!";
+            } 
+        }
+    */
 
     generateBtnPressed(level) {
         closeNav();
@@ -1209,6 +1225,42 @@ class PuzzleDBDialog {
     }
 }
 
+
+class ConfirmDialog {
+    constructor(question) {
+        this.myOpen = false;
+        this.myConfirmDlgNode = document.getElementById("confirm-reset-dlg");
+        this.myTextNode = document.getElementById("confirm-reset-dlg-header");
+        this.okNode = document.getElementById("btn-confirm-ok");
+        this.cancelNode = document.getElementById("btn-confirm-cancel");
+        // Mit der Erzeugung des Wrappers werden 
+        // auch der Eventhandler OK und Abbrechen gesetzt
+        this.okNode.addEventListener('click', () => {
+            sudoApp.mySolverController.confirmDlgOKPressed();
+        });
+        this.cancelNode.addEventListener('click', () => {
+            sudoApp.mySolverController.confirmDlgCancelPressed();
+        });
+    }
+    confirm(question) {
+        this.myTextNode.innerText = question;
+        this.open();
+    }
+    open(question) {
+        this.myOpen = true;
+        this.myQuestion = question;
+        this.myConfirmDlgNode.showModal();
+    }
+
+    close() {
+        if (this.myOpen) {
+            this.myConfirmDlgNode.close();
+            this.myOpen = false;
+        }
+    }
+}
+
+
 class PuzzleSaveDialog {
     constructor() {
         this.myOpen = false;
@@ -1245,6 +1297,9 @@ class PuzzleSaveDialog {
         return this.myPuzzleNameNode.value;
     }
 }
+
+
+
 
 
 

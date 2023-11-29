@@ -833,7 +833,7 @@ label {
     background: hsl(201 50% 40% /.5);
 }
 
-.infoDlg {
+.infoDlg, .confirm-dlg {
     width: 30%;
 
     -webkit-box-sizing: border-box;
@@ -847,7 +847,7 @@ label {
     margin-right: auto;
 }
 
-.infoDlgHeader {
+.infoDlgHeader, .confirm-dlg-header {
     font-size: var(--font-size-lg);
     font-weight: bold;
     margin: 10px;
@@ -863,12 +863,12 @@ label {
     margin-right: 10px;
 }
 
-.infoDlgBody {
+.infoDlgBody, .confirm-dlg-body {
     font-size: var(--font-size);
     margin-left: 10px;
 }
 
-.infoIcon {
+.infoIcon, .confirm-icon {
     margin-left: 5px;
     margin-right: 10px;
     height: 40px;
@@ -876,7 +876,7 @@ label {
     background-color: white;
 }
 
-.infoDlg-OK-Btn {
+.infoDlg-OK-Btn, #btn-confirm-ok {
     width: 100px;
     margin-top: 10px;
     /* margin-left: auto; */
@@ -884,6 +884,16 @@ label {
     margin-right: 10px;
     margin-bottom: 10px;
 }
+
+ #btn-confirm-cancel {
+
+    margin-top: 10px;
+    /* margin-left: auto; */
+    float: right;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
 
 .settings-dlg {
     width: 50%;

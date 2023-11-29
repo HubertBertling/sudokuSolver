@@ -854,8 +854,8 @@ label {
     background: hsl(201 50% 40% /.5);
 }
 
-.infoDlg {
-    width: 60%;
+.infoDlg, .confirm-dlg {
+    width: 80%;
 
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -868,7 +868,7 @@ label {
     margin-right: auto;
 }
 
-.infoDlgHeader {
+.infoDlgHeader,.confirm-dlg-header {
     font-size: var(--font-size-lg);
     font-weight: bold;
     margin: 10px;
@@ -884,16 +884,16 @@ label {
     margin-right: 10px;
 }
 
-.infoDlgBody {
+.infoDlgBody, .confirm-dlg-body {
     font-size: var(--font-size);
     margin-left: 10px;
 }
 
-.infoIcon {
+.infoIcon, .confirm-icon {
     margin-left: 5px;
     margin-right: 10px;
-    height: 40px;
-    width: 40px;
+    height: 20px;
+    width: 20px;
     background-color: white;
 }
 
