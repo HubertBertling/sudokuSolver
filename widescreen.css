@@ -864,7 +864,7 @@ label {
 }
 
 .infoDlgBody, .confirm-dlg-body {
-    font-size: var(--font-size);
+    font-size: var(--font-size-lg);
     margin-left: 10px;
 }
 
@@ -1197,10 +1197,6 @@ th {
 /*=======================================*/
 /* Settings-Dialog 
 /*=======================================*/
-#settings-dlg {
-
-}
-
 
 /* Safari */
 @-webkit-keyframes spin {

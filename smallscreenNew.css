@@ -884,7 +884,7 @@ label {
 }
 
 .infoDlgBody , .confirm-dlg-body {
-    font-size: var(--font-size);
+    font-size: var(--font-size-lg);
     margin-left: 10px;
 }
 
