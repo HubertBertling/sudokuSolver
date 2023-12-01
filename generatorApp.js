@@ -66,7 +66,7 @@ class SudokuGenerator extends SudokuCalculator {
         this.init();
         // Setze in zufälliger Zelle eine zufällige Nummer
         let randomCellIndex = Randomizer.getRandomIntInclusive(0, 80);
-        this.myGrid.indexSelect(randomCellIndex);
+        this.myGrid.select(randomCellIndex);
 
         let randomCellContent = Randomizer.getRandomIntInclusive(1, 9).toString();
         this.atCurrentSelectionSetNumber(randomCellContent);

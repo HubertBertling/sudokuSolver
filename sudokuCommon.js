@@ -8,6 +8,9 @@ class SudokuSolverController {
         this.myInfoDialog = new InfoDialog();
         this.myResetConfirmDlg = new ConfirmDialog();
         this.mySettingsDialog = new SettingsDialog();
+        this.myUndoActionStack = [];
+        this.myRedoActionStack = [];
+
 
         // =============================================================
         // The events of the solver are set
@@ -110,6 +113,20 @@ class SudokuSolverController {
         });
 
         // Click-Events for both init buttons, desktop and mobile
+        this.btns = document.querySelectorAll('.btn-undo');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.undoBtnPressed();
+            })
+        });
+        this.btns = document.querySelectorAll('.btn-redo');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.redoBtnPressed();
+            })
+        });
+
+
         this.btns = document.querySelectorAll('.btn-init');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -176,7 +193,14 @@ class SudokuSolverController {
             // The stepper is stopped and terminated
             this.mySolver.autoExecStop();
         } else {
+            let action = {
+                operation: 'setNr',
+                cellIndex: this.mySolver.myGrid.indexSelected,
+                cellValue: nr
+            }
             this.mySolver.atCurrentSelectionSetNumber(nr);
+            this.myUndoActionStack.push(action);
+            this.mySolver.notify();
             if (this.mySolver.succeeds()) {
                 this.mySuccessDialog.open();
             }
@@ -189,21 +213,31 @@ class SudokuSolverController {
             // The stepper is stopped and terminated
             this.mySolver.autoExecStop();
         }
+        let action = {
+            operation: 'delete',
+            cellIndex: this.mySolver.myGrid.indexSelected,
+            cellValue: this.mySolver.myGrid.selectedCell().getValue()
+        }
+        this.myUndoActionStack.push(action);
         this.mySolver.deleteSelected();
+        this.mySolver.notify();
 
     }
 
-    sudokuCellPressed(cell, index) {
+    sudokuCellPressed(index) {
         if (this.mySolver.isInAutoExecution()) {
             // Cell selected during automatic execution
             // The stepper is stopped and terminated
             this.mySolver.autoExecStop();
         }
-        this.mySolver.select(cell, index);
+        this.mySolver.select(index);
     }
 
     defineBtnPressed() {
         this.mySolver.setGamePhase('define');
+        this.myUndoActionStack = [];
+        this.myRedoActionStack = [];
+
     }
 
     playBtnPressed() {
@@ -212,13 +246,20 @@ class SudokuSolverController {
         // This includes the solution of the puzzle. The latter allows, the user to have 
         // his current number settings checked. There is a call button for this check.
         this.mySolver.getPuzzlePreRunDataUsingWebworker();
+        this.myUndoActionStack = [];
+        this.myRedoActionStack = [];
+
     }
 
     autoStepBtnPressed() {
         if (this.mySolver.getGamePhase() == 'define') {
             this.mySolver.getPuzzlePreRunDataUsingWebworker();
         }
-        this.mySolver.executeSingleStep();
+        let stepResult = this.mySolver.executeSingleStep();
+        if (stepResult.action !== undefined) {
+            this.myUndoActionStack.push(stepResult.action);
+            this.mySolver.notify();
+        }
     }
 
     startBtnPressed() {
@@ -226,6 +267,9 @@ class SudokuSolverController {
             this.mySolver.getPuzzlePreRunDataUsingWebworker();
         }
         this.mySolver.startSolverLoop();
+        this.myUndoActionStack = [];
+        this.myRedoActionStack = [];
+
     }
 
     pauseBtnPressed() {
@@ -237,32 +281,87 @@ class SudokuSolverController {
     }
 
     initBtnPressed() {
+        closeNav();
+        this.myUndoActionStack = [];
+        this.myRedoActionStack = [];
         this.mySolver.init();
     }
 
     resetBtnPressed() {
+        closeNav();
         this.myResetConfirmDlg.open("Willst Du das Puzzle wirklich vollständig zurücksetzen?");
     }
 
+    undoBtnPressed() {
+        if (this.myUndoActionStack.length > 0) {
+            let action = this.myUndoActionStack.pop();
+            this.undo(action);
+            this.myRedoActionStack.push(action);
+            this.mySolver.notify();
+        }
+    }
+
+    redoBtnPressed() {
+        if (this.myRedoActionStack.length > 0) {
+            let action = this.myRedoActionStack.pop();
+            this.redo(action);
+            this.myUndoActionStack.push(action);
+            this.mySolver.notify();
+        }
+    }
+    undo(action) {
+        switch (action.operation) {
+            case 'setNr': {
+                // Delete set number
+                this.mySolver.myGrid.indexSelected = action.cellIndex;
+                this.mySolver.deleteSelected();
+                break;
+            }
+            case 'delete': {
+                // Set the deleted number again
+                this.mySolver.myGrid.indexSelected = action.cellIndex;
+                this.mySolver.atCurrentSelectionSetNumber(action.cellValue);
+                break;
+            }
+            default: {
+                throw new Error('Unknown undo-redo-action: ' + action.operation);
+            }
+        }
+    }
+
+    redo(action) {
+        switch (action.operation) {
+            case 'setNr': {
+                // Set the number again
+                this.mySolver.myGrid.indexSelected = action.cellIndex;
+                this.mySolver.atCurrentSelectionSetNumber(action.cellValue);
+                break;
+            }
+            case 'delete': {
+                // Delete the number again
+                this.mySolver.myGrid.indexSelected = action.cellIndex;
+                this.mySolver.deleteSelected();
+                break;
+            }
+            default: {
+                throw new Error('Unknown undo-redo-action: ' + action.operation);
+            }
+        }
+    }
+
+
     confirmDlgOKPressed() {
         this.myResetConfirmDlg.close();
+        this.myUndoActionStack = [];
+        this.myRedoActionStack = [];
         this.mySolver.reset();
+        
     }
 
 
     confirmDlgCancelPressed() {
         this.myResetConfirmDlg.close();
     }
-    /*
-        resetBtnPressed() {
-            let text = "Willst Du das Puzzle wirklich vollständig zurücksetzen?";
-            if (confirm(text) == true) {
-                this.mySolver.reset();
-            }  else {
-              text = "You canceled!";
-            } 
-        }
-    */
 
     generateBtnPressed(level) {
         closeNav();
@@ -482,6 +581,7 @@ class SudokuSolverView extends SudokuView {
         // this.displayPuzzle(myGrid.loadedPuzzleId, myGrid.loadedPuzzleName);
         this.displayEvalType(this.mySolver.getActualEvalType());
         this.displayPlayModeType(this.mySolver.getPlayMode());
+        this.displayUndoRedo();
 
         sudoApp.mySolver.myGridView.displayNameAndDifficulty();
     }
@@ -559,6 +659,22 @@ class SudokuSolverView extends SudokuView {
         btnStep.style.gridRowEnd = 4;
     }
 
+    displayUndoRedo() {
+        let undoBtn = document.getElementById('btn-undo');
+        let redoBtn = document.getElementById('btn-redo');
+        if (sudoApp.mySolverController.myUndoActionStack.length > 0) {
+            undoBtn.classList.remove('btn-undo-off');
+        } else {
+            undoBtn.classList.add('btn-undo-off');
+        }
+
+        if (sudoApp.mySolverController.myRedoActionStack.length > 0) {
+            redoBtn.classList.remove('btn-redo-off');
+        } else {
+            redoBtn.classList.add('btn-redo-off');
+        }
+    }
+
     displayGamePhase() {
         let gamePhase = this.getMyModel().getGamePhase();
         if (gamePhase == 'play') {
@@ -634,10 +750,12 @@ class SudokuSolverView extends SudokuView {
         switch (pt) {
             case 'training': {
                 trainingNode.checked = true;
+                solvingNode.checked = false;
                 break;
             }
             case 'solving': {
                 solvingNode.checked = true;
+                trainingNode.checked = false;
                 break;
             }
             default: {
@@ -872,11 +990,11 @@ class SudokuCalculator extends SudokuModel {
         this.myGrid.atCurrentSelectionSetNumber(number, this.currentPhase, false);
     }
     deleteSelected() {
-        this.myStepper.deleteSelected(this.currentPhase, false);
+        this.myStepper.deleteSelected(this.currentPhase);
     }
 
-    select(cell, index) {
-        this.myGrid.select(cell, index);
+    select(index) {
+        this.myGrid.select(index);
     }
     deselect() {
         this.myGrid.deselect();
@@ -884,16 +1002,17 @@ class SudokuCalculator extends SudokuModel {
 
     executeSingleStep() {
         if (this.isInAutoExecMode) {
-            this.myStepper.executeSingleStep();
+            return this.myStepper.executeSingleStep();
         } else {
             if (this.myStepper.deadlockReached()) {
                 this.setInAutoExecMode();
                 sudoApp.mySolver.notify();
                 sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
                 // alert("Keine (weitere) Lösung gefunden!");
+                return undefined;
             } else {
                 this.setInAutoExecMode();
-                this.myStepper.executeSingleStep();
+                return this.myStepper.executeSingleStep();
             }
         }
     }
@@ -973,9 +1092,9 @@ class SudokuSolver extends SudokuCalculator {
         // Die Matrix des Sudoku-Solver
         this.myGridView = new SudokuGridView(this.myGrid);
         this.myGrid.setMyView(this.myGridView);
-        this.playMode = 'solving';
         super.setExecutionObserver();
         this.init();
+        this.setPlayMode('solving');
     }
 
     setPlayMode(mode) {
@@ -1001,7 +1120,7 @@ class SudokuSolver extends SudokuCalculator {
     init() {
         super.init();
         this.setActualEvalType('lazy-invisible');
-        this.setPlayMode('solving');
+        //this.setPlayMode('solving');
         this.notify();
     }
     loadPuzzle(uid, puzzle) {
@@ -1132,8 +1251,8 @@ class SudokuSolver extends SudokuCalculator {
         super.deselect();
         this.notify();
     }
-    select(cell, index) {
-        super.select(cell, index);
+    select(index) {
+        super.select(index);
         this.notify();
     }
     deselect() {
@@ -1145,7 +1264,7 @@ class SudokuSolver extends SudokuCalculator {
         this.notify();
     }
     executeSingleStep() {
-        super.executeSingleStep();
+        return super.executeSingleStep();
     }
     autoExecStop() {
         super.autoExecStop();
@@ -1797,7 +1916,7 @@ class StepperOnGrid {
     constructor(suGrid) {
         this.lastNumberSet = '0';
         this.indexSelected = -1;
-        this.myResult = '';
+        this.myResult = undefined;
         this.myGrid = suGrid;
         this.myBackTracker;
         this.timer = false;
@@ -1813,7 +1932,7 @@ class StepperOnGrid {
     init() {
         this.lastNumberSet = '0';
         this.indexSelected = this.myGrid.indexSelected;
-        this.myResult = '';
+        this.myResult = undefined;
         this.goneSteps = 0;
         this.countBackwards = 0;
 
@@ -1874,11 +1993,11 @@ class StepperOnGrid {
     startAsyncLoop() {
         this.lastNumberSet = '0';
         if (this.indexSelected !== this.myGrid.indexSelected && this.indexSelected !== -1) {
-            this.myGrid.indexSelect(this.indexSelected);
+            this.myGrid.select(this.indexSelected);
         }
         if (!this.isRunningAsyncLoop()) {
             this.timer = window.setInterval(() => {
-                if (this.myResult == '' || this.myResult == 'inProgress') {
+                if (this.myResult == undefined || this.myResult.processResult == 'inProgress') {
                     this.myResult = this.asyncObservedStep();
                 } else {
                     this.stopAsyncLoop();
@@ -1898,17 +2017,18 @@ class StepperOnGrid {
 
     executeSingleStep() {
         if (this.indexSelected !== this.myGrid.indexSelected && this.indexSelected !== -1) {
-            this.myGrid.indexSelect(this.indexSelected);
+            this.myGrid.select(this.indexSelected);
         }
 
-        if (this.myResult == '' || this.myResult == 'inProgress') {
+        if (this.myResult == undefined || this.myResult.processResult == 'inProgress') {
             this.myResult = this.asyncObservedStep();
-            if (this.myResult == 'success') {
+            if (this.myResult.processResult == 'success') {
                 this.cleanupFinishedLoop();
             }
         } else {
             this.cleanupFinishedLoop();
         }
+        return this.myResult;
     }
 
     asyncObservedStep() {
@@ -1918,7 +2038,7 @@ class StepperOnGrid {
     }
 
     cleanupFinishedLoop() {
-        switch (this.myResult) {
+        switch (this.myResult.processResult) {
             case 'success': {
                 // Übertrage Stepper-Infos nach Grid-Infos.
                 this.myGrid.difficulty = this.levelOfDifficulty;
@@ -1950,7 +2070,7 @@ class StepperOnGrid {
                 break;
             }
             default: {
-                throw new Error('Unknown autoStep result: ' + this.myResult);
+                throw new Error('Unknown autoStep result: ' + this.myResult.processResult);
             }
         }
     }
@@ -1958,10 +2078,10 @@ class StepperOnGrid {
     startSynchronousLoop() {
         this.lastNumberSet = '0';
         if (this.indexSelected !== this.myGrid.indexSelected && this.indexSelected !== -1) {
-            this.myGrid.indexSelect(this.indexSelected);
+            this.myGrid.select(this.indexSelected);
         }
 
-        while (this.myResult == '' || this.myResult == 'inProgress') {
+        while (this.myResult == undefined || this.myResult.processResult == 'inProgress') {
             this.myResult = this.synchronousHiddenStep();
         }
         this.synchronousLoopFinished();
@@ -1973,7 +2093,7 @@ class StepperOnGrid {
     }
 
     synchronousLoopFinished() {
-        switch (this.myResult) {
+        switch (this.myResult.processResult) {
             case 'success': {
                 // Übertrage Stepper-Infos nach Grid-Infos.
                 this.myGrid.difficulty = this.levelOfDifficulty;
@@ -1993,14 +2113,14 @@ class StepperOnGrid {
                 break;
             }
             default: {
-                throw new Error('Unknown autoStep result: ' + this.myResult);
+                throw new Error('Unknown autoStep result: ' + this.myResult.processResult);
             }
         }
     }
 
-    indexSelect(index) {
+    select(index) {
         this.indexSelected = index;
-        this.myGrid.indexSelect(index);
+        this.myGrid.select(index);
     }
 
     autoStep() {
@@ -2033,8 +2153,12 @@ class StepperOnGrid {
                 // Lege einen neuen Step an mit der Nummer der nächsten Option
                 let realStep = this.myBackTracker.getNextBackTrackRealStep();
                 // Selektiere die Zelle des Optionsteps, deren Index auch im neuen Realstep gespeichert ist
-                this.indexSelect(realStep.getCellIndex());
-                return 'inProgress';
+                this.select(realStep.getCellIndex());
+                let autoStepResult = {
+                    processResult: 'inProgress',
+                    action: undefined
+                }
+                return autoStepResult;
             }
             // ====================================================================================
             // Aktion Fall 2: Die nächste Zelle bestimmen
@@ -2042,11 +2166,15 @@ class StepperOnGrid {
             if (tmpSelection.index == -1) {
                 // Es gibt erst dann keine Selektion mehr, wenn die Tabelle vollständig gefüllt ist.
                 // D.h. das Sudoku ist erfolgreich gelöst
-                return 'success';
+                let autoStepResult = {
+                    processResult: 'success',
+                    action: undefined
+                }
+                return autoStepResult;
             } else {
                 // ================================================================================
                 // Die ermittelte Selektion wird gesetzt
-                this.indexSelect(tmpSelection.index);
+                this.select(tmpSelection.index);
                 // ================================================================================
                 // Jetzt muss für diese Selektion eine Nummer bestimmt werden.
                 // Ergebnis wird sein: realStep mit Nummer
@@ -2058,7 +2186,11 @@ class StepperOnGrid {
                     // Die Selektion hat eine eindeutige Nummer. D.h. es geht eindeutig weiter.
                     // Lege neuen Realstep mit der eindeutigen Nummer an
                     this.myBackTracker.addBackTrackRealStep(tmpSelection.index, tmpValue);
-                    return 'inProgress';
+                    let autoStepResult = {
+                        processResult: 'inProgress',
+                        action: undefined
+                    }
+                    return autoStepResult;
                 } else {
                     // =============================================================================
                     // Die Selektion hat keine eindeutige Nummer. D.h. es geht mit mehreren Optionen weiter.
@@ -2067,7 +2199,11 @@ class StepperOnGrid {
                     // Neuer realstep mit der ersten Optionsnummer
 
                     let realStep = this.myBackTracker.getNextBackTrackRealStep();
-                    return 'inProgress';
+                    let autoStepResult = {
+                        processResult: 'inProgress',
+                        action: undefined
+                    }
+                    return autoStepResult;
                 }
             }
         } else {
@@ -2076,37 +2212,49 @@ class StepperOnGrid {
             // b) Die zu setzende Nummer ist im aktuellen Realstep gespeichert
             // Aktion:
             // Setze die eindeutige Nummer
-            this.atCurrentSelectionSetAutoNumber(currentStep);
+            let tmpAction = this.atCurrentSelectionSetAutoNumber(currentStep);
             this.lastNumberSet = currentStep.getValue();
             this.goneSteps++;
             // Falls die Nummernsetzung zur Unlösbarkeit führt
             // muss der Solver zurückgehen
 
-            /*   if (this.deadlockReached()) {
-                this.setAutoDirection('backward');
-                this.countBackwards++;
-            }           
-            return 'inProgress';
-            */
             if (this.myGrid.isInsolvable()) {
                 this.setAutoDirection('backward');
                 this.countBackwards++;
-                return 'inProgress';
+                let autoStepResult = {
+                    processResult: 'inProgress',
+                    action: tmpAction
+                }
+                return autoStepResult;
             } else if (this.myGrid.isFinished()) {
-                return 'success'
+                let autoStepResult = {
+                    processResult: 'success',
+                    action: tmpAction
+                }
+                return autoStepResult;
             } else {
-                return 'inProgress';
+                let autoStepResult = {
+                    processResult: 'inProgress',
+                    action: tmpAction
+                }
+                return autoStepResult;
             }
         }
     }
 
     atCurrentSelectionSetAutoNumber(step) {
         this.myGrid.atCurrentSelectionSetAutoNumber(step);
+        let tmpAction = {
+            operation: 'setNr',
+            cellIndex: step.myCellIndex,
+            cellValue: step.myCellValue
+        }
         this.deselect();
+        return tmpAction;
     }
 
     deleteSelected(phase) {
-        this.myGrid.deleteSelected(phase, false);
+        this.myGrid.deleteSelected(phase);
         this.deselect();
     }
 
@@ -2139,7 +2287,7 @@ class StepperOnGrid {
         } else if (currentStep instanceof BackTrackRealStep) {
             if (this.indexSelected !== currentStep.getCellIndex()) {
                 // Fall 1: Keine oder eine falsch selektierte Zelle
-                this.indexSelect(currentStep.getCellIndex());
+                this.select(currentStep.getCellIndex());
                 // In der Matrix ist die Zelle des aktuellen Schrittes selektiert
                 return 'inProgress';
             }
@@ -2149,7 +2297,7 @@ class StepperOnGrid {
             // b) Die selektierte Zelle ist noch nicht gelöscht
             if (this.myGrid.sudoCells[currentStep.getCellIndex()].getValue() !== '0') {
                 this.goneSteps++;
-                this.deleteSelected('play', false);
+                this.deleteSelected('play');
                 // Nach Löschen der Zelle den neuen aktuellen Schritt bestimmen
                 let prevStep = this.myBackTracker.previousStep();
                 return 'inProgress'
@@ -3456,7 +3604,6 @@ class SudokuGrid extends SudokuModel {
         this.myCalculator = calculator;
 
         // Aktuelle Selektion
-        this.selectedCell = undefined;
         this.indexSelected = -1;
         // In der slektierten Zelle der Indes der selektierten
         // zulässigen Nummer
@@ -3486,7 +3633,6 @@ class SudokuGrid extends SudokuModel {
 
     init() {
         // Speichert die aktuell selektierte Zelle und ihren Index
-        this.selectedCell = undefined;
         this.indexSelected = -1;
         this.adMissibleIndexSelected = -1;
 
@@ -3803,38 +3949,13 @@ class SudokuGrid extends SudokuModel {
             let k = randomCellOrder[i];
             if (this.sudoCells[k].getValue() !== '0') {
                 // Selektiere Zelle mit gesetzter Nummer
-                this.select(this.sudoCells[k], k);
+                this.select(k);
                 // Notiere die gesetzte Nummer, um sie eventuell wiederherstellen zu können
                 let tmpNr = this.sudoCells[k].getValue();
                 // Lösche die gesetzte Nummer
-                this.deleteSelected('define', false);
+                this.deleteSelected('define');
                 // Werte die verbliebene Matrix strikt aus.
                 this.evaluateGridStrict();
-
-                /*
-                if (requestedLevel == 'Leicht') {
-                    if (!this.isMatrixWithNecessary()) {
-                        // Dann wird die Löschung zurückgenommen.
-                        this.select(this.sudoCells[k], k);
-                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
-                    }
-                } else if (requestedLevel == 'Mittel') {
-                    if (!this.isMatrixWithSingleOrNecessary()) {
-                        // Dann wird die Löschung zurückgenommen.
-                        this.select(this.sudoCells[k], k);
-                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
-                    }
-                } else if (requestedLevel == 'Schwer') {
-                    if (!this.isMatrixWithHiddenSingleOrSingleOrNecessary()) {
-                        // Dann wird die Löschung zurückgenommen.
-                        this.select(this.sudoCells[k], k);
-                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
-                    }
-            
-                } else {
-                    throw new Error('Unknown level of difficulty in takeBackSolvedCells(requestedLevel)!');
-                }
-                */
 
                 if (this.sudoCells[k].getNecessarys().size == 1) {
                     // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
@@ -3845,7 +3966,7 @@ class SudokuGrid extends SudokuModel {
                 } else {
                     // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
                     // Dann wird die Löschung zurückgenommen.
-                    this.select(this.sudoCells[k], k);
+                    this.select(k);
                     this.sudoCells[k].manualSetValue(tmpNr, 'define');
                 }
             }
@@ -4005,37 +4126,45 @@ class SudokuGrid extends SudokuModel {
     deselect() {
         if (this.isCellSelected()) {
             // Lösche die Selektionsinformation der Tabelle
-            this.selectedCell.unsetSelected();
-            this.selectedCell = undefined;
+            this.selectedCell().unsetSelected();
             this.indexSelected = -1;
             this.adMissibleIndexSelected = -1;
         }
     }
 
-    setCurrentSelection(cell, index) {
+    setCurrentSelection(index) {
+        let cell = this.sudoCells[index];
         cell.setSelected();
         this.indexSelected = index;
-        this.selectedCell = cell;
         // Erste Subselektion setzen
         // Subselektion kann leer sein.
         this.adMissibleIndexSelected = cell.nextAdMissibleIndex();
     }
 
     isCellSelected() {
-        return this.indexSelected != -1;
+        return this.indexSelected !== -1;
+    }
+
+    selectedCell() {
+        if (this.indexSelected > -1) {
+            return this.sudoCells[this.indexSelected];
+        } else {
+            return undefined;
+        }
     }
 
     atCurrentSelectionSetNumber(btnNumber, currentPhase) {
         // Setze Nummer in einer Zelle
         if ( // Das geht nur, wenn eine Zelle selektiert ist
             this.isCellSelected()) {
+            let cell = this.selectedCell();
             if (// Wenn die Zelle leer ist, kein Problem
-                (this.selectedCell.getValue() == '0') ||
+                (this.selectedCell().getValue() == '0') ||
                 // Wenn die Zelle gefüllt ist, kann nur im gleichen Modus
                 // eine Neusetzung erfolgen
-                (this.selectedCell.getPhase() == currentPhase)) {
-                this.selectedCell.unsetWrong();
-                this.selectedCell.manualSetValue(btnNumber, currentPhase);
+                (this.selectedCell().getPhase() == currentPhase)) {
+                this.selectedCell().unsetWrong();
+                this.selectedCell().manualSetValue(btnNumber, currentPhase);
                 this.deselect();
                 this.evaluateMatrix();
             }
@@ -4047,26 +4176,26 @@ class SudokuGrid extends SudokuModel {
         if ( // Das geht nur, wenn eine Zelle selektiert ist
             this.isCellSelected()) {
             if (// Wenn die Zelle leer ist, kein Problem
-                (this.selectedCell.getValue() == '0') ||
+                (this.selectedCell().getValue() == '0') ||
                 // Wenn die Zelle geüllt ist, kann nur im gleichen Modus
                 // eine Neusetzung erfolgen
-                (this.selectedCell.getPhase() == 'play')
+                (this.selectedCell().getPhase() == 'play')
             ) {
-                this.selectedCell.unsetWrong();
-                this.selectedCell.autoSetValue(currentStep);
+                this.selectedCell().unsetWrong();
+                this.selectedCell().autoSetValue(currentStep);
                 this.deselect();
                 this.evaluateMatrix();
             }
         }
     }
 
-    deleteSelected(currentPhase, undoOp) {
+    deleteSelected(currentPhase) {
         // Lösche die selektierte Zelle
         if (this.isCellSelected()) {
             // Das Löschen kann nur im gleichen Modus
             // eine Neusetzung erfolgen
-            if (this.selectedCell.getPhase() == currentPhase) {
-                this.selectedCell.clear();
+            if (this.selectedCell().getPhase() == currentPhase) {
+                this.selectedCell().clear();
                 this.deselect();
                 this.evaluateMatrix();
             }
@@ -4579,11 +4708,12 @@ class SudokuGrid extends SudokuModel {
         }
     }
 
-    select(sudoCell, index) {
+    select(index) {
         // Selektiere in der Tabelle eine Zelle
         // Parameter:
         //      cell: Wrapper der Zelle
         //      index: index der Zelle
+        let sudoCell = this.sudoCells[index];
         let oldIndex = this.indexSelected;
 
         if (oldIndex == index) {
@@ -4605,12 +4735,8 @@ class SudokuGrid extends SudokuModel {
             }
         } else {
             // Neue Gesamtselektion
-            this.setCurrentSelection(sudoCell, index);
+            this.setCurrentSelection(index);
         }
-    }
-
-    indexSelect(index) {
-        this.select(this.sudoCells[index], index);
     }
 
     influencersOfCell(index) {
@@ -4714,7 +4840,7 @@ class SudokuCellView extends SudokuView {
 
         myBlockNode.appendChild(tmpCellNode);
         tmpCellNode.addEventListener('click', () => {
-            sudoApp.mySolverController.sudokuCellPressed(myCell, myCell.getMyIndex());
+            sudoApp.mySolverController.sudokuCellPressed(myCell.getMyIndex());
         });
         this.upDateCellContent();
     }
@@ -4757,7 +4883,7 @@ class SudokuCellView extends SudokuView {
 
         myBlockNode.appendChild(tmpCellNode);
         tmpCellNode.addEventListener('click', () => {
-            sudoApp.mySolverController.sudokuCellPressed(myCell, myCell.getMyIndex());
+            sudoApp.mySolverController.sudokuCellPressed(myCell.getMyIndex());
         });
 
         if (myCell.myValue == '0') {
@@ -5779,6 +5905,8 @@ class SudokuPuzzleDBController {
             let puzzle = this.myPuzzleDB.getSelectedPuzzle();
             let uid = this.myPuzzleDB.getSelectedUid();
             sudoApp.mySolver.loadPuzzle(uid, puzzle);
+            sudoApp.mySolverController.myUndoActionStack = [];
+            sudoApp.mySolverController.myRedoActionStack = [];
             sudoApp.mySolver.notify();
             this.myPuzzleDBDialog.close();
         }

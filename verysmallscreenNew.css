@@ -543,10 +543,8 @@ app-empty-footer {
     padding: 0.8rem;
 }
 
-
-.footer-trainer-label {
-    font-size: var(--font-size-xl);
-    text-align: center;
+.btn-undo-off > img, .btn-redo-off > img {
+    opacity: 0.3; 
 }
 
 .btn-define {

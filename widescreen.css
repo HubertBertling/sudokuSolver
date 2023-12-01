@@ -534,6 +534,10 @@ html {
 
 }
 
+.btn-undo-off > img, .btn-redo-off > img {
+    opacity: 0.3; 
+}
+
 
 .btn-define {
     background-color: var(--defined-cell-bg-color);

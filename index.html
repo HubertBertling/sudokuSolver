@@ -32,6 +32,8 @@
     <div class="app-content noprint">
 
         <div id="mySidenav" class="sidenav">
+            <a href="#" onclick="sudoApp.mySolverController.initBtnPressed()">Initialisieren</a>
+            <a href="#" onclick="sudoApp.mySolverController.resetBtnPressed()">Zurücksetzen</a>
             <button class="dropdown-btn" id="dropdown-btn-new">
                 Neu
                 <i class="fa fa-caret-down"></i>
@@ -124,15 +126,18 @@
                 <button class="mobile-interface mobile-btn mobile-number" value="5">5</button>
                 <button class="mobile-interface mobile-btn mobile-number" value="6">6</button>
                 <button class="mobile-interface mobile-btn btn-define">Def.</button>
-                <button class="mobile-interface mobile-btn btn-reset">Zurück</button>
-
+                <button class="mobile-interface mobile-btn btn-undo" id="btn-undo">
+                    <img src="images/undo.png" class="btn-image">
+                    Undo
+                </button>
                 <button class="mobile-interface mobile-btn mobile-number" value="1">1</button>
                 <button class="mobile-interface mobile-btn mobile-number" value="2">2</button>
                 <button class="mobile-interface mobile-btn mobile-number" value="3">3</button>
                 <button class="mobile-interface mobile-btn btn-play">Lösen</button>
-                <button class="mobile-interface mobile-btn btn-init">Init</button>
-                
-            
+                <button class="mobile-interface mobile-btn btn-redo" id="btn-redo">
+                    <img src="images/redo.png" class="btn-image">
+                    Redo
+                </button>
                 <button class="mobile-interface mobile-btn btn-with-image btn-run" id="btn-run">
                     <img src="images/play-96.png" class="btn-image">
                     Start
