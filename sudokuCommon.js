@@ -218,7 +218,7 @@ class SudokuSolverController {
         let action = {
             operation: 'delete',
             cellIndex: this.mySolver.myGrid.indexSelected,
-            cellValue: this.mySolver.myGrid.selectedCell().getValue()
+            cellValue: this.mySolver.myGrid.sudoCells[this.mySolver.myGrid.indexSelected].getValue()
         }
         if (action.cellIndex > -1){
             this.myUndoActionStack.push(action);
@@ -2270,12 +2270,17 @@ class StepperOnGrid {
     stepBackward() {
         // Wenn die letzte gesetzte Nummer zur Unlösbarkeit des Sudokus führt, 
         // muss der Solver rückwärts gehen.
+        let autoStepResult = {
+            processResult: 'inProgress',
+            action: undefined
+        }
         let currentStep = this.myBackTracker.getCurrentStep();
         if (currentStep instanceof BackTrackOptionStep) {
             if (currentStep.getCellIndex() == -1) {
                 // Im Wurzel-Optionsschritt gibt es keine Option mehr
                 // Spielende, keine Lösung
-                return 'fail';
+                autoStepResult.processResult = 'fail';
+                return autoStepResult;
             }
             if (currentStep.isCompleted()) {
                 // Der Optionstep ist vollständig abgearbeitet
@@ -2293,7 +2298,8 @@ class StepperOnGrid {
                 // Fall 1: Keine oder eine falsch selektierte Zelle
                 this.select(currentStep.getCellIndex());
                 // In der Matrix ist die Zelle des aktuellen Schrittes selektiert
-                return 'inProgress';
+                autoStepResult.processResult = 'inProgress';
+                return autoStepResult;
             }
             // Fall 2: 
             // Startzustand
@@ -2304,7 +2310,8 @@ class StepperOnGrid {
                 this.deleteSelected('play');
                 // Nach Löschen der Zelle den neuen aktuellen Schritt bestimmen
                 let prevStep = this.myBackTracker.previousStep();
-                return 'inProgress'
+                autoStepResult.processResult = 'inProgress';
+                return autoStepResult;
             }
         }
     }
