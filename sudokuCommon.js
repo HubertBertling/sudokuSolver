@@ -199,7 +199,9 @@ class SudokuSolverController {
                 cellValue: nr
             }
             this.mySolver.atCurrentSelectionSetNumber(nr);
-            this.myUndoActionStack.push(action);
+            if (action.cellIndex > -1){
+                this.myUndoActionStack.push(action);
+            }
             this.mySolver.notify();
             if (this.mySolver.succeeds()) {
                 this.mySuccessDialog.open();
@@ -218,7 +220,9 @@ class SudokuSolverController {
             cellIndex: this.mySolver.myGrid.indexSelected,
             cellValue: this.mySolver.myGrid.selectedCell().getValue()
         }
-        this.myUndoActionStack.push(action);
+        if (action.cellIndex > -1){
+            this.myUndoActionStack.push(action);
+        }
         this.mySolver.deleteSelected();
         this.mySolver.notify();
 
@@ -1093,8 +1097,8 @@ class SudokuSolver extends SudokuCalculator {
         this.myGridView = new SudokuGridView(this.myGrid);
         this.myGrid.setMyView(this.myGridView);
         super.setExecutionObserver();
+        // this.setPlayMode('training');
         this.init();
-        this.setPlayMode('solving');
     }
 
     setPlayMode(mode) {
@@ -1120,7 +1124,7 @@ class SudokuSolver extends SudokuCalculator {
     init() {
         super.init();
         this.setActualEvalType('lazy-invisible');
-        //this.setPlayMode('solving');
+        this.setPlayMode('training');
         this.notify();
     }
     loadPuzzle(uid, puzzle) {
