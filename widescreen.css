@@ -32,7 +32,7 @@
     --error-cell-color: white;
 
     /* Other definitions */
-    --sudoku-cell-size: 62px;
+    --sudoku-cell-size: 4.8rem;
     --border-radius: 5px;
     --space-y: 20px;
     --font-size-btn: 1.2rem;
@@ -285,8 +285,8 @@ html {
 
 .sudoku-grid-cell {
     position: relative;
-    height: 45px;
-    width: 45px;
+    height:var(--sudoku-cell-size);
+    width: var(--sudoku-cell-size);
     display: grid;
     font-size: var(--font-size-lg);
     place-items: center;

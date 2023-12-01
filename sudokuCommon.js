@@ -4738,6 +4738,7 @@ class SudokuGrid extends SudokuModel {
                 }
             }
         } else {
+            this.deselect();
             // Neue Gesamtselektion
             this.setCurrentSelection(index);
         }
