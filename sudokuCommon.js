@@ -6,7 +6,7 @@ class SudokuSolverController {
         this.mySuccessDialog = new SuccessDialog();
         this.myPuzzleSaveDialog = new PuzzleSaveDialog();
         this.myInfoDialog = new InfoDialog();
-        this.myResetConfirmDlg = new ConfirmDialog();
+        this.myConfirmDlg = new ConfirmDialog();
         this.mySettingsDialog = new SettingsDialog();
         this.myUndoActionStack = [];
         this.myRedoActionStack = [];
@@ -292,14 +292,12 @@ class SudokuSolverController {
 
     initBtnPressed() {
         closeNav();
-        this.myUndoActionStack = [];
-        this.myRedoActionStack = [];
-        this.mySolver.init();
-    }
+        this.myConfirmDlg.open('init', "Alle Daten gehen verloren, falls nicht vorher schon gespeichert! Solver initialisieren? ");
+     }
 
     resetBtnPressed() {
         closeNav();
-        this.myResetConfirmDlg.open("Willst Du das Puzzle wirklich vollständig zurücksetzen?");
+        this.myConfirmDlg.open('reset', "Alle Lösungsnummern werden gelöscht. Puzzle zurücksetzen?");
     }
 
     undoBtnPressed() {
@@ -363,16 +361,27 @@ class SudokuSolverController {
 
 
     confirmDlgOKPressed() {
-        this.myResetConfirmDlg.close();
+        this.myConfirmDlg.close();
         this.myUndoActionStack = [];
         this.myRedoActionStack = [];
-        this.mySolver.reset();
-        
+        switch (this.myConfirmDlg.confirmOperation()) {
+            case 'reset': {
+                this.mySolver.reset();
+                break;          
+            }
+            case 'init': {
+                this.mySolver.init();
+                break;
+            }
+            default: {
+                throw new Error('Unknown confirm: ' + this.myConfirmDlg.confirmOperation());
+            }
+        }
     }
 
 
     confirmDlgCancelPressed() {
-        this.myResetConfirmDlg.close();
+        this.myConfirmDlg.close();
     }
 
     generateBtnPressed(level) {
@@ -1363,10 +1372,10 @@ class PuzzleDBDialog {
 
 
 class ConfirmDialog {
-    constructor(question) {
+    constructor() {
         this.myOpen = false;
-        this.myConfirmDlgNode = document.getElementById("confirm-reset-dlg");
-        this.myTextNode = document.getElementById("confirm-reset-dlg-header");
+        this.myConfirmDlgNode = document.getElementById("confirm-dlg");
+        this.myTextNode = document.getElementById("confirm-dlg-body");
         this.okNode = document.getElementById("btn-confirm-ok");
         this.cancelNode = document.getElementById("btn-confirm-cancel");
         // Mit der Erzeugung des Wrappers werden 
@@ -1378,14 +1387,15 @@ class ConfirmDialog {
             sudoApp.mySolverController.confirmDlgCancelPressed();
         });
     }
-    confirm(question) {
-        this.myTextNode.innerText = question;
-        this.open();
-    }
-    open(question) {
+    open(rqOp, question) {
         this.myOpen = true;
-        this.myQuestion = question;
+        this.myRequestOperation = rqOp;
+        this.myTextNode.innerText = question;
         this.myConfirmDlgNode.showModal();
+    }
+
+    confirmOperation() {
+        return this.myRequestOperation;
     }
 
     close() {
