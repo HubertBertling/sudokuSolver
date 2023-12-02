@@ -179,6 +179,12 @@ class SudokuSolverController {
         mobileRadioPMNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
                 this.mySolver.setPlayMode(radioNode.value);
+                let appSetting = {
+                    playMode: radioNode.value,
+                    other: ''
+                }
+                let str_appSetting = JSON.stringify(appSetting);
+                localStorage.setItem("sudokuAppSetting", str_appSetting);
             })
         });
     }
@@ -1097,7 +1103,6 @@ class SudokuSolver extends SudokuCalculator {
         this.myGridView = new SudokuGridView(this.myGrid);
         this.myGrid.setMyView(this.myGridView);
         super.setExecutionObserver();
-        // this.setPlayMode('training');
         this.init();
     }
 
@@ -1124,7 +1129,13 @@ class SudokuSolver extends SudokuCalculator {
     init() {
         super.init();
         this.setActualEvalType('lazy-invisible');
-        this.setPlayMode('training');
+        let str_appSetting = localStorage.getItem("sudokuAppSetting");
+        if (str_appSetting !== null){
+            let appSetting = JSON.parse(str_appSetting);  
+            this.setPlayMode(appSetting.playMode);     
+        } else {
+            this.setPlayMode('training');     
+        }
         this.notify();
     }
     loadPuzzle(uid, puzzle) {
