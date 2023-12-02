@@ -868,7 +868,7 @@ label {
 }
 
 .infoDlgBody, .confirm-dlg-body {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size);
     margin-left: 10px;
 }
 
@@ -890,17 +890,15 @@ label {
 }
 
  #btn-confirm-cancel {
-
-    margin-top: 1.8rem;
-    /* margin-left: auto; */
-    /*float: right; */
+    width: 100px;
+    margin-top: 10px;
     margin-right: 10px;
     margin-bottom: 10px;
 }
 
 
 .settings-dlg {
-    width: 50%;
+    width: 40rem;
 
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;

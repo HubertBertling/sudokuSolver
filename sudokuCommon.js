@@ -320,6 +320,7 @@ class SudokuSolverController {
         }
     }
     undo(action) {
+        this.mySolver.autoExecStop();
         switch (action.operation) {
             case 'setNr': {
                 // Delete set number
@@ -340,6 +341,7 @@ class SudokuSolverController {
     }
 
     redo(action) {
+        this.mySolver.autoExecStop();
         switch (action.operation) {
             case 'setNr': {
                 // Set the number again

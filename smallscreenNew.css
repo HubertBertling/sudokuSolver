@@ -539,7 +539,9 @@ html {
     place-items: center;
     padding: 0.8rem;
 }
-
+.mobile-number {
+    font-size: var(--font-size-xl);
+}
 
 .btn-undo-off > img, .btn-redo-off > img {
     opacity: 0.3; 
