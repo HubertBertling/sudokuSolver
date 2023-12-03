@@ -1004,7 +1004,7 @@ class SudokuCalculator extends SudokuModel {
 
     tryMoreSolutions() {
         this.myStepper.setAutoDirection('backward');
-        this.myStepper.myResult = '';
+        this.myStepper.myResult = undefined;
         this.myStepper.startAsyncLoop();
     }
 
