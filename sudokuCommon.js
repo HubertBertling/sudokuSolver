@@ -171,19 +171,29 @@ class SudokuSolverController {
         let mobileRadioEvalNodes = document.querySelectorAll('.pc-eval-type');
         mobileRadioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
+                let appSetting = '';
+                let str_appSetting = localStorage.getItem("sudokuAppSetting");
+                if (str_appSetting !== null){
+                    appSetting = JSON.parse(str_appSetting);  
+                }
                 this.mySolver.setActualEvalType(radioNode.value);
+                appSetting.evalType = radioNode.value,
+                str_appSetting = JSON.stringify(appSetting);
+                localStorage.setItem("sudokuAppSetting", str_appSetting);          
             })
         });
 
         let mobileRadioPMNodes = document.querySelectorAll('.play-mode-type');
         mobileRadioPMNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
-                this.mySolver.setPlayMode(radioNode.value);
-                let appSetting = {
-                    playMode: radioNode.value,
-                    other: ''
+                let appSetting = '';
+                let str_appSetting = localStorage.getItem("sudokuAppSetting");
+                if (str_appSetting !== null){
+                    appSetting = JSON.parse(str_appSetting);  
                 }
-                let str_appSetting = JSON.stringify(appSetting);
+                this.mySolver.setPlayMode(radioNode.value);
+                appSetting.playMode = radioNode.value,
+                str_appSetting = JSON.stringify(appSetting);
                 localStorage.setItem("sudokuAppSetting", str_appSetting);
             })
         });
@@ -1139,13 +1149,15 @@ class SudokuSolver extends SudokuCalculator {
 
     init() {
         super.init();
-        this.setActualEvalType('lazy-invisible');
+       
         let str_appSetting = localStorage.getItem("sudokuAppSetting");
         if (str_appSetting !== null){
             let appSetting = JSON.parse(str_appSetting);  
-            this.setPlayMode(appSetting.playMode);     
+            this.setPlayMode(appSetting.playMode);
+            this.setActualEvalType(appSetting.evalType);
         } else {
             this.setPlayMode('training');     
+            this.setActualEvalType('lazy-invisible');
         }
         this.notify();
     }
