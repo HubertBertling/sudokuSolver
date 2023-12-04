@@ -1216,6 +1216,7 @@ th {
 }
 
 #search-level {
+    width: 14rem;
     left:25%;
     top: 25%;
     margin-top: 20px;

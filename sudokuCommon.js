@@ -2488,7 +2488,11 @@ class StepperOnGrid {
         if (tmpNeccessary.index !== -1) {
             switch (this.levelOfDifficulty) {
                 case 'Keine Angabe': {
-                    this.levelOfDifficulty = 'Leicht';
+                    if (this.myGrid.numberOfGivens() > 35) {
+                        this.levelOfDifficulty = 'Sehr leicht';
+                    } else {
+                        this.levelOfDifficulty = 'Leicht';
+                    }
                     break;
                 }
                 default: {
@@ -2502,6 +2506,7 @@ class StepperOnGrid {
         if (tmpLevel_0_single.index !== -1) {
             switch (this.levelOfDifficulty) {
                 case 'Keine Angabe':
+                case 'Sehr leicht':
                 case 'Leicht': {
                     this.levelOfDifficulty = 'Mittel';
                     break;
@@ -2519,6 +2524,7 @@ class StepperOnGrid {
         if (oneOption.index !== -1) {
             switch (this.levelOfDifficulty) {
                 case 'Keine Angabe':
+                case 'Sehr leicht':
                 case 'Leicht':
                 case 'Mittel': {
                     this.levelOfDifficulty = 'Schwer';
@@ -2538,6 +2544,7 @@ class StepperOnGrid {
         // Diese Zelle kann eine mit der vollen Optionsmenge sein
         switch (this.levelOfDifficulty) {
             case 'Keine Angabe':
+            case 'Sehr leicht':
             case 'Leicht':
             case 'Mittel':
             case 'Schwer': {
@@ -3990,34 +3997,41 @@ class SudokuGrid extends SudokuModel {
     }
 
 
-    takeBackSolvedCells() {
+    takeBackSolvedCells(level) {
         // Vom Generator verwendete Funktion
         // Löscht solange gelöste Zellen, wie das Grid 
         // eine eindeutige Lösung behält.
+        let nrOfGivens = 81;
         let randomCellOrder = Randomizer.getRandomNumbers(81, 0, 81);
         for (let i = 0; i < 81; i++) {
-            let k = randomCellOrder[i];
-            if (this.sudoCells[k].getValue() !== '0') {
-                // Selektiere Zelle mit gesetzter Nummer
-                this.select(k);
-                // Notiere die gesetzte Nummer, um sie eventuell wiederherstellen zu können
-                let tmpNr = this.sudoCells[k].getValue();
-                // Lösche die gesetzte Nummer
-                this.deleteSelected('define');
-                // Werte die verbliebene Matrix strikt aus.
-                this.evaluateGridStrict();
-
-                if (this.sudoCells[k].getNecessarys().size == 1) {
-                    // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
-                    // necessaryCondition
-                } else if (this.sudoCells[k].getTotalAdmissibles().size == 1) {
-                    // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
-                    // totalAdmissibleCondition
-                } else {
-                    // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
-                    // Dann wird die Löschung zurückgenommen.
+            if (nrOfGivens > 36) {
+                let k = randomCellOrder[i];
+                if (this.sudoCells[k].getValue() !== '0') {
+                    // Selektiere Zelle mit gesetzter Nummer
                     this.select(k);
-                    this.sudoCells[k].manualSetValue(tmpNr, 'define');
+                    // Notiere die gesetzte Nummer, um sie eventuell wiederherstellen zu können
+                    let tmpNr = this.sudoCells[k].getValue();
+                    // Lösche die gesetzte Nummer
+                    this.deleteSelected('define');
+                    // Werte die verbliebene Matrix strikt aus.
+                    this.evaluateGridStrict();
+
+                    if (this.sudoCells[k].getNecessarys().size == 1) {
+                        // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
+                        if (level == 'Sehr leicht') {
+                            nrOfGivens--;
+                        }
+                    } else if (this.sudoCells[k].getTotalAdmissibles().size == 1) {
+                        // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
+                        if (level == 'Sehr leicht') {
+                            nrOfGivens--;
+                        }
+                    } else {
+                        // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
+                        // Dann wird die Löschung zurückgenommen.
+                        this.select(k);
+                        this.sudoCells[k].manualSetValue(tmpNr, 'define');
+                    }
                 }
             }
         }
