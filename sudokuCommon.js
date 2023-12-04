@@ -1152,7 +1152,11 @@ class SudokuSolver extends SudokuCalculator {
        
         let str_appSetting = localStorage.getItem("sudokuAppSetting");
         if (str_appSetting !== null){
-            let appSetting = JSON.parse(str_appSetting);  
+            let appSetting = JSON.parse(str_appSetting);
+            // Downward compatibility
+            if (appSetting.evalType == undefined){
+                appSetting.evalType = 'training';
+            }
             this.setPlayMode(appSetting.playMode);
             this.setActualEvalType(appSetting.evalType);
         } else {
@@ -5252,14 +5256,12 @@ class SudokuCellView extends SudokuView {
         if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
 
             if (tmpCell.myNecessarys.size > 0 && sudoApp.mySolver.myStepper.indexSelected > -1) {
-                //   if (adMissibleNrSelected == Array.from(tmpCell.myNecessarys)[0]) {
                 let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
                 collection.myCells.forEach(e => {
                     if (e !== tmpCell) {
                         e.myView.setBorderGreenSelected()
                     }
                 });
-                //   }
                 sudoApp.mySolver.myView.displayTechnique('Notwendige ' + Array.from(tmpCell.myNecessarys)[0] +
                     ' in dieser Gruppe setzen.');
             } else if (tmpCell.getAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
@@ -5269,9 +5271,6 @@ class SudokuCellView extends SudokuView {
             } else if (tmpCell.getTotalAdmissibles().size > 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
                 sudoApp.mySolver.myView.displayTechnique('Aus mehreren Kandidaten eine Nummer setzen.');
             }
-
-
-
         } else if (sudoApp.mySolver.getActualEvalType() == 'lazy') {
             // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
             // wird die verursachende collection angezeigt.
