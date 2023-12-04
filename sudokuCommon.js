@@ -173,13 +173,13 @@ class SudokuSolverController {
             radioNode.addEventListener('click', () => {
                 let appSetting = '';
                 let str_appSetting = localStorage.getItem("sudokuAppSetting");
-                if (str_appSetting !== null){
-                    appSetting = JSON.parse(str_appSetting);  
+                if (str_appSetting !== null) {
+                    appSetting = JSON.parse(str_appSetting);
                 }
                 this.mySolver.setActualEvalType(radioNode.value);
                 appSetting.evalType = radioNode.value,
-                str_appSetting = JSON.stringify(appSetting);
-                localStorage.setItem("sudokuAppSetting", str_appSetting);          
+                    str_appSetting = JSON.stringify(appSetting);
+                localStorage.setItem("sudokuAppSetting", str_appSetting);
             })
         });
 
@@ -188,12 +188,12 @@ class SudokuSolverController {
             radioNode.addEventListener('click', () => {
                 let appSetting = '';
                 let str_appSetting = localStorage.getItem("sudokuAppSetting");
-                if (str_appSetting !== null){
-                    appSetting = JSON.parse(str_appSetting);  
+                if (str_appSetting !== null) {
+                    appSetting = JSON.parse(str_appSetting);
                 }
                 this.mySolver.setPlayMode(radioNode.value);
                 appSetting.playMode = radioNode.value,
-                str_appSetting = JSON.stringify(appSetting);
+                    str_appSetting = JSON.stringify(appSetting);
                 localStorage.setItem("sudokuAppSetting", str_appSetting);
             })
         });
@@ -215,7 +215,7 @@ class SudokuSolverController {
                 cellValue: nr
             }
             this.mySolver.atCurrentSelectionSetNumber(nr);
-            if (action.cellIndex > -1){
+            if (action.cellIndex > -1) {
                 this.myUndoActionStack.push(action);
             }
             this.mySolver.notify();
@@ -236,7 +236,7 @@ class SudokuSolverController {
             cellIndex: this.mySolver.myGrid.indexSelected,
             cellValue: this.mySolver.myGrid.sudoCells[this.mySolver.myGrid.indexSelected].getValue()
         }
-        if (action.cellIndex > -1){
+        if (action.cellIndex > -1) {
             this.myUndoActionStack.push(action);
         }
         this.mySolver.deleteSelected();
@@ -303,7 +303,7 @@ class SudokuSolverController {
     initBtnPressed() {
         closeNav();
         this.myConfirmDlg.open('init', "Alle Daten gehen verloren, falls nicht vorher schon gespeichert! Solver initialisieren? ");
-     }
+    }
 
     resetBtnPressed() {
         closeNav();
@@ -377,7 +377,7 @@ class SudokuSolverController {
         switch (this.myConfirmDlg.confirmOperation()) {
             case 'reset': {
                 this.mySolver.reset();
-                break;          
+                break;
             }
             case 'init': {
                 this.mySolver.init();
@@ -1149,18 +1149,18 @@ class SudokuSolver extends SudokuCalculator {
 
     init() {
         super.init();
-       
+
         let str_appSetting = localStorage.getItem("sudokuAppSetting");
-        if (str_appSetting !== null){
+        if (str_appSetting !== null) {
             let appSetting = JSON.parse(str_appSetting);
             // Downward compatibility
-            if (appSetting.evalType == undefined){
+            if (appSetting.evalType == undefined) {
                 appSetting.evalType = 'lazy-invisible';
             }
             this.setPlayMode(appSetting.playMode);
             this.setActualEvalType(appSetting.evalType);
         } else {
-            this.setPlayMode('training');     
+            this.setPlayMode('training');
             this.setActualEvalType('lazy-invisible');
         }
         this.notify();
@@ -5243,11 +5243,20 @@ class SudokuCellView extends SudokuView {
     setBorderGreenSelected() {
         this.myNode.classList.add('hover-green');
     }
+    setBorderWhiteSelected() {
+        this.myNode.classList.add('hover-white');
+    }
+    setBorderBlackSelected() {
+        this.myNode.classList.add('hover-black');
+    }
+
 
     unsetBorderSelected() {
         this.myNode.classList.remove('hover');
         this.myNode.classList.remove('hover-red');
         this.myNode.classList.remove('hover-green');
+        this.myNode.classList.remove('hover-white');
+        this.myNode.classList.remove('hover-black');
     }
 
     setSelectStatus() {
@@ -5259,7 +5268,14 @@ class SudokuCellView extends SudokuView {
                 let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
                 collection.myCells.forEach(e => {
                     if (e !== tmpCell) {
-                        e.myView.setBorderGreenSelected()
+                        if (e.getValue() == '0') {
+                            e.myView.setBorderGreenSelected();
+                            e.myInfluencers.forEach(cell => {
+                                if (cell.getValue() == Array.from(tmpCell.myNecessarys)[0]) {
+                                    cell.myView.setBorderWhiteSelected();
+                                }
+                            });
+                        }
                     }
                 });
                 sudoApp.mySolver.myView.displayTechnique('Notwendige ' + Array.from(tmpCell.myNecessarys)[0] +

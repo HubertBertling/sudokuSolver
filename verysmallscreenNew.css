@@ -458,6 +458,14 @@ app-empty-footer {
     border: 3px dashed green;
 }
 
+.sudoku-grid-cell.hover-white {
+    border: 5px dashed white;
+}
+.sudoku-grid-cell.hover-black {
+    border: 5px dashed black;
+}
+
+
 .sudoku-block.err {
     background-color: var(--error-cell-bg-color);
     color: var(--error-cell-color);
