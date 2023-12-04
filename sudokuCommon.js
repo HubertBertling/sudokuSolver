@@ -1155,7 +1155,7 @@ class SudokuSolver extends SudokuCalculator {
             let appSetting = JSON.parse(str_appSetting);
             // Downward compatibility
             if (appSetting.evalType == undefined){
-                appSetting.evalType = 'training';
+                appSetting.evalType = 'lazy-invisible';
             }
             this.setPlayMode(appSetting.playMode);
             this.setActualEvalType(appSetting.evalType);
