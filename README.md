@@ -1,5 +1,4 @@
-# HB-Sudoku-Solver
+# Sudoku Trainer
 
-Dies ist ein Sudoku-Solver, der jedes Sudoku in wenigen Sekunden löst bzw. als nicht lösbar erkennt.
-Seine Besonderheit: man kann ihm bei der Suche nach der Lösung zuschauen.
-https://hubertbertling.github.io/sudokuSolver/
+Dies ist ein Solver und Generator für klasschisches Sudoku. Der Solver kann manuell oder automatisch genutzt werden. Seine Besonderheit: man kann ihm bei der automatischen Suche nach der Lösung zuschauen. Bei jeder automatischen Setzung einer Nummer zeigt der Solver den logischen Grund für die Setzung. Der Anwender kann ein Puzzle manuell lösen, oder er kann sich einen möglichen nächsten Schritt zeigen lassen. Es ist auch möglich, das Puzzle vollständig automatisch lösen zu lassen. Automatisch löst der Solver jedes Puzzle in wenigen Sekunden oder erkennt es als nicht lösbar (weil es widersprüchlich ist).
+Der Reiz dieses Solvers besteht darin, dass der Spieler für jedes angefangene Puzzle ein Ergebnis bekommt, manchmal mit Hilfe. Der Solver ist also ein Trainer, der den Frust des Nicht-Gelingens vermeidet. In jedem Fall erhält der Spieler nicht nur die Lösung seines Puzzles sondern auch die in jedem Schritt angewendeten logischen Schlüsse. Viel Spaß dabei.
