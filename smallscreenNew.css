@@ -627,7 +627,7 @@ html {
 .eval-legend, .play-mode-legend {
     font-weight: bold;
     margin-left: 10px;
-    font-size: var(--font-size);
+    font-size: var(--font-size-lg);
 }
 
 
