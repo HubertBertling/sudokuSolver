@@ -5317,6 +5317,11 @@ class SudokuCellView extends SudokuView {
                     collection.myCells.forEach(e => {
                         if (e !== tmpCell) {
                             e.myView.setBorderGreenSelected()
+                            e.myInfluencers.forEach(cell => {
+                                if (cell.getValue() == Array.from(tmpCell.myNecessarys)[0]) {
+                                    cell.myView.setBorderWhiteSelected();
+                                }
+                            });
                         }
                     });
                     sudoApp.mySolver.myView.displayTechnique(Array.from(tmpCell.myNecessarys)[0] +

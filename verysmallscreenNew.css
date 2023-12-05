@@ -107,22 +107,6 @@ html {
 /*=====================================================*/
 
 
-.menu-icon {
-    position: absolute;
-    z-index: 1;
-    margin: 0.1rem;
-}
-.menu-icon-line {
-    width: 3.5rem;
-    height: 0.3rem;
-    background-color: white;
-    margin: 0.3rem 0;
-  }
-  
-.menu-icon:active {
-    transform: translate(2px, 2px);
-}
-
 
 .sidenav {
     height: 100%;
@@ -217,20 +201,11 @@ app-empty-footer {
     display: none;
 }
 
-.h-text {
-    flex-grow: 9;
-}
-
-.help-button {
-    flex-grow: 1;
-}
-
-
 .app-name-header {
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
-    display: flex;
-    flex-direction: row;
+    margin-left: 0.3rem;
+    margin-right: 0.3rem;
+    display: grid;
+    grid-template-columns: 0.2fr 1.6fr 0.1fr; 
     font-size: var(--font-size-xl);
     font-weight: bold;
     padding: 0.4rem;
@@ -239,6 +214,8 @@ app-empty-footer {
     color: white;
     border-radius: 0.6rem;
 }
+
+
 
 #help-button {
     width: 2.4rem;
@@ -252,13 +229,20 @@ app-empty-footer {
 
 
 
-.app-name-footer {
-    margin-left: 1rem;
-    margin-right: 1rem;
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
+.menu-icon {
+    margin: 0.1rem;
 }
+.menu-icon-line {
+    width: 3rem;
+    height: 0.3rem;
+    background-color: white;
+    margin: 0.3rem 0;
+  }
+  
+.menu-icon:active {
+    transform: translate(2px, 2px);
+}
+
 
 /*==============================================*/
 

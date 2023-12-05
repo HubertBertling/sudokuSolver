@@ -104,40 +104,22 @@ html {
 /*=====================================================*/
 
 
-.menu-icon {
-    position: absolute;
-    z-index: 1;
-    margin-top: 0.2rem;
-    margin-left: 1rem;
-    margin-right: 1rem;
-}
-.menu-icon-line {
-    width: 3.5rem;
-    height: 0.5rem;
-    background-color: white;
-    margin: 0.4rem 0;
-  }
-  
-.menu-icon:active {
-    transform: translate(2px, 2px);
-}
-
-
 .sidenav {
     height: 85%;
     width: 0;
     position: fixed;
     z-index: 2;
     /* top: 0;
-    left: 0; */ 
+    left: 0; */
     background-color: #111;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
-  }
+}
 
 
-  .sidenav a, .dropdown-btn {
+.sidenav a,
+.dropdown-btn {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
@@ -150,44 +132,45 @@ html {
     text-align: left;
     cursor: pointer;
     outline: none;
-  
-   
-  }
-  
-  .sidenav a:hover, .dropdown-btn:hover {
+
+
+}
+
+.sidenav a:hover,
+.dropdown-btn:hover {
     color: #f1f1f1;
-  }
-  
+}
 
 
-  .sidenav .closebtn {
+
+.sidenav .closebtn {
     position: absolute;
     top: 0;
     right: 25px;
     font-size: 36px;
     margin-left: 50px;
-  }
+}
 
-  .active {
+.active {
     background-color: green;
     color: white;
-  }
-  
+}
+
 /* Dropdown container (hidden by default). Optional: add a lighter background color 
    and some left padding to change the design of the dropdown content */
 .dropdown-container {
     display: none;
     background-color: #262626;
     padding-left: 18px;
-  }
-  
-  /* Optional: Style the caret down icon */
-  .fa-caret-down {
+}
+
+/* Optional: Style the caret down icon */
+.fa-caret-down {
     float: right;
     padding-right: 8px;
-  }
-  
-  
+}
+
+
 
 
 /*
@@ -214,38 +197,45 @@ html {
     display: none;
 }
 
-.h-text {
-    flex-grow: 9;
-}
-
-.app-name-header {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-}
-
-
-
 .app-empty-footer,
 .app-name-header {
-    margin-top: 0.5rem;
+    display: grid;
+    grid-template-columns: 0.1fr 1.8fr 0.1fr;
     font-size: var(--font-size-xl);
     font-weight: bold;
-    padding: 1rem;
     text-align: center;
+    padding: 0.5rem;
     background-color: DimGray;
     color: white;
     border-radius: 0.6rem;
 }
+
 #help-button {
-    width: 3rem;
-    height: 3rem;
+    margin: 0.3rem;
+    padding: 0.3rem;
     font-weight: bold;
     font-size: var(--font-size-lg);
     background-color: white;
     border-radius: 0.6rem;
     border: 0;
 }
+
+
+.menu-icon {
+    margin: 0.3rem;
+}
+
+.menu-icon-line {
+    width: 2.4rem;
+    height: 0.3rem;
+    background-color: white;
+    margin: 0.4rem 0;
+}
+
+.menu-icon:active {
+    transform: translate(2px, 2px);
+}
+
 /*==============================================*/
 
 
@@ -285,7 +275,7 @@ html {
 
 .sudoku-grid-cell {
     position: relative;
-    height:var(--sudoku-cell-size);
+    height: var(--sudoku-cell-size);
     width: var(--sudoku-cell-size);
     display: grid;
     font-size: var(--font-size-lg);
@@ -442,9 +432,11 @@ html {
 .sudoku-grid-cell.hover-green {
     border: 5px dashed green;
 }
+
 .sudoku-grid-cell.hover-white {
     border: 5px dashed white;
 }
+
 .sudoku-grid-cell.hover-black {
     border: 5px dashed black;
 }
@@ -517,7 +509,7 @@ html {
     margin-right: 1rem;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(4, 1fr); 
+    grid-template-rows: repeat(4, 1fr);
     gap: 0.4rem;
 }
 
@@ -541,8 +533,9 @@ html {
 
 }
 
-.btn-undo-off > img, .btn-redo-off > img {
-    opacity: 0.3; 
+.btn-undo-off>img,
+.btn-redo-off>img {
+    opacity: 0.3;
 }
 
 
@@ -601,7 +594,8 @@ html {
 /* Evaluation radio buttons             */
 /*======================================*/
 
-.pc-eval, .play-mode {
+.pc-eval,
+.play-mode {
     margin-top: 2rem;
     margin-left: 1.2rem;
     margin-right: 1.2rem;
@@ -615,7 +609,8 @@ html {
 /* ======================================*/
 /* Evaluation block                       */
 /* ======================================*/
-.eval-legend, .play-mode-legend {
+.eval-legend,
+.play-mode-legend {
     font-weight: bold;
     margin-left: 10px;
     font-size: var(--font-size);
@@ -844,8 +839,9 @@ label {
     background: hsl(201 50% 40% /.5);
 }
 
-.infoDlg, .confirm-dlg {
-    width:30rem;
+.infoDlg,
+.confirm-dlg {
+    width: 30rem;
 
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -858,7 +854,8 @@ label {
     margin-right: auto;
 }
 
-.infoDlgHeader, .confirm-dlg-header {
+.infoDlgHeader,
+.confirm-dlg-header {
     font-size: var(--font-size-lg);
     font-weight: bold;
     margin: 10px;
@@ -874,12 +871,14 @@ label {
     margin-right: 10px;
 }
 
-.infoDlgBody, .confirm-dlg-body {
+.infoDlgBody,
+.confirm-dlg-body {
     font-size: var(--font-size);
     margin-left: 10px;
 }
 
-.infoIcon, .confirm-icon {
+.infoIcon,
+.confirm-icon {
     margin-left: 5px;
     margin-right: 10px;
     height: 40px;
@@ -887,7 +886,8 @@ label {
     background-color: white;
 }
 
-.infoDlg-OK-Btn, #btn-confirm-ok {
+.infoDlg-OK-Btn,
+#btn-confirm-ok {
     width: 100px;
     margin-top: 10px;
     /* margin-left: auto; */
@@ -896,7 +896,7 @@ label {
     margin-bottom: 10px;
 }
 
- #btn-confirm-cancel {
+#btn-confirm-cancel {
     width: 100px;
     margin-top: 10px;
     margin-right: 10px;
@@ -1149,7 +1149,7 @@ th {
     padding-right: 18px;
 }
 
-#col-status-open div  {
+#col-status-open div {
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-bg-color);
     padding-right: 18px;

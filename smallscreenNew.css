@@ -106,23 +106,6 @@ html {
 /* Side Navigation */
 /*=====================================================*/
 
-.menu-icon {
-    position: absolute;
-    z-index: 1;
-    margin: 0.1rem;
-}
-.menu-icon-line {
-    width: 3.5rem;
-    height: 0.3rem;
-    background-color: white;
-    margin: 0.3rem 0;
-  }
-  
-.menu-icon:active {
-    transform: translate(2px, 2px);
-}
-
-
 .sidenav {
     height: 100%;
     width: 0;
@@ -219,41 +202,49 @@ html {
     display: none;
 }
 
-.h-text {
-    flex-grow: 9;
-}
 
 .app-name-header {
     margin-left: 0.5rem;
     margin-right: 0.5rem;
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 0.2fr 1.6fr 0.2fr;
     font-size: var(--font-size-xl);
     font-weight: bold;
-    padding: 0.4rem;
     text-align: center;
+    padding: 0.5rem;
     background-color: DimGray;
     color: white;
     border-radius: 0.6rem;
 }
+.app-name-header>span {
+    padding: 0.3rem;
+}
 
 #help-button {
-    width: 2.4rem;
-    height: 2.4rem;
+    margin: 0.3rem;
+    padding: 0.3rem;
     font-weight: bold;
     font-size: var(--font-size-lg);
     background-color: white;
-    border-radius: 0.3rem;
+    border-radius: 0.6rem;
     border: 0;
 }
 
-.app-name-footer {
-    margin-left: 1rem;
-    margin-right: 1rem;
-    display: flex;
-    flex-direction: row;
-    gap:5px;
-}   
+.menu-icon {
+    margin: 0.3rem;
+}
+
+.menu-icon-line {
+    width: 2.2rem;
+    height: 0.3rem;
+    background-color: white;
+    margin: 0.3rem 0;
+}
+
+.menu-icon:active {
+    transform: translate(2px, 2px);
+}
+
 
 /*==============================================*/
 
