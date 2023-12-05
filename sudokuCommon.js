@@ -5316,12 +5316,14 @@ class SudokuCellView extends SudokuView {
                     let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
                     collection.myCells.forEach(e => {
                         if (e !== tmpCell) {
-                            e.myView.setBorderGreenSelected()
-                            e.myInfluencers.forEach(cell => {
-                                if (cell.getValue() == Array.from(tmpCell.myNecessarys)[0]) {
-                                    cell.myView.setBorderWhiteSelected();
-                                }
-                            });
+                            if (e.getValue() == '0') {
+                                e.myView.setBorderGreenSelected()
+                                e.myInfluencers.forEach(cell => {
+                                    if (cell.getValue() == Array.from(tmpCell.myNecessarys)[0]) {
+                                        cell.myView.setBorderWhiteSelected();
+                                    }
+                                });
+                            }
                         }
                     });
                     sudoApp.mySolver.myView.displayTechnique(Array.from(tmpCell.myNecessarys)[0] +
