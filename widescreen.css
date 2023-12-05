@@ -952,13 +952,6 @@ label {
     height: 65vh;
 }
 
-/* 1.1.1 Äußere Klammer auf */
-.puzzle-db-header-outmost {
-    flex-grow: 1;
-    /* background-color: #500; */
-
-}
-
 /* 1.1.2 Innere Klammer auf */
 .puzzle-db-header {
     flex-grow: 0;

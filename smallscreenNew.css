@@ -62,6 +62,7 @@ body,
 html {
     font-family: 'Open Sans', sans-serif;
     height: 95vh;
+    width: 100%;
     background-color: var(--screen-bg-color);
     margin-top: 5px;
     display: flex;
@@ -112,15 +113,16 @@ html {
     position: fixed;
     z-index: 3;
     /* top: 0;
-    left: 0; */ 
+    left: 0; */
     background-color: #111;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
-  }
+}
 
 
-  .sidenav a, .dropdown-btn {
+.sidenav a,
+.dropdown-btn {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
@@ -133,44 +135,45 @@ html {
     text-align: left;
     cursor: pointer;
     outline: none;
-  
-  }
-  
-  .sidenav a:hover, .dropdown-btn:hover {
+
+}
+
+.sidenav a:hover,
+.dropdown-btn:hover {
     color: #f1f1f1;
-  }
-  
+}
 
 
-  .sidenav .closebtn {
+
+.sidenav .closebtn {
     position: absolute;
     top: 0;
     right: 25px;
     font-size: 36px;
     margin-left: 50px;
-  }
+}
 
-  .active {
+.active {
     background-color: green;
     color: white;
-  }
-  
+}
+
 /* Dropdown container (hidden by default). Optional: add a lighter background color 
    and some left padding to change the design of the dropdown content */
 .dropdown-container {
     display: none;
     background-color: #262626;
     padding-left: 18px;
-  }
-  
-  /* Optional: Style the caret down icon */
-  .fa-caret-down {
+}
+
+/* Optional: Style the caret down icon */
+.fa-caret-down {
     float: right;
     padding-right: 8px;
-  }
-  
+}
 
-  /*=======================================================*/
+
+/*=======================================================*/
 
 .app-content {
     display: flex;
@@ -216,6 +219,7 @@ html {
     color: white;
     border-radius: 0.6rem;
 }
+
 .app-name-header>span {
     padding: 0.3rem;
 }
@@ -449,6 +453,7 @@ html {
 .sudoku-grid-cell.hover-white {
     border: 5px dashed white;
 }
+
 .sudoku-grid-cell.hover-black {
     border: 5px dashed black;
 }
@@ -538,12 +543,14 @@ html {
     place-items: center;
     padding: 0.8rem;
 }
+
 .mobile-number {
     font-size: var(--font-size-xl);
 }
 
-.btn-undo-off > img, .btn-redo-off > img {
-    opacity: 0.3; 
+.btn-undo-off>img,
+.btn-redo-off>img {
+    opacity: 0.3;
 }
 
 .btn-define {
@@ -578,7 +585,9 @@ html {
     color: var(--delete-btn-color);
 }
 
-#btn-run, #btn-pause, #btn-stop {
+#btn-run,
+#btn-pause,
+#btn-stop {
     display: none;
 }
 
@@ -593,7 +602,7 @@ html {
 
 .btn-image {
     width: 1.6rem;
-    height:1.6rem;    
+    height: 1.6rem;
 }
 
 /*======================================*/
@@ -610,7 +619,8 @@ html {
 /* ======================================*/
 
 
-.pc-eval, .play-mode {
+.pc-eval,
+.play-mode {
     margin-top: 3rem;
     margin-left: 1.2rem;
     margin-right: 1.2rem;
@@ -624,7 +634,8 @@ html {
 /* ======================================*/
 /* Evaluation block                       */
 /* ======================================*/
-.eval-legend, .play-mode-legend {
+.eval-legend,
+.play-mode-legend {
     font-weight: bold;
     margin-left: 10px;
     font-size: var(--font-size-lg);
@@ -853,7 +864,8 @@ label {
     background: hsl(201 50% 40% /.5);
 }
 
-.infoDlg, .confirm-dlg {
+.infoDlg,
+.confirm-dlg {
     width: 90%;
 
     -webkit-box-sizing: border-box;
@@ -867,7 +879,8 @@ label {
     margin-right: auto;
 }
 
-.infoDlgHeader, .confirm-dlg-header {
+.infoDlgHeader,
+.confirm-dlg-header {
     font-size: var(--font-size-lg);
     font-weight: bold;
     margin: 10px;
@@ -883,12 +896,14 @@ label {
     margin-right: 10px;
 }
 
-.infoDlgBody , .confirm-dlg-body {
+.infoDlgBody,
+.confirm-dlg-body {
     font-size: var(--font-size-lg);
     margin-left: 10px;
 }
 
-.infoIcon, .confirm-icon {
+.infoIcon,
+.confirm-icon {
     margin-left: 5px;
     margin-right: 10px;
     height: 40px;
@@ -896,7 +911,8 @@ label {
     background-color: white;
 }
 
-.infoDlg-OK-Btn, #btn-confirm-ok {
+.infoDlg-OK-Btn,
+#btn-confirm-ok {
     width: 100px;
     margin-top: 10px;
     /* margin-left: auto; */
@@ -905,7 +921,8 @@ label {
     margin-bottom: 10px;
 }
 
-.infoDlg-OK-Btn,  #btn-confirm-cancel {
+.infoDlg-OK-Btn,
+#btn-confirm-cancel {
     margin-top: 10px;
     /* margin-left: auto; */
     float: right;
@@ -943,47 +960,39 @@ label {
 /*=======================================*/
 /* 1. Dialogebene */
 .puzzle-table-dlg {
-    width: 100%;
+    width: 100vh;
+    height: 95vh;
     background-color: #500;
-    position: relative;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-left: auto;
-    margin-right: auto;
-    border-radius: 1.4rem;
     border: none;
-   
-  }
+}
+
+#puzzle-db-dialog::backdrop {
+    background: #500
+}
+
 
 /* 1.1 Wurzel im Dialog */
 .puzzle-db-root {
-    display: flex;
-    flex-direction: column;
-    height: 95vh;
+    position: absolute;
+    left: 2rem;
+    display: grid;
 }
 
-/* 1.1.1 Äußere Klammer auf */
-.puzzle-db-header-outmost {
-    flex-grow: 1;
-}
 /* 1.1.2 Innere Klammer auf */
 .puzzle-db-header {
-    flex-grow: 0;
-  
+    padding: 1.2rem;
     font-size: var(--font-size-xl);
-        font-weight: bold;
-        padding: 1rem;
-        text-align: center;
-         color: white;    
+    font-weight: bold;
+    text-align: center;
+    color: white;
+
 }
 
 /* 1.1.3 Section enthält DB-Tabelle */
 section {
-    flex-grow: 0;
     font-size: var(--font-size);
     position: relative;
     padding-top: 37px;
-    width: 100%;
 }
 
 section.positioned {
@@ -1002,12 +1011,11 @@ section.positioned {
 
 
 
-/* 1.1.4 container-puzzle-buttons */ 
-.container-puzzle-buttons{
-    margin:5px;
-    flex-grow: 0;
-   
+/* 1.1.4 container-puzzle-buttons */
+.container-puzzle-buttons {
+    padding-top: 1.2rem;
 }
+
 /* 1.1.4.1 Die Buttons des Dialogs           */
 
 .puzzle-db-button {
@@ -1029,19 +1037,11 @@ section.positioned {
 }
 
 .puzzle-btns {
-    margin: 0.5rem;;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr); 
+    grid-template-rows: repeat(2, 1fr);
     gap: 0.1rem;
 }
-
-
-/* 1.1.5 Äußere Klammer zu */
-.puzzle-db-footer-outmost {
-    flex-grow: 1;
-}
-
 
 
 /* ========================================*/
@@ -1081,7 +1081,7 @@ section.positioned {
 /* Print */
 /*======================================*/
 .print-content {
-    display:none;
+    display: none;
 }
 
 .puzzle-header-print {
@@ -1126,6 +1126,7 @@ table {
 .puzzle-db-table td+td {
     border-left: 1px solid #eee;
 }
+
 section div {
     font-size: var(--font-size);
 }
@@ -1163,7 +1164,7 @@ th {
     padding-right: 1rem;
 }
 
-#col-status-open div  {
+#col-status-open div {
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-bg-color);
     padding-right: 1rem;
@@ -1208,7 +1209,7 @@ th {
 
 #search-level {
     width: 14rem;
-    left:25%;
+    left: 25%;
     top: 25%;
     margin-top: 20px;
     padding: 2.4rem;

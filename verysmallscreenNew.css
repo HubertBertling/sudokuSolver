@@ -927,7 +927,6 @@ label {
 /* 1. Dialogebene */
 .puzzle-table-dlg {
     background-color: #500;
-    position: relative;
     margin-top: auto;
     margin-bottom: auto;
     margin-left: auto;
@@ -937,21 +936,19 @@ label {
 
 }
 
-/* 1.1 Wurzel im Dialog */
-.puzzle-db-root {
-    display: flex;
-    flex-direction: column;
-    height: 95vh;
+
+#puzzle-db-dialog::backdrop {
+    background: #500
 }
 
-/* 1.1.1 Äußere Klammer auf */
-.puzzle-db-header-outmost {
-    flex-grow: 1;
+
+/* 1.1 Wurzel im Dialog */
+.puzzle-db-root {
+    display: grid;
 }
 
 /* 1.1.2 Innere Klammer auf */
 .puzzle-db-header {
-    flex-grow: 0;
     font-size: var(--font-size-xl);
     font-weight: bold;
     padding: 1rem;
@@ -961,11 +958,9 @@ label {
 
 /* 1.1.3 Section enthält DB-Tabelle */
 section {
-    flex-grow: 0;
     font-size: var(--font-size);
     position: relative;
     padding-top: 37px;
-    width: 100%;
 }
 
 section.positioned {
@@ -987,10 +982,7 @@ section.positioned {
 
 /* 1.1.4 container-puzzle-buttons */
 .container-puzzle-buttons {
-    margin: 5px;
-    flex-grow: 0;
-    border: none;
-
+   padding-top: 1.2rem;
 }
 
 /* 1.1.4.1 Die Buttons des Dialogs           */
@@ -1015,19 +1007,13 @@ section.positioned {
 
 .puzzle-btns {
     margin: 0.5rem;
-    background: #500;
     border: none;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    /*  grid-template-rows: repeat(5, 1fr); */
+    grid-template-rows: repeat(2, 1fr); 
     gap: 0.1rem;
 }
 
-
-/* 1.1.5 Äußere Klammer zu */
-.puzzle-db-footer-outmost {
-    flex-grow: 1;
-}
 
 
 
