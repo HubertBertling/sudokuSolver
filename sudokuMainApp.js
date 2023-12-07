@@ -70,12 +70,26 @@ class SudokuMainApp {
         this.mySolver.init();
         this.mySolver.notify();
         this.myPuzzleDB.init();
+        this.myPuzzleDB.importBackRunPuzzle();
     }
+    
 
     helpFunktion() {
         window.open('./help.html');
     }
 }
+
+// Example puzzle with 23 back tracks
+
+back23 =    ["0","3","0","0","1","0","0","0","9",
+            "0","0","6","0","0","0","5","0","0",
+            "1","0","0","0","0","0","0","4","0",
+            "4","0","0","0","0","3","2","0","0",
+            "0","9","0","0","7","0","0","0","8",
+            "0","0","5","6","0","0","0","0","0",
+            "8","0","0","0","0","2","0","0","3",
+            "0","0","0","0","9","0","0","7","0",
+            "0","0","0","4","0","0","1","0","0"];
 
 // Launch and initialize the app
 start();

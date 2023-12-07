@@ -4086,11 +4086,28 @@ class SudokuGrid extends SudokuModel {
         return tmpPuzzleArray;
     }
 
+    getSimplePuzzleArray() {
+        let tmpPuzzleArray = [];
+        for (let i = 0; i < 81; i++) {
+            tmpPuzzleArray.push(this.sudoCells[i].getValue());
+        }
+        return tmpPuzzleArray;
+    }
+
     loadPuzzleArray(pa) {
         for (let i = 0; i < 81; i++) {
             let tmpCellValue = pa[i].cellValue;
             let tmpCellPhase = pa[i].cellPhase;
             this.sudoCells[i].manualSetValue(tmpCellValue, tmpCellPhase);
+        }
+    }
+    loadSimplePuzzleArray() {
+        for (let i = 0; i < 81; i++) {
+            if (back23[i] == '0') {
+                this.sudoCells[i].manualSetValue(back23[i], '');
+            } else {
+                this.sudoCells[i].manualSetValue(back23[i], 'define');
+            }
         }
     }
 
@@ -6251,7 +6268,7 @@ class SudokuPuzzleDB extends SudokuModel {
         } else {
             this.selectedIndex = -1;
         }
-
+        this.init();
         // 
         this.sorted = new Map([
             ['name', 'desc'],
@@ -6294,8 +6311,7 @@ class SudokuPuzzleDB extends SudokuModel {
     }
 
     init() {
-        // Bisher nichts
-    }
+        }
     sort(col) {
         // Hole den Speicher als ein Objekt
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
@@ -6478,6 +6494,21 @@ class SudokuPuzzleDB extends SudokuModel {
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
         this.selectedIndex = this.getIndex(puzzleId);
         this.notify();
+    }
+
+    importBackRunPuzzle() {
+        sudoApp.mySolver.myGrid.loadSimplePuzzleArray();
+        let puzzleId = 'lpmrrjo3kp5dcvrnmab';
+
+        // Hole den Speicher als ein Objekt
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        let playedPuzzleDbElement = sudoApp.mySolver.myGrid.getPuzzleRecord();
+            
+        if (!puzzleMap.has(puzzleId)) {
+            this.saveNamedPuzzle(puzzleId, 'Puzzle 23 backtracks', playedPuzzleDbElement);
+        }
     }
 
     getPuzzle(uid) {

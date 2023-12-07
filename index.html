@@ -62,9 +62,9 @@
             <button class="help-button" id="help-button"> ? </button>
         </div>
         <div class="sudoku-solver-container">
-            
+
             <div class="gridArea" id="gridArea">
-          
+
                 <div class="grid-plus-explainer" id="grid-plus-explainer">
                     <div id="loader">
                         <div id="search-level"></div>
@@ -116,7 +116,7 @@
                 <button class="mobile-interface mobile-btn mobile-number" value="9">9</button>
                 <button class="mobile-interface mobile-btn btn-delete-cell">X</button>
                 <button class="mobile-interface mobile-btn btn-showWrongNumbers">Prüfen</button>
-                
+
                 <button class="mobile-interface mobile-btn mobile-number" value="4">4</button>
                 <button class="mobile-interface mobile-btn mobile-number" value="5">5</button>
                 <button class="mobile-interface mobile-btn mobile-number" value="6">6</button>
@@ -141,7 +141,7 @@
                     <img src="images/pause-96.png" class="btn-image">
                     Pause
                 </button>
-                 <button class="mobile-interface mobile-btn btn-with-image btn-stop" id="btn-stop">
+                <button class="mobile-interface mobile-btn btn-with-image btn-stop" id="btn-stop">
                     <img src="images/stop-96.png" class="btn-image">
                     Stop
                 </button>
@@ -149,7 +149,7 @@
                     <img src="images/step-96.png" class="btn-image" id="image-autostep">
                     Schritt
                 </button>
-               
+
             </div>
         </div>
         <div class="app-empty-footer pc-element">
@@ -226,28 +226,27 @@
                 </div>
             </div>
 
-            </div>
+        </div>
     </dialog>
 
     <dialog class="confirm-dlg noprint" id="confirm-dlg">
         <div class="confirm-dlg-header" id="confirm-dlg-Header">
             Bestätigen
         </div>
-     
+
         <div class="infoDlgBodyRow">
             <img src="images/questionMark.png" class="confirm-icon" id="comfirm-icon">
             <div class="confirm-dlg-body" id="confirm-dlg-body">
-                
+
             </div>
         </div>
-     
+
         <div class="ok-cancel-btns">
             <input type="button" class="main-btn ok-cancel-btn" id="btn-confirm-ok" name="OK" value="Ja" />
-            <input type="button" class="main-btn ok-cancel-btn" id="btn-confirm-cancel" name="Cancel"
-                value="Nein" />
+            <input type="button" class="main-btn ok-cancel-btn" id="btn-confirm-cancel" name="Cancel" value="Nein" />
         </div>
     </dialog>
-    
+
     <dialog class="puzzle-dlg noprint" id="contentSaveDlg">
         <div class="dlg-header" id="contentSaveDlgHeader">
             Puzzle speichern unter ...
@@ -318,23 +317,30 @@
                     <div id="pcNoEval" class="pc-floatBlock">
                         <label for="pc-no-eval"> <input id="pc-no-eval" class="pc-eval-type" name="pc-auswertung"
                                 type="radio" value="lazy-invisible" checked />
-                            Keine: Keine Kandidatenanzeige. Im Hintergrund erfolgt die Kandidatenauswertung im Lazy-Modus.
+                            Keine: Keine Kandidatenanzeige. Im Hintergrund erfolgt die Kandidatenauswertung im
+                            Lazy-Modus.
                         </label>
                     </div>
 
                     <div id="pcLazy" class="pc-floatBlock">
                         <label for="pc-lazy"> <input id="pc-lazy" class="pc-eval-type" name="pc-auswertung" type="radio"
-                                value="lazy" /> Lazy: Die Lazy-Auswertungsmethode praktiziert eine verzögerte Auswertung. Die Auswertung erfolgt nur soweit, bis die nächste notwendige Nummer oder die nächste Single-Nummer oder die nächste versteckte Single-Nummer bestimmt ist.</label>
+                                value="lazy" /> Lazy: Die Lazy-Auswertungsmethode praktiziert eine verzögerte
+                            Auswertung. Die Auswertung erfolgt nur soweit, bis die nächste notwendige Nummer oder die
+                            nächste Single-Nummer oder die nächste versteckte Single-Nummer bestimmt ist.</label>
                     </div>
 
                     <div id="pcStrictPlus" class="pc-floatBlock">
                         <label for="pc-strict-plus"> <input id="pc-strict-plus" class="pc-eval-type"
-                                name="pc-auswertung" type="radio" value="strict-plus" /> Strikt + (Strikt-Plus): Diese Auswertungsmethode führt eine vollständige Auswertung durch. Alle aktuell unzulässigen Kandidaten, alle notwendigen Nummern, alle Singles und versteckten Singles werden ermittelt und angezeigt.
+                                name="pc-auswertung" type="radio" value="strict-plus" /> Strikt + (Strikt-Plus): Diese
+                            Auswertungsmethode führt eine vollständige Auswertung durch. Alle aktuell unzulässigen
+                            Kandidaten, alle notwendigen Nummern, alle Singles und versteckten Singles werden ermittelt
+                            und angezeigt.
                         </label>
                     </div>
                     <div id="pcStrictMinus" class="pc-floatBlock">
                         <label for="pc-strict-minus"> <input id="pc-strict-minus" class="pc-eval-type"
-                                name="pc-auswertung" type="radio" value="strict-minus" /> Strikt - (Strikt-Minus): Wie Strikt +. Jedoch werden die errechneten unzulässigen Kandidaten ausgeblendet.
+                                name="pc-auswertung" type="radio" value="strict-minus" /> Strikt - (Strikt-Minus): Wie
+                            Strikt +. Jedoch werden die errechneten unzulässigen Kandidaten ausgeblendet.
                         </label>
                     </div>
                 </div>
@@ -349,14 +355,14 @@
 
                 <div id="pc-play-mode" name="pc-play-mode" class="pc-play-mode-options">
                     <div id="pcTraining" class="pc-floatBlock">
-                        <label for="pc-training"> <input id="pc-training" class="play-mode-type" 
-                            name="pc-play-mode" type="radio" value="training" /> Trainieren (Puzzle manuell lösen)
+                        <label for="pc-training"> <input id="pc-training" class="play-mode-type" name="pc-play-mode"
+                                type="radio" value="training" /> Trainieren (Puzzle manuell lösen)
                         </label>
                     </div>
 
                     <div id="pcSolving" class="pc-floatBlock">
-                        <label for="pc-solving"> <input id="pc-solving" class="play-mode-type"
-                                name="pc-play-mode" type="radio" value="solving" checked /> Lösen (Puzzle automatisch lösen lassen)
+                        <label for="pc-solving"> <input id="pc-solving" class="play-mode-type" name="pc-play-mode"
+                                type="radio" value="solving" checked /> Lösen (Puzzle automatisch lösen lassen)
                         </label>
                     </div>
                 </div>
@@ -367,11 +373,6 @@
         <button id="settings-dlg-close-btn">Schließen</button>
 
     </dialog>
-
-
-
-
-
 
     <div class="print-content">
         <div class="puzzle-header">
@@ -396,26 +397,6 @@
     <script src="./sudokuMainApp.js"></script>
 
     <script>
-        /* When the user clicks on the button, 
-        toggle between hiding and showing the dropdown content 
-        function myFunction() {
-            document.getElementById("myDropdown").classList.toggle("show");
-        }
-
-        // Close the dropdown if the user clicks outside of it
-        window.onclick = function (event) {
-            if (!event.target.matches('.dropbtn')) {
-                var dropdowns = document.getElementsByClassName("dropdown-content");
-                var i;
-                for (i = 0; i < dropdowns.length; i++) {
-                    var openDropdown = dropdowns[i];
-                    if (openDropdown.classList.contains('show')) {
-                        openDropdown.classList.remove('show');
-                    }
-                }
-            }
-        }
-        */
 
         function openNav() {
             document.getElementById("mySidenav").style.width = "250px";
@@ -454,8 +435,9 @@
 
 
     </script>
-
-
+    <script type="module">
+        import str_dbElementR23 from "./puzzle_23_back.js";
+    </script>
 </body>
 
 </html>
