@@ -148,9 +148,8 @@ html {
 .sidenav .closebtn {
     position: absolute;
     top: 0;
-    right: 25px;
+    left: 17rem;
     font-size: 36px;
-    margin-left: 50px;
 }
 
 .active {
