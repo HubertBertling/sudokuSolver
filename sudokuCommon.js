@@ -4991,7 +4991,11 @@ class SudokuCellView extends SudokuView {
                 let admissibleNrElement = document.createElement('div');
                 admissibleNrElement.setAttribute('data-value', necessaryNr);
                 admissibleNrElement.innerHTML = necessaryNr;
-                admissibleNrElement.classList.add('neccessary');
+                if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
+                    admissibleNrElement.classList.add('neccessary-big');
+                } else {
+                    admissibleNrElement.classList.add('neccessary');      
+                }
                 this.getMyNode().appendChild(admissibleNrElement);
             })
             return true;
@@ -6509,6 +6513,7 @@ class SudokuPuzzleDB extends SudokuModel {
         if (!puzzleMap.has(puzzleId)) {
             this.saveNamedPuzzle(puzzleId, 'Puzzle 23 backtracks', playedPuzzleDbElement);
         }
+        sudoApp.mySolver.init();
     }
 
     getPuzzle(uid) {
