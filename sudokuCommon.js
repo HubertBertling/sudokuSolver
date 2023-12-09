@@ -140,23 +140,12 @@ class SudokuSolverController {
                 this.resetBtnPressed();
             })
         });
-        // Click-Events for both generate buttons, desktop and mobile
-        /*
-        this.btns = document.querySelectorAll('.btn-generate');
-        this.btns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                this.generateBtnPressed();
-            })
-        });
-        */
         this.btns = document.querySelectorAll('.help-button');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
                 sudoApp.helpFunktion();
             })
         });
-
-
 
         // Click-Events for both showWrongNumbers buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-showWrongNumbers');
@@ -3662,7 +3651,7 @@ class SudokuGrid extends SudokuModel {
 
         // Aktuelle Selektion
         this.indexSelected = -1;
-        // In der slektierten Zelle der Indes der selektierten
+        // In der selektierten Zelle die Indices der selektierten
         // zulässigen Nummer
         this.adMissibleIndexSelected = -1;
 
@@ -5722,15 +5711,26 @@ class SudokuCell extends SudokuModel {
         this.myGamePhase = phase;
     }
     nextAdMissibleIndex() {
+        
         let maxIndex = this.getAdmissibles().size;
-        let adMissibleArray = Array.from(this.getAdmissibles());
+        let adMissibleArray = Array.from(this.getAdmissibles()); 
+        let necessaryNr = -1;
+        let necessaryIndex = -1;
 
+        if (this.myNecessarys.size > 0){
+            necessaryNr = Array.from(this.myNecessarys)[0];
+            necessaryIndex = adMissibleArray.indexOf(necessaryNr);
+            this.adMissibleIndexSelected = necessaryIndex;
+            return necessaryIndex;
+        }
+        
         let nextIndex = this.adMissibleIndexSelected + 1;
         let nextAdmissible = '-1';
         let found = false;
 
         while (nextIndex < maxIndex && !found) {
             nextAdmissible = adMissibleArray[nextIndex];
+            //Subindex is display relevant if the candidate is red.
             if (this.isDisplayRelevant(nextAdmissible)) {
                 found = true;
             } else {
@@ -5747,9 +5747,7 @@ class SudokuCell extends SudokuModel {
     }
 
     isDisplayRelevant(admissibleNr) {
-        let relevant =
-            admissibleNr == Array.from(this.myNecessarys)[0] ||
-            this.myLevel_gt0_inAdmissibles.has(admissibleNr);
+        let relevant = this.myLevel_gt0_inAdmissibles.has(admissibleNr);
         return relevant;
     }
 
