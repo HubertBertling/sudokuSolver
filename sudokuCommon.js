@@ -160,7 +160,7 @@ class SudokuSolverController {
         let mobileRadioEvalNodes = document.querySelectorAll('.pc-eval-type');
         mobileRadioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
-                let appSetting = '';
+                let appSetting = null;
                 let str_appSetting = localStorage.getItem("sudokuAppSetting");
                 if (str_appSetting !== null) {
                     appSetting = JSON.parse(str_appSetting);
@@ -175,7 +175,7 @@ class SudokuSolverController {
         let mobileRadioPMNodes = document.querySelectorAll('.play-mode-type');
         mobileRadioPMNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
-                let appSetting = '';
+                let appSetting = null;
                 let str_appSetting = localStorage.getItem("sudokuAppSetting");
                 if (str_appSetting !== null) {
                     appSetting = JSON.parse(str_appSetting);
