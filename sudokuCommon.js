@@ -6215,17 +6215,6 @@ class SudokuPuzzleDBView extends SudokuView {
                 tr.appendChild(td_status_open);
 
 
-
-
-
-                /*         let td_steps_lazy = document.createElement('td');
-                         td_steps_lazy.innerText = pzRecord.stepsLazy;
-                         tr.appendChild(td_steps_lazy);
-         
-                         let td_steps_strict = document.createElement('td');
-                         td_steps_strict.innerText = pzRecord.stepsStrict;
-                         tr.appendChild(td_steps_strict);  */
-
                 let td_level = document.createElement('td');
                 td_level.innerText = pzRecord.preRunRecord.level;
                 tr.appendChild(td_level);
@@ -6240,25 +6229,9 @@ class SudokuPuzzleDBView extends SudokuView {
 
                 tbNode.appendChild(tr);
             }
-            this.scrollToBeVisible(selectedTr, container);
+            
         }
     }
-
-    scrollToBeVisible(ele, container) {
-        const eleTop = ele.offsetTop;
-        const eleBottom = eleTop + ele.clientHeight;
-
-        const containerTop = container.scrollTop;
-        const containerBottom = containerTop + container.clientHeight;
-
-        if (eleTop < containerTop) {
-            // Scroll to the top of container
-            container.scrollTop -= containerTop - eleTop;
-        } else if (eleBottom > containerBottom) {
-            // Scroll to the bottom of container
-            container.scrollTop += eleBottom - containerBottom;
-        }
-    };
 }
 class SudokuPuzzleDB extends SudokuModel {
     constructor() {
