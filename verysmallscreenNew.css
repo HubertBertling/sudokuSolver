@@ -374,7 +374,7 @@ app-empty-footer {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     place-items: center;
-    font-size: 1.0rem;
+    font-size: 1.2rem;
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-color);
 }
