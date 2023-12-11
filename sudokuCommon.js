@@ -156,18 +156,16 @@ class SudokuSolverController {
         });
 
         // Radio button eval type: No-evaluation, Lazy, Strikt+ oder Strikt-
-        // mobile variant
         let mobileRadioEvalNodes = document.querySelectorAll('.pc-eval-type');
         mobileRadioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
-                let appSetting = '';
+                let appSetting = undefined;
                 let str_appSetting = localStorage.getItem("sudokuAppSetting");
-                if (str_appSetting !== null) {
-                    appSetting = JSON.parse(str_appSetting);
-                }
+                //The item appSetting exists already
+                appSetting = JSON.parse(str_appSetting);
+                appSetting.evalType = radioNode.value;
                 this.mySolver.setActualEvalType(radioNode.value);
-                appSetting.evalType = radioNode.value,
-                    str_appSetting = JSON.stringify(appSetting);
+                str_appSetting = JSON.stringify(appSetting);
                 localStorage.setItem("sudokuAppSetting", str_appSetting);
             })
         });
@@ -175,14 +173,13 @@ class SudokuSolverController {
         let mobileRadioPMNodes = document.querySelectorAll('.play-mode-type');
         mobileRadioPMNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
-                let appSetting = '';
+                let appSetting = undefined;
                 let str_appSetting = localStorage.getItem("sudokuAppSetting");
-                if (str_appSetting !== null) {
-                    appSetting = JSON.parse(str_appSetting);
-                }
+                //The item appSetting exists already
+                appSetting = JSON.parse(str_appSetting);
+                appSetting.playMode = radioNode.value;
                 this.mySolver.setPlayMode(radioNode.value);
-                appSetting.playMode = radioNode.value,
-                    str_appSetting = JSON.stringify(appSetting);
+                str_appSetting = JSON.stringify(appSetting);
                 localStorage.setItem("sudokuAppSetting", str_appSetting);
             })
         });
@@ -1138,20 +1135,22 @@ class SudokuSolver extends SudokuCalculator {
 
     init() {
         super.init();
-
+        let appSetting = undefined;
         let str_appSetting = localStorage.getItem("sudokuAppSetting");
-        if (str_appSetting !== null) {
-            let appSetting = JSON.parse(str_appSetting);
-            // Downward compatibility
-            if (appSetting.evalType == undefined) {
-                appSetting.evalType = 'lazy-invisible';
+        if (str_appSetting == null) {
+            // appSetting does not exist in localStorage
+            appSetting = {
+                evalType: 'lazy-invisible',
+                playMode: 'training'
             }
-            this.setPlayMode(appSetting.playMode);
-            this.setActualEvalType(appSetting.evalType);
+            str_appSetting = JSON.stringify(appSetting);
+            localStorage.setItem("sudokuAppSetting", str_appSetting);
         } else {
-            this.setPlayMode('training');
-            this.setActualEvalType('lazy-invisible');
+            // appSetting exists already
+            appSetting = JSON.parse(str_appSetting);
         }
+        this.setActualEvalType(appSetting.evalType);
+        this.setPlayMode(appSetting.playMode);
         this.notify();
     }
     loadPuzzle(uid, puzzle) {
@@ -4983,7 +4982,7 @@ class SudokuCellView extends SudokuView {
                 if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
                     admissibleNrElement.classList.add('neccessary-big');
                 } else {
-                    admissibleNrElement.classList.add('neccessary');      
+                    admissibleNrElement.classList.add('neccessary');
                 }
                 this.getMyNode().appendChild(admissibleNrElement);
             })
@@ -5711,19 +5710,19 @@ class SudokuCell extends SudokuModel {
         this.myGamePhase = phase;
     }
     nextAdMissibleIndex() {
-        
+
         let maxIndex = this.getAdmissibles().size;
-        let adMissibleArray = Array.from(this.getAdmissibles()); 
+        let adMissibleArray = Array.from(this.getAdmissibles());
         let necessaryNr = -1;
         let necessaryIndex = -1;
 
-        if (this.myNecessarys.size > 0){
+        if (this.myNecessarys.size > 0) {
             necessaryNr = Array.from(this.myNecessarys)[0];
             necessaryIndex = adMissibleArray.indexOf(necessaryNr);
             this.adMissibleIndexSelected = necessaryIndex;
             return necessaryIndex;
         }
-        
+
         let nextIndex = this.adMissibleIndexSelected + 1;
         let nextAdmissible = '-1';
         let found = false;
@@ -6286,7 +6285,7 @@ class SudokuPuzzleDB extends SudokuModel {
     }
 
     init() {
-        }
+    }
     sort(col) {
         // Hole den Speicher als ein Objekt
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
@@ -6480,7 +6479,7 @@ class SudokuPuzzleDB extends SudokuModel {
 
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         let playedPuzzleDbElement = sudoApp.mySolver.myGrid.getPuzzleRecord();
-            
+
         if (!puzzleMap.has(puzzleId)) {
             this.saveNamedPuzzle(puzzleId, 'Puzzle 23 backtracks', playedPuzzleDbElement);
         }
