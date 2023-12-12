@@ -178,7 +178,6 @@ html {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-
 }
 
 /* App-header */
@@ -973,10 +972,12 @@ label {
 /*=======================================*/
 /* 1. Dialogebene */
 .puzzle-table-dlg {
+    margin: auto;
     width: 100vh;
-    height: 95vh;
-   
+    height: 100vh;
     border: none;
+    background-color: #500;
+ 
 }
 
 #puzzle-db-dialog::backdrop {
@@ -986,14 +987,15 @@ label {
 .puzzle-db-header {
     font-size: var(--font-size-xl);
     font-weight: bold;
-    padding: 1rem;
+    padding: 2rem;
     text-align: center;
-    color: black;
+    color: white;
+    background-color: #500;
 }
 
 .tableFixHead {
     overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
-    height: 400px; /* gives an initial height of 200px to the table */
+    height:500px; /* gives an initial height of 200px to the table */
   }
   .tableFixHead thead th {
     position: sticky; /* make the table heads sticky */
@@ -1006,18 +1008,44 @@ label {
   }
   th,
   td {
-    padding: 6px 8px;
+    padding: 6px 6px;
     border: 1px solid #ccc;
   }
   th {
     background: #eee;
   }
+#col-status-given,
+#col-status-solved,
+#col-status-open {
+    writing-mode:vertical-rl;
+}
+
+#col-status-given {
+    background-color: var(--defined-cell-bg-color);
+    color: white;
+}
+#col-status-solved {
+    background-color: var(--played-cell-bg-color);
+}
+#col-status-open {
+    background-color: var(--nested-cell-bg-color);
+}
+
+.puzzle-db-tbody tr td {
+    background-color: #ddd;
+}
+
+
+.puzzle-db-tbody tr.selected td {
+    background-color: lightcyan;
+}
 
 
 
 /* 1.1.4 container-puzzle-buttons */
 .container-puzzle-buttons {
     padding-top: 1.2rem;
+    background-color: #500;
 }
 
 /* 1.1.4.1 Die Buttons des Dialogs           */
