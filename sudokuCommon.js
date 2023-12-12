@@ -53,11 +53,11 @@ class SudokuSolverController {
                 case "7":
                 case "8":
                 case "9":
-                    this.handleNumberPressed(event.key);
+                    this.handleNumberPressed(event.key, event.target);
                     break;
                 case "Delete":
                 case "Backspace":
-                    this.handleDeletePressed();
+                    this.handleDeletePressed(event.target);
                     break;
                 default:
                     return;
@@ -189,45 +189,54 @@ class SudokuSolverController {
     // Solver event handler
     // ===============================================================
 
-    handleNumberPressed(nr) {
-        if (this.mySolver.isInAutoExecution()) {
-            // Number button pressed during automatic execution
-            // The stepper is stopped and terminated
-            this.mySolver.autoExecStop();
+    handleNumberPressed(nr, target) {
+        if (target.nodeName == 'INPUT') {
+            // Input inside a dialog
         } else {
-            let action = {
-                operation: 'setNr',
-                cellIndex: this.mySolver.myGrid.indexSelected,
-                cellValue: nr
-            }
-            this.mySolver.atCurrentSelectionSetNumber(nr);
-            if (action.cellIndex > -1) {
-                this.myUndoActionStack.push(action);
-            }
-            this.mySolver.notify();
-            if (this.mySolver.succeeds()) {
-                this.mySuccessDialog.open();
+            // Cell inside the solver
+            if (this.mySolver.isInAutoExecution()) {
+                // Number button pressed during automatic execution
+                // The stepper is stopped and terminated
+                this.mySolver.autoExecStop();
+            } else {
+                let action = {
+                    operation: 'setNr',
+                    cellIndex: this.mySolver.myGrid.indexSelected,
+                    cellValue: nr
+                }
+                this.mySolver.atCurrentSelectionSetNumber(nr);
+                if (action.cellIndex > -1) {
+                    this.myUndoActionStack.push(action);
+                }
+                this.mySolver.notify();
+                if (this.mySolver.succeeds()) {
+                    this.mySuccessDialog.open();
+                }
             }
         }
     }
 
-    handleDeletePressed() {
-        if (this.mySolver.isInAutoExecution()) {
-            // Delete button pressed during automatic execution
-            // The stepper is stopped and terminated
-            this.mySolver.autoExecStop();
+    handleDeletePressed(target) {
+        if (target.nodeName  == 'INPUT') {
+            // Input inside a dialog
+        } else {
+            // Cell inside the solver
+            if (this.mySolver.isInAutoExecution()) {
+                // Delete button pressed during automatic execution
+                // The stepper is stopped and terminated
+                this.mySolver.autoExecStop();
+            }
+            let action = {
+                operation: 'delete',
+                cellIndex: this.mySolver.myGrid.indexSelected,
+                cellValue: this.mySolver.myGrid.sudoCells[this.mySolver.myGrid.indexSelected].getValue()
+            }
+            if (action.cellIndex > -1) {
+                this.myUndoActionStack.push(action);
+            }
+            this.mySolver.deleteSelected();
+            this.mySolver.notify();
         }
-        let action = {
-            operation: 'delete',
-            cellIndex: this.mySolver.myGrid.indexSelected,
-            cellValue: this.mySolver.myGrid.sudoCells[this.mySolver.myGrid.indexSelected].getValue()
-        }
-        if (action.cellIndex > -1) {
-            this.myUndoActionStack.push(action);
-        }
-        this.mySolver.deleteSelected();
-        this.mySolver.notify();
-
     }
 
     sudokuCellPressed(index) {
