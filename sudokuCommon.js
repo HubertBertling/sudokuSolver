@@ -53,11 +53,11 @@ class SudokuSolverController {
                 case "7":
                 case "8":
                 case "9":
-                    this.handleNumberPressed(event.key, event.target);
+                    this.handleNumberPressed(event.key);
                     break;
                 case "Delete":
                 case "Backspace":
-                    this.handleDeletePressed(event.target);
+                    this.handleDeletePressed();
                     break;
                 default:
                     return;
@@ -189,8 +189,8 @@ class SudokuSolverController {
     // Solver event handler
     // ===============================================================
 
-    handleNumberPressed(nr, target) {
-        if (target.nodeName == 'INPUT') {
+    handleNumberPressed(nr) {
+        if (document.activeElement.tagName == 'INPUT') {
             // Input inside a dialog
         } else {
             // Cell inside the solver
@@ -216,8 +216,8 @@ class SudokuSolverController {
         }
     }
 
-    handleDeletePressed(target) {
-        if (target.nodeName  == 'INPUT') {
+    handleDeletePressed() {
+        if (document.activeElement.tagName  == 'INPUT') {
             // Input inside a dialog
         } else {
             // Cell inside the solver
