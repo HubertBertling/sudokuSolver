@@ -28,7 +28,6 @@ class SudokuSolverController {
         this.number_inputs = document.querySelectorAll('.mobile-number');
         this.number_inputs.forEach((e, index) => {
             e.addEventListener('click', () => {
-                // Notice: index + 1 = number on button
                 let btnNumber = this.number_inputs[index].value.toString();
                 this.handleNumberPressed(btnNumber);
             })
@@ -54,9 +53,11 @@ class SudokuSolverController {
                 case "8":
                 case "9":
                     this.handleNumberPressed(event.key);
+                    this.handleNumberPressed(event.key);
                     break;
                 case "Delete":
                 case "Backspace":
+                    this.handleDeletePressed();
                     this.handleDeletePressed();
                     break;
                 default:
@@ -229,9 +230,10 @@ class SudokuSolverController {
             let action = {
                 operation: 'delete',
                 cellIndex: this.mySolver.myGrid.indexSelected,
-                cellValue: this.mySolver.myGrid.sudoCells[this.mySolver.myGrid.indexSelected].getValue()
+                cellValue: undefined
             }
             if (action.cellIndex > -1) {
+                action.cellValue = this.mySolver.myGrid.sudoCells[this.mySolver.myGrid.indexSelected].getValue();
                 this.myUndoActionStack.push(action);
             }
             this.mySolver.deleteSelected();
