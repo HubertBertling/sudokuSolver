@@ -1012,8 +1012,10 @@ label {
     border: 1px solid #ccc;
   }
   th {
-    background: #eee;
-  }
+    /* background: #eee; */
+    background: #500;
+    color:white;
+}
 #col-status-given,
 #col-status-solved,
 #col-status-open {
@@ -1026,9 +1028,11 @@ label {
 }
 #col-status-solved {
     background-color: var(--played-cell-bg-color);
+    color: black;
 }
 #col-status-open {
     background-color: var(--nested-cell-bg-color);
+    color: black;
 }
 
 .puzzle-db-tbody tr td {

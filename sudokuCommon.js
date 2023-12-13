@@ -17,14 +17,6 @@ class SudokuSolverController {
         // =============================================================
 
         // Set click event for the number buttons
-        this.number_inputs = document.querySelectorAll('.number');
-        this.number_inputs.forEach((e, index) => {
-            e.addEventListener('click', () => {
-                // Notice: index + 1 = number on button
-                let btnNumber = (index + 1).toString();
-                this.handleNumberPressed(btnNumber);
-            })
-        });
         this.number_inputs = document.querySelectorAll('.mobile-number');
         this.number_inputs.forEach((e, index) => {
             e.addEventListener('click', () => {
@@ -52,13 +44,11 @@ class SudokuSolverController {
                 case "7":
                 case "8":
                 case "9":
-                    this.handleNumberPressed(event.key);
-                    this.handleNumberPressed(event.key);
+                    this.handleKeyNumberPressed(event);
                     break;
                 case "Delete":
                 case "Backspace":
-                    this.handleDeletePressed();
-                    this.handleDeletePressed();
+                    this.handleDeleteKeyPressed(event);
                     break;
                 default:
                     return;
@@ -189,56 +179,78 @@ class SudokuSolverController {
     // ===============================================================
     // Solver event handler
     // ===============================================================
+    handleKeyNumberPressed(event) {
+        switch (event.target.tagName) {
+            case 'INPUT': {
+                event.stopPropagation();
+                break;
+            }
+            case 'BODY': {
+                this.handleNumberPressed(event.key);
+                break;
+            }
+            default: {
+                throw new Error('Unexpected event target: ' + event.target.tagName);
+            }
+        }
+    }
 
     handleNumberPressed(nr) {
-        if (document.activeElement.tagName == 'INPUT') {
-            // Input inside a dialog
+        if (this.mySolver.isInAutoExecution()) {
+            // Number button pressed during automatic execution
+            // The stepper is stopped and terminated
+            this.mySolver.autoExecStop();
         } else {
-            // Cell inside the solver
-            if (this.mySolver.isInAutoExecution()) {
-                // Number button pressed during automatic execution
-                // The stepper is stopped and terminated
-                this.mySolver.autoExecStop();
-            } else {
-                let action = {
-                    operation: 'setNr',
-                    cellIndex: this.mySolver.myGrid.indexSelected,
-                    cellValue: nr
-                }
-                this.mySolver.atCurrentSelectionSetNumber(nr);
-                if (action.cellIndex > -1) {
-                    this.myUndoActionStack.push(action);
-                }
-                this.mySolver.notify();
-                if (this.mySolver.succeeds()) {
-                    this.mySuccessDialog.open();
-                }
+            let action = {
+                operation: 'setNr',
+                cellIndex: this.mySolver.myGrid.indexSelected,
+                cellValue: nr
+            }
+            this.mySolver.atCurrentSelectionSetNumber(nr);
+            if (action.cellIndex > -1) {
+                this.myUndoActionStack.push(action);
+            }
+            this.mySolver.notify();
+            if (this.mySolver.succeeds()) {
+                this.mySuccessDialog.open();
+            }
+        }
+    }
+
+    handleDeleteKeyPressed(event) {
+        switch (event.target.tagName) {
+            case 'INPUT': {
+                event.stopPropagation();
+                break;
+            }
+            case 'BODY': {
+                this.handleDeletePressed();
+                break;
+            }
+            default: {
+                throw new Error('Unexpected event target: ' + event.target.tagName);
             }
         }
     }
 
     handleDeletePressed() {
-        if (document.activeElement.tagName  == 'INPUT') {
-            // Input inside a dialog
-        } else {
-            // Cell inside the solver
-            if (this.mySolver.isInAutoExecution()) {
-                // Delete button pressed during automatic execution
-                // The stepper is stopped and terminated
-                this.mySolver.autoExecStop();
-            }
-            let action = {
-                operation: 'delete',
-                cellIndex: this.mySolver.myGrid.indexSelected,
-                cellValue: undefined
-            }
-            if (action.cellIndex > -1) {
-                action.cellValue = this.mySolver.myGrid.sudoCells[this.mySolver.myGrid.indexSelected].getValue();
-                this.myUndoActionStack.push(action);
-            }
-            this.mySolver.deleteSelected();
-            this.mySolver.notify();
+        // Cell inside the solver
+        if (this.mySolver.isInAutoExecution()) {
+            // Delete button pressed during automatic execution
+            // The stepper is stopped and terminated
+            this.mySolver.autoExecStop();
         }
+        let action = {
+            operation: 'delete',
+            cellIndex: this.mySolver.myGrid.indexSelected,
+            cellValue: undefined
+        }
+        if (action.cellIndex > -1) {
+            action.cellValue = this.mySolver.myGrid.sudoCells[this.mySolver.myGrid.indexSelected].getValue();
+            this.myUndoActionStack.push(action);
+        }
+        this.mySolver.deleteSelected();
+        this.mySolver.notify();
     }
 
     sudokuCellPressed(index) {
@@ -6173,7 +6185,7 @@ class SudokuPuzzleDBView extends SudokuView {
             let selectedTr = null;
             for (let [key, pzRecord] of puzzleMap) {
                 let tr = document.createElement('tr');
-                tr.setAttribute("onClick", "sudoApp.myPuzzleDBController.setSelected(this)");
+                tr.setAttribute("onclick", "sudoApp.myPuzzleDBController.setSelected(this)");
                 tr.setAttribute("ondblclick", "sudoApp.myPuzzleDBController.loadBtnPressed()");
                 tr.setAttribute("style", "cursor:pointer");
                 tr.classList.add('item')
@@ -6239,7 +6251,7 @@ class SudokuPuzzleDBView extends SudokuView {
 
                 tbNode.appendChild(tr);
             }
-            
+
         }
     }
 }

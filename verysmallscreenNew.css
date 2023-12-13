@@ -941,7 +941,6 @@ label {
     margin-bottom: auto;
     margin-left: auto;
     margin-right: auto;
-    border-radius: 1.4rem;
     border: none;
 
 }
@@ -966,28 +965,58 @@ label {
     color: white;
 }
 
-/* 1.1.3 Section enthält DB-Tabelle */
-section {
-    font-size: var(--font-size);
-    position: relative;
-    padding-top: 37px;
+
+
+.tableFixHead {
+    overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+    height:400px; /* gives an initial height of 200px to the table */
+  }
+  .tableFixHead thead th {
+    position: sticky; /* make the table heads sticky */
+    top:0px; /* table head will be placed from the top of the table and sticks to it */
+  }
+  table {
+    border-collapse: collapse; /* make the table borders collapse to each other */
+    width: 100%;
+   
+  }
+  th,
+  td {
+    padding: 6px 6px;
+    border: 1px solid #ccc;
+  }
+  th {
+    /* background: #eee; */
+    background: #500;
+    color:white;
+}
+#col-status-given,
+#col-status-solved,
+#col-status-open {
+    writing-mode:vertical-rl;
 }
 
-section.positioned {
-    position: absolute;
-    top: 50px;
-    left: 50px;
-    box-shadow: 0 0 15px #333;
+#col-status-given {
+    background-color: var(--defined-cell-bg-color);
+    color: white;
+}
+#col-status-solved {
+    background-color: var(--played-cell-bg-color);
+    color: black;
+}
+#col-status-open {
+    background-color: var(--nested-cell-bg-color);
+    color: black;
 }
 
-/* 1.1.3.1 Container */
-.container {
-    overflow-y: auto;
-    /* Höhe der sichtbaren Puzzle-Tabelle hier einstellen. */
-    height: 65vh;
-    border: none;
+.puzzle-db-tbody tr td {
+    background-color: #ddd;
 }
 
+
+.puzzle-db-tbody tr.selected td {
+    background-color: lightcyan;
+}
 
 
 /* 1.1.4 container-puzzle-buttons */
@@ -1100,78 +1129,6 @@ section.positioned {
     place-items: center;
 }
 
-
-table {
-    border-spacing: 0;
-    width: 100%;
-}
-
-.puzzle-db-table td+td {
-    border-left: 1px solid #eee;
-}
-
-section div {
-    font-size: var(--font-size);
-}
-
-.puzzle-db-table td,
-th {
-    border-bottom: 1px solid #eee;
-    background: #ddd;
-    color: #000;
-    /* Zeilenhöhe der Tabelle mit erstem Parameter einstellen. */
-    padding: 10px 5px;
-    font-size: var(--font-size);
-}
-
-.puzzle-db-table th {
-    height: 0;
-    line-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    color: transparent;
-    border: none;
-    white-space: nowrap;
-    font-size: var(--font-size);
-}
-
-#col-status-given div {
-    background-color: var(--defined-cell-bg-color);
-    color: var(--defined-cell-bg-color);
-     padding-right: 1rem;
-}
-
-#col-status-solved div {
-    background-color: var(--played-cell-bg-color);
-    color: var(--played-cell-bg-color);
-    padding-right: 1rem;
-}
-
-#col-status-open div  {
-    background-color: var(--nested-cell-bg-color);
-    color: var(--nested-cell-bg-color);
-    padding-right: 1rem;
-}
-
-
-.puzzle-db-table th div {
-    position: absolute;
-    background: transparent;
-    color: #fff;
-    padding: 8px 5px;
-    top: 0;
-    margin-left: -2px;
-    line-height: normal;
-    border-left: 1px solid #800;
-}
-
-.puzzle-db-table th:first-child div {
-    border: none;
-}
-
-.puzzle-db-tbody tr.selected td {
-    background-color: lightcyan;
-}
 
 #loader {
     display: none;
