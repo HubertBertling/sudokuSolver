@@ -6182,11 +6182,10 @@ class SudokuPuzzleDBView extends SudokuView {
         while (tbNode.childElementCount > 0) {
             tbNode.removeChild(tbNode.lastChild);
         }
-
+        let selectedTr = undefined;
         if (puzzleMap.size > 0) {
 
             let i = 0;
-            let selectedTr = null;
             for (let [key, pzRecord] of puzzleMap) {
                 let tr = document.createElement('tr');
                 tr.setAttribute("onclick", "sudoApp.myPuzzleDBController.setSelected(this)");
@@ -6255,8 +6254,12 @@ class SudokuPuzzleDBView extends SudokuView {
 
                 tbNode.appendChild(tr);
             }
-
+            if (selectedTr !== undefined) {
+                selectedTr.scrollIntoView(false);
+            }
         }
+
+
     }
 }
 class SudokuPuzzleDB extends SudokuModel {
@@ -6442,7 +6445,7 @@ class SudokuPuzzleDB extends SudokuModel {
             }
             default: {
                 // Kann nicht vorkommen
-                throw new Error('Unexpected column name: ' + col); 
+                throw new Error('Unexpected column name: ' + col);
             }
         }
         // Kreiere die JSON-Version des Speicherobjektes
