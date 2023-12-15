@@ -183,20 +183,6 @@ html {
 /* App-header */
 
 
-.puzzle-db-button {
-    background-color: #ddd;
-    text-align: center;
-    font-size: var(--font-size);
-    border-radius: 0.5rem;
-    border: none;
-    margin: 0.8rem 0.6rem 0.6rem 0.6rem;
-    padding: 0.2rem;
-}
-
-.puzzle-db-button:active {
-    transform: translate(2px, 2px);
-}
-
 /* App-header */
 
 .app-empty-footer {
@@ -553,7 +539,7 @@ html {
     gap: 5px;
     grid-template-columns: 1fr;
     place-items: center;
-    padding: 0.8rem;
+    padding: 0.6rem;
 }
 
 .mobile-number {
@@ -966,10 +952,9 @@ label {
 }
 
 
+/*======================================*/
+/*======================================*/
 
-/*=======================================*/
-/* Puzzle-Datenbank 
-/*=======================================*/
 /* 1. Dialogebene */
 .puzzle-table-dlg {
     margin: auto;
@@ -980,11 +965,11 @@ label {
  
 }
 
-#puzzle-db-dialog::backdrop {
+#db-puzzle-dialog::backdrop {
     background: #500
 }
 
-.puzzle-db-header {
+.db-puzzle-header {
     font-size: var(--font-size-xl);
     font-weight: bold;
     padding: 2rem;
@@ -993,33 +978,37 @@ label {
     background-color: #500;
 }
 
+
 .tableFixHead {
     overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
-    height:500px; /* gives an initial height of 200px to the table */
+    height:480px; /* gives an initial height of 200px to the table */
   }
   .tableFixHead thead th {
     position: sticky; /* make the table heads sticky */
     top:0px; /* table head will be placed from the top of the table and sticks to it */
   }
-  table {
+  .db-puzzle-table {
     border-collapse: collapse; /* make the table borders collapse to each other */
     width: 100%;
    
   }
-  th,
-  td {
+  .db-puzzle-table th,
+  .db-puzzle-table td {
     padding: 6px 6px;
     border: 1px solid #ccc;
   }
-  th {
+
+  .db-puzzle-table th {
     /* background: #eee; */
     background: #500;
     color:white;
 }
+
 #col-status-given,
 #col-status-solved,
 #col-status-open {
     writing-mode:vertical-rl;
+    padding: 0.8rem;
 }
 
 #col-status-given {
@@ -1035,83 +1024,38 @@ label {
     color: black;
 }
 
-.puzzle-db-tbody tr td {
+
+.db-puzzle-tbody tr td {
     background-color: #ddd;
 }
 
-
-.puzzle-db-tbody tr.selected td {
+.db-puzzle-tbody tr.selected td {
     background-color: lightcyan;
 }
 
-
-
-/* 1.1.4 container-puzzle-buttons */
-.container-puzzle-buttons {
-    padding-top: 1.2rem;
-    background-color: #500;
-}
-
-/* 1.1.4.1 Die Buttons des Dialogs           */
-
-.puzzle-db-button {
-    background-color: #ddd;
-    text-align: center;
-    border-radius: 0.3rem;
-    border: none;
-    display: grid;
-    grid-template-columns: 1fr;
-    place-items: center;
-    padding-top: 0.4rem;
-    padding-bottom: 0.4rem;
-    padding-left: 0.4rem;
-    padding-right: 0.4rem;
-}
-
-.puzzle-db-button:active {
-    transform: translate(2px, 2px);
-}
-
-.puzzle-btns {
+.db-puzzle-btns {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 0.1rem;
+    gap: 0.3rem;
+    margin: 1rem;
 }
 
-
-/* ========================================*/
-
-.status-line {
-
+.db-puzzle-button {
+    background-color: #ddd;
+    text-align: center;
     font-size: var(--font-size);
-    color: black;
-    padding-top: 5px;
-    margin-top: 5px;
-
-    line-height: normal;
-    display: flex;
-    width: 100%;
+    display: grid;
+    place-items:center;
+    border-radius: 0.5rem;
+    border: none;
+    margin: 0.8rem 0.6rem 0.6rem 0.6rem;
+    padding: 0.2rem;
 }
 
-.status-line-item {
-    flex-direction: row;
-    padding-left: 5px;
-    padding-right: 5px;
-
+.db-puzzle-button:active {
+    transform: translate(2px, 2px);
 }
-
-
-.pz-nr {
-    margin-left: 10px;
-    margin-right: 5px;
-}
-
-.pz-all {
-    margin-left: 5px;
-    margin-right: 20px;
-}
-
 
 /*======================================*/
 /* Print */
@@ -1120,40 +1064,7 @@ label {
     display: none;
 }
 
-.puzzle-header-print {
-    font-size: var(--font-size-xl);
-    display: inline-block;
-    color: black;
-    margin-top: 10px;
-}
-
-.puzzle-line-print {
-    font-size: var(--font-size);
-    color: black;
-    margin-top: 10px;
-    display: flex;
-    flex-direction: row;
-    line-height: normal;
-}
-
-
-.pz-table-print {
-    margin-left: 30px;
-    margin-right: 5px;
-    display: grid;
-    grid-template-columns: repeat(9, auto);
-}
-
-.cell-field {
-    font-size: var(--font-size);
-    position: relative;
-    width: 20px;
-    height: 20px;
-    display: grid;
-    place-items: center;
-}
-
-
+/* ========================================*/
 
 
 #loader {

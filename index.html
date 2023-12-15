@@ -160,15 +160,15 @@
 
     <!--Dialoge -->
 
-    <dialog class="puzzle-table-dlg noprint" id="puzzle-db-dialog">
-        <div class="puzzle-db-root">
-            <div class="puzzle-db-header">
+    <dialog class="puzzle-table-dlg noprint" id="db-puzzle-dialog">
+        <div class="db-puzzle-root">
+            <div class="db-puzzle-header">
                 Puzzle Datenbank
             </div>
             <div class="tableFixHead">
-             <table class="puzzle-db-table " id="puzzle-db-table">
+             <table class="db-puzzle-table " id="db-puzzle-table">
                 <!--Die Datenbanktabelle-->
-                <thead class="puzzle-db-thead">
+                <thead class="db-puzzle-thead">
                     <tr>
                         <th style="cursor:pointer">Nr</th>
                         <th id="col-name" style="cursor:pointer">Puzzle-Name </th>
@@ -180,29 +180,29 @@
                         <th id="col-date" style="cursor:pointer">Datum</th>
                     </tr>
                 </thead>
-                <tbody class="puzzle-db-tbody" id="puzzle-db-tbody">
+                <tbody class="db-puzzle-tbody" id="db-puzzle-tbody">
                     <!--Der Inhalt der Datenbanktabelle wird per JS aus dem Local-Store geladen-->
                 </tbody>
             </table>
         </div>
 
         <div class="container-puzzle-buttons">
-            <div class="puzzle-btns ">
+            <div class="db-puzzle-btns ">
                 <!--Die buttons unterhalb der Puzzle-Datenbanktabelle -->
-                <button class="puzzle-db-button noprint" id="pz-btn-load"><img src="images/upload.png"
+                <button class="db-puzzle-button noprint" id="pz-btn-load"><img src="images/upload.png"
                         class="btn-image">Laden</button>
-                <button class="puzzle-db-button noprint" id="pz-btn-rename"><img src="images/rename.png"
+                <button class="db-puzzle-button noprint" id="pz-btn-rename"><img src="images/rename.png"
                         class="btn-image">Umbenennen</button>
-                <button class="puzzle-db-button noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
+                <button class="db-puzzle-button noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
                         class="btn-image"></button>
-                <button class="puzzle-db-button noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
+                <button class="db-puzzle-button noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
                         class="btn-image"></button>
-                <button class="puzzle-db-button noprint" id="pz-btn-delete">X</button>
-                <button class="puzzle-db-button" id="puzzle-db-btn-print"><img src="images/drucker.png"
+                <button class="db-puzzle-button noprint" id="pz-btn-delete">X</button>
+                <button class="db-puzzle-button" id="db-puzzle-btn-print"><img src="images/drucker.png"
                         class="btn-image">Drucken
                 </button>
 
-                <button class="puzzle-db-button noprint" id="pz-btn-ok">Schließen</button>
+                <button class="db-puzzle-button noprint" id="pz-btn-ok">Schließen</button>
             </div>
         </div>
 
@@ -355,12 +355,12 @@
     </dialog>
 
     <div class="print-content">
-        <div class="puzzle-header">
+        <div class="print-puzzle-header">
             <!--Id und Name des aktuell geladenen Puzzles werden als String via JS erzeugt-->
-            <div class="pz-id-row" id="pz-id-row">0</div>
+            <div class="print-pz-id-row" id="print-pz-id-row">0</div>
         </div>
-        <div class="puzzle-line">
-            <div class="pz-table" id="print-puzzle">
+        <div class="print-puzzle-line">
+            <div class="print-pz-table" id="print-pz-table">
             </div>
         </div>
     </div>

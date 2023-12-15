@@ -146,7 +146,7 @@ html {
 .sidenav .closebtn {
     position: absolute;
     top: 0;
-    left:170px;
+    left: 170px;
     font-size: 36px;
 }
 
@@ -401,6 +401,7 @@ html {
     color: #0d1117;
     border: 0.1rem solid white;
 }
+
 .nested>div.neccessary-big {
     padding-top: 0.1rem;
     padding-bottom: 0.1rem;
@@ -956,12 +957,12 @@ label {
 /* Puzzle-Datenbank 
 /*=======================================*/
 
-/* 1. Dialogebene */
 .puzzle-table-dlg {
     background-color: #500;
-    position: relative;
-    margin-top: auto;
-    margin-bottom: auto;
+    width: 800px;
+    height: 640px;
+    margin-top: 10rem;
+    margin-bottom: 10rem;
     margin-left: auto;
     margin-right: auto;
     border-radius: 2.4rem;
@@ -969,124 +970,108 @@ label {
 
 }
 
-/* 1.1 Wurzel im Dialog */
-.puzzle-db-root {
-    display: flex;
-    flex-direction: column;
-    height: 65vh;
-}
-
-/* 1.1.2 Innere Klammer auf */
-.puzzle-db-header {
-    flex-grow: 1;
-
+.db-puzzle-header {
     font-size: var(--font-size-xl);
     font-weight: bold;
-    padding: 1rem;
-    text-align: center;
-    /*    background-color: #500; */
+    padding: 2rem;
+    text-align:center;
+    background-color: #500;
+    color: white;
+    border-bottom: none;
+}
+
+
+.tableFixHead {
+    overflow-y: auto;
+    /* make the table scrollable if height is more than 400 px  */
+    height: 400px;
+    /* gives an initial height of 400px to the table */
+}
+
+.tableFixHead thead th {
+    position: sticky;
+    /* make the table heads sticky */
+    top: 0px;
+    /* table head will be placed from the top of the table and sticks to it */
+    background-color: #500;
+    color: white;
+  
+}
+
+.db-puzzle-table {
+    border-collapse: collapse;
+    /* make the table borders collapse to each other */
+    width: 100%;
+    font-size: var(--font-size-lg);
+}
+
+.db-puzzle-table thead th,
+.db-puzzle-table tbody td {
+    padding: 0.2rem 0.2rem;
+    
+}
+
+.db-puzzle-table thead th {
+     background-color: #500;
+     text-align: left;
+     color: white;
+}
+
+#col-status-given,
+#col-status-solved,
+#col-status-open {
+    writing-mode: vertical-rl;
+    padding: 0.8rem;
+}
+
+#col-status-given {
+    background-color: var(--defined-cell-bg-color);
     color: white;
 }
 
-/* 1.1.3 Section enthält DB-Tabelle */
-section {
-    flex-grow: 0;
-    font-size: var(--font-size);
-    position: relative;
-    padding-top: 37px;
-    /* background: #500; */
+#col-status-solved {
+    background-color: var(--played-cell-bg-color);
+    color: black;
 }
 
-section.positioned {
-    position: absolute;
-    top: 30px;
-    left: 50px;
-    width: 600px;
-    box-shadow: 0 0 15px #333;
+#col-status-open {
+    background-color: var(--nested-cell-bg-color);
+    color: black;
 }
 
-/* 1.1.3.1 Container */
-.container {
-    overflow-y: auto;
-    /* Höhe der sichtbaren Puzzle-Tabelle hier einstellen. */
-    height: 40vh;
+.db-puzzle-tbody tr.selected td {
+    background-color: lightcyan;
 }
 
-
-
-/* 1.1.4 container-puzzle-buttons */
-.container-puzzle-buttons {
-    margin: 20px;
-    flex-grow: 1;
-    /* background-color: #500; */
-
+.db-puzzle-tbody tr td {
+    background-color: #ddd;
 }
 
-.puzzle-btns {
-    /* background: #500; */
+.db-puzzle-btns {
+    margin: 3rem;
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    /*  grid-template-rows: repeat(5, 1fr); */
-    gap: 1rem;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 2rem;
 }
-
-/* 1.1.4.1 Die Buttons des Dialogs           */
-
-.puzzle-db-button {
+.db-puzzle-button {
     background-color: #ddd;
     text-align: center;
+    font-size: var(--font-size-lg);
+
     border-radius: 0.3rem;
     border: none;
     display: grid;
     grid-template-columns: 1fr;
     place-items: center;
     padding: 0%;
+
 }
 
-.puzzle-db-button:active {
+.db-puzzle-button:active {
     transform: translate(2px, 2px);
 }
 
-
-/* ========================================*/
-
-.status-line {
-
-    font-size: var(--font-size);
-    color: black;
-    padding-top: 5px;
-    margin-top: 5px;
-
-    line-height: normal;
-    display: flex;
-    width: 100%;
-}
-
-.status-line-item {
-    flex-direction: row;
-    padding-left: 5px;
-    padding-right: 5px;
-
-}
-
-.puzzle-line {
-    font-size: var(--font-size);
-    color: black;
-    margin-top: 10px;
-    display: flex;
-    flex-direction: row;
-    line-height: normal;
-}
-
-.pz-nr {
-    margin-left: 10px;
-    margin-right: 5px;
-}
-
-.pz-all {
-    margin-left: 5px;
-    margin-right: 20px;
-}
 
 
 /*======================================*/
@@ -1096,92 +1081,7 @@ section.positioned {
     display: none;
 }
 
-
-
-.pz-table {
-    margin-left: 30px;
-    margin-right: 5px;
-    display: grid;
-    grid-template-columns: repeat(9, auto);
-}
-
-.cell-field {
-    font-size: var(--font-size);
-    position: relative;
-    width: 20px;
-    height: 20px;
-    display: grid;
-    place-items: center;
-}
-
-
-
-table {
-    border-spacing: 0;
-    width: 100%;
-}
-
-.puzzle-db-table td+td {
-    border-left: 1px solid #eee;
-}
-
-.puzzle-db-table td,
-th {
-    border-bottom: 1px solid #eee;
-    background: #ddd;
-    color: #000;
-    /* Zeilenhöhe der Tabelle mit erstem Parameter einstellen. */
-    padding: 10px 5px;
-}
-
-.puzzle-db-table th {
-    height: 0;
-    line-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    color: transparent;
-    border: none;
-    white-space: nowrap;
-}
-
-#col-status-given div {
-    background-color: var(--defined-cell-bg-color);
-    color: var(--defined-cell-bg-color);
-    padding-right: 18px;
-}
-
-#col-status-solved div {
-    background-color: var(--played-cell-bg-color);
-    color: var(--played-cell-bg-color);
-    padding-right: 18px;
-}
-
-#col-status-open div {
-    background-color: var(--nested-cell-bg-color);
-    color: var(--nested-cell-bg-color);
-    padding-right: 18px;
-}
-
-
-
-.puzzle-db-table th div {
-    position: absolute;
-    background: transparent;
-    color: #fff;
-    padding: 8px 5px;
-    top: 0;
-    margin-left: -2px;
-    line-height: normal;
-    border-left: 1px solid #800;
-}
-
-.puzzle-db-table th:first-child div {
-    border: none;
-}
-
-.puzzle-db-tbody tr.selected td {
-    background-color: lightcyan;
-}
+/* ========================================*/
 
 #loader {
     display: none;

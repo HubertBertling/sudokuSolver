@@ -66,7 +66,7 @@ class SudokuMainApp {
     }
 
     init() {
-        this.myPuzzleDB.migratePuzzleDB()
+        //this.myPuzzleDB.migratePuzzleDB()
         this.mySolver.init();
         this.mySolver.notify();
         this.myPuzzleDB.init();
