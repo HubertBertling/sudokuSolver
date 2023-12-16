@@ -153,16 +153,17 @@ html {
     margin-bottom: 40px;
 }
 
-/* Hover not possible on touch devices
-.sidenav a:hover,
-.dropdown-btn:hover {
+/* Hover not possible on touch devices */
+
+.sidenav a:active,
+.dropdown-btn:active {
     color: #f1f1f1;
 }
 
-.closebtn:hover {
+.closebtn:active {
     color: #f1f1f1;
 }
-**************************************/
+/**************************************/
 
 .active {
     background-color: green;
