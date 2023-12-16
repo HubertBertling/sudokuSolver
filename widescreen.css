@@ -990,7 +990,7 @@ label {
     /* make the table heads sticky */
     top: 0px;
     /* table head will be placed from the top of the table and sticks to it */
-    background-color: #500;
+    background-color: #818181;
     color: white;
   
 }
@@ -1004,8 +1004,8 @@ label {
 
 .db-puzzle-table thead th,
 .db-puzzle-table tbody td {
-    padding: 0.2rem 0.2rem;
-    
+    padding: 0.3rem;
+    border: 3px solid #ccc;
 }
 
 .db-puzzle-table thead th {
