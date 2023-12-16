@@ -106,23 +106,22 @@ html {
 /* Side Navigation */
 /*=====================================================*/
 
-
-
 .sidenav {
-    height: 100%;
+    height: 85%;
     width: 0;
     position: fixed;
-    z-index: 3;
+    z-index: 2;
     /* top: 0;
-    left: 0; */ 
+    left: 0; */
     background-color: #111;
     overflow-x: hidden;
     transition: 0.5s;
-    padding-top: 60px;
-  }
+    padding-top: 10px;
+}
 
 
-  .sidenav a, .dropdown-btn {
+.sidenav a,
+.dropdown-btn {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
@@ -135,35 +134,52 @@ html {
     text-align: left;
     cursor: pointer;
     outline: none;
-  
-  }
-
-  .sidenav .closebtn {
-    position: absolute;
-    top: 0;
-    left: 24rem;
-    font-size: 36px;
 }
 
-  .active {
+.closebtn {
+    text-align: right;
+    padding: 8px 8px 8px 8px;
+    text-decoration: none;
+    font-size: 48px;
+    color: #818181;
+    display: block;
+    border: none;
+    background: none;
+    width: 100%;
+    cursor: pointer;
+    outline: none;
+    margin-bottom: 40px;
+}
+
+/* Hover not possible on touch devices
+.sidenav a:hover,
+.dropdown-btn:hover {
+    color: #f1f1f1;
+}
+
+.closebtn:hover {
+    color: #f1f1f1;
+}
+**************************************/
+
+.active {
     background-color: green;
     color: white;
-  }
-  
+}
+
 /* Dropdown container (hidden by default). Optional: add a lighter background color 
    and some left padding to change the design of the dropdown content */
 .dropdown-container {
     display: none;
     background-color: #262626;
     padding-left: 18px;
-  }
-  
-  /* Optional: Style the caret down icon */
-  .fa-caret-down {
+}
+
+/* Optional: Style the caret down icon */
+.fa-caret-down {
     float: right;
     padding-right: 8px;
-  }
-  
+}
 
 
 /*===========================================================*/
@@ -767,16 +783,18 @@ label {
     margin: 2.4rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.2rem;
+    gap: 0.8rem;
 }
 
-.okCancelBtn {
+/*{
     width: 50%;
     margin-top: auto;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 15px;
 }
+
+*/
 
 /*=======================================*/
 /* Success-Dialog 
