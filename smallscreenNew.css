@@ -127,7 +127,7 @@ html {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
-    color: #818181;
+    color: white;
     display: block;
 
     border: none;
@@ -143,7 +143,7 @@ html {
     padding: 8px 8px 8px 8px;
     text-decoration: none;
     font-size: 48px;
-    color: #818181;
+    color: white;
     display: block;
     border: none;
     background: none;
@@ -157,11 +157,11 @@ html {
 
 .sidenav a:active,
 .dropdown-btn:active {
-    color: #f1f1f1;
+    color: white;
 }
 
 .closebtn:active {
-    color: #f1f1f1;
+    color: white;
 }
 /**************************************/
 
