@@ -61,7 +61,7 @@ html {
     font-family: 'Open Sans', sans-serif;
     height: 95vh;
     background-color: var(--screen-bg-color);
-    margin-top: 10px;
+    /* margin-top: 10px; */
     display: flex;
     flex-direction: column;
     /* justify-content: center; */
@@ -957,7 +957,7 @@ label {
 .puzzle-table-dlg {
     background-color: #500;
     width: 800px;
-    height: 640px;
+    height: 440px;
     margin-top: 10rem;
     margin-bottom: 10rem;
     margin-left: auto;
@@ -981,7 +981,7 @@ label {
 .tableFixHead {
     overflow-y: auto;
     /* make the table scrollable if height is more than 400 px  */
-    height: 400px;
+    height: 250px;
     /* gives an initial height of 400px to the table */
 }
 
@@ -999,7 +999,7 @@ label {
     border-collapse: collapse;
     /* make the table borders collapse to each other */
     width: 100%;
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size);
 }
 
 .db-puzzle-table thead th,
@@ -1045,16 +1045,16 @@ label {
 }
 
 .db-puzzle-btns {
-    margin: 3rem;
+    margin: 1.2rem;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 2rem;
+    gap: 1rem;
 }
 .db-puzzle-button {
     background-color: #ddd;
     text-align: center;
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size);
 
     border-radius: 0.3rem;
     border: none;
