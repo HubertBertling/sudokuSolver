@@ -873,13 +873,13 @@ label {
 /*=======================================*/
 /* Info-Dialog 
 /*=======================================*/
+
 .infoDlg::backdrop {
     background: hsl(201 50% 40% /.5);
 }
 
-.infoDlg,
-.confirm-dlg {
-    width: 90%;
+.infoDlg {
+    width: 30rem;
 
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -892,8 +892,7 @@ label {
     margin-right: auto;
 }
 
-.infoDlgHeader,
-.confirm-dlg-header {
+.infoDlgHeader {
     font-size: var(--font-size-lg);
     font-weight: bold;
     margin: 10px;
@@ -909,14 +908,12 @@ label {
     margin-right: 10px;
 }
 
-.infoDlgBody,
-.confirm-dlg-body {
+.infoDlgBody {
     font-size: var(--font-size-lg);
     margin-left: 10px;
 }
 
-.infoIcon,
-.confirm-icon {
+.infoIcon {
     margin-left: 5px;
     margin-right: 10px;
     height: 40px;
@@ -924,8 +921,7 @@ label {
     background-color: white;
 }
 
-.infoDlg-OK-Btn,
-#btn-confirm-ok {
+.infoDlg-OK-Btn {
     width: 100px;
     margin-top: 10px;
     /* margin-left: auto; */
@@ -934,14 +930,66 @@ label {
     margin-bottom: 10px;
 }
 
-.infoDlg-OK-Btn,
-#btn-confirm-cancel {
-    margin-top: 10px;
-    /* margin-left: auto; */
-    float: right;
-    margin-right: 10px;
-    margin-bottom: 10px;
+/*=======================================*/
+/* Confirm-Dialog 
+/*=======================================*/
+
+.confirm-dlg::backdrop {
+    background: hsl(201 50% 40% /.5);
 }
+
+.confirm-dlg {
+    width: 30rem;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    position: absolute;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.confirm-dlg-header {
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    margin: 10px;
+    text-align: center;
+}
+
+.confirm-dlg-body {
+    font-size: var(--font-size-lg);
+    margin-left: 10px;
+}
+
+.confirm-icon {
+    margin-left: 5px;
+    margin-right: 10px;
+    height: 40px;
+    width: 40px;
+    background-color: white;
+}
+
+#confirm-ok-cancel-btns {
+    display: grid;   justify-content: center;   align-items: center;
+    grid-template-columns: 1fr 1fr; 
+    margin-top: 20px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    gap: 10px;
+    margin-right: 20px;
+}
+
+#btn-confirm-ok,
+#btn-confirm-cancel {
+    text-align: center;
+    font-size: var(--font-size);
+}
+
+
+/*=======================================*/
+/* Settings-Dialog 
+/*=======================================*/
 
 .settings-dlg {
     width: 100%;

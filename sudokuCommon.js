@@ -311,12 +311,16 @@ class SudokuSolverController {
 
     initBtnPressed() {
         closeNav();
-        this.myConfirmDlg.open('init', "Alle Daten gehen verloren, falls nicht vorher schon gespeichert! Solver initialisieren? ");
+        this.myConfirmDlg.open('init', 
+                                "Solver initialisieren", 
+                                "Alle Daten gehen verloren, falls nicht vorher schon gespeichert! Solver initialisieren? ");
     }
 
     resetBtnPressed() {
         closeNav();
-        this.myConfirmDlg.open('reset', "Alle Lösungsnummern werden gelöscht. Puzzle zurücksetzen?");
+        this.myConfirmDlg.open('reset', 
+                                    "Puzzle zurücksetzen",
+                                    "Alle Lösungsnummern werden gelöscht. Puzzle zurücksetzen?");
     }
 
     undoBtnPressed() {
@@ -1402,6 +1406,7 @@ class ConfirmDialog {
     constructor() {
         this.myOpen = false;
         this.myConfirmDlgNode = document.getElementById("confirm-dlg");
+        this.myHeader = document.getElementById("confirm-dlg-header");
         this.myTextNode = document.getElementById("confirm-dlg-body");
         this.okNode = document.getElementById("btn-confirm-ok");
         this.cancelNode = document.getElementById("btn-confirm-cancel");
@@ -1414,9 +1419,10 @@ class ConfirmDialog {
             sudoApp.mySolverController.confirmDlgCancelPressed();
         });
     }
-    open(rqOp, question) {
+    open(rqOp, header, question) {
         this.myOpen = true;
         this.myRequestOperation = rqOp;
+        this.myHeader.innerText = header;
         this.myTextNode.innerText = question;
         this.myConfirmDlgNode.showModal();
     }
