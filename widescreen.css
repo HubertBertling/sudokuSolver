@@ -217,9 +217,8 @@ html {
 }
 
 .app-empty-footer     {
-    height: 2.4rem;
+    height: 0.2rem;
     background-color: DimGray;
-    border-radius: 0.6rem;  
 }
 
 #help-button {
