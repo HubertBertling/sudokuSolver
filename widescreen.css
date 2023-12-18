@@ -195,7 +195,7 @@ html {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: 95vh;
+    /*    height: 95vh; */
 }
 
 /* App-header */
@@ -216,7 +216,7 @@ html {
     border-radius: 0.6rem;
 }
 
-.app-empty-footer     {
+.app-empty-footer {
     height: 0.2rem;
     background-color: DimGray;
 }
@@ -958,8 +958,10 @@ label {
 }
 
 #confirm-ok-cancel-btns {
-    display: grid;   justify-content: center;   align-items: center;
-    grid-template-columns: 1fr 1fr; 
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 1fr 1fr;
     margin-top: 20px;
     margin-bottom: 10px;
     margin-left: 20px;
@@ -971,7 +973,7 @@ label {
 #btn-confirm-cancel {
     text-align: center;
     font-size: var(--font-size-lg);
-    padding:0.5rem 0.5rem;
+    padding: 0.5rem 0.5rem;
 }
 
 
@@ -1024,7 +1026,7 @@ label {
     font-size: var(--font-size-xl);
     font-weight: bold;
     padding: 2rem;
-    text-align:center;
+    text-align: center;
     background-color: #500;
     color: white;
     border-bottom: none;
@@ -1045,7 +1047,7 @@ label {
     /* table head will be placed from the top of the table and sticks to it */
     background-color: #818181;
     color: white;
-  
+
 }
 
 .db-puzzle-table {
@@ -1062,9 +1064,9 @@ label {
 }
 
 .db-puzzle-table thead th {
-     background-color: #818181;
-     text-align: left;
-     color: white;
+    background-color: #818181;
+    text-align: left;
+    color: white;
 }
 
 #col-status-given,
@@ -1104,6 +1106,7 @@ label {
     grid-template-rows: repeat(2, 1fr);
     gap: 1rem;
 }
+
 .db-puzzle-button {
     background-color: #ddd;
     text-align: center;
