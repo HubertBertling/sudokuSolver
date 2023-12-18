@@ -204,7 +204,6 @@ html {
     display: none;
 }
 
-.app-empty-footer,
 .app-name-header {
     display: grid;
     grid-template-columns: 0.1fr 1.8fr 0.1fr;
@@ -215,6 +214,12 @@ html {
     background-color: DimGray;
     color: white;
     border-radius: 0.6rem;
+}
+
+.app-empty-footer     {
+    height: 2.4rem;
+    background-color: DimGray;
+    border-radius: 0.6rem;  
 }
 
 #help-button {
@@ -643,7 +648,7 @@ html {
 /*======================================*/
 
 .progress-box {
-    border-bottom: 3px solid #0d1117;
+    /* border-bottom: 3px solid #0d1117; */
     padding-top: 5px;
     padding-bottom: 10px;
     color: var(--screen-color);
@@ -922,7 +927,7 @@ label {
 }
 
 .confirm-dlg {
-    width: 30rem;
+    width: 40rem;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -941,7 +946,7 @@ label {
 }
 
 .confirm-dlg-body {
-    font-size: var(--font-size);
+    font-size: var(--font-size-lg);
     margin-left: 10px;
 }
 
@@ -966,7 +971,8 @@ label {
 #btn-confirm-ok,
 #btn-confirm-cancel {
     text-align: center;
-    font-size: var(--font-size);
+    font-size: var(--font-size-lg);
+    padding:0.5rem 0.5rem;
 }
 
 

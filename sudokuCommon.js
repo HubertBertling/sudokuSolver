@@ -182,6 +182,14 @@ class SudokuSolverController {
     handleKeyNumberPressed(event) {
         switch (event.target.tagName) {
             case 'INPUT': {
+                // In dialogs with input fields, entries can be made in the field using keys on the keyboard
+                // (instead of using buttons on the GUI). In our case, two events are generated: 
+                // (1) the keydown event for the input field and (2) the keydown event for the global body element. 
+                // The latter is semantically the same as the corresponding button event. 
+                // Only numeric keys and the delete key are used. Keydowns of other keys are ignored.I.e. 
+                // no event handler is declared.
+                // If the current context is an input field, the simultaneous propagation to the cell of a Sudoku puzzle 
+                // must be switched off, as the solver cannot react to this.
                 event.stopPropagation();
                 break;
             }
@@ -190,9 +198,9 @@ class SudokuSolverController {
                 break;
             }
             default: {
-                throw new Error('Unexpected event target: ' + event.target.tagName);
+                throw new Error('Unexpected keypad event target: ' + event.target.tagName);
             }
-        }
+        }                                                                                                                               
     }
 
     handleNumberPressed(nr) {
@@ -220,15 +228,24 @@ class SudokuSolverController {
     handleDeleteKeyPressed(event) {
         switch (event.target.tagName) {
             case 'INPUT': {
+                // In dialogs with input fields, entries can be made in the field using keys on the keyboard
+                // (instead of using buttons on the GUI). In our case, two events are generated: 
+                // (1) the keydown event for the input field and (2) the keydown event for the global body element. 
+                // The latter is semantically the same as the corresponding button event. 
+                // Only numeric keys and the delete key are used. Keydowns of other keys are ignored, i.e. 
+                // no event handler is declared.
+                // If the current context is an input field, the simultaneous propagation to the cell of a Sudoku cell 
+                // must be switched off, as the solver cannot react to this.
                 event.stopPropagation();
                 break;
             }
             case 'BODY': {
+                // This event is generated when a number is to be deleted in a Sudoku cell.
                 this.handleDeletePressed();
                 break;
             }
             default: {
-                throw new Error('Unexpected event target: ' + event.target.tagName);
+                throw new Error('Unexpected keypad event target: ' + event.target.tagName);
             }
         }
     }
@@ -622,7 +639,6 @@ class SudokuSolverView extends SudokuView {
         this.displayGoneSteps(myStepper.getGoneSteps());
         this.displayAutoDirection(myStepper.getAutoDirection());
         this.displayProgress();
-        // this.displayPuzzle(myGrid.loadedPuzzleId, myGrid.loadedPuzzleName);
         this.displayEvalType(this.mySolver.getActualEvalType());
         this.displayPlayModeType(this.mySolver.getPlayMode());
         this.displayUndoRedo();
