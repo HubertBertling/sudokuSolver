@@ -262,6 +262,8 @@ app-empty-footer {
     position: relative;
     display: grid;
     grid-template-columns: repeat(1, auto);
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid gray;
 }
 
 .main-sudoku-grid {
@@ -501,7 +503,8 @@ app-empty-footer {
 }
 
 .loaded-evaluations {
-    margin-top: 0.5rem;
+    padding: 3px 3px;
+    margin-bottom: 5px;
 }
 
 .technique,
@@ -525,8 +528,7 @@ app-empty-footer {
 /*======================================*/
 
 .mobile-btn-container {
-    margin-left: 1rem;
-    margin-right: 1rem;
+    padding: 1rem;
     flex-grow: 1;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -640,9 +642,9 @@ app-empty-footer {
 /*======================================*/
 
 .progress-box {
-    border-bottom: 3px solid #0d1117;
-    padding-top: 5px;
-    padding-bottom: 10px;
+    /* border-bottom: 3px solid #0d1117; */
+    padding-top: 3px;
+    padding-bottom: 3px;
     color: var(--screen-color);
     font-size: var(--font-size);
 }

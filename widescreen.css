@@ -506,7 +506,9 @@ html {
 }
 
 .loaded-evaluations {
-    margin-top: 0.5rem;
+    
+    padding: 3px 3px;
+    margin-bottom: 5px;
 }
 
 .technique,
