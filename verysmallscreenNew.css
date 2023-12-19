@@ -996,6 +996,11 @@ label {
     margin-right: auto;
 }
 
+
+.settings-dlg::backdrop {
+    background: hsl(201 50% 40% /.5);
+}
+
 #settings-dlg-close-btn {
     width: 100px;
     margin-top: 10px;
