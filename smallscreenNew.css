@@ -511,6 +511,17 @@ html {
     margin-bottom: 5px;
 }
 
+.pz-name {
+    text-align: left;
+    width: 100%;
+}
+
+.pz-level {
+    text-align: right;
+    width: 100%;
+}
+
+
 .technique,
 .reasonInsolvability {
     height: 18px;
@@ -668,7 +679,7 @@ html {
     margin-top: 5px;
     line-height: 16px;
     display: grid;
-    grid-template-columns: 1.1fr 0.2fr 0.9fr;
+    grid-template-columns: 1.2fr 0.2fr 0.8fr;
     gap: 2px;
 }
 

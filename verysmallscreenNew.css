@@ -499,13 +499,19 @@ app-empty-footer {
 .loaded-evaluations {
     font-size: var(--font-size);
     display: flex;
-    padding-top: 5px;
-}
-
-.loaded-evaluations {
     padding: 3px 3px;
     margin-bottom: 5px;
 }
+.pz-name {
+    text-align: left;
+    width: 100%;
+}
+
+.pz-level {
+    text-align: right;
+    width: 100%;
+}
+
 
 .technique,
 .reasonInsolvability {

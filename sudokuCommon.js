@@ -3634,8 +3634,8 @@ class SudokuGridView extends SudokuView {
         let name = this.myModel.loadedPuzzleName;
         if (name == '') name = '-';
         evalNode.innerHTML =
-            '<b>Puzzle:</b> &nbsp' + name + '; &nbsp' +
-            '<b>Schwierigkeitsgrad:</b> &nbsp' + this.myModel.preRunRecord.level + '; &nbsp'
+            '<span class="pz-name"><b>Puzzle:</b> &nbsp' + name + '</span>' +
+            '<span class="pz-level"><b>Level:</b> &nbsp' + this.myModel.preRunRecord.level + '</span>'
     }
 
     displaySelection() {
