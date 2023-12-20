@@ -163,6 +163,7 @@ html {
 .closebtn:active {
     color: white;
 }
+
 /**************************************/
 
 .active {
@@ -815,6 +816,7 @@ label {
     grid-template-columns: 1fr 1fr;
     gap: 0.8rem;
 }
+
 /*
 .okCancelBtn {
     width: 50%;
@@ -980,8 +982,10 @@ label {
 }
 
 #confirm-ok-cancel-btns {
-    display: grid;   justify-content: center;   align-items: center;
-    grid-template-columns: 1fr 1fr; 
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 1fr 1fr;
     margin-top: 20px;
     margin-bottom: 10px;
     margin-left: 20px;
@@ -1039,7 +1043,7 @@ label {
     height: 100vh;
     border: none;
     background-color: #500;
- 
+
 }
 
 #db-puzzle-dialog::backdrop {
@@ -1055,36 +1059,50 @@ label {
     background-color: #500;
 }
 
+#db-close-btn {
+    font-weight: bold;
+    color: white;
+    text-align: right;
+    font-size: 3.4rem;
+}
 
 .tableFixHead {
-    overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
-    height:380px; /* gives an initial height of 200px to the table */
-  }
-  .tableFixHead thead th {
-    position: sticky; /* make the table heads sticky */
-    top:0px; /* table head will be placed from the top of the table and sticks to it */
-  }
-  .db-puzzle-table {
-    border-collapse: collapse; /* make the table borders collapse to each other */
+    overflow-y: auto;
+    /* make the table scrollable if height is more than 200 px  */
+    height: 440px;
+    /* gives an initial height of 200px to the table */
+}
+
+.tableFixHead thead th {
+    position: sticky;
+    /* make the table heads sticky */
+    top: 0px;
+    /* table head will be placed from the top of the table and sticks to it */
+}
+
+.db-puzzle-table {
+    border-collapse: collapse;
+    /* make the table borders collapse to each other */
     width: 100%;
-   
-  }
-  .db-puzzle-table th,
-  .db-puzzle-table td {
+
+}
+
+.db-puzzle-table th,
+.db-puzzle-table td {
     padding: 6px 6px;
     border: 1px solid #ccc;
-  }
+}
 
-  .db-puzzle-table th {
+.db-puzzle-table th {
     /* background: #eee; */
     background: #818181;
-    color:white;
+    color: white;
 }
 
 #col-status-given,
 #col-status-solved,
 #col-status-open {
-    writing-mode:vertical-rl;
+    writing-mode: vertical-rl;
     padding: 0.8rem;
 }
 
@@ -1092,10 +1110,12 @@ label {
     background-color: var(--defined-cell-bg-color);
     color: white;
 }
+
 #col-status-solved {
     background-color: var(--played-cell-bg-color);
     color: black;
 }
+
 #col-status-open {
     background-color: var(--nested-cell-bg-color);
     color: black;
@@ -1123,7 +1143,7 @@ label {
     text-align: center;
     font-size: var(--font-size);
     display: grid;
-    place-items:center;
+    place-items: center;
     border-radius: 0.5rem;
     border: none;
     margin: 0.6rem 0.4rem 0.4rem 0.4rem;

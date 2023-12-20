@@ -65,12 +65,12 @@
             <div class="gridArea" id="gridArea">
                 <div class="loaded-evaluations" id="loaded-evaluations">
                 </div>
-   
+
                 <div class="grid-plus-explainer" id="grid-plus-explainer">
                     <div id="loader">
                         <div id="search-level"></div>
                     </div>
-                
+
                     <div class="main-sudoku-grid" id="main-sudoku-grid">
                         <!-- block 0 -->
                     </div>
@@ -162,56 +162,57 @@
 
     <dialog class="puzzle-table-dlg noprint" id="db-puzzle-dialog">
         <div class="db-puzzle-root">
+            <div id="db-close-btn">&times;</div>
             <div class="db-puzzle-header">
                 Puzzle Datenbank
             </div>
             <div class="tableFixHead">
-             <table class="db-puzzle-table " id="db-puzzle-table">
-                <!--Die Datenbanktabelle-->
-                <thead class="db-puzzle-thead">
-                    <tr>
-                        <th style="cursor:pointer">Nr</th>
-                        <th id="col-name" style="cursor:pointer">Puzzle-Name </th>
-                        <th id="col-status-given" style="cursor:pointer"># Givens</th>
-                        <th id="col-status-solved" style="cursor:pointer"># Gelöst</th>
-                        <th id="col-status-open" style="cursor:pointer"># Offen</th>
-                        <th id="col-level" style="cursor:pointer">Level</th>
-                        <th id="col-backTracks" style="cursor:pointer">#RL</th>
-                        <th id="col-date" style="cursor:pointer">Datum</th>
-                    </tr>
-                </thead>
-                <tbody class="db-puzzle-tbody" id="db-puzzle-tbody">
-                    <!--Der Inhalt der Datenbanktabelle wird per JS aus dem Local-Store geladen-->
-                </tbody>
-            </table>
-        </div>
-
-        <div class="container-puzzle-buttons">
-            <div class="db-puzzle-btns ">
-                <!--Die buttons unterhalb der Puzzle-Datenbanktabelle -->
-                <button class="db-puzzle-button noprint" id="pz-btn-load"><img src="images/upload.png"
-                        class="btn-image">Laden</button>
-                <button class="db-puzzle-button noprint" id="pz-btn-rename"><img src="images/rename.png"
-                        class="btn-image">Umbenennen</button>
-                <button class="db-puzzle-button noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
-                        class="btn-image"></button>
-                <button class="db-puzzle-button noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
-                        class="btn-image"></button>
-                <button class="db-puzzle-button noprint" id="pz-btn-delete">X</button>
-                <button class="db-puzzle-button" id="db-puzzle-btn-print"><img src="images/drucker.png"
-                        class="btn-image">Drucken
-                </button>
-
-                <button class="db-puzzle-button noprint" id="pz-btn-ok">Schließen</button>
+                <table class="db-puzzle-table " id="db-puzzle-table">
+                    <!--Die Datenbanktabelle-->
+                    <thead class="db-puzzle-thead">
+                        <tr>
+                            <th style="cursor:pointer">Nr</th>
+                            <th id="col-name" style="cursor:pointer">Puzzle-Name </th>
+                            <th id="col-status-given" style="cursor:pointer"># Givens</th>
+                            <th id="col-status-solved" style="cursor:pointer"># Gelöst</th>
+                            <th id="col-status-open" style="cursor:pointer"># Offen</th>
+                            <th id="col-level" style="cursor:pointer">Level</th>
+                            <th id="col-backTracks" style="cursor:pointer">#RL</th>
+                            <th id="col-date" style="cursor:pointer">Datum</th>
+                        </tr>
+                    </thead>
+                    <tbody class="db-puzzle-tbody" id="db-puzzle-tbody">
+                        <!--Der Inhalt der Datenbanktabelle wird per JS aus dem Local-Store geladen-->
+                    </tbody>
+                </table>
             </div>
-        </div>
+
+            <div class="container-puzzle-buttons">
+                <div class="db-puzzle-btns ">
+                    <!--Die buttons unterhalb der Puzzle-Datenbanktabelle -->
+                    <button class="db-puzzle-button noprint" id="pz-btn-load"><img src="images/upload.png"
+                            class="btn-image">Laden</button>
+                    <button class="db-puzzle-button noprint" id="pz-btn-rename"><img src="images/rename.png"
+                            class="btn-image">Umbenennen</button>
+                    <button class="db-puzzle-button noprint" id="pz-btn-previous"><img src="images/pfeilrueckwaerts.png"
+                            class="btn-image"></button>
+                    <button class="db-puzzle-button noprint" id="pz-btn-next"><img src="images/pfeilvorwaerts.png"
+                            class="btn-image"></button>
+                    <button class="db-puzzle-button noprint" id="pz-btn-delete">X</button>
+                    <button class="db-puzzle-button" id="db-puzzle-btn-print"><img src="images/drucker.png"
+                            class="btn-image">Drucken
+                    </button>
+
+                    <button class="db-puzzle-button noprint" id="pz-btn-ok">Schließen</button>
+                </div>
+            </div>
 
         </div>
     </dialog>
 
     <dialog class="confirm-dlg noprint" id="confirm-dlg">
         <div class="confirm-dlg-header" id="confirm-dlg-header">
-            
+
         </div>
         <div class="infoDlgBodyRow">
             <img src="images/questionMark.png" class="confirm-icon" id="comfirm-icon">
@@ -219,8 +220,8 @@
 
             </div>
         </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-        <div  id="confirm-ok-cancel-btns">
+
+        <div id="confirm-ok-cancel-btns">
             <input type="button" id="btn-confirm-ok" name="OK" value="Ja" />
             <input type="button" id="btn-confirm-cancel" name="Cancel" value="Nein" />
         </div>

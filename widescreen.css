@@ -1025,7 +1025,7 @@ label {
 .puzzle-table-dlg {
     background-color: #500;
     width: 800px;
-    height: 440px;
+    height: 480px;
     margin-top: 10rem;
     margin-bottom: 10rem;
     margin-left: auto;
@@ -1038,13 +1038,24 @@ label {
 .db-puzzle-header {
     font-size: var(--font-size-xl);
     font-weight: bold;
-    padding: 2rem;
+    padding: 1rem 1rem 2rem 1rem;
     text-align: center;
     background-color: #500;
     color: white;
     border-bottom: none;
 }
 
+
+#db-close-btn {
+    font-weight: bold;
+    color: white;
+    text-align: right;
+    font-size: 3.8rem;
+    margin-right:3rem;
+}
+#db-close-btn:active {
+    transform: translate(8x, 8px);
+}
 
 .tableFixHead {
     overflow-y: auto;

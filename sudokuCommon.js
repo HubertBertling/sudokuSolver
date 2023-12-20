@@ -6038,6 +6038,9 @@ class SudokuPuzzleDBController {
         document.getElementById('pz-btn-ok').addEventListener('click', () => {
             this.closeBtnPressed();
         });
+        document.getElementById('db-close-btn').addEventListener('click', () => {
+            this.closeBtnPressed();
+        });
 
     }
 
