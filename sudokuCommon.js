@@ -6561,7 +6561,7 @@ class SudokuPuzzleDB extends SudokuModel {
         let playedPuzzleDbElement = sudoApp.mySolver.myGrid.getPuzzleRecord();
 
         if (!puzzleMap.has(puzzleId)) {
-            this.saveNamedPuzzle(puzzleId, 'Puzzle 23 backtracks', playedPuzzleDbElement);
+            this.saveNamedPuzzle(puzzleId, 'Backtrack_23', playedPuzzleDbElement);
         }
         sudoApp.mySolver.init();
     }
