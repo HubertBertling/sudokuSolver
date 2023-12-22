@@ -606,14 +606,14 @@ html {
 }
 
 #btn-autoStep {
-    grid-column-start: 4;
+    grid-column-start: 5;
     grid-column-end: 6;
     grid-row-start: 4;
     grid-row-end: 4;
 }
 
 .btn-with-image {
-    font-size: var(--font-size);
+    font-size: var(--font-size-lg);
 }
 
 

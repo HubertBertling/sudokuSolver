@@ -95,6 +95,15 @@ class SudokuSolverController {
             })
         });
 
+        // Click-Events for both pause buttons, desktop and mobile
+        this.btns = document.querySelectorAll('.btn-save');
+        this.btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.saveBtnPressed();
+            })
+        });
+
+
         // Click-Events for both stop buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-stop');
         this.btns.forEach(btn => {
@@ -102,6 +111,7 @@ class SudokuSolverController {
                 this.stopBtnPressed();
             })
         });
+
 
         // Click-Events for both init buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-undo');
@@ -200,7 +210,7 @@ class SudokuSolverController {
             default: {
                 throw new Error('Unexpected keypad event target: ' + event.target.tagName);
             }
-        }                                                                                                                               
+        }
     }
 
     handleNumberPressed(nr) {
@@ -328,16 +338,16 @@ class SudokuSolverController {
 
     initBtnPressed() {
         closeNav();
-        this.myConfirmDlg.open('init', 
-                                "Solver initialisieren", 
-                                "Alle Daten gehen verloren, falls nicht vorher schon gespeichert! Solver initialisieren? ");
+        this.myConfirmDlg.open('init',
+            "Solver initialisieren",
+            "Alle Daten gehen verloren, falls nicht vorher schon gespeichert! Solver initialisieren? ");
     }
 
     resetBtnPressed() {
         closeNav();
-        this.myConfirmDlg.open('reset', 
-                                    "Puzzle zurücksetzen",
-                                    "Alle Lösungsnummern werden gelöscht. Puzzle zurücksetzen?");
+        this.myConfirmDlg.open('reset',
+            "Puzzle zurücksetzen",
+            "Alle Lösungsnummern werden gelöscht. Puzzle zurücksetzen?");
     }
 
     undoBtnPressed() {
@@ -431,10 +441,9 @@ class SudokuSolverController {
     }
 
     saveBtnPressed() {
-        closeNav();
         this.mySuccessDialog.close();
-        sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
-        sudoApp.myPuzzleDB.notify();
+        //sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
+        //sudoApp.myPuzzleDB.notify();
         let tmpPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
 
         let puzzleId = this.mySolver.myGrid.loadedPuzzleId;
@@ -442,16 +451,23 @@ class SudokuSolverController {
         if (puzzleId == '' || puzzleId == '-') {
             //Neues Puzzle abfragen
             let newPuzzleId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-            let newPuzzleName = 'Puzzle (' + new Date().toLocaleString('de-DE') + ')';
+            let newPuzzleName = 'PZ (' + new Date().toLocaleString('de-DE') + ')';
             let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
             // this.myPuzzleSaveDialog.open(newPuzzelId, 'Puzzle (' + new Date().toLocaleString('de-DE') + ')');
-            sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzleId, newPuzzleName, playedPuzzleDbElement);
-
+            sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzleId, newPuzzleName, playedPuzzleDbElement); 
+            this.myInfoDialog.open('Spielstand gespeichert', "info", 
+                'Neues Puzzle: ' + newPuzzleName + ' gespeichert.');
         } else {
             //Aktuelles Puzzel ist aus der Datenbank überschreiben
-
             sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, puzzleName, tmpPuzzleDbElement);
+            this.myInfoDialog.open('Spielstand gespeichert', "info", 
+                'Puzzle: ' + puzzleName);
         }
+        // Das (neu) gespeicherte Puzzle wird das aktuell gespielte Puzzle
+        let tmpPuzzleID = sudoApp.myPuzzleDB.getSelectedUid();
+        let puzzle = sudoApp.myPuzzleDB.getSelectedPuzzle();
+        sudoApp.mySolver.loadPuzzle(tmpPuzzleID, puzzle);
+        sudoApp.mySolver.notify();
     }
 
     openDBBtnPressed() {
@@ -696,7 +712,7 @@ class SudokuSolverView extends SudokuView {
         btnPause.style.display = 'none';
         btnStop.style.display = 'none';
 
-        btnStep.style.gridColumnStart = 1;
+        btnStep.style.gridColumnStart = 2;
         btnStep.style.gridColumnEnd = 6;
         btnStep.style.gridRowStart = 4;
         btnStep.style.gridRowEnd = 4;
@@ -713,7 +729,7 @@ class SudokuSolverView extends SudokuView {
         btnPause.style.display = 'grid';
         btnStop.style.display = 'grid';
 
-        btnStep.style.gridColumnStart = 4;
+        btnStep.style.gridColumnStart = 5;
         btnStep.style.gridColumnEnd = 6;
         btnStep.style.gridRowStart = 4;
         btnStep.style.gridRowEnd = 4;
