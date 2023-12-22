@@ -623,8 +623,8 @@ html {
 }
 
 .btn-image {
-    width: 1.6rem;
-    height: 1.6rem;
+    width: 1.8rem;
+    height: 1.8rem;
 }
 
 /*======================================*/
@@ -1141,7 +1141,7 @@ label {
 .db-puzzle-button {
     background-color: #ddd;
     text-align: center;
-    font-size: var(--font-size);
+    font-size: var(--font-size-lg);
     display: grid;
     place-items: center;
     border-radius: 0.5rem;
