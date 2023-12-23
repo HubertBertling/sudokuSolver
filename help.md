@@ -4,7 +4,7 @@ layout: default
 
 # Sudoku-Trainer
 
-## Ein Trainer mit Solver und Generator für klassisches Sudoku
+## Ein Trainer für klassisches Sudoku
 
 Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Puzzle, manchmal sogar nur als leicht klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man den Sudoku-Trainer mögliche nächste Schritte anzeigen lassen oder darüber hinaus das Puzzle komplett lösen lassen.
 
