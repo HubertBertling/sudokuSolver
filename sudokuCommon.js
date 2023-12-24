@@ -454,13 +454,13 @@ class SudokuSolverController {
             let newPuzzleName = 'PZ (' + new Date().toLocaleString('de-DE') + ')';
             let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
             // this.myPuzzleSaveDialog.open(newPuzzelId, 'Puzzle (' + new Date().toLocaleString('de-DE') + ')');
-            sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzleId, newPuzzleName, playedPuzzleDbElement); 
-            this.myInfoDialog.open('Spielstand gespeichert', "info", 
+            sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzleId, newPuzzleName, playedPuzzleDbElement);
+            this.myInfoDialog.open('Spielstand gespeichert', "info",
                 'Neues Puzzle: ' + newPuzzleName + ' gespeichert.');
         } else {
             //Aktuelles Puzzel ist aus der Datenbank überschreiben
             sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, puzzleName, tmpPuzzleDbElement);
-            this.myInfoDialog.open('Spielstand gespeichert', "info", 
+            this.myInfoDialog.open('Spielstand gespeichert', "info",
                 'Puzzle: ' + puzzleName);
         }
         // Das (neu) gespeicherte Puzzle wird das aktuell gespielte Puzzle
@@ -4155,12 +4155,12 @@ class SudokuGrid extends SudokuModel {
             this.sudoCells[i].manualSetValue(tmpCellValue, tmpCellPhase);
         }
     }
-    loadSimplePuzzleArray() {
+    loadSimplePuzzleArray(pa) {
         for (let i = 0; i < 81; i++) {
-            if (back23[i] == '0') {
-                this.sudoCells[i].manualSetValue(back23[i], '');
+            if (pa[i] == '0') {
+                this.sudoCells[i].manualSetValue(pa[i], '');
             } else {
-                this.sudoCells[i].manualSetValue(back23[i], 'define');
+                this.sudoCells[i].manualSetValue(pa[i], 'define');
             }
         }
     }
@@ -6550,20 +6550,53 @@ class SudokuPuzzleDB extends SudokuModel {
         this.notify();
     }
 
-    importBackRunPuzzle() {
-        sudoApp.mySolver.myGrid.loadSimplePuzzleArray();
-        let puzzleId = 'lpmrrjo3kp5dcvrnmab';
-
-        // Hole den Speicher als ein Objekt
+    importBackRunPuzzle(pa, pzName, puzzleId) {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
-
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-        let playedPuzzleDbElement = sudoApp.mySolver.myGrid.getPuzzleRecord();
-
         if (!puzzleMap.has(puzzleId)) {
-            this.saveNamedPuzzle(puzzleId, 'Backtrack_23', playedPuzzleDbElement);
+            sudoApp.mySolver.myGrid.loadSimplePuzzleArray(pa);
+            let playedPuzzleDbElement = sudoApp.mySolver.myGrid.getPuzzleRecord();
+            this.saveNamedPuzzle(puzzleId, pzName, playedPuzzleDbElement);
+            this.addPuzzlePreRunDataUsingWebworker(puzzleId);
         }
         sudoApp.mySolver.init();
+    }
+
+    addPuzzlePreRunDataUsingWebworker(puzzleId) {
+        // A new web worker that performs the fast solution of this puzzle, is created.
+        let webworkerFastSolver = new Worker("./fastSolverApp.js");
+        // A message handler is given to the web worker. The web worker
+        // sends a message containing the solved puzzle as a string (response object).
+        webworkerFastSolver.onmessage = function (e) {
+            let response = JSON.parse(e.data);
+            let calculatedPreRunRecord = response.value;
+            let str_puzzleMap = localStorage.getItem("localSudokuDB");
+            let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+            // Füge das Puzzle in das Speicherobjekt ein
+            let puzzleDbElement = puzzleMap.get(puzzleId);
+  
+            puzzleDbElement.preRunRecord = calculatedPreRunRecord;
+/*
+            puzzleDbElement.preRunRecord.statusGiven;
+            puzzleDbElement.preRunRecord.stepsLazy;
+            puzzleDbElement.preRunRecord.stepsStrict;
+            puzzleDbElement.preRunRecord.level;
+            puzzleDbElement.preRunRecord.backTracks;
+            puzzleDbElement.preRunRecord.solvedPuzzle;
+*/
+            puzzleMap.set(puzzleId, puzzleDbElement);
+            // Kreiere die JSON-Version des Speicherobjektes
+            // und speichere sie.
+            let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
+            localStorage.setItem("localSudokuDB", update_str_puzzleMap);            
+        }
+        let puzzleArray = sudoApp.mySolver.myGrid.getPuzzleArray();
+        let request = {
+            name: 'preRun',
+            value: puzzleArray
+        }
+        let str_request = JSON.stringify(request);
+        webworkerFastSolver.postMessage(str_request);
     }
 
     getPuzzle(uid) {
