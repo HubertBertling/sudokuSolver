@@ -10,7 +10,8 @@
         }
     },
     "markdownConverter.ConversionType": [
-        "HTML"
+        "HTML",
+        "PDF"
     ],
     "markdown.showToolbar": true,
     "markdownConverter.Document.Paper.PaperFormat": {

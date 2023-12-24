@@ -6,38 +6,22 @@ layout: default
 
 ## Ein Trainer für klassisches Sudoku
 
-Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach jahrelanger Erfahrung ist man spürbar besser geworden. Und dann kommt ein Puzzle, manchmal sogar nur als leicht klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man den Sudoku-Trainer mögliche nächste Schritte anzeigen lassen oder darüber hinaus das Puzzle komplett lösen lassen.
+Wer kennt das nicht? Beim Kaffeetrinken ein Sudoku lösen. Nach zunehmender Erfahrung ist man spürbar besser geworden. Und dann kommt ein Puzzle, manchmal sogar nur als leicht klassifiziert, und man findet partout nicht die nächste Zelle mit einer eindeutigen Nummernbelegung. Anstatt den Kaffeetisch frustriert zu verlassen, kann man den vorliegenden Sudoku-Trainer mögliche nächste Schritte anzeigen lassen oder darüber hinaus das Puzzle komplett lösen lassen.
 
-Die Besonderheit des Sudoku-Trainers besteht darin, dass man ihm bei der Lösungssuche zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Solver zur Lösung des Sudokus gelangt. Durch das Beobachten und Verstehen des Solvers kann der Spieler seine Fähigkeit,Sudokus zu lösen, trainieren.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Der Generator generiert faire Puzzles mit den Schwierigkeitsgraden 'Leicht', 'Mittel' und 'Schwer'. Im Gegensatz zu 'Sehr Schweren' oder 'Extrem Schweren' Puzzles - Definition der Schwierigkeitsgrade erfolgt weiter unten - können faire Puzzles allein durch logisches Schließen gelöst werden. Sie benötigen kein "Backtracking", kein Raten und Probieren.
+Die Besonderheit dieses Sudoku-Trainers besteht darin, dass man ihm bei der Lösungssuche zuschauen kann. Schritt für Schritt kann man beobachten und verstehen, wie der Trainer zur Lösung des Sudoku-Puzzles gelangt.
 
 ## App-Überblick
 
-![Anwendungsansicht](./images/AppView.png)
+<img src="./images/Architektur.png" width="300px"/>
 
-Der Sudoku-Trainer besteht aus drei Komponenten, dem Solver, dem Generator und der Puzzle-Datenbank. Mit Hilfe des Solvers kann man beliebige Sudoku-Puzzles manuell oder automatisch lösen. Mittels des Generators kann man neue Puzzles generieren. In der Puzzle-Datenbank können Puzzles mit ihren Eigenschaften, etwa dem Schwierigkeitsgrad, der Anzahl benötigter Lösungsschritte und der Lösung selbst gespeichert werden.
+Der Sudoku-Trainer besteht aus drei Komponenten, dem Solver, dem Generator und der Puzzle-Datenbank. Mit Hilfe des Solvers kann man beliebige Sudoku-Puzzles manuell oder automatisch lösen. Mittels des Generators kann man neue Puzzles generieren. In der Puzzle-Datenbank kann der Spielstand von Puzzles sowie Eigenschaften des Puzzle, etwa dem Schwierigkeitsgrad, gespeichert werden.
 
 ## Der Solver
 
-Ein Sudoku bzw. ein Puzzle ist eine partiell gefüllte Tabelle. Die Tabelle hat 9 Reihen, 9 Spalten und 9 Blöcke. Die initial gesetzten Nummern heißen Givens. Sie werden blau unterlegt angezeigt. Grün unterlegte Zellen enthalten Lösungsnummern, die vom Spieler oder dem Solver gesetzt wurden. Reihen, Spalten und Blöcke haben einen gemeinsamen Oberbegriff: Die Gruppe. Jede Reihe, Spalte und jeder Block ist eine Gruppe.
+![Anwendungsansicht](./images/AppView.png)
+
+
+Ein Sudoku-Puzzle ist eine partiell gefüllte Tabelle. Die Tabelle hat 9 Reihen, 9 Spalten und 9 Blöcke. Die initial gesetzten Nummern heißen Givens. Sie werden blau unterlegt angezeigt. Grün unterlegte Zellen enthalten Lösungsnummern, die vom Spieler oder dem Solver gesetzt wurden. Reihen, Spalten und Blöcke haben einen gemeinsamen Oberbegriff: Die Gruppe. Jede Reihe, Spalte und jeder Block ist eine Gruppe.
 
 Der Spieler kann sich bei der Lösungssuche unterstützen lassen, indem er in den noch nicht gesetzten Zellen Kandidatennummern anzeigen lässt. Kandidatennummern einer Zelle sind Nummern, die ohne Widerspruch gesetzt werden können. Damit die Kandidatennummern angezeigt werden, muss der Spieler in dem Feld Kandidatenauswertung eine Option ungleich "Keine" selektieren, beispielsweise "Lazy". Weiter unten wird das Konzept der Kandidatenauswertung im Detail eingeführt.
 
@@ -249,9 +233,16 @@ Extrem oder sehr schwere Sudokus eignen sich nicht für die manuelle Lösungssuc
 
 ## Der Sudoku-Generator
 
-Nahtlos integriert in den Sudoku-Solver findet sich ein Sudoku-Generator. Mittels der Taste **Neu** kann ein neues Puzzle generiert werden. Der Generator generiert nur faire Puzzles mit den Schwierigkeitsgraden 'Leicht', 'Mittel' und 'Schwer'.
+Nahtlos integriert in den Sudoku-Trainer findet sich ein Sudoku-Generator.
+
+Mittels der Taste **Neu** kann ein neues Puzzle generiert werden. Der Generator generiert nur faire Puzzles mit den Schwierigkeitsgraden 'Leicht', 'Mittel' und 'Schwer'.
 
 Der Generator kann nicht gezielt ein Puzzle mit bestimmtem Schwierigkeitsgrad herstellen. Die generierten Puzzles haben zufällig einen der Schwierigkeitsgrade 'Leicht', 'Mittel' oder 'Schwer'. Wenn man einen bestimmten Schwierigkeitsgrad wünscht, muss man gegebenenfalls mehrere Generierungen veranlassen, bis der gewünschte Schwierigkeitsgrad dabei ist.
+
+
+Der Generator generiert faire Puzzles mit den Schwierigkeitsgraden 'Seher leicht', 'Leicht', 'Mittel' und 'Schwer'. Im Gegensatz zu 'Sehr schweren' oder 'Extrem schweren' Puzzles - Definition der Schwierigkeitsgrade erfolgt weiter unten - können faire Puzzles allein durch logisches Schließen gelöst werden. Sie benötigen kein "Backtracking", kein Raten und Probieren.
+
+
 
 ## Die Puzzle-Datenbank
 
