@@ -975,6 +975,10 @@ class SudokuCalculator extends SudokuModel {
         this.setGamePhase('play');
     }
 
+    reloadNameOfLoadedPuzzle (uid, name) {
+        this.myGrid.reloadNameOfLoadedPuzzle(uid, name);
+    }
+
     loadPreRunRecord(uid, puzzle) {
         this.myGrid.loadPreRunRecord(uid, puzzle);
     }
@@ -1215,6 +1219,9 @@ class SudokuSolver extends SudokuCalculator {
     loadPuzzle(uid, puzzle) {
         super.loadPuzzle(uid, puzzle);
         this.notify();
+    }
+    reloadNameOfLoadedPuzzle (uid, name) {
+        super.reloadNameOfLoadedPuzzle(uid, name);
     }
 
     clearLoadedPuzzleInfo(key) {
@@ -4119,6 +4126,13 @@ class SudokuGrid extends SudokuModel {
         }
         this.evaluateMatrix();
     }
+    
+    reloadNameOfLoadedPuzzle (uid, name) {
+        if(this.loadedPuzzleId == uid) {
+            this.loadedPuzzleName = name;
+        }       
+    }
+
 
     loadPreRunRecord(uid, preRunRecordToLoad) {
         this.preRunRecord.statusGiven = preRunRecordToLoad.statusGiven;
@@ -6089,8 +6103,9 @@ class SudokuPuzzleDBController {
         let puzzleName = this.myPuzzleRenameDialog.getPuzzleName();
         //Speichere den named Zustand
         sudoApp.myPuzzleDB.saveRenamedPuzzle(puzzleId, puzzleName);
-        // Wechsle in den DB-Dialog
         sudoApp.myPuzzleDB.notify()
+        sudoApp.mySolver.reloadNameOfLoadedPuzzle(puzzleId, puzzleName);
+        sudoApp.mySolver.notify();
     }
 
     renamePuzzleDlgCancelPressed() {
