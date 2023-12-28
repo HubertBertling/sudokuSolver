@@ -30,18 +30,20 @@ Der Generator generiert faire Puzzles mit den Schwierigkeitsgraden 'Sehr leicht'
 
 Der Spielstand von Sudoku-Puzzles kann im lokalen Speicher des Browsers gespeichert werden. Die Tabelle (Datenbank) der gespeicherten Puzzles kann nach ihren Spalten sortiert werden.
 
+## Sudoku-Puzzle
 
-## Der Solver
+Die nachfolgend verwendeten Bezeichnungen sind im Laufe der Entwicklung dieses Trainers entstanden. Sie unterstützen primär das Verständnis dieses Trainers. Dennoch haben wir uns bemüht, Standardbegriffe zu verwenden, wie man sie im Internet findet, beispielsweise in [Wikipedia](https://en.wikipedia.org/wiki/Glossary_of_Sudoku). Eine herausragende Seite für Sudoku-Interessierte ist die Seite von [Andrew Stuart](https://www.sudokuwiki.org/Main_Page).
 
 ![Anwendungsansicht](./images/AppView.png)
 
-Ein Sudoku-Puzzle ist eine partiell gefüllte Tabelle. Die Tabelle hat 9 Reihen, 9 Spalten und 9 Blöcke. Die initial gesetzten Nummern heißen Givens. Sie werden blau unterlegt angezeigt. Grün unterlegte Zellen enthalten Lösungsnummern, die vom Spieler oder dem Solver gesetzt wurden. Reihen, Spalten und Blöcke haben einen gemeinsamen Oberbegriff: Die Gruppe. Jede Reihe, Spalte und jeder Block ist eine Gruppe.
+Ein Sudoku-Puzzle ist eine partiell gefüllte Tabelle. Die Tabelle hat 9 Reihen, 9 Spalten und 9 Blöcke. Die initial gesetzten Nummern heißen Givens. Sie werden blau unterlegt angezeigt. Grün unterlegte Zellen enthalten Lösungsnummern, die vom Spieler oder dem Solver gesetzt wurden. Die Tabelle besitzt Reihen, Spalten und Blöcke. Eine Reihe, eine Spalte oder ein Block wird auch als Gruppe bezeichnet.
 
-Der Spieler kann sich bei der Lösungssuche unterstützen lassen, indem er in den noch nicht gesetzten Zellen Kandidatennummern anzeigen lässt. Kandidatennummern einer Zelle sind Nummern, die ohne Widerspruch gesetzt werden können. Damit die Kandidatennummern angezeigt werden, muss der Spieler in dem Feld Kandidatenauswertung eine Option ungleich "Keine" selektieren, beispielsweise "Lazy". Weiter unten wird das Konzept der Kandidatenauswertung im Detail eingeführt.
+Der Spieler kann sich bei der Lösungssuche unterstützen lassen, indem er in den noch nicht gesetzten Zellen Kandidatennummern anzeigen lässt. Kandidatennummern einer Zelle sind Nummern, die ohne Widerspruch gesetzt werden können. Damit die Kandidatennummern angezeigt werden, muss der Spieler in der Navigationsleiste die Option "Einstellungen" wählen und dort in dem Feld Kandidatenauswertung eine Option ungleich "Keine" selektieren, beispielsweise "Lazy". Weiter unten wird das Konzept der Kandidatenauswertung im Detail eingeführt.
+
 
 ![Anwendungsansicht](./images/AppView2.png)
 
-### Typischer Ablauf der Lösung eines Sudoku-Puzzles
+## Typischer Ablauf der Lösung eines Sudoku-Puzzles
 
 1. **Sudoku-Puzzle eingeben:** "Definieren" wählen und die Zellen mit den Givens des Puzzles setzen.
 2. **Sudoku-Puzzle lösen:** "Lösen" wählen und die Zellen mit den vermutet richtigen Nummern belegen.
@@ -53,11 +55,7 @@ Beim Definieren wie auch beim Lösen besteht ein Lösungsschritt aus zwei Subsch
 
 Soll eine Nummern-Setzung zurückgenommen werden, muss die betroffene Zelle selektiert werden und dann die rote Lösch-Taste gedrückt werden.
 
-## Basisbegriffe des Solvers
-
-Die nachfolgend verwendeten Begriffe sind im Laufe der Entwicklung dieses Solvers entstanden. Sie unterstützen primär das Verständnis dieses Solvers. Dennoch haben wir uns bemüht, Standardbegriffe zu verwenden, wie man sie im Internet findet, beispielsweise in [Wikipedia](https://en.wikipedia.org/wiki/Glossary_of_Sudoku). Eine herausragende Seite für Sudoku-Interessierte ist die Seite von [Andrew Stuart](https://www.sudokuwiki.org/Main_Page).
-
-### Die möglichen Inhalte einer Sudoku-Zelle
+## Die möglichen Inhalte einer Sudoku-Zelle
 
 |Zelle  |Bedeutung  |
 |---------|---------|
@@ -72,7 +70,7 @@ Die nachfolgend verwendeten Begriffe sind im Laufe der Entwicklung dieses Solver
 |<img src="./images/conflct.png" width="100px"/>|**Widerspruch - Die Nummer 5 ist bereits einmal gesetzt:** Für diese Zelle wurde die Nummer 5 gesetzt. Diese Nummer ist direkt unzulässig, weil in der Spalte, Reihe oder dem Block dieser Zelle bereits eine 5 gesetzt ist. Das zweite oder dritte Auftreten der Nummer wird ebenfalls mit rotem Rand angezeigt.|
 |<img src="./images/conflct.png" width="100px"/>|**Prüfen - Die Prüfung, aufgerufen durch die Prüfen-Taste, hat ergeben, dass die Nummer 5 falsch gesetzt ist:** Wenn ein Spieler manuell die Lösungsnummern setzt, kann er jederzeit mittels der Prüfen-Taste ermitteln, ob alle seine bisherigen gesetzten Lösungsnummern korrekt gesetzt sind. Alle nicht korrekten Setzungen werden wie der Widerspruch angezeigt. In diesem Beispiel hat die Prüfung ergeben, dass die 5 falsch gesetzt ist.|
 
-### Zwei Phasen
+## Zwei Spielphhasen
 
 |Phase  |Bedeutung  |
 |---------|---------|
@@ -81,20 +79,28 @@ Die nachfolgend verwendeten Begriffe sind im Laufe der Entwicklung dieses Solver
 
 Hinweis: Gegebene Nummern, die Givens - dies sind blaue Nummern - können in der Lösungsphase nicht gelöscht werden. Falls Givens gelöscht werden sollen, muss man zuvor die Definieren-Taste drücken.
 
-### Manuelle Ausführung ohne Kandidatenauswertung
+## Manuelle Ausführung
 
-Manuelle Ausführung bedeutet, dass der Spieler die Lösungsnummern (grün) in den Zellen setzt. Die Lösungsphase kann alternativ auch automatisch durchgeführt werden. Die automatische Lösungssuche kann jederzeit mit der Start-Taste gestartet werden. So können auch bereits manuell teilweise gelöste Puzzles automatisch komplett gelöst werden.
+Manuelle Ausführung bedeutet, dass der Spieler die Lösungsnummern (grün) in den Zellen setzt.
+Will man sich der Herausforderung einer manuellen Lösungssuche ernsthaft stellen, kann man sich durch eine entsprechende Werkzeugeinstellung unterstützen lassen.
 
-Will man sich der Herausforderung einer manuellen Lösungssuche ernsthaft stellen, muss man die Kandidatenauswertung auf 'Keine' setzen. Indem man die Kandidatenauswertung auf 'Keine' setzt, wird die Kandidatenauswertung ausgeschaltet. Auf diese Weise kann man am Computer das Puzzle lösen wie auf einem Blatt Papier.
+|Menü  |Einstellungen  |
+|---------|---------|
+|<img src="./images/menuEinstellung.png" width="100px"/>|<img src="./images/einstellungen.png" width="200px"/>|
 
-Ist hingegen die Kandidatenauswertung auf 'Lazy' gesetzt, zeigt der Solver unter anderem notwendige Kandidaten und Singles an. Da diese in einer korrekten Lösung gesetzt sein müssen, wird der Spieler nach und nach alle notwendigen Nummern und alle Singles manuell setzen. D.h. manuelles Lösen mit Kandidatenauswertung ist Lösen mit "Vorsagen". Dies ist für Trainingszwecke sicher in Ordnung. Ansonsten ist es aber offensichtlich eine unsportliche Art, ein Puzzle zu lösen.
+Indem man die Kandidatenauswertung auf 'Keine' setzt, wird die Kandidatenauswertung ausgeschaltet. Auf diese Weise kann man am Computer das Puzzle lösen wie auf einem Blatt Papier. Die zweite Einstellung, der Spielmodus "Trainieren", bewirkt, dass die Tasten für die automatische Ausführung ausgeblendet werden.
 
-Wenn man beim echten manuellen Lösen (Kandidatenauswertung = 'Keine') nicht weiterkommt, gibt es 2 Optionen:
+|Tastenauswahl Manuelle Ausführung|Tastenauswahl Automatische Ausführung|
+|---------|---------|
+|<img src="./images/TastenauswahlManuell.png" width="200px"/>|<img src="./images/tastenauswahlAutomatik.png" width="200px"/>|
 
-1. Schritttaste drücken. Dann selektiert der Solver die Zelle, die er als nächstes setzen würde. Meist ist die eine Zelle, die eine notwendige Nummer besitzt. Drückt man die Schritttaste ein weiteres mal, wird die notwendige Nummer automatisch gesetzt.
-1. Kandidatenauswertung temporär auf 'Lazy' setzen, um einen möglichen nächsten Schritt zu erkennen und anschließend wieder zurück auf 'Keine' setzen.
+Wenn man beim  manuellen Lösen (Kandidatenauswertung = 'Keine') nicht weiterkommt, kann man die Schritttaste drücken. Dann selektiert der Solver die Zelle, die er als nächstes setzen würde. Meist ist dies eine Zelle, die eine notwendige Nummer besitzt. Drückt man die Schritttaste ein weiteres mal, wird die notwendige Nummer automatisch gesetzt.
 
-### Automatische Ausführung
+Manuelles Lösen mit der Schritttaste ist Lösen mit "Vorsagen". Dies ist für Trainingszwecke sicher in Ordnung und nützlich. Ansonsten ist es aber offensichtlich eine eher unsportliche Art, ein Puzzle zu lösen.
+
+## Automatische Ausführung
+
+Die Lösungsphase kann alternativ auch automatisch durchgeführt werden. Die automatische Lösungssuche kann jederzeit mit der Start-Taste gestartet werden. So können auch bereits manuell teilweise gelöste Puzzles automatisch komplett gelöst werden. Für die automatische Ausführung muss in den Einstellungen der Spielmodus "Lösen" gewählt sein. Die Tasten der automatischen Ausführung haben folgende Bedeutung:
 
 |Taste  |Bedeutung  |
 |---------|---------|
@@ -103,27 +109,43 @@ Wenn man beim echten manuellen Lösen (Kandidatenauswertung = 'Keine') nicht wei
 |**Stop**|Der Taktgeber der automatischen Ausführung wird angehalten und der aktuelle Suchprozess wird abgebrochen. In der Anzeige werden die Schrittinformationen ausgeblendet und nur noch die Lösungsnummern angezeigt.|
 |**Schritt**|Der Solver führt den nächsten automatischen Suchschritt aus. Falls noch nicht geschehen, startet er zuvor den Suchprozess überhaupt. Mit dieser Taste kann man den Solver Schritt für Schritt arbeiten lassen und so jeden einzelnen seiner Schritte beobachten und verstehen.|
 
-### Puzzle-Operationen
+## Puzzle-Tasten
 
 |Taste  |Bedeutung  |
 |---------|---------|
-|**Init**|Durch das Drücken dieser Initialisierungstaste wird das aktuelle Puzzle des Solvers initialisiert. Danach ist die Sudoku-Tabelle leer.|
-|**Zurück**|Mittels dieser Taste wird das Puzzle des Solvers zurückgesetzt auf die Aufgabenstellung. D.h. alle in der Lösungsphase gesetzten Zellen, die grünen Zellen, werden gelöscht. Die Givens bleiben erhalten.|
-|**Neu**|Mittels dieser Taste kann ein neues Puzzle generiert werden.|
+|**Undo**|Durch das Drücken dieser Taste wird die letzte Zellenoperation zurückgenommen.|
+|**Redo**|Rücknahme des Undo.|
 |**Prüfen**|Die gesetzten Lösungsnummern werden geprüft. Wenn sie falsch gesetzt sind, werden sie als fehlerhaft gekennzeichnet. Diese Funktion ist dann nützlich, wenn man das Puzzle manuell lösen will und man vermutet, dass man bereits einen Fehler gemacht hat.
-|**Speichern unter**|Mittels dieser Taste kann das aktuelle Puzzle in der Datenbank gespeichert werden.|
-|**Überschreiben**|Mittels dieser Taste können für ein aus der Datenbank geladenes Puzzle die Daten in der Datenbank aktualisiert werden. Die alten Daten werden durch die neuen Daten überschrieben. Falls das aktuelle Puzzle nicht aus der Datenbank geladen wurde, wird der Speicherdialog angestoßen.|
+|**Speichern**|Mittels dieser Taste kann der Spielstand des aktuellen Puzzles in der Datenbank gespeichert werden. Gegebenenfalls wird das Puzzle in der DB neu angelegt.|
 
-### Kandidaten und unzulässige Nummern
+## Menü-Optionen
 
-Für eine noch nicht belegte Zelle der Sudoku-Tabelle unterscheiden wir Kandidatnummern und unzulässge Nummern. Für eine unbelegte Zelle ist eine Nummer **unzulässig**, wenn in dem Block, in der Reihe oder Spalte dieser Zelle eine andere Zelle existiert, in der diese Nummer gesetzt ist. Alle anderen Nummern heißen **Kandidatnummern** oder einfach **Kandidaten** dieser Zelle. In einer unbelegten Zelle werden die Kandidaten der Zelle angezeigt, sofern im Feld Kandidatenauswertung nicht der Wert "Keine" gesetzt ist.
+Durch Klicken der Menü-Taste im Header des Trainers öffnet sich die Menü-Leiste.
 
-### Notwendige Nummern
+<img src="./images/menuEinstellung.png" width="100px"/>
+
+|Option  |Bedeutung  |
+|---------|---------|
+|**Initialisieren**|Durch das Drücken dieser Option wird das aktuelle Puzzle des Solvers initialisiert. Danach ist die Sudoku-Tabelle leer.|
+|**Zurücksetzen**|Mittels dieser Option wird das Puzzle des Solvers zurückgesetzt auf die Aufgabenstellung. D.h. alle in der Lösungsphase gesetzten Zellen, die grünen Zellen, werden gelöscht. Die Givens bleiben erhalten.|
+|**Neu/Sehr leicht**|Mittels dieser Option wird ein neues sehr leicht zu lösendes Puzzle generiert.|
+|**Neu/Leicht**|Mittels dieser Option wird ein neues leicht zu lösendes Puzzle generiert.|
+|**Neu/Mittel**|Mittels dieser Option wird ein neues mittel schwer zu lösendes Puzzle generiert.|
+|**Neu/Schwer**|Mittels dieser Option wird ein neues schwer zu lösendes Puzzle generiert.|
+|**Drucken**|Mittels dieser Option wird das aktuelle Puzzle ausgedruckt.|
+|**Datenbank**|Mittels dieser Option wird der Datenbankdialog gestartet.|
+|**Einstellungen**|Mittels dieser Option wird der Einstellungsdialog gestartet.|
+
+## Kandidaten und unzulässige Nummern
+
+Für eine noch nicht belegte Zelle der Sudoku-Tabelle unterscheiden wir Kandidatnummern und Nicht-Kandidatennummern. Nicht-Kandidatennummern bezeichen wir auch als unzulässge Nummern. Für eine unbelegte Zelle ist eine Nummer **unzulässig**, wenn in dem Block, in der Reihe oder Spalte dieser Zelle eine andere Zelle existiert, in der diese Nummer bereits gesetzt ist. Alle anderen Nummern heißen **Kandidatnummern** oder einfach **Kandidaten** dieser Zelle. In einer unbelegten Zelle werden die Kandidaten der Zelle angezeigt, sofern im Feld Kandidatenauswertung nicht der Wert "Keine" gesetzt ist.
+
+## Notwendige Nummern
 
 ![Lazy notwendig](./images/lazynotwendig.png)
-Eine Kandidatnummer in einer Zelle ist notwendig, wenn die Nummer in ihrem Block, in ihrer Reihe oder Spalte einzig ist. D.h. sie kann nur hier gesetzt werden. Im Bild ist die grüne 1 notwendig, weil sie in ihrem Block kein weiteres mal zulässig ist. Im Lazy-Auswertungsmodus zeigt der Solver den die Notwendigkeit verursachenden Block, Spalte oder Reihe an, wenn man die Zelle mit der notwendigen Nummer selektiert hat. Die Zellen des Blocks besitzen einen grün gestrichelten Rahmen.
+Eine Kandidatnummer in einer Zelle ist notwendig, wenn die Nummer in ihrem Block, in ihrer Reihe oder Spalte einzig ist. D.h. sie kann nur hier gesetzt werden. Im Bild ist die grüne 1 notwendig, weil sie in ihrem Block kein weiteres mal zulässig ist. Im Lazy-Auswertungsmodus zeigt der Solver den die Notwendigkeit verursachenden Block, Spalte oder Reihe an, wenn man die Zelle mit der notwendigen Nummer selektiert hat. Die Zellen des Blocks besitzen einen grün gestrichelten Rahmen. Die Zellen mit den weiß gestrichelten Rahmen zeigen Einsen an, deretwegen in den grün gestrichelten Rahmen keine 1 mehr gesetzt werden kann.
 
-### Unzulässige Kandidaten
+## Unzulässige Kandidaten
 
 **Direkt unzulässige Nummern** sind Nummern, die in einem Block, in einer Spalte oder Reihe bereits einmal existieren. Direkt unzulässige Nummern können keine Kandidaten sein. Es gibt jedoch auch unzulässige Kandidaten. **Unzulässige Kandidaten** werden in roter Schrift angezeigt. Eine Kandidatnummer ist (indirekt) unzulässig, wenn ihre Setzung in der Zelle das Puzzle widerspruchsvoll macht.
 
@@ -139,11 +161,11 @@ In fairen Puzzles kann man unzulässige Kandidaten allein durch logisches Schlie
 1. **Kriterium: Unzulässig wegen Überschneidung.** Ein Block und eine Spalte oder Reihe überschneiden sich. In der Reihe gibt es Nummern, die nur in den gemeinsamen Zellen mit dem Block auftauchen. Im Beispiel die 7. Damit es am Ende in der Reihe überhaupt eine 7 gibt, muss eine 7 in der Reihe gewählt werden. Dies wiederum bedeutet, dass die Nummern 7 in dem Block jenseits der Reihe gestrichen werden müssen.
 ![Überschneidung](./images/ueberschneidung.png)
 
-### Methoden der Kandidatenauswertung
+## Methoden der Kandidatenauswertung
 
 Unter Kandidatenauswertung verstehen wir die Anwendung der Kriterien, die im vorigen Abschnitt eingeführt wurden. Es müssen nicht immer alle Kriterien angewandt werden. Der Solver unterscheidet mehrere Methoden der Kandidatenauswertung.
 
-1. **Keine** Kandidatenauswertung. Der Solver arbeitet ohne Kandidaten. Diese Option ist wünschenswert, wenn der Spieler ohne Hilfe des Solvers eine manuelle Lösung des Puzzles suchen will. In diesem Modus werden in den Zellen keine Kandidaten angezeigt.
+1. **Keine** Kandidatenauswertung. Der Solver zeigt keine Kandidaten an, wenngleich er im Hintergrund weiter mit Kandidaten arbeitet. Diese Option ist wünschenswert, wenn der Spieler ohne Hilfe des Solvers eine manuelle Lösung des Puzzles suchen will.
 
 1. **Lazy** Kandidatenauswertung. Wenn die Anzahl unzulässiger Kandidaten (die roten Nummern) groß wird, wird es immer schwieriger, nackte Paare oder versteckte Paare zu erkennen. Die Lazy-Auswertungsmethode praktiziert eine verzögerte Auswertung. Die Auswertung erfolgt nur soweit, bis die nächste notwendige Nummer oder die nächste Single-Nummer oder die nächste versteckte Single-Nummer bestimmt ist. Nur im Lazy-Modus, werden in den oben gezeigten Beispielen die Erläuterungen der Kandidatennummern angezeigt.
 
@@ -159,8 +181,7 @@ Das nachfolgende Bild zeigt die vorige Tabelle im Strikt-Minus-Modus. Im Strikt-
 
 ![Strikt Minus](./images/striktminus.png)
 
-Hinweis: In der Smartphone-Version des Solvers gibt es aus Platzgründen nur die Auswertungsmethode 'Strikt'. 'Strikt' = 'Strikt - '.
-### Vergleich der Auswertungsmodi Lazy und Strikt
+## Vergleich der Auswertungsmodi Lazy und Strikt
 
 Wir vergleichen die jeweiligen Vorteile der Auswertungsmodi.
 
@@ -168,22 +189,20 @@ Wir vergleichen die jeweiligen Vorteile der Auswertungsmodi.
 
 Im Lazy-Modus wird die Verursachung notwendiger Nummern oder unzulässiger Kandidaten angezeigt durch gestrichelte Border, wenn die Zelle der notwendigen Nummer oder unzulässigen Nummer selektiert ist. Durch erneutes Klicken der selektierten Zelle können die Ursachen der notwendigen und unzulässigen Kandidaten der Reihe nach jeweils angezeigt werden. Wenn alle Kandidaten angezeigt wurden, führt das erneute Klicken der Zelle zur Deselektion der Zelle.
 
-**Vorteil der strikten Auswertung: Lösung des Puzzles mit weniger Schritten.** Im Auswertungsmodus Strikt benötigt der Solver im Allgemeinen weniger Schritte bis zur Lösung des Puzzles als im Ausführungsmodus Lazy. Woran liegt das? Es liegt daran, dass der Solver im Ausführungsmodus Strikt sehr viel früher die Widersprüchlichkeit, falls vorhanden, der aktuellen Nummernbelegungen feststellt. Dies wiederum führt dazu, dass die Anzahl der Rückwärtsschritte entsprechend geringer wird und damit die Anzahl der Schritte insgesamt. Die Anzahl der Rückwärtsläufe bleibt in beiden Ausführungsmodi gleich. Der Solver untersucht in beiden Auswertungsmodi dieselben Optionen.
+**Vorteil der strikten Auswertung: Lösung des Puzzles mit weniger Schritten.** Im Auswertungsmodus Strikt benötigt der Solver im Allgemeinen weniger Schritte bis zur Lösung des Puzzles als im Ausführungsmodus Lazy. Woran liegt das? Es liegt daran, dass der Solver im Ausführungsmodus Strikt sehr viel früher die Widersprüchlichkeit, falls vorhanden, der aktuellen Nummernbelegungen feststellt. Dies wiederum führt dazu, dass die Anzahl der Rückwärtsschritte entsprechend geringer wird und damit die Anzahl der Schritte insgesamt. Die Anzahl der Rückwärtsläufe bleibt in beiden Ausführungsmodi gleich. Der Solver untersucht in beiden Auswertungsmodi dieselben möglchen Nummernsetzungen.
 
-Dieser Sudoku-Solver zeichnet sich in erster Linie durch seine nachvollziehbare Lösungssuche aus. Die Schrittminimierung ist kein Ziel. Daher "Keine" bzw. "Lazy" der Default-Auswertungsmodus bei der automatischen Lösungssuche.
+Dieser Sudoku-Trainer zeichnet sich in erster Linie durch seine nachvollziehbare Lösungssuche aus. Die Schrittminimierung ist kein Ziel. Daher sind "Keine" bzw. "Lazy" der Default-Auswertungsmodus.
 
 ## Widerspruchsvolle Sudokus
 
 Der automatische Solver setzt solange weitere Nummern in der Tabelle, bis er entweder alle Zellen gesetzt hat (das Sudoku ist gelöst), oder er erkennt, dass das Sudoku bei der aktuellen Befüllung widerspruchsvoll ist. Ein Sudoku-Puzzle ist widerspruchsvoll, wenn es
 
 1. eine widerspruchsvolle Zelle besitzt, oder
-1. einen widerspruchsvollen Block besitzt, oder
-1. eine widerspruchsvolle Reihe besitzt, oder
-1. eine widerspruchsvolle Spalte besitzt.
+1. eine widerspruchsvollen Gruppe.
 
 Es können mehrere dieser Bedingungen gleichzeitig vorliegen. Der vorliegende Solver zeigt der Übersichtlichkeit halber immer nur eine Widerspruchsbedingung an.
 
-### Widerspruchsvolle Zellen
+## Widerspruchsvolle Zellen
 
 <img src= "./images/nochoice.png" width="100px"/>
 <img src= "./images/twoNeccessary.png" width="100px" />
@@ -191,7 +210,7 @@ Es können mehrere dieser Bedingungen gleichzeitig vorliegen. Der vorliegende So
 
 Widerspruchsvolle Zellen hatten wir oben schon kennengelernt. Es sind dies Zellen mit leerer Option, Zellen mit zwei notwendigen Nummern gleichzeitig und Zellen, die mit einer direkt unzulässigen Nummer belegt sind..
 
-### Widerspruchsvolle Gruppen
+## Widerspruchsvolle Gruppen
 
 Wir betrachten hier die abstrakte Gruppe. Eine konkrete Gruppe ist immer entweder eine Reihe oder eine Spalte oder ein Block. So wie es widerspruchsvolle Zellen geben kann - erkennbar an ihrem roten Rand - kann es auch widerspruchsvolle Gruppen geben. Eine Gruppe ist widerspruchsvoll, wenn eine der folgenden Bedingungen vorliegt:
 
@@ -202,19 +221,13 @@ Wir betrachten hier die abstrakte Gruppe. Eine konkrete Gruppe ist immer entwede
 
 Wir sehen, dass gleichzeitig mehrere Bedingungen für einen Gruppenwiderspruch vorliegen können. Tritt während der automatischen Ausführung eine solche widerspruchsvolle Gruppe auf, schaltet der Solver in den Rückwärts-Modus um.
 
-Widerspruch - Single 4 mehrfach: 
-
-![Spaltenkonflikt](./images/colconflct.png)
-
-## Die Lösungssuche des Solvers
-
-### Vorwärts und Rückwärts
+## Die Lösungssuche des Solvers, Vorwärts und Rückwärts
 
 Der Solver zeigt an, wie er im Suchprozess vorwärts und rückwärts geht. Im Fachjargon: Der Solver realisiert einen Backtracking-Algorithmus. Rückwärts muss er gehen, wenn die aktuell gesetzte Nummer zur Widersprüchlichkeit des Sudokus führt. Rückwärtsgehen bedeutet, dass der Solver der Reihe nach zuvor gesetzte Nummern wieder zurücknimmt, bis er auf eine Zelle trifft, in der er mehrere Kandidatnummern zur Auswahl hatte. Er wählt dann die nächste noch nicht probierte Zahl der Auswahl und geht wieder in den Vorwärts-Modus. Sind alle Kandidatnummern durchprobiert, geht er weiter rückwärts. Wenn er im Rückwärtsgehen bei der ersten gesetzten Zelle ankommt, und die erste Zelle keine weitere unprobierte Nummer mehr hat, hat das Sudoku keine Lösung.
 
 Der Solver zeigt die Anzahl der zurückgelegten Schritte an. Jedes Setzen einer Zelle sowie die Rücknahme einer Setzung erhöht den Zähler um 1. Ebenso zeigt der Solver die Anzahl der Rückwärtsläufe an.
 
-### Wie wählt der Solver die nächste Zelle und die in ihr zu setzende Nummer?
+## Wie wählt der Solver die nächste Zelle und die in ihr zu setzende Nummer?
 
 Der Solver sucht gemäß der folgenden Priorität die nächste offene Zelle und die zu setzende Nummer:
 
@@ -223,11 +236,11 @@ Der Solver sucht gemäß der folgenden Priorität die nächste offene Zelle und 
 1. **Zelle mit Hidden Single**: Wenn es keine Zelle mit notwendiger Nummer oder mit Single mehr gibt wählt der Solver eine Zelle mit Hidden Single.
 1. **Zelle mit minimaler Optionenmenge**. Sind keine Zellen mit notwendigen Nummern oder Singles mehr verfügbar, wählt der Solver eine Zelle mit minimaler Anzahl von Kandidaten. Die sogenannten **Optionen der Zelle**. Meist besteht die minimale Optionenmenge aus zwei Optionen. Die Selektion ist aber nicht eindeutig, d.h. es gibt in der Regel mehrere Zellen mit zwei Optionen. In dieser Menge wählt der Solver zufällig eine Zelle und setzt eine der beiden Optionennummern. Im Laufe der weiteren Suche kann sich herausstellen, dass diese Nummer keine Lösung des Sudokus erlaubt. Der Backtracking-Prozess kehrt im weiteren Verlauf zu dieser Zelle zurück und versucht dann mit der Wahl einer anderen Nummer aus der Optionenmenge die Lösung zu finden.
 
-### Wie prüft der Solver die neu gesetzte Nummer?
+## Wie prüft der Solver die neu gesetzte Nummer?
 
 Der Solver prüft nach der Setzung einer neuen Nummer, ob das Sudoku mit dieser gesetzten Nummer widersprüchlich geworden ist. Falls ja, wird der Solver in den Rückwärts-Modus geschaltet und geht zurück bis zu einer Zelle, die mehrere Optionen für eine Nummernsetzung hatte.
 
-## Sudoku-Schwierigkeitsgrade
+## Sudoku-Schwierigkeitsgrade (Levels)
 
 Der Schwierigkeitsgrad eines Sudoku-Puzzles kann auf verschiedene Weisen definiert werden. Wie beispielsweise anhand folgender Kriterien:
 
@@ -238,6 +251,7 @@ Der Schwierigkeitsgrad eines Sudoku-Puzzles kann auf verschiedene Weisen definie
 Dieser Solver unterscheidet Schwierigkeitsgrade anhand der Komplexität der erforderlichen Lösungstechniken. Folgende Schwierigkeitsgrade werden unterschieden:
 
 1. **Leicht:** Nur durch die Bestimmung **notwendiger Nummern** kann die Lösung des Sudokus erreicht werden.
+1. **Sehr Leicht:** Wie Leicht, jedoch mit höherer Anzahl von Givens.
 1. **Mittel:** Durch die Bestimmung notwendiger Nummern und **mindestens eines offenen Singles** kann die Lösung des Sudokus erreicht werden.
 1. **Schwer:** Bei diesem Schwierigkeitsgrad benötigt der Solver **mindestens ein Hidden Single**. Für die Bestimmung von versteckten Singles müssen unzulässige Kandidaten (rot dargestellt) bestimmt werden. Dies unterscheidet diesen Schwierigkeitsgrad vom Schwierigkeitsgrad 'Mittel'. Zugleich ist dies der höchste Schwierigkeitsgrad, der ohne Backtracking auskommt.
 1. **Sehr Schwer:** Bei diesem Schwierigkeitsgrad muss der Solver für mindestens eine Zelle eine Nummer raten und ausprobieren. "**Backtracking**" ist das dazugehörige Stichwort. Der Solver führt für die Berechnung der Lösung unter Umständen zahlreiche Rückwärtsläufe durch.
@@ -247,38 +261,28 @@ Extrem oder sehr schwere Sudokus eignen sich nicht für die manuelle Lösungssuc
 
 ## Der Sudoku-Generator
 
-Nahtlos integriert in den Sudoku-Trainer findet sich ein Sudoku-Generator.
-
-Mittels der Taste **Neu** kann ein neues Puzzle generiert werden. Der Generator generiert nur faire Puzzles mit den Schwierigkeitsgraden 'Leicht', 'Mittel' und 'Schwer'.
-
-Der Generator kann nicht gezielt ein Puzzle mit bestimmtem Schwierigkeitsgrad herstellen. Die generierten Puzzles haben zufällig einen der Schwierigkeitsgrade 'Leicht', 'Mittel' oder 'Schwer'. Wenn man einen bestimmten Schwierigkeitsgrad wünscht, muss man gegebenenfalls mehrere Generierungen veranlassen, bis der gewünschte Schwierigkeitsgrad dabei ist.
-
-
-Der Generator generiert faire Puzzles mit den Schwierigkeitsgraden 'Seher leicht', 'Leicht', 'Mittel' und 'Schwer'. Im Gegensatz zu 'Sehr schweren' oder 'Extrem schweren' Puzzles - Definition der Schwierigkeitsgrade erfolgt weiter unten - können faire Puzzles allein durch logisches Schließen gelöst werden. Sie benötigen kein "Backtracking", kein Raten und Probieren.
-
-
+Nahtlos integriert in den Sudoku-Trainer findet sich ein Sudoku-Generator. Mittels der Option **Neu** im Menu kann ein neues Puzzle generiert werden. Der Generator generiert nur faire Puzzles mit den Schwierigkeitsgraden 'Sehr leicht', 'Leicht', 'Mittel' und 'Schwer'. Im Gegensatz zu 'Sehr schweren' oder 'Extrem schweren' Puzzles können faire Puzzles allein durch logisches Schließen gelöst werden. Sie benötigen kein "Backtracking", kein Raten und Probieren.
 
 ## Die Puzzle-Datenbank
 
-Sudoku-Puzzles und ihre Lösungen können im lokalen Speicher des Browsers gespeichert werden, nicht jedoch auf dem Computer selbst. Internet-Anwendungen ist es generell nicht gestattet, auf den lokalen Speicher des Computers zuzugreifen. D.h. Man kann seine gespeicherten Puzzles nur in dem Browser wiederfinden, in dem sie gespeichert wurden.
+Sudoku-Puzzles und ihre Lösungen können im lokalen Speicher des Browsers gespeichert werden, nicht jedoch auf dem Computer selbst. Internet-Anwendungen können nicht auf das Datei-System des Computers zuzugreifen. D.h. Man kann seine gespeicherten Puzzles nur in dem Browser wiederfinden, in dem sie gespeichert wurden.
 
 ![PuzzleDB](./images/PuzzleDB.png)
 
-Beim Abspeichern kann dem Puzzle ein Name gegeben werden. Automatisch erhält es eine eindeutige ID. Zusätzlich werden weitere Attribute für das gespeicherte Puzzle erfasst:
+Beim Abspeichern erhält das gespeicherte Puzzle automatisch einen Namen, das aktuelle Datum. Bei Bedarf kann der Name umbenannt werden. Bezüglich der Namen gibt es keine Einschränkungen.
 
 |Attribut  |Bedeutung  |
 |---------|---------|
-|Puzzle-ID|Die eindeutige ID des gespeicherten Puzzles.|
-|Name|Name des gespeicherten Puzzles. Muss nicht eindeutig sein.|
-|Definierte Zellen|Die Zahl der der definierten Zellen des Puzzles.|
-|Status|Der Lösungsstatus des gespeicherten Puzzles.|
-|Schritte (lazy)|Die Anzahl der Schritte, die der Solver brauchte, um das Puzzle im Auswertungsmodus Lazy zu lösen.|
-|Schritte (strikt)|Die Anzahl der Schritte, die der Solver brauchte, um das Puzzle im Auswertungsmodus Strikt + bzw. Strikt - zu lösen.|
+|Laufende Nr.|Laufende Nr. in der Tabelle. Sie ist keine ID für Puzzles|
+|Puzzle-Name|Name des gespeicherten Puzzles. Muss nicht eindeutig sein.|
+|#Givens|Die Zahl der Givens des Puzzles.|
+|#Gelöste|Die Zahl der gelösten Zellen des Puzzles.|
+|#Offene|Die Zahl der offenen, ungelösten Zellen des Puzzles.|
 |Level|Der ermittelte Schwierigkeitsgrad des gespeicherten Puzzles.|
 |#Rückwärts|Die Anzahl der Rückwärtsläufe, die der Solver durchgeführt hat, um das Puzzle zu lösen.|
 |Datum|Datum, an dem das Puzzle zuletzt gespeichert wurde.
 
-### Operationen der Datenbank
+## Operationen der Datenbank
 
 |Taste  |Bedeutung  |
 |---------|---------|
@@ -288,6 +292,10 @@ Beim Abspeichern kann dem Puzzle ein Name gegeben werden. Automatisch erhält es
 |Löschen| **Puzzle löschen.** Gespeicherte Puzzles können auch wieder gelöscht werden.|
 |Drucken| **Puzzle drucken.** Mittels der Taste Drucken kann das aktuell selektierte Puzzle gedruckt werden. Dabei wird nur die Aufgabe, nicht aber die Lösung ausgedruckt. Dies ist besonders dann nützlich wenn man ein generiertes Puzzle von Hand auf dem Papier lösen möchte.
 
+## Die initiale Datenbank ist nicht leer
+
+Sie enthält zwei sehr schwere Puzzles. Also Puzzles, die nur durch Backtracking gelöst werden können. Der Einsteiger in diese App kann damit die automatische Lösungssuche dieses Trainers ausprobieren. In den Zeitungen und Zeitschriften findet man solche Puzzles nicht. Im Internet gibt es unter anderen diese bekannte Adresse [SoEinDing](https://sudoku.soeinding.de/sudokuExtraTeuflischSchwer.php), an der man solche Puzzles finden kann.
+
 ## Sudoku im Internet
 
 Eine herausragende Seite für Sudoku-Interessierte ist die Seite von [Andrew Stuart](https://www.sudokuwiki.org/Main_Page). Dort findest Du einen kompletten Überblick über logische Lösungsstrategien für klassisches Sudoku und auch einen Überblick über nicht klassische Sudoku-Varianten.
@@ -295,6 +303,6 @@ Eine herausragende Seite für Sudoku-Interessierte ist die Seite von [Andrew Stu
 Stuarts Sudoku-Solver stellt die Anwendung logischer Lösungsstrategien in den Mittelpunkt. Ein Lösungsschritt besteht aus der Anwendung einer logischen Schlussregel. Das kann die Elimination von Kandidaten in mehreren Zellen sein aufgrund eines 'nackten Paares' oder die Setzung von 'versteckten Singles' (notwendigen Nummern) in mehreren Zellen gleichzeitig. Puzzles, die keine Lösung per logischem Schließen haben, löst der Solver (absichtlich) nicht. Echte Sudoku-Fans verzichten auf Backtracking.
 Stuarts Sudoku-Solver richtet sich an Sudoku-Strategie-Experten bzw. an solche, die es werden wollen. 
 
-Der von mir hier präsentierte Solver/Generator wendet sich an den Gelegenheits-Sudoku-Spieler, die ein Puzzle z.B. aus einer Zeitschrift lösen wollen. Sie bekommen auf jeden Fall eine Lösung ihres Puzzles sowie einen Schritt für Schritt Lösungsweg und den Schwierigkeitsgrad des eingegebenen Puzzles.
+Der von mir hier präsentierte Sudoku-Trainer wendet sich an den Gelegenheits-Sudoku-Spieler, die ein Puzzle z.B. aus einer Zeitschrift lösen wollen. Sie bekommen auf jeden Fall eine Lösung ihres Puzzles sowie einen Schritt für Schritt Lösungsweg und den Schwierigkeitsgrad des eingegebenen Puzzles.
 
 Mehr noch: dieser Solver zeigt im Lazy-Auswertungsmodus notwendige Nummern, offene Singles und versteckte Singles des aktuellen Puzzle-Bearbeitungsstands an und damit die mögliche Setzung einer nächsten Zelle. Der Spieler kann sogar die Begründung einer notwendigen Nummer oder einer indirekt unzulässigen Nummer erfragen. Der Spieler kann mit Hilfe dieser Funktionen seine Sudoku-Kompetenz trainieren. Gewöhnliche Sudoku-Solver liefern einfach nur die fertige Lösung eines Puzzles. Die vorliegende App ist damit nicht nur ein Sudoku-Solver sondern darüber hinaus ein Sudoku-Trainer.
