@@ -1034,6 +1034,9 @@ label {
     border: none;
 
 }
+.puzzle-table-dlg::backdrop {
+    background: hsl(201 50% 40% /.5);
+}
 
 .db-puzzle-header {
     font-size: var(--font-size-xl);
