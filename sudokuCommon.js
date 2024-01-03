@@ -6360,28 +6360,28 @@ class NewPuzzleStore {
             case 'Sehr leicht': {
                 if (this.verySimplePuzzles.length < 3) {
                     this.verySimplePuzzles.push(puzzleRecord);
-                    console.log('push: Sehr leicht: #' + this.verySimplePuzzles.length);
+      //              console.log('push: Sehr leicht: #' + this.verySimplePuzzles.length);
                 }
                 break;
             }
             case 'Leicht': {
                 if (this.simplePuzzles.length < 3) {
                     this.simplePuzzles.push(puzzleRecord);
-                    console.log('push: Leicht: #' + this.simplePuzzles.length);
+     //               console.log('push: Leicht: #' + this.simplePuzzles.length);
                 }
                 break;
             }
             case 'Mittel': {
                 if (this.mediumPuzzles.length < 3) {
                     this.mediumPuzzles.push(puzzleRecord);
-                    console.log('push: Mittel: #' + this.mediumPuzzles.length);
+     //               console.log('push: Mittel: #' + this.mediumPuzzles.length);
                 }
                 break;
             }
             case 'Schwer': {
                 if (this.heavyPuzzles.length < 3) {
                     this.heavyPuzzles.push(puzzleRecord);
-                    console.log('push: Schwer: #' + this.heavyPuzzles.length)
+     //               console.log('push: Schwer: #' + this.heavyPuzzles.length)
                 }
                 break;
             }
