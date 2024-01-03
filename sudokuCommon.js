@@ -434,10 +434,32 @@ class SudokuSolverController {
         this.myConfirmDlg.close();
     }
 
-    generateBtnPressed(level) {
+    sleep(milliseconds) {
+        return new Promise(resolve => setTimeout(resolve, milliseconds));
+    }
+
+    
+
+    async generateBtnPressed(level) {
         closeNav();
-        // 3 Webworker in parallel are generating a puzzle with the desired level
-        this.mySolver.getGeneratedPuzzleUsingWebworker(level);
+        let puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
+        while (puzzle == undefined) {
+            // Waiting for push of level 'level'
+            // The rotating loader icon is started
+            let aspectValue = {
+                op: 'started',
+                rl: level
+            }
+            sudoApp.mySolver.notifyAspect('puzzleGenerator', aspectValue);
+            await this.sleep(5000); 
+            puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
+        }
+        sudoApp.mySolver.loadPuzzle('', puzzle);
+        let aspectValue = {
+            op: 'finished',
+            rl: level
+        }
+        sudoApp.mySolver.notifyAspect('puzzleGenerator', aspectValue);
     }
 
     saveBtnPressed() {
@@ -975,7 +997,7 @@ class SudokuCalculator extends SudokuModel {
         this.setGamePhase('play');
     }
 
-    reloadNameOfLoadedPuzzle (uid, name) {
+    reloadNameOfLoadedPuzzle(uid, name) {
         this.myGrid.reloadNameOfLoadedPuzzle(uid, name);
     }
 
@@ -1220,7 +1242,7 @@ class SudokuSolver extends SudokuCalculator {
         super.loadPuzzle(uid, puzzle);
         this.notify();
     }
-    reloadNameOfLoadedPuzzle (uid, name) {
+    reloadNameOfLoadedPuzzle(uid, name) {
         super.reloadNameOfLoadedPuzzle(uid, name);
     }
 
@@ -1232,68 +1254,54 @@ class SudokuSolver extends SudokuCalculator {
         }
     }
 
-    getGeneratedPuzzleUsingWebworker(requestedLevel) {
-        // The rotating loader icon is started
-        let aspectValue = {
-            op: 'started',
-            rl: requestedLevel
+    generateNewVerySimplePuzzle() {
+        // The new web worker is sent the request message, 
+        // which starts the generation of the new puzzle. 
+        let request = {
+            name: 'generateVerySimple',
+            value: ''
         }
-        this.notifyAspect('puzzleGenerator', aspectValue);
+        let webworkerGenerator = new Worker("./generatorApp.js");
+        webworkerGenerator.onmessage = function (e) {
+            let response = JSON.parse(e.data);
+            // Load the puzzle into the NewPuzzleStore
+            sudoApp.myNewPuzzleStore.pushPuzzle(response.value);
+            if (sudoApp.myNewPuzzleStore.verySimpleIsNotFilled()) {
+                sudoApp.mySolver.generateNewVerySimplePuzzle();
+            } else if (sudoApp.myNewPuzzleStore.isNotFilled()) {
+                sudoApp.mySolver.generateNewPuzzle();
+            }
+        }
+        let str_request = JSON.stringify(request);
+        webworkerGenerator.postMessage(str_request);
+    }
+
+    generateNewPuzzle() {
         // The new web worker is sent the request message, 
         // which starts the generation of the new puzzle. 
         let request = {
             name: 'generate',
-            level: requestedLevel,
-            value: '',
-            lfdNr: 0
+            value: ''
         }
-
-        if (typeof (generator_1) == "undefined") {
-            generator_1 = new Worker("./generatorApp.js");
-            generator_1.onmessage = generatorHandler;
-            request.lfdNr = 1;
-            let str_request = JSON.stringify(request);
-            generator_1.postMessage(str_request);
+        let webworkerGenerator = new Worker("./generatorApp.js");
+        webworkerGenerator.onmessage = function (e) {
+            let response = JSON.parse(e.data);
+            // Load the puzzle into the NewPuzzleStore
+            sudoApp.myNewPuzzleStore.pushPuzzle(response.value);
+            if (sudoApp.myNewPuzzleStore.verySimpleIsNotFilled()) {
+                sudoApp.mySolver.generateNewVerySimplePuzzle();
+            } else if (sudoApp.myNewPuzzleStore.isNotFilled()) {
+                sudoApp.mySolver.generateNewPuzzle();
+            }
         }
-        if (typeof (generator_2) == "undefined") {
-            generator_2 = new Worker("./generatorApp.js");
-            generator_2.onmessage = generatorHandler;
-            request.lfdNr = 2;
-            let str_request = JSON.stringify(request);
-            generator_2.postMessage(str_request);
-        }
-        if (typeof (generator_3) == "undefined") {
-            generator_3 = new Worker("./generatorApp.js");
-            generator_3.onmessage = generatorHandler;
-            request.lfdNr = 3;
-            let str_request = JSON.stringify(request);
-            generator_3.postMessage(str_request);
-        }
-        if (typeof (generator_4) == "undefined") {
-            generator_4 = new Worker("./generatorApp.js");
-            generator_4.onmessage = generatorHandler;
-            request.lfdNr = 4;
-            let str_request = JSON.stringify(request);
-            generator_4.postMessage(str_request);
-        }
-        if (typeof (generator_5) == "undefined") {
-            generator_5 = new Worker("./generatorApp.js");
-            generator_5.onmessage = generatorHandler;
-            request.lfdNr = 5;
-            let str_request = JSON.stringify(request);
-            generator_5.postMessage(str_request);
-        }
-        if (typeof (generator_6) == "undefined") {
-            generator_6 = new Worker("./generatorApp.js");
-            generator_6.onmessage = generatorHandler;
-            request.lfdNr = 6;
-            let str_request = JSON.stringify(request);
-            generator_6.postMessage(str_request);
-        }
+        let str_request = JSON.stringify(request);
+        webworkerGenerator.postMessage(str_request);
     }
+
     getActualEvalType() {
         return super.getActualEvalType();
     }
+
     setActualEvalType(et) {
         super.setActualEvalType(et);
         this.notify();
@@ -4058,14 +4066,14 @@ class SudokuGrid extends SudokuModel {
     }
 
 
-    takeBackSolvedCells(level) {
+    takeBackSolvedCells(nr) {
         // Vom Generator verwendete Funktion
         // Löscht solange gelöste Zellen, wie das Grid 
         // eine eindeutige Lösung behält.
         let nrOfGivens = 81;
         let randomCellOrder = Randomizer.getRandomNumbers(81, 0, 81);
         for (let i = 0; i < 81; i++) {
-            if (nrOfGivens > 36) {
+            if (nrOfGivens > nr) {
                 let k = randomCellOrder[i];
                 if (this.sudoCells[k].getValue() !== '0') {
                     // Selektiere Zelle mit gesetzter Nummer
@@ -4079,14 +4087,10 @@ class SudokuGrid extends SudokuModel {
 
                     if (this.sudoCells[k].getNecessarys().size == 1) {
                         // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
-                        if (level == 'Sehr leicht') {
-                            nrOfGivens--;
-                        }
+                        nrOfGivens--;
                     } else if (this.sudoCells[k].getTotalAdmissibles().size == 1) {
                         // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
-                        if (level == 'Sehr leicht') {
-                            nrOfGivens--;
-                        }
+                        nrOfGivens--;
                     } else {
                         // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
                         // Dann wird die Löschung zurückgenommen.
@@ -4126,11 +4130,11 @@ class SudokuGrid extends SudokuModel {
         }
         this.evaluateMatrix();
     }
-    
-    reloadNameOfLoadedPuzzle (uid, name) {
-        if(this.loadedPuzzleId == uid) {
+
+    reloadNameOfLoadedPuzzle(uid, name) {
+        if (this.loadedPuzzleId == uid) {
             this.loadedPuzzleName = name;
-        }       
+        }
     }
 
 
@@ -6318,6 +6322,105 @@ class SudokuPuzzleDBView extends SudokuView {
 
     }
 }
+class NewPuzzleStore {
+    constructor() {
+        this.verySimplePuzzles = [];
+        this.simplePuzzles = [];
+        this.mediumPuzzles = [];
+        this.heavyPuzzles = [];
+
+        this.verySimplePuzzlesPromise = undefined;
+        this.simplePuzzlesPromise = undefined;
+        this.mediumPuzzlesPromise = undefined;
+        this.heavyPuzzlesPromise = undefined;
+    }
+    init() {
+        this.fillNewPuzzleStore();
+    }
+    fillNewPuzzleStore() {
+        if (this.verySimpleIsNotFilled()) {
+            sudoApp.mySolver.generateNewVerySimplePuzzle();
+        } else if (this.isNotFilled()) {
+            sudoApp.mySolver.generateNewPuzzle();
+        }
+    }
+
+    verySimpleIsNotFilled() {
+        return this.verySimplePuzzles.length < 3;
+    }
+
+    isNotFilled() {
+        return this.simplePuzzles.length < 3
+            || this.mediumPuzzles.length < 3
+            || this.heavyPuzzles.length < 3;
+    }
+
+    pushPuzzle(puzzleRecord) {
+        switch (puzzleRecord.preRunRecord.level) {
+            case 'Sehr leicht': {
+                if (this.verySimplePuzzles.length < 3) {
+                    this.verySimplePuzzles.push(puzzleRecord);
+                    console.log('push: Sehr leicht: #' + this.verySimplePuzzles.length);
+                }
+                break;
+            }
+            case 'Leicht': {
+                if (this.simplePuzzles.length < 3) {
+                    this.simplePuzzles.push(puzzleRecord);
+                    console.log('push: Leicht: #' + this.simplePuzzles.length);
+                }
+                break;
+            }
+            case 'Mittel': {
+                if (this.mediumPuzzles.length < 3) {
+                    this.mediumPuzzles.push(puzzleRecord);
+                    console.log('push: Mittel: #' + this.mediumPuzzles.length);
+                }
+                break;
+            }
+            case 'Schwer': {
+                if (this.heavyPuzzles.length < 3) {
+                    this.heavyPuzzles.push(puzzleRecord);
+                    console.log('push: Schwer: #' + this.heavyPuzzles.length)
+                }
+                break;
+            }
+            default: {
+                throw new Error('Unexpected difficulty: ' + puzzleRecord.preRunRecord.level);
+            }
+        }
+    }
+
+    popPuzzle(difficulty) {
+        switch (difficulty) {
+            case 'Sehr leicht': {
+                let pz = this.verySimplePuzzles.pop();
+                sudoApp.mySolver.generateNewPuzzle();
+                return pz;
+            }
+            case 'Leicht': {
+                let pz = this.simplePuzzles.pop();
+                sudoApp.mySolver.generateNewPuzzle();
+                return pz;
+            }
+            case 'Mittel': {
+                let pz = this.mediumPuzzles.pop();
+                sudoApp.mySolver.generateNewPuzzle();
+                return pz;
+            }
+            case 'Schwer': {
+                let pz = this.heavyPuzzles.pop();
+                sudoApp.mySolver.generateNewPuzzle();
+                return pz;
+            }
+            default: {
+                throw new Error('Unexpected difficulty: ' + difficulty);
+            }
+        }
+    }
+}
+
+
 class SudokuPuzzleDB extends SudokuModel {
     constructor() {
         super();
@@ -6589,21 +6692,21 @@ class SudokuPuzzleDB extends SudokuModel {
             let puzzleMap = new Map(JSON.parse(str_puzzleMap));
             // Füge das Puzzle in das Speicherobjekt ein
             let puzzleDbElement = puzzleMap.get(puzzleId);
-  
+
             puzzleDbElement.preRunRecord = calculatedPreRunRecord;
-/*
-            puzzleDbElement.preRunRecord.statusGiven;
-            puzzleDbElement.preRunRecord.stepsLazy;
-            puzzleDbElement.preRunRecord.stepsStrict;
-            puzzleDbElement.preRunRecord.level;
-            puzzleDbElement.preRunRecord.backTracks;
-            puzzleDbElement.preRunRecord.solvedPuzzle;
-*/
+            /*
+                        puzzleDbElement.preRunRecord.statusGiven;
+                        puzzleDbElement.preRunRecord.stepsLazy;
+                        puzzleDbElement.preRunRecord.stepsStrict;
+                        puzzleDbElement.preRunRecord.level;
+                        puzzleDbElement.preRunRecord.backTracks;
+                        puzzleDbElement.preRunRecord.solvedPuzzle;
+            */
             puzzleMap.set(puzzleId, puzzleDbElement);
             // Kreiere die JSON-Version des Speicherobjektes
             // und speichere sie.
             let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
-            localStorage.setItem("localSudokuDB", update_str_puzzleMap);            
+            localStorage.setItem("localSudokuDB", update_str_puzzleMap);
         }
         let puzzleArray = sudoApp.mySolver.myGrid.getPuzzleArray();
         let request = {

@@ -1,38 +1,4 @@
 let sudoApp;
-let generator_1 = undefined;
-let generator_2 = undefined;
-let generator_3 = undefined;
-let generator_4 = undefined;
-let generator_5 = undefined;
-let generator_6 = undefined;
-
-let generatorHandler = function (e) {
-    // Create the puzzle from the supplied string
-    let tmpEvalType = sudoApp.mySolver.currentEvalType;
-    let response = JSON.parse(e.data);
-    // Load the puzzle into the solver
-    sudoApp.mySolver.loadPuzzle('-', response.value);
-    // The delivered puzzle contains its solution along with other info. Therefore
-    // the puzzle must be reset at this point.
-    sudoApp.mySolver.reset();
-    sudoApp.mySolver.notify();
-    sudoApp.mySolver.setActualEvalType(tmpEvalType);
-
-    // console.log('generator_' + response.lfdNr + ' erfolgreich.');
-
-    generator_1.terminate(); generator_1 = undefined;
-    generator_2.terminate(); generator_2 = undefined;
-    generator_3.terminate(); generator_3 = undefined;
-    generator_4.terminate(); generator_4 = undefined;
-    generator_5.terminate(); generator_5 = undefined;
-    generator_6.terminate(); generator_6 = undefined;
-    // The rotating loader icon is stopped
-    aspectValue = {
-        op: 'finished',
-        rl: ''
-    }
-    sudoApp.mySolver.notifyAspect('puzzleGenerator', aspectValue);
-}
 
 function start() {
 
@@ -58,9 +24,9 @@ class SudokuMainApp {
         // 2. The database component
         this.myPuzzleDB = new SudokuPuzzleDB();
         this.myPuzzleDBController = new SudokuPuzzleDBController(this.myPuzzleDB);
-        // this.myPuzzleDBView = new SudokuPuzzleDBView(this.myPuzzleDB);
-        // this.myMobilePuzzleDBView = new SudokuMobilePuzzleDBView(this.myPuzzleDB);
-
+     
+        this.myNewPuzzleStore = new NewPuzzleStore();
+   
         // There are two play-modes 'training' and 'solving'.
         this.playMode = 'solving';
     }
@@ -72,6 +38,8 @@ class SudokuMainApp {
         this.myPuzzleDB.init();
         this.myPuzzleDB.importBackRunPuzzle(back23, 'Backtrack_23', 'lqwgzcback23g2ak');
         this.myPuzzleDB.importBackRunPuzzle(back9, 'Backtrack_9', 'lqgwgzcback9hpfg2ak');
+
+        this.myNewPuzzleStore.init();
     }
     
 
