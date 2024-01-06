@@ -451,7 +451,7 @@ class SudokuSolverController {
                 rl: level
             }
             sudoApp.mySolver.notifyAspect('puzzleGenerator', aspectValue);
-            await this.sleep(2000); 
+            await this.sleep(1000); 
             puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
         }
         sudoApp.mySolver.loadPuzzle('', puzzle);
