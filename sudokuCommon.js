@@ -455,6 +455,8 @@ class SudokuSolverController {
             puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
         }
         sudoApp.mySolver.loadPuzzle('', puzzle);
+        sudoApp.mySolver.reset();
+
         let aspectValue = {
             op: 'finished',
             rl: level

@@ -93,7 +93,8 @@ class SudokuGenerator extends SudokuCalculator {
         // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
         this.autoExecStop();
         this.startGeneratorSolutionLoop();
-        this.myGrid.reset();
+        // Reset hier nicht
+        // this.myGrid.reset();
     }
 
     generatePuzzle() {
@@ -123,7 +124,8 @@ class SudokuGenerator extends SudokuCalculator {
         // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
         this.autoExecStop();
         this.startGeneratorSolutionLoop();
-        this.myGrid.reset();
+        // Reset hier nicht
+        // this.myGrid.reset();
     }
 
     startGeneratorSolutionLoop() {
