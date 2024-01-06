@@ -438,12 +438,12 @@ class SudokuSolverController {
         return new Promise(resolve => setTimeout(resolve, milliseconds));
     }
 
-    
+
 
     async generateBtnPressed(level) {
         closeNav();
         let puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
-        while (puzzle == undefined) {
+        if (puzzle == undefined) {
             // Waiting for push of level 'level'
             // The rotating loader icon is started
             let aspectValue = {
@@ -451,12 +451,13 @@ class SudokuSolverController {
                 rl: level
             }
             sudoApp.mySolver.notifyAspect('puzzleGenerator', aspectValue);
-            await this.sleep(1000); 
-            puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
+            while (puzzle == undefined) {
+                await this.sleep(1000);
+                puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
+            }
         }
         sudoApp.mySolver.loadPuzzle('', puzzle);
         sudoApp.mySolver.reset();
-
         let aspectValue = {
             op: 'finished',
             rl: level
@@ -6362,28 +6363,28 @@ class NewPuzzleStore {
             case 'Sehr leicht': {
                 if (this.verySimplePuzzles.length < 3) {
                     this.verySimplePuzzles.push(puzzleRecord);
-      //              console.log('push: Sehr leicht: #' + this.verySimplePuzzles.length);
+                    //              console.log('push: Sehr leicht: #' + this.verySimplePuzzles.length);
                 }
                 break;
             }
             case 'Leicht': {
                 if (this.simplePuzzles.length < 3) {
                     this.simplePuzzles.push(puzzleRecord);
-     //               console.log('push: Leicht: #' + this.simplePuzzles.length);
+                    //               console.log('push: Leicht: #' + this.simplePuzzles.length);
                 }
                 break;
             }
             case 'Mittel': {
                 if (this.mediumPuzzles.length < 3) {
                     this.mediumPuzzles.push(puzzleRecord);
-     //               console.log('push: Mittel: #' + this.mediumPuzzles.length);
+                    //               console.log('push: Mittel: #' + this.mediumPuzzles.length);
                 }
                 break;
             }
             case 'Schwer': {
                 if (this.heavyPuzzles.length < 3) {
                     this.heavyPuzzles.push(puzzleRecord);
-     //               console.log('push: Schwer: #' + this.heavyPuzzles.length)
+                    //               console.log('push: Schwer: #' + this.heavyPuzzles.length)
                 }
                 break;
             }
