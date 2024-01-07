@@ -338,9 +338,8 @@ class SudokuSolverController {
 
     initBtnPressed() {
         closeNav();
-        this.myConfirmDlg.open('init',
-            "Solver initialisieren",
-            "Alle Daten gehen verloren, falls nicht vorher schon gespeichert! Solver initialisieren? ");
+        this.mySolver.init();
+        sudoApp.mySolver.notifyAspect('puzzleLoading', undefined);
     }
 
     resetBtnPressed() {
@@ -454,13 +453,16 @@ class SudokuSolverController {
                 puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
             }
         }
-        sudoApp.mySolver.loadPuzzle('', puzzle);
-        sudoApp.mySolver.reset();
         let aspectValue = {
             op: 'finished',
             rl: level
         }
         sudoApp.mySolver.notifyAspect('puzzleGenerator', aspectValue);
+     
+        sudoApp.mySolver.loadPuzzle('', puzzle);
+        sudoApp.mySolver.reset();
+        sudoApp.mySolver.notifyAspect('puzzleLoading', undefined);
+     
         sudoApp.myNewPuzzleStore.fillNewPuzzleStore();
     }
 
@@ -718,6 +720,11 @@ class SudokuSolverView extends SudokuView {
                         throw new Error('Unknown aspectValue playMode: ' + aspectValue);
                     }
                 }
+                break;
+            }
+            case 'puzzleLoading': {
+                let mainGrid = document.getElementById('main-sudoku-grid');
+                mainGrid.classList.add('mainLoading');
                 break;
             }
             default: {
@@ -6088,6 +6095,7 @@ class SudokuPuzzleDBController {
             sudoApp.mySolverController.myUndoActionStack = [];
             sudoApp.mySolverController.myRedoActionStack = [];
             sudoApp.mySolver.notify();
+            sudoApp.mySolver.notifyAspect('puzzleLoading', undefined);
             this.myPuzzleDBDialog.close();
         }
     }
@@ -6339,7 +6347,7 @@ class NewPuzzleStore {
                     filled1 = false;
                     sudoApp.mySolver.generateNewVerySimplePuzzle();
                     this.runningGenerators++;
-                //    console.log('       runningGenerators: ' + this.runningGenerators);
+                    //    console.log('       runningGenerators: ' + this.runningGenerators);
                 } else {
                     filled1 = true;
                 }
@@ -6347,7 +6355,7 @@ class NewPuzzleStore {
                     filled2 = false;
                     sudoApp.mySolver.generateNewPuzzle();
                     this.runningGenerators++;
-                 //   console.log('       runningGenerators: ' + this.runningGenerators);
+                    //   console.log('       runningGenerators: ' + this.runningGenerators);
                 } else {
                     filled2 = true;
                 }
@@ -6370,28 +6378,28 @@ class NewPuzzleStore {
             case 'Sehr leicht': {
                 if (this.verySimplePuzzles.length < 3) {
                     this.verySimplePuzzles.push(puzzleRecord);
-                   // console.log('push: Sehr leicht: #' + this.verySimplePuzzles.length);
+                    // console.log('push: Sehr leicht: #' + this.verySimplePuzzles.length);
                 }
                 break;
             }
             case 'Leicht': {
                 if (this.simplePuzzles.length < 3) {
                     this.simplePuzzles.push(puzzleRecord);
-                  //  console.log('push: Leicht: #' + this.simplePuzzles.length);
+                    //  console.log('push: Leicht: #' + this.simplePuzzles.length);
                 }
                 break;
             }
             case 'Mittel': {
                 if (this.mediumPuzzles.length < 3) {
                     this.mediumPuzzles.push(puzzleRecord);
-                  //  console.log('push: Mittel: #' + this.mediumPuzzles.length);
+                    //  console.log('push: Mittel: #' + this.mediumPuzzles.length);
                 }
                 break;
             }
             case 'Schwer': {
                 if (this.heavyPuzzles.length < 3) {
                     this.heavyPuzzles.push(puzzleRecord);
-              //      console.log('push: Schwer: #' + this.heavyPuzzles.length)
+                    //      console.log('push: Schwer: #' + this.heavyPuzzles.length)
                 }
                 break;
             }

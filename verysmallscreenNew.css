@@ -273,6 +273,10 @@ app-empty-footer {
     margin: 0.1em;
 }
 
+.mainLoading {
+    animation: zoom-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
 .grid-plus-explainer {
     border: 1px solid black;
 }
@@ -534,6 +538,8 @@ app-empty-footer {
 /*======================================*/
 
 .mobile-btn-container {
+    margin-left: 0.6rem;
+    margin-right: 0.6rem;
     padding: 1rem;
     flex-grow: 1;
     display: grid;
