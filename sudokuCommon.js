@@ -438,8 +438,6 @@ class SudokuSolverController {
         return new Promise(resolve => setTimeout(resolve, milliseconds));
     }
 
-
-
     async generateBtnPressed(level) {
         closeNav();
         let puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
@@ -463,6 +461,7 @@ class SudokuSolverController {
             rl: level
         }
         sudoApp.mySolver.notifyAspect('puzzleGenerator', aspectValue);
+        sudoApp.myNewPuzzleStore.fillNewPuzzleStore();
     }
 
     saveBtnPressed() {
@@ -1269,11 +1268,6 @@ class SudokuSolver extends SudokuCalculator {
             let response = JSON.parse(e.data);
             // Load the puzzle into the NewPuzzleStore
             sudoApp.myNewPuzzleStore.pushPuzzle(response.value);
-            if (sudoApp.myNewPuzzleStore.verySimpleIsNotFilled()) {
-                sudoApp.mySolver.generateNewVerySimplePuzzle();
-            } else if (sudoApp.myNewPuzzleStore.isNotFilled()) {
-                sudoApp.mySolver.generateNewPuzzle();
-            }
         }
         let str_request = JSON.stringify(request);
         webworkerGenerator.postMessage(str_request);
@@ -1291,11 +1285,6 @@ class SudokuSolver extends SudokuCalculator {
             let response = JSON.parse(e.data);
             // Load the puzzle into the NewPuzzleStore
             sudoApp.myNewPuzzleStore.pushPuzzle(response.value);
-            if (sudoApp.myNewPuzzleStore.verySimpleIsNotFilled()) {
-                sudoApp.mySolver.generateNewVerySimplePuzzle();
-            } else if (sudoApp.myNewPuzzleStore.isNotFilled()) {
-                sudoApp.mySolver.generateNewPuzzle();
-            }
         }
         let str_request = JSON.stringify(request);
         webworkerGenerator.postMessage(str_request);
@@ -6331,20 +6320,38 @@ class NewPuzzleStore {
         this.simplePuzzles = [];
         this.mediumPuzzles = [];
         this.heavyPuzzles = [];
-
-        this.verySimplePuzzlesPromise = undefined;
-        this.simplePuzzlesPromise = undefined;
-        this.mediumPuzzlesPromise = undefined;
-        this.heavyPuzzlesPromise = undefined;
+        this.runningGenerators = 0;
     }
     init() {
         this.fillNewPuzzleStore();
     }
-    fillNewPuzzleStore() {
-        if (this.verySimpleIsNotFilled()) {
-            sudoApp.mySolver.generateNewVerySimplePuzzle();
-        } else if (this.isNotFilled()) {
-            sudoApp.mySolver.generateNewPuzzle();
+
+    sleep(milliseconds) {
+        return new Promise(resolve => setTimeout(resolve, milliseconds));
+    }
+    async fillNewPuzzleStore() {
+        let filled1 = false;
+        let filled2 = false;
+        while (!(filled1 && filled2)) {
+            await this.sleep(1000);
+            if (this.runningGenerators < 10) {
+                if (this.verySimpleIsNotFilled()) {
+                    filled1 = false;
+                    sudoApp.mySolver.generateNewVerySimplePuzzle();
+                    this.runningGenerators++;
+                //    console.log('       runningGenerators: ' + this.runningGenerators);
+                } else {
+                    filled1 = true;
+                }
+                if (this.isNotFilled()) {
+                    filled2 = false;
+                    sudoApp.mySolver.generateNewPuzzle();
+                    this.runningGenerators++;
+                 //   console.log('       runningGenerators: ' + this.runningGenerators);
+                } else {
+                    filled2 = true;
+                }
+            }
         }
     }
 
@@ -6363,28 +6370,28 @@ class NewPuzzleStore {
             case 'Sehr leicht': {
                 if (this.verySimplePuzzles.length < 3) {
                     this.verySimplePuzzles.push(puzzleRecord);
-                    //              console.log('push: Sehr leicht: #' + this.verySimplePuzzles.length);
+                   // console.log('push: Sehr leicht: #' + this.verySimplePuzzles.length);
                 }
                 break;
             }
             case 'Leicht': {
                 if (this.simplePuzzles.length < 3) {
                     this.simplePuzzles.push(puzzleRecord);
-                    //               console.log('push: Leicht: #' + this.simplePuzzles.length);
+                  //  console.log('push: Leicht: #' + this.simplePuzzles.length);
                 }
                 break;
             }
             case 'Mittel': {
                 if (this.mediumPuzzles.length < 3) {
                     this.mediumPuzzles.push(puzzleRecord);
-                    //               console.log('push: Mittel: #' + this.mediumPuzzles.length);
+                  //  console.log('push: Mittel: #' + this.mediumPuzzles.length);
                 }
                 break;
             }
             case 'Schwer': {
                 if (this.heavyPuzzles.length < 3) {
                     this.heavyPuzzles.push(puzzleRecord);
-                    //               console.log('push: Schwer: #' + this.heavyPuzzles.length)
+              //      console.log('push: Schwer: #' + this.heavyPuzzles.length)
                 }
                 break;
             }
@@ -6392,34 +6399,38 @@ class NewPuzzleStore {
                 throw new Error('Unexpected difficulty: ' + puzzleRecord.preRunRecord.level);
             }
         }
+        if (this.runningGenerators > 0) {
+            this.runningGenerators--;
+            // console.log('       runningGenerators: ' + this.runningGenerators);
+        } else {
+            throw new Error('Unexpected #running generators: ' + this.runningGenerators);
+        }
     }
 
     popPuzzle(difficulty) {
+        let pz = undefined;
         switch (difficulty) {
             case 'Sehr leicht': {
-                let pz = this.verySimplePuzzles.pop();
-                sudoApp.mySolver.generateNewPuzzle();
-                return pz;
+                pz = this.verySimplePuzzles.pop();
+                break;
             }
             case 'Leicht': {
-                let pz = this.simplePuzzles.pop();
-                sudoApp.mySolver.generateNewPuzzle();
-                return pz;
+                pz = this.simplePuzzles.pop();
+                break;
             }
             case 'Mittel': {
-                let pz = this.mediumPuzzles.pop();
-                sudoApp.mySolver.generateNewPuzzle();
-                return pz;
+                pz = this.mediumPuzzles.pop();
+                break;
             }
             case 'Schwer': {
-                let pz = this.heavyPuzzles.pop();
-                sudoApp.mySolver.generateNewPuzzle();
-                return pz;
+                pz = this.heavyPuzzles.pop();
+                break;;
             }
             default: {
                 throw new Error('Unexpected difficulty: ' + difficulty);
             }
         }
+        return pz;
     }
 }
 
