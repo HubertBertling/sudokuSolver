@@ -4,7 +4,6 @@ class SudokuSolverController {
         this.mySolver = solver;
         // Used dialogs
         this.mySuccessDialog = new SuccessDialog();
-        this.myPuzzleSaveDialog = new PuzzleSaveDialog();
         this.myInfoDialog = new InfoDialog();
         this.myConfirmDlg = new ConfirmDialog();
         this.mySettingsDialog = new SettingsDialog();
@@ -103,7 +102,6 @@ class SudokuSolverController {
             })
         });
 
-
         // Click-Events for both stop buttons, desktop and mobile
         this.btns = document.querySelectorAll('.btn-stop');
         this.btns.forEach(btn => {
@@ -127,20 +125,6 @@ class SudokuSolverController {
             })
         });
 
-
-        this.btns = document.querySelectorAll('.btn-init');
-        this.btns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                this.initBtnPressed();
-            })
-        });
-        // Click-Events for both reset buttons, desktop and mobile
-        this.btns = document.querySelectorAll('.btn-reset');
-        this.btns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                this.resetBtnPressed();
-            })
-        });
         this.btns = document.querySelectorAll('.help-button');
         this.btns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -196,7 +180,7 @@ class SudokuSolverController {
                 // (instead of using buttons on the GUI). In our case, two events are generated: 
                 // (1) the keydown event for the input field and (2) the keydown event for the global body element. 
                 // The latter is semantically the same as the corresponding button event. 
-                // Only numeric keys and the delete key are used. Keydowns of other keys are ignored.I.e. 
+                // Only numeric keys and the delete key are used. Key-downs of other keys are ignored.I.e. 
                 // no event handler is declared.
                 // If the current context is an input field, the simultaneous propagation to the cell of a Sudoku puzzle 
                 // must be switched off, as the solver cannot react to this.
@@ -339,6 +323,7 @@ class SudokuSolverController {
     initBtnPressed() {
         closeNav();
         this.mySolver.init();
+        // Zoom in the new initiated grid
         sudoApp.mySolver.notifyAspect('puzzleLoading', undefined);
     }
 
@@ -418,10 +403,6 @@ class SudokuSolverController {
                 this.mySolver.reset();
                 break;
             }
-            case 'init': {
-                this.mySolver.init();
-                break;
-            }
             default: {
                 throw new Error('Unknown confirm: ' + this.myConfirmDlg.confirmOperation());
             }
@@ -441,55 +422,62 @@ class SudokuSolverController {
         closeNav();
         let puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
         if (puzzle == undefined) {
-            // Waiting for push of level 'level'
-            // The rotating loader icon is started
+            // popPuzzle has returned 'undefined'.
+            // Now we are waiting for the store to fill up.
+            // The rotating loader icon is started.
             let aspectValue = {
                 op: 'started',
                 rl: level
             }
             sudoApp.mySolver.notifyAspect('puzzleGenerator', aspectValue);
             while (puzzle == undefined) {
+                // Wait a second so that the running generators 
+                // have a chance to generate puzzles and 
+                // and fill the puzzle store
                 await this.sleep(1000);
                 puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
             }
         }
+        // We got the desired puzzle and do not longer wait
+        // for new puzzles in the store.
+        // The rotating loader icon is stopped.
         let aspectValue = {
             op: 'finished',
             rl: level
         }
         sudoApp.mySolver.notifyAspect('puzzleGenerator', aspectValue);
-     
+        // The puzzle popped from store is loaded into the solver
         sudoApp.mySolver.loadPuzzle('', puzzle);
+        // Puzzles generated into the store are in solved state.
+        // So the loaded puzzle must be reset.
         sudoApp.mySolver.reset();
+        // Zoom in the loaded puzzle
         sudoApp.mySolver.notifyAspect('puzzleLoading', undefined);
-     
+        // After popping a puzzle from store the store needs to be filled up.
         sudoApp.myNewPuzzleStore.fillNewPuzzleStore();
     }
 
     saveBtnPressed() {
-        this.mySuccessDialog.close();
-        //sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
-        //sudoApp.myPuzzleDB.notify();
-        let tmpPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
-
-        let puzzleId = this.mySolver.myGrid.loadedPuzzleId;
-        let puzzleName = this.mySolver.myGrid.loadedPuzzleName;
-        if (puzzleId == '' || puzzleId == '-') {
-            //Neues Puzzle abfragen
+        //The current puzzle state shall be saved into the database.
+        let currentPuzzle = this.mySolver.myGrid.getPuzzleRecord();
+        let currentPuzzleId = this.mySolver.myGrid.loadedPuzzleId;
+        let currentPuzzleName = this.mySolver.myGrid.loadedPuzzleName;
+        if (currentPuzzleId == '' || currentPuzzleId == '-') {
+            // The current puzzle is until now not element in the database
+            // Save current puzzle with new ID and name in the database
             let newPuzzleId = Date.now().toString(36) + Math.random().toString(36).substr(2);
             let newPuzzleName = 'PZ (' + new Date().toLocaleString('de-DE') + ')';
-            let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
-            // this.myPuzzleSaveDialog.open(newPuzzelId, 'Puzzle (' + new Date().toLocaleString('de-DE') + ')');
-            sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzleId, newPuzzleName, playedPuzzleDbElement);
+            sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzleId, newPuzzleName, currentPuzzle);
             this.myInfoDialog.open('Spielstand gespeichert', "info",
                 'Neues Puzzle: ' + newPuzzleName + ' gespeichert.');
         } else {
-            //Aktuelles Puzzel ist aus der Datenbank überschreiben
-            sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, puzzleName, tmpPuzzleDbElement);
+            // The current puzzle is already element in the database
+            // So only the actual puzzle state needs to be saved
+            sudoApp.myPuzzleDB.mergePlayedPuzzle(currentPuzzleId, currentPuzzleName, currentPuzzle);
             this.myInfoDialog.open('Spielstand gespeichert', "info",
-                'Puzzle: ' + puzzleName);
+                'Puzzle: ' + currentPuzzleName);
         }
-        // Das (neu) gespeicherte Puzzle wird das aktuell gespielte Puzzle
+        // The saved puzzle becomes the new current puzzle
         let tmpPuzzleID = sudoApp.myPuzzleDB.getSelectedUid();
         let puzzle = sudoApp.myPuzzleDB.getSelectedPuzzle();
         sudoApp.mySolver.loadPuzzle(tmpPuzzleID, puzzle);
@@ -507,27 +495,31 @@ class SudokuSolverController {
         closeNav();
     }
 
-
     printBtnPressed() {
         closeNav();
         this.mySolver.autoExecStop();
         this.mySuccessDialog.close();
-        let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
+        let currentPuzzle = this.mySolver.myGrid.getPuzzleRecord();
+        let currentPuzzleId = this.mySolver.myGrid.loadedPuzzleId;
+        let currentPuzzleName = this.mySolver.myGrid.loadedPuzzleName;
 
-        let puzzleId = this.mySolver.myGrid.loadedPuzzleId;
-        let puzzleName = this.mySolver.myGrid.loadedPuzzleName;
-
-        if (puzzleId == '' || puzzleId == '-') {
+        if (currentPuzzleId == '' || currentPuzzleId == '-') {
+            // The current puzzle is until now not element in the database
+            // Save current puzzle with new ID and name in the database
             let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-            // sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
-            sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzelId, 'Druck (' + new Date().toLocaleString('de-DE') + ')', playedPuzzleDbElement);
-            sudoApp.myPuzzleDBController.printSelectedPuzzle();
+            sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzelId, 'Druck (' + new Date().toLocaleString('de-DE') + ')', currentPuzzle);
         } else {
-            //sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
-            let tmpPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
-            sudoApp.myPuzzleDB.mergePlayedPuzzle(puzzleId, puzzleName, tmpPuzzleDbElement);
-            sudoApp.myPuzzleDBController.printSelectedPuzzle();
+            // The current puzzle is element in the database
+            // Before printing save the current state
+            let currentPuzzle = this.mySolver.myGrid.getPuzzleRecord();
+            sudoApp.myPuzzleDB.mergePlayedPuzzle(currentPuzzleId, currentPuzzleName, currentPuzzle);
         }
+        sudoApp.myPuzzleDBController.printSelectedPuzzle();
+        // The saved and printed puzzle becomes the new current puzzle
+        let tmpPuzzleID = sudoApp.myPuzzleDB.getSelectedUid();
+        let puzzle = sudoApp.myPuzzleDB.getSelectedPuzzle();
+        sudoApp.mySolver.loadPuzzle(tmpPuzzleID, puzzle);
+        sudoApp.mySolver.notify();
     }
     showWrongNumbersBtnPressed() {
         // Kennzeichnet falsch gesetzte Zahlen
@@ -559,23 +551,6 @@ class SudokuSolverController {
             }
 
         }
-    }
-
-    savePuzzleDlgOKPressed() {
-        this.myPuzzleSaveDialog.close();
-        sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
-        let puzzleId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-        let puzzleName = this.myPuzzleSaveDialog.getPuzzleName();
-        let playedPuzzleDbElement = this.mySolver.myGrid.getPuzzleRecord();
-        //Speichere den named Zustand
-        sudoApp.myPuzzleDB.saveNamedPuzzle(puzzleId, puzzleName, playedPuzzleDbElement);
-        // Wechsle in den DB-Dialog
-        sudoApp.myPuzzleDB.notify();
-
-    }
-
-    savePuzzleDlgCancelPressed() {
-        this.myPuzzleSaveDialog.close()
     }
 
     successDlgOKPressed() {
@@ -723,8 +698,12 @@ class SudokuSolverView extends SudokuView {
                 break;
             }
             case 'puzzleLoading': {
+                // Zoom-in-effect of newly loaded puzzle
                 let mainGrid = document.getElementById('main-sudoku-grid');
                 mainGrid.classList.add('mainLoading');
+                // A remove of this class happens implicitly
+                // when the grid as a whole is regenerated
+                // without setting this class
                 break;
             }
             default: {
@@ -1270,7 +1249,7 @@ class SudokuSolver extends SudokuCalculator {
             name: 'generateVerySimple',
             value: ''
         }
-        let webworkerGenerator = new Worker("./generatorApp.js");
+        let webworkerGenerator = new Worker("./src/generatorApp.js");
         webworkerGenerator.onmessage = function (e) {
             let response = JSON.parse(e.data);
             // Load the puzzle into the NewPuzzleStore
@@ -1287,7 +1266,7 @@ class SudokuSolver extends SudokuCalculator {
             name: 'generate',
             value: ''
         }
-        let webworkerGenerator = new Worker("./generatorApp.js");
+        let webworkerGenerator = new Worker("/src/generatorApp.js");
         webworkerGenerator.onmessage = function (e) {
             let response = JSON.parse(e.data);
             // Load the puzzle into the NewPuzzleStore
@@ -1308,7 +1287,7 @@ class SudokuSolver extends SudokuCalculator {
 
     getPuzzlePreRunDataUsingWebworker() {
         // A new web worker that performs the fast solution of this puzzle, is created.
-        let webworkerFastSolver = new Worker("./fastSolverApp.js");
+        let webworkerFastSolver = new Worker("/src/fastSolverApp.js");
         // A message handler is given to the web worker. The web worker
         // sends a message containing the solved puzzle as a string (response object).
         webworkerFastSolver.onmessage = function (e) {
@@ -5994,10 +5973,6 @@ class SudokuCell extends SudokuModel {
                 // 3) Gleichzeitig verschiedene notwendige Nummern
                 (this.getValue() == '0' && this.myNecessarys.size > 1));
     }
-
-    init() {
-        this.myPuzzleSaveDialog.close();
-    }
 }
 
 class SudokuPuzzleDBController {
@@ -6095,6 +6070,7 @@ class SudokuPuzzleDBController {
             sudoApp.mySolverController.myUndoActionStack = [];
             sudoApp.mySolverController.myRedoActionStack = [];
             sudoApp.mySolver.notify();
+            // Zoom in the loaded puzzle
             sudoApp.mySolver.notifyAspect('puzzleLoading', undefined);
             this.myPuzzleDBDialog.close();
         }
@@ -6104,11 +6080,11 @@ class SudokuPuzzleDBController {
         this.myPuzzleRenameDialog.close();
         // Der Name unter dem der aktuelle Zustand gespeichert werden soll
         let puzzleId = sudoApp.myPuzzleDB.getSelectedUid();
-        let puzzleName = this.myPuzzleRenameDialog.getPuzzleName();
+        let currentPuzzleName = this.myPuzzleRenameDialog.getPuzzleName();
         //Speichere den named Zustand
-        sudoApp.myPuzzleDB.saveRenamedPuzzle(puzzleId, puzzleName);
+        sudoApp.myPuzzleDB.saveRenamedPuzzle(puzzleId, currentPuzzleName);
         sudoApp.myPuzzleDB.notify()
-        sudoApp.mySolver.reloadNameOfLoadedPuzzle(puzzleId, puzzleName);
+        sudoApp.mySolver.reloadNameOfLoadedPuzzle(puzzleId, currentPuzzleName);
         sudoApp.mySolver.notify();
     }
 
@@ -6323,6 +6299,11 @@ class SudokuPuzzleDBView extends SudokuView {
     }
 }
 class NewPuzzleStore {
+    // This is a store of new puzzles. For each difficulty it stores
+    // 3 puzzles in advance, such that a request for a new puzzle
+    // can be served without delay. 
+    // During the initiation of the solver the puzzles in the store 
+    // are generated by web-workers in the background.
     constructor() {
         this.verySimplePuzzles = [];
         this.simplePuzzles = [];
@@ -6341,7 +6322,7 @@ class NewPuzzleStore {
         let filled1 = false;
         let filled2 = false;
         while (!(filled1 && filled2)) {
-            await this.sleep(1000);
+            // limit the number of running generators
             if (this.runningGenerators < 10) {
                 if (this.verySimpleIsNotFilled()) {
                     filled1 = false;
@@ -6360,6 +6341,10 @@ class NewPuzzleStore {
                     filled2 = true;
                 }
             }
+            // Wait a second so that the running generators 
+            // have a chance to generate puzzles and exit 
+            // before new generators are started.
+            await this.sleep(1000);
         }
     }
 
@@ -6695,8 +6680,8 @@ class SudokuPuzzleDB extends SudokuModel {
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         if (!puzzleMap.has(puzzleId)) {
             sudoApp.mySolver.myGrid.loadSimplePuzzleArray(pa);
-            let playedPuzzleDbElement = sudoApp.mySolver.myGrid.getPuzzleRecord();
-            this.saveNamedPuzzle(puzzleId, pzName, playedPuzzleDbElement);
+            let currentPuzzle = sudoApp.mySolver.myGrid.getPuzzleRecord();
+            this.saveNamedPuzzle(puzzleId, pzName, currentPuzzle);
             this.addPuzzlePreRunDataUsingWebworker(puzzleId);
         }
         sudoApp.mySolver.init();
@@ -6704,7 +6689,7 @@ class SudokuPuzzleDB extends SudokuModel {
 
     addPuzzlePreRunDataUsingWebworker(puzzleId) {
         // A new web worker that performs the fast solution of this puzzle, is created.
-        let webworkerFastSolver = new Worker("./fastSolverApp.js");
+        let webworkerFastSolver = new Worker("/src/fastSolverApp.js");
         // A message handler is given to the web worker. The web worker
         // sends a message containing the solved puzzle as a string (response object).
         webworkerFastSolver.onmessage = function (e) {
@@ -6714,16 +6699,7 @@ class SudokuPuzzleDB extends SudokuModel {
             let puzzleMap = new Map(JSON.parse(str_puzzleMap));
             // Füge das Puzzle in das Speicherobjekt ein
             let puzzleDbElement = puzzleMap.get(puzzleId);
-
             puzzleDbElement.preRunRecord = calculatedPreRunRecord;
-            /*
-                        puzzleDbElement.preRunRecord.statusGiven;
-                        puzzleDbElement.preRunRecord.stepsLazy;
-                        puzzleDbElement.preRunRecord.stepsStrict;
-                        puzzleDbElement.preRunRecord.level;
-                        puzzleDbElement.preRunRecord.backTracks;
-                        puzzleDbElement.preRunRecord.solvedPuzzle;
-            */
             puzzleMap.set(puzzleId, puzzleDbElement);
             // Kreiere die JSON-Version des Speicherobjektes
             // und speichere sie.
@@ -6740,8 +6716,6 @@ class SudokuPuzzleDB extends SudokuModel {
     }
 
     getPuzzle(uid) {
-        // Vielleicht ändern in getSelectedPuzzle();
-        // Hole den Speicher als ein Objekt
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         // Füge das Puzzle in das Speicherobjekt ein
@@ -6779,6 +6753,7 @@ class SudokuPuzzleDB extends SudokuModel {
     }
 
     selectedPZ() {
+        // return selected puzzle
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         let key = Array.from(puzzleMap.keys())[this.selectedIndex];
@@ -6787,6 +6762,7 @@ class SudokuPuzzleDB extends SudokuModel {
     }
 
     selectedKey() {
+        //return selected key
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         let key = Array.from(puzzleMap.keys())[this.selectedIndex];
@@ -6817,22 +6793,6 @@ class SudokuPuzzleDB extends SudokuModel {
         this.notify();
     }
 
-
-    /*
-    setSelected(trNode) {
-        let displayRows = document.getElementById('db-puzzle-tbody').rows;
-        for (let i = 0; i < displayRows.length; i++) {
-            if (displayRows[i].classList.contains('selected')) {
-                displayRows[i].classList.remove('selected');
-            }
-        }
-        trNode.classList.add('selected');
-        this.selectedIndex = this.getIndex(trNode.cells[0].innerText);
-        this.displayCurrentPZ();
-    }
-  */
-
-
     migratePuzzleDB() {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
@@ -6855,7 +6815,6 @@ class SudokuPuzzleDB extends SudokuModel {
     }
 
     getSelectedPuzzle() {
-
         let selectedPZ = this.selectedPZ();
         return selectedPZ;
     }

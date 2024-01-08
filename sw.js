@@ -9,7 +9,7 @@ var APP_PREFIX = 'sudo_';
 // you need to change this version (version_01, version_02…). 
 // If you don't change the version, the service worker will give your
 // users the old files!
-var VERSION = 'version_137';
+var VERSION = 'version_140';
 
 // The files to make available for offline use. make sure to add 
 // others to this list
@@ -17,14 +17,14 @@ var URLS = [
   `${GHPATH}/`,
   `${GHPATH}/index.html`,
   `${GHPATH}/help.html`,
-  `${GHPATH}/sudokuMainApp.js`,
-  `${GHPATH}/fastSolverApp.js`,
-  `${GHPATH}/generatorApp.js`,
-  `${GHPATH}/sudokuCommon.js`,
-  `${GHPATH}/widescreen.css`,
-  `${GHPATH}/smallscreenNew.css`,
-  `${GHPATH}/verysmallscreenNew.css`,
-  `${GHPATH}/print.css`,
+  `${GHPATH}/src/sudokuMainApp.js`,
+  `${GHPATH}/src/fastSolverApp.js`,
+  `${GHPATH}/src/generatorApp.js`,
+  `${GHPATH}/src/sudokuCommon.js`,
+  `${GHPATH}/styles/widescreen.css`,
+  `${GHPATH}/styles/smallscreenNew.css`,
+  `${GHPATH}/styles/verysmallscreenNew.css`,
+  `${GHPATH}/styles/print.css`,
   `${GHPATH}/images/sudoku.png`,
   `${GHPATH}/images/ok.png`,
   `${GHPATH}/images/fail.png`,
