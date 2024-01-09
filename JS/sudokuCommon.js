@@ -423,7 +423,7 @@ class SudokuSolverController {
         let puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
         if (puzzle == undefined) {
             // popPuzzle has returned 'undefined'.
-            // Now we are waiting for the store to fill up.
+            // Now we are waiting for the store to be filled.
             // The rotating loader icon is started.
             let aspectValue = {
                 op: 'started',
@@ -446,14 +446,14 @@ class SudokuSolverController {
             rl: level
         }
         sudoApp.mySolver.notifyAspect('puzzleGenerator', aspectValue);
-        // The puzzle popped from store is loaded into the solver
+        //The puzzle taken from the store (pop) is loaded into the solver
         sudoApp.mySolver.loadPuzzle('', puzzle);
         // Puzzles generated into the store are in solved state.
         // So the loaded puzzle must be reset.
         sudoApp.mySolver.reset();
         // Zoom in the loaded puzzle
         sudoApp.mySolver.notifyAspect('puzzleLoading', undefined);
-        // After popping a puzzle from store the store needs to be filled up.
+        // After getting a puzzle from store the store needs to be filled up.
         sudoApp.myNewPuzzleStore.fillNewPuzzleStore();
     }
 
@@ -463,7 +463,7 @@ class SudokuSolverController {
         let currentPuzzleId = this.mySolver.myGrid.loadedPuzzleId;
         let currentPuzzleName = this.mySolver.myGrid.loadedPuzzleName;
         if (currentPuzzleId == '' || currentPuzzleId == '-') {
-            // The current puzzle is until now not element in the database
+            // The current puzzle is not yet element in the database.
             // Save current puzzle with new ID and name in the database
             let newPuzzleId = Date.now().toString(36) + Math.random().toString(36).substr(2);
             let newPuzzleName = 'PZ (' + new Date().toLocaleString('de-DE') + ')';
@@ -504,13 +504,13 @@ class SudokuSolverController {
         let currentPuzzleName = this.mySolver.myGrid.loadedPuzzleName;
 
         if (currentPuzzleId == '' || currentPuzzleId == '-') {
-            // The current puzzle is until now not element in the database
-            // Save current puzzle with new ID and name in the database
+            // The current puzzle is not yet an element in the database.
+            // Save the current puzzle with a new ID and new name in the database.
             let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
             sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzelId, 'Druck (' + new Date().toLocaleString('de-DE') + ')', currentPuzzle);
         } else {
-            // The current puzzle is element in the database
-            // Before printing save the current state
+            // The current puzzle is element in the database.
+            // Before printing save the current state.
             let currentPuzzle = this.mySolver.myGrid.getPuzzleRecord();
             sudoApp.myPuzzleDB.mergePlayedPuzzle(currentPuzzleId, currentPuzzleName, currentPuzzle);
         }
@@ -6309,6 +6309,7 @@ class NewPuzzleStore {
         this.simplePuzzles = [];
         this.mediumPuzzles = [];
         this.heavyPuzzles = [];
+        // Number of running web.workers which are generating new puzzles.
         this.runningGenerators = 0;
     }
     init() {
@@ -6324,8 +6325,12 @@ class NewPuzzleStore {
         while (!(filled1 && filled2)) {
             // limit the number of running generators
             if (this.runningGenerators < 10) {
+                // The number of generators running in parallel is limited 
+                // to 9 - a spontaneously chosen limit. We need a limit
+                // to restrict the simultaneous resource requirements.
                 if (this.verySimpleIsNotFilled()) {
                     filled1 = false;
+                    // Starting a new puzzle generator (web worker).
                     sudoApp.mySolver.generateNewVerySimplePuzzle();
                     this.runningGenerators++;
                     //    console.log('       runningGenerators: ' + this.runningGenerators);
@@ -6334,6 +6339,7 @@ class NewPuzzleStore {
                 }
                 if (this.isNotFilled()) {
                     filled2 = false;
+                    // Starting a new puzzle generator (web worker).
                     sudoApp.mySolver.generateNewPuzzle();
                     this.runningGenerators++;
                     //   console.log('       runningGenerators: ' + this.runningGenerators);
@@ -6341,9 +6347,8 @@ class NewPuzzleStore {
                     filled2 = true;
                 }
             }
-            // Wait a second so that the running generators 
-            // have a chance to generate puzzles and exit 
-            // before new generators are started.
+            // Wait a second so that the running generators have a chance
+            // to generate new puzzles and finish before new generators are started.
             await this.sleep(1000);
         }
     }
@@ -6393,6 +6398,10 @@ class NewPuzzleStore {
             }
         }
         if (this.runningGenerators > 0) {
+            // A generator has successfully generated a new puzzle 
+            // and placed it in the store (pushPuzzle). 
+            // After generating a new puzzle, the generator terminates itself. 
+            // Hence the following decrement
             this.runningGenerators--;
             // console.log('       runningGenerators: ' + this.runningGenerators);
         } else {

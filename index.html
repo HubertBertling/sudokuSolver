@@ -135,9 +135,9 @@
                 <button class="mobile-interface mobile-btn mobile-number" value="3">3</button>
 
                 <button class="mobile-interface mobile-btn btn-with-image btn-save" id="btn-save-mobile"><img
-                    src="images/save.png" class="btn-image">Speichern
+                        src="images/save.png" class="btn-image">Speichern
                 </button>
- 
+
                 <button class="mobile-interface mobile-btn btn-with-image btn-run" id="btn-run">
                     <img src="images/play-96.png" class="btn-image">
                     Start
@@ -372,11 +372,13 @@
     <script>
         if (navigator.serviceWorker) {
             navigator.serviceWorker.register(
-                '/sudokuSolver/sw.js',
+                'sw.js',
+                //            '/sudokuSolver/sw.js',
                 { scope: '/sudokuSolver/' }
             )
         }
     </script>
+
     <script src="./JS/sudokuCommon.js"></script>
     <script src="./JS/sudokuMainApp.js"></script>
 
