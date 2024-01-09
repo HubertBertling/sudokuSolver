@@ -1249,7 +1249,7 @@ class SudokuSolver extends SudokuCalculator {
             name: 'generateVerySimple',
             value: ''
         }
-        let webworkerGenerator = new Worker("./src/generatorApp.js");
+        let webworkerGenerator = new Worker("./JS/generatorWorker.js");
         webworkerGenerator.onmessage = function (e) {
             let response = JSON.parse(e.data);
             // Load the puzzle into the NewPuzzleStore
@@ -1266,7 +1266,7 @@ class SudokuSolver extends SudokuCalculator {
             name: 'generate',
             value: ''
         }
-        let webworkerGenerator = new Worker("/src/generatorApp.js");
+        let webworkerGenerator = new Worker("./JS/generatorWorker.js");
         webworkerGenerator.onmessage = function (e) {
             let response = JSON.parse(e.data);
             // Load the puzzle into the NewPuzzleStore
@@ -1287,7 +1287,7 @@ class SudokuSolver extends SudokuCalculator {
 
     getPuzzlePreRunDataUsingWebworker() {
         // A new web worker that performs the fast solution of this puzzle, is created.
-        let webworkerFastSolver = new Worker("/src/fastSolverApp.js");
+        let webworkerFastSolver = new Worker("./JS/fastSolverWorker.js");
         // A message handler is given to the web worker. The web worker
         // sends a message containing the solved puzzle as a string (response object).
         webworkerFastSolver.onmessage = function (e) {
@@ -6689,7 +6689,7 @@ class SudokuPuzzleDB extends SudokuModel {
 
     addPuzzlePreRunDataUsingWebworker(puzzleId) {
         // A new web worker that performs the fast solution of this puzzle, is created.
-        let webworkerFastSolver = new Worker("/src/fastSolverApp.js");
+        let webworkerFastSolver = new Worker("./JS/fastSolverWorker.js");
         // A message handler is given to the web worker. The web worker
         // sends a message containing the solved puzzle as a string (response object).
         webworkerFastSolver.onmessage = function (e) {

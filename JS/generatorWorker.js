@@ -1,5 +1,5 @@
 // The Web Worker imports the common code
-importScripts('./src/sudokuCommon.js');
+importScripts('./sudokuCommon.js');
 
 let sudoApp;
 

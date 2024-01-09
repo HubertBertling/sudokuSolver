@@ -13,9 +13,9 @@
     
     "icons": [
         {
-          "src": "/sudokuSolver/images/sudoku.png",
+          "src": "./images/sudoku.png",
           "type": "image/png",
-          "sizes": "700x700"
+          "sizes": "500x500"
         }
     ]
   }
