@@ -19,10 +19,10 @@
     <meta name="description" content="This is a Sudoku-solver, -generator and -trainer." />
     <meta name="pwa-capable" content="yes">
 
-    <link rel="stylesheet" media="screen and (max-width: 359px)" href="verysmallscreenNew.css">
-    <link rel="stylesheet" media="screen and (min-width: 360px) and (max-width: 490px)" href="smallscreenNew.css">
-    <link rel="stylesheet" media="screen and (min-width: 491px)" href="widescreen.css">
-    <link rel="stylesheet" media="print" type="text/css" href="print.css" />
+    <link rel="stylesheet" media="screen and (max-width: 359px)" href="CSS/verysmallscreenNew.css">
+    <link rel="stylesheet" media="screen and (min-width: 360px) and (max-width: 490px)" href="CSS/smallscreenNew.css">
+    <link rel="stylesheet" media="screen and (min-width: 491px)" href="CSS/widescreen.css">
+    <link rel="stylesheet" media="print" type="text/css" href="CSS/print.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
@@ -373,7 +373,6 @@
         if (navigator.serviceWorker) {
             navigator.serviceWorker.register(
                 'sw.js',
-                //            '/sudokuSolver/sw.js',
                 { scope: '/sudokuSolver/' }
             )
         }
