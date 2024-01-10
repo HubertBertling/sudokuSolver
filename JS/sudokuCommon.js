@@ -321,14 +321,14 @@ class SudokuSolverController {
     }
 
     initBtnPressed() {
-        closeNav();
+        sudoApp.myNavBar.closeNav();
         this.mySolver.init();
         // Zoom in the new initiated grid
         sudoApp.mySolver.notifyAspect('puzzleLoading', undefined);
     }
 
     resetBtnPressed() {
-        closeNav();
+        sudoApp.myNavBar.closeNav();
         this.myConfirmDlg.open('reset',
             "Puzzle zurücksetzen",
             "Alle Lösungsnummern werden gelöscht. Puzzle zurücksetzen?");
@@ -419,7 +419,7 @@ class SudokuSolverController {
     }
 
     async generateBtnPressed(level) {
-        closeNav();
+        sudoApp.myNavBar.closeNav();
         let puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
         if (puzzle == undefined) {
             // popPuzzle has returned 'undefined'.
@@ -487,16 +487,16 @@ class SudokuSolverController {
     openDBBtnPressed() {
         sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
         sudoApp.myPuzzleDB.notify();
-        closeNav();
+        sudoApp.myNavBar.closeNav();
     }
     openSettingsDlgPressed() {
         sudoApp.mySolverController.mySettingsDialog.open();
         sudoApp.mySolver.notify();
-        closeNav();
+        sudoApp.myNavBar.closeNav();
     }
 
     printBtnPressed() {
-        closeNav();
+        sudoApp.myNavBar.closeNav();
         this.mySolver.autoExecStop();
         this.mySuccessDialog.close();
         let currentPuzzle = this.mySolver.myGrid.getPuzzleRecord();
@@ -6842,3 +6842,39 @@ class SudokuPuzzleDB extends SudokuModel {
     }
 }
 
+class NavigationBar {
+    constructor() {
+    }
+
+    init() {
+        
+        /* Loop through all dropdown buttons to toggle between hiding and showing 
+        its dropdown content - This allows the user to have multiple dropdowns 
+        without any conflict */
+        var dropdown = document.getElementsByClassName("dropdown-btn");
+        var i;
+
+        for (i = 0; i < dropdown.length; i++) {
+            dropdown[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var dropdownContent = this.nextElementSibling;
+                if (dropdownContent.style.display === "block") {
+                    dropdownContent.style.display = "none";
+                } else {
+                    dropdownContent.style.display = "block";
+                }
+            });
+        }
+    }
+    openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+    }
+    closeNav() {
+        let dropdown = document.getElementById("dropdown-btn-new");
+            let dropdownContent = document.getElementById("dropdown-container-btn-new");
+            if (dropdownContent.style.display === "block") {
+                dropdown.click();
+            }
+            document.getElementById("mySidenav").style.width = "0";
+    }
+}

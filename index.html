@@ -45,14 +45,14 @@
                 <a href="#" onclick="sudoApp.mySolverController.generateBtnPressed('Mittel')">Mittel</a>
                 <a href="#" onclick="sudoApp.mySolverController.generateBtnPressed('Schwer')">Schwer</a>
             </div>
-            <!-- <a href="#" onclick="sudoApp.mySolverController.saveBtnPressed()">Speichern</a> -->
             <a href="#" onclick="sudoApp.mySolverController.printBtnPressed()">Drucken</a>
             <a href="#" onclick="sudoApp.mySolverController.openDBBtnPressed()">Datenbank</a>
             <a href="#" onclick="sudoApp.mySolverController.openSettingsDlgPressed()">Einstellungen</a>
             <a href="#" onclick="closeNav()">Schließen</a>
         </div>
+        
         <div class="app-name-header pc-element">
-            <div class="menu-icon" onclick="openNav()">
+            <div class="menu-icon" onclick="sudoApp.myNavBar.openNav()">
                 <div class="menu-icon-line"></div>
                 <div class="menu-icon-line"></div>
                 <div class="menu-icon-line"></div>
@@ -377,46 +377,7 @@
             )
         }
     </script>
-
     <script src="./JS/sudokuCommon.js"></script>
     <script src="./JS/sudokuMainApp.js"></script>
-
-    <script>
-
-        function openNav() {
-            document.getElementById("mySidenav").style.width = "250px";
-
-        }
-
-        function closeNav() {
-            let dropdown = document.getElementById("dropdown-btn-new");
-            let dropdownContent = document.getElementById("dropdown-container-btn-new");
-            if (dropdownContent.style.display === "block") {
-                dropdown.click();
-            }
-            document.getElementById("mySidenav").style.width = "0";
-        }
-
-        /* Loop through all dropdown buttons to toggle between hiding and showing 
-        its dropdown content - This allows the user to have multiple dropdowns 
-        without any conflict */
-
-
-        var dropdown = document.getElementsByClassName("dropdown-btn");
-        var i;
-
-        for (i = 0; i < dropdown.length; i++) {
-            dropdown[i].addEventListener("click", function () {
-                this.classList.toggle("active");
-                var dropdownContent = this.nextElementSibling;
-                if (dropdownContent.style.display === "block") {
-                    dropdownContent.style.display = "none";
-                } else {
-                    dropdownContent.style.display = "block";
-                }
-            });
-        }
-    </script>
 </body>
-
 </html>

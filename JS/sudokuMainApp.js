@@ -26,7 +26,8 @@ class SudokuMainApp {
         this.myPuzzleDBController = new SudokuPuzzleDBController(this.myPuzzleDB);
      
         this.myNewPuzzleStore = new NewPuzzleStore();
-   
+        this.myNavBar = new NavigationBar();
+
         // There are two play-modes 'training' and 'solving'.
         this.playMode = 'solving';
     }
@@ -40,6 +41,7 @@ class SudokuMainApp {
         this.myPuzzleDB.importBackRunPuzzle(back9, 'Backtrack_9', 'lqgwgzcback9hpfg2ak');
 
         this.myNewPuzzleStore.init();
+        this.myNavBar.init();
     }
     
 
