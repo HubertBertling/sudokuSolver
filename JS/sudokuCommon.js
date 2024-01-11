@@ -321,7 +321,10 @@ class SudokuSolverController {
     }
 
     initBtnPressed() {
+        // navigation bar init pressed
         sudoApp.myNavBar.closeNav();
+        this.myUndoActionStack = [];
+        this.myRedoActionStack = [];
         this.mySolver.init();
         // Zoom in the new initiated grid
         sudoApp.mySolver.notifyAspect('puzzleLoading', undefined);
