@@ -36,6 +36,8 @@ var URLS = [
   `${GHPATH}/images/stop-96.png`,
   `${GHPATH}/images/step-96.png`,
   `${GHPATH}/images/save.png`,
+  `${GHPATH}/images/redo.png`,
+  `${GHPATH}/images/undo.png`,
   `${GHPATH}/images/oeffnen.png`,
   `${GHPATH}/images/gueckwunsch.jfif`,
   `${GHPATH}/images/upload.png`,
