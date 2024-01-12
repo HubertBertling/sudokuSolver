@@ -23,8 +23,7 @@
     <link rel="stylesheet" media="screen and (min-width: 360px) and (max-width: 490px)" href="CSS/smallscreenNew.css">
     <link rel="stylesheet" media="screen and (min-width: 491px)" href="CSS/widescreen.css">
     <link rel="stylesheet" media="print" type="text/css" href="CSS/print.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+ 
 </head>
 
 <body>
@@ -371,6 +370,8 @@
 
     <script>
         if (navigator.serviceWorker) {
+            // The browser supports service workers.
+            //auf dem window.navigator Objekt die Eigenschaft serviceWorker
             navigator.serviceWorker.register(
                 'sw.js',
                 { scope: '/sudokuSolver/' }

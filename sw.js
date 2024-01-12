@@ -9,7 +9,7 @@ var APP_PREFIX = 'sudo_';
 // you need to change this version (version_01, version_02…). 
 // If you don't change the version, the service worker will give your
 // users the old files!
-var VERSION = 'version_153';
+var VERSION = 'version_154';
 
 // The files to make available for offline use. make sure to add 
 // others to this list
@@ -43,8 +43,7 @@ var URLS = [
   `${GHPATH}/images/upload.png`,
   `${GHPATH}/images/rename.png`,
   `${GHPATH}/images/questionMark.png`,
-  `${GHPATH}/images/drucker.png`,
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
+  `${GHPATH}/images/drucker.png`
   ]
 
 const CACHE_NAME = APP_PREFIX + VERSION
