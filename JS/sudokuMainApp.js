@@ -1,5 +1,5 @@
 let sudoApp;
-
+let VERSION = 155;
 function start() {
 
     sudoApp = new SudokuMainApp();
@@ -42,8 +42,13 @@ class SudokuMainApp {
 
         this.myNewPuzzleStore.init();
         this.myNavBar.init();
+        this.displayAppVersion();
     }
-    
+    displayAppVersion() {
+        let versionNode = document.getElementById('appVersion');
+        versionNode.innerHTML =
+        '<b>AppVersion:</b> &nbsp' + VERSION;
+    }
 
     helpFunktion() {
         window.open('./help.html');

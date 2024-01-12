@@ -99,6 +99,11 @@ html {
     visibility: visible;
 }
 
+#appVersion {
+    margin-top: 5rem;
+    margin-left: 2rem;
+    color: white;
+}
 /*=====================================================*/
 /* Side Navigation */
 /*=====================================================*/
