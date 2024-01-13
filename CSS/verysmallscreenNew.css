@@ -184,11 +184,15 @@ html {
 }
 
 /* Optional: Style the caret down icon */
-.fa-caret-down {
+.fa-caret-down, .no-caret {
     float: right;
     padding-right: 8px;
 }
 
+#caret-down-img, #no-caret-img {
+    width: 2.4rem;
+    height: 2.4rem;
+}
 
 /*===========================================================*/
 

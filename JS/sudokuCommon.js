@@ -6855,17 +6855,25 @@ class NavigationBar {
         its dropdown content - This allows the user to have multiple dropdowns 
         without any conflict */
         var dropdown = document.getElementsByClassName("dropdown-btn");
+        let caretDownImg = document.getElementById('caret-down-img');
+        let noCaretImg = document.getElementById('no-caret-img');
         var i;
+        noCaretImg.style.display = "block";
+        caretDownImg.style.display = "none";
 
         for (i = 0; i < dropdown.length; i++) {
             dropdown[i].addEventListener("click", function () {
                 this.classList.toggle("active");
                 var dropdownContent = this.nextElementSibling;
                 if (dropdownContent.style.display === "block") {
+                    noCaretImg.style.display = "block";
+                    caretDownImg.style.display = "none";
                     dropdownContent.style.display = "none";
                 } else {
                     dropdownContent.style.display = "block";
-                }
+                    noCaretImg.style.display = "none";
+                    caretDownImg.style.display = "block";
+                   }
             });
         }
     }

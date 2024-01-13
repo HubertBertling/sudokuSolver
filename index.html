@@ -23,8 +23,6 @@
     <link rel="stylesheet" media="screen and (min-width: 360px) and (max-width: 490px)" href="CSS/smallscreenNew.css">
     <link rel="stylesheet" media="screen and (min-width: 491px)" href="CSS/widescreen.css">
     <link rel="stylesheet" media="print" type="text/css" href="CSS/print.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
- 
 </head>
 
 <body>
@@ -37,7 +35,10 @@
             <a href="#" onclick="sudoApp.mySolverController.resetBtnPressed()">Zurücksetzen</a>
             <button class="dropdown-btn" id="dropdown-btn-new">
                 Neu
-                <i class="fa fa-caret-down"></i>
+                <i class="fa fa-caret-down">
+                    <img src="images/caret-down.png" id="caret-down-img">
+                    <img src="images/no-caret.png"  id="no-caret-img">
+                </i>
             </button>
             <div class="dropdown-container" id="dropdown-container-btn-new">
                 <a href="#" onclick="sudoApp.mySolverController.generateBtnPressed('Sehr leicht')">Sehr leicht</a>

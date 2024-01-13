@@ -45,7 +45,8 @@ var URLS = [
   `${GHPATH}/images/rename.png`,
   `${GHPATH}/images/questionMark.png`,
   `${GHPATH}/images/drucker.png`,
-  `https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css`
+  `${GHPATH}/images/no-caret.png`,
+  `${GHPATH}/images/caret-down.png`
   ]
 
 const CACHE_NAME = APP_PREFIX + VERSION
