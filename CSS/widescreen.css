@@ -100,7 +100,7 @@ html {
 }
 
 #appVersion {
-    margin-top: 5rem;
+    margin-top: 4rem;
     margin-left: 2rem;
     color: white;
 }
@@ -127,7 +127,7 @@ html {
 .dropdown-btn {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
-    font-size: 25px;
+    font-size: 18px;
     color: #818181;
     display: block;
 
@@ -151,7 +151,7 @@ html {
     width: 100%;
     cursor: pointer;
     outline: none;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 .sidenav a:hover,
@@ -186,7 +186,6 @@ html {
     width: 2.4rem;
     height: 2.4rem;
 }
-
 
 /*
   
