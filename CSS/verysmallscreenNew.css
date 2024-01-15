@@ -566,10 +566,10 @@ app-empty-footer {
     border-radius: 0.3rem;
     border: none;
     display: grid;
-    gap: 5px;
+    gap: 4px;
     grid-template-columns: 1fr;
     place-items: center;
-    padding: 0.4rem;
+    padding: 0.2rem;
 }
 
 .btn-undo-off > img, .btn-redo-off > img {
@@ -616,12 +616,12 @@ app-empty-footer {
 }
 
 .btn-image {
-    width: 0.8rem;
-    height: 0.8rem;
-
+    width: 1rem;
+    height: 1rem;
 }
 .btn-with-image {
-    font-size: var(--font-size);
+    padding-top: 0.2rem;
+    font-size: var(--font-size-lg);
 }
 
 /*======================================*/

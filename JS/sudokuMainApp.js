@@ -1,5 +1,5 @@
 let sudoApp;
-let VERSION = 157;
+let VERSION = 158;
 function start() {
 
     sudoApp = new SudokuMainApp();
