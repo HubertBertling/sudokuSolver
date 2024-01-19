@@ -1139,7 +1139,7 @@ label {
 .db-puzzle-btns {
     margin: 1.2rem;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(2, 1fr);
     gap: 1rem;
 }

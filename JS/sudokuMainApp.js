@@ -1,5 +1,39 @@
 let sudoApp;
-let VERSION = 158;
+let VERSION = 177;
+
+if ('launchQueue' in window) {
+    console.log('File Handling API is supported!');
+
+    launchQueue.setConsumer(launchParams => {
+        handleFiles(launchParams.files);
+    });
+} else {
+    console.error('File Handling API is not supported!');
+}
+
+async function handleFiles(files) {
+    for (const file of files) {
+        const blob = await file.getFile();
+        blob.handle = file;
+        const strFilePuzzleMap = await blob.text();
+        let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        filePuzzleMap.forEach((key, value) => {
+            if (!puzzleMap.has(key)) {
+                puzzleMap.set(key, value);
+            }
+        })
+         // Kreiere die JSON-Version des Speicherobjektes
+        // und speichere sie.
+        let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
+        localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+      
+        console.log(`${file.name} handled`);
+    }
+}
+
+
 function start() {
 
     sudoApp = new SudokuMainApp();

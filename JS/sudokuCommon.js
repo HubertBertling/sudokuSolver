@@ -492,6 +492,7 @@ class SudokuSolverController {
         sudoApp.myPuzzleDB.notify();
         sudoApp.myNavBar.closeNav();
     }
+
     openSettingsDlgPressed() {
         sudoApp.mySolverController.mySettingsDialog.open();
         sudoApp.mySolver.notify();
@@ -6046,6 +6047,14 @@ class SudokuPuzzleDBController {
         document.getElementById('db-puzzle-btn-print').addEventListener('click', () => {
             this.puzzleDBPrintBtnPressed();
         });
+
+        document.getElementById('db-puzzle-btn-download').addEventListener('click', () => {
+            this.puzzleDbDownloadBtnPressed();
+        });
+        document.getElementById('db-puzzle-btn-upload').addEventListener('click', () => {
+            this.puzzleDbUploadBtnPressed();
+        });
+
         document.getElementById('pz-btn-ok').addEventListener('click', () => {
             this.closeBtnPressed();
         });
@@ -6128,6 +6137,16 @@ class SudokuPuzzleDBController {
         // Button on the puzzle DB view
         this.printSelectedPuzzle();
     }
+
+    puzzleDbDownloadBtnPressed() {
+        // Button on the puzzle DB view
+        this.myPuzzleDB.downloadPuzzleDb();
+    }
+    puzzleDbUploadBtnPressed() {
+        // Button on the puzzle DB view
+        this.myPuzzleDB.uploadPuzzleDb();
+    }
+
 
     closeBtnPressed() {
         this.myPuzzleDBDialog.close();
@@ -6842,6 +6861,27 @@ class SudokuPuzzleDB extends SudokuModel {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         return puzzleMap.has(uid);
+    }
+    downloadPuzzleDb () {
+        let json = localStorage.getItem("localSudokuDB");
+       //Convert JSON string to BLOB.
+        json = [json];
+        var blob1 = new Blob(json, { type: "text/plain;charset=utf-8" });
+ 
+        //Check the Browser.
+        var isIE = false || !!document.documentMode;
+        if (isIE) {
+            window.navigator.msSaveBlob(blob1, "Puzzle-Datenbank.txt");
+        } else {
+            var url = window.URL || window.webkitURL;
+            var link = url.createObjectURL(blob1);
+            var a = document.createElement("a");
+            a.download = "Puzzle-Datenbank.txt";
+            a.href = link;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
     }
 }
 

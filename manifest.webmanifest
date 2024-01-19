@@ -1,23 +1,30 @@
-   {
-    "name": "SudokuTrainer",
-    "short_name": "SudokuTrainer",
-    "description": "This is a Sudoku-solver, -generator and -trainer.",
-  
-    "scope": "/sudokuSolver/",
-    "start_url": "/sudokuSolver/index.html",
+{
+  "name": "SudokuTrainer",
+  "short_name": "SudokuTrainer",
+  "description": "This is a Sudoku-solver, -generator and -trainer.",
 
-    "background_color": "#ffffff",
-    "theme_color": "#ffffff",
-  
-    "display": "standalone", 
-    
-    "icons": [
-        {
-          "src": "./images/sudoku.png",
-          "type": "image/png",
-          "sizes": "500x500"
-        }
-    ]
-  }
+  "scope": "/sudokuSolver/",
+  "start_url": "/sudokuSolver/index.html",
 
-  
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+
+  "display": "standalone",
+
+  "icons": [
+    {
+      "src": "./images/sudoku.png",
+      "type": "image/png",
+      "sizes": "500x500"
+    }
+  ],
+
+  "file_handlers": [
+    {
+      "action": "/sudokuSolver/",
+      "accept": {
+        "text/*": [".txt"]
+      }
+    }
+  ]
+}
