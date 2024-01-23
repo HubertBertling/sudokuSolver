@@ -21,7 +21,7 @@ var URLS = [
   `${GHPATH}/CSS/verysmallscreenNew.css`,
   `${GHPATH}/CSS/print.css`,
   `${GHPATH}/index.html`,
-  `${GHPATH}/manifest.webmanifest`,
+  `${GHPATH}/manifest.json`,
   `${GHPATH}/help.html`,
   `${GHPATH}/JS/sudokuMainApp.js`,
   `${GHPATH}/JS/fastSolverWorker.js`,
