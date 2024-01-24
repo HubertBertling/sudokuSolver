@@ -24,7 +24,7 @@ async function handleFiles(files) {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
  
-        filePuzzleMap.forEach((key, value) => {
+        filePuzzleMap.forEach((value, key) => {
             console.log('key: ' + key + ', value: ' + value);
             if (!puzzleMap.has(key)) {
                 puzzleMap.set(key, value);
