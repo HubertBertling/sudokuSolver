@@ -18,8 +18,6 @@ async function handleFiles(files) {
         blob.handle = file;
         let strFilePuzzleMapObj = await blob.text();
 
-        console.log(`${file.name} handled, strFilePuzzleMapObj: ${strFilePuzzleMapObj}`);
-
         // let strFilePuzzleMap = strFilePuzzleMapObj[0];
         let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMapObj));
  
@@ -27,6 +25,7 @@ async function handleFiles(files) {
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
  
         filePuzzleMap.forEach((key, value) => {
+            console.log('key: ' + key + ', value: ' + value);
             if (!puzzleMap.has(key)) {
                 puzzleMap.set(key, value);
                     //console.log('blob. puzzleMap.set(key, value);');
