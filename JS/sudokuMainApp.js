@@ -13,22 +13,27 @@ if ('launchQueue' in window) {
 
 async function handleFiles(files) {
     for (const file of files) {
+ 
         const blob = await file.getFile();
         blob.handle = file;
-        const strFilePuzzleMap = await blob.text();
+        let strFilePuzzleMapObj = await blob.text();
+        let strFilePuzzleMap = strFilePuzzleMapObj[0];
         let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
+ 
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+ 
         filePuzzleMap.forEach((key, value) => {
             if (!puzzleMap.has(key)) {
                 puzzleMap.set(key, value);
+                    //console.log('blob. puzzleMap.set(key, value);');
             }
         })
          // Kreiere die JSON-Version des Speicherobjektes
         // und speichere sie.
         let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
-      
+ 
         console.log(`${file.name} handled`);
     }
 }

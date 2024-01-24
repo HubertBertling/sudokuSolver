@@ -6863,9 +6863,10 @@ class SudokuPuzzleDB extends SudokuModel {
         return puzzleMap.has(uid);
     }
     downloadPuzzleDb () {
-        let json = localStorage.getItem("localSudokuDB");
+        // let json = localStorage.getItem("localSudokuDB");
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
        //Convert JSON string to BLOB.
-        json = [json];
+        json = [str_puzzleMap];
         var blob1 = new Blob(json, { type: "text/plain;charset=utf-8" });
  
         //Check the Browser.
