@@ -6121,7 +6121,7 @@ class SudokuPuzzleDBController {
     deleteBtnPressed() {
         if (this.myPuzzleDB.getSize() > 0) {
             this.myPuzzleDB.deleteSelected();
-
+            this.nextBtnPressed();
         }
     }
 
