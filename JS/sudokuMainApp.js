@@ -61,7 +61,7 @@ async function chooseAFile() {
       
       // get the content of the file
       let blob = await fileHandle[0].getFile();
-      blob.handle = file;
+      blob.handle = fileHandle[0];
       let strFilePuzzleMap = await blob.text();
       let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
   
