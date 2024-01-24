@@ -17,8 +17,11 @@ async function handleFiles(files) {
         const blob = await file.getFile();
         blob.handle = file;
         let strFilePuzzleMapObj = await blob.text();
-        let strFilePuzzleMap = strFilePuzzleMapObj[0];
-        let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
+
+        console.log(`${file.name} handled, strFilePuzzleMapObj: ${strFilePuzzleMapObj}`);
+
+        // let strFilePuzzleMap = strFilePuzzleMapObj[0];
+        let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMapObj));
  
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
