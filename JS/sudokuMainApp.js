@@ -23,7 +23,7 @@ async function handleFiles(files) {
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
  
         filePuzzleMap.forEach((value, key) => {
-            console.log('key: ' + key + ', value: ' + value);
+            // console.log('key: ' + key + ', value: ' + value);
             if (!puzzleMap.has(key)) {
                 puzzleMap.set(key, value);
             }
@@ -32,12 +32,58 @@ async function handleFiles(files) {
         // und speichere sie.
         let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
- 
-        console.log(`${file.name} handled`);
+        
+        sudoApp.mySolverController.openDBBtnPressed();
+        //console.log(`${file.name} handled`);
     }
 }
 
-
+async function chooseAFile() {
+    if (!window.showOpenFilePicker){
+        alert("Your current device does not support the File System API. Try again on desktop Chrome!");
+    }
+    else {
+      //here you specify the type of files you want to allow
+      let options = {
+        types: [{
+          description: "Sudoku", 
+          accept: {
+              "text/*": [".sudoku"],
+          },
+        }],
+        excludeAcceptAllOption: true,
+        multiple: false,
+      };
+      
+      // Open file picker and choose a file
+      let fileHandle = await window.showOpenFilePicker(options);
+      if (!fileHandle[0]){return;}
+      
+      // get the content of the file
+      let blob = await fileHandle[0].getFile();
+      blob.handle = file;
+      let strFilePuzzleMap = await blob.text();
+      let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
+  
+      let str_puzzleMap = localStorage.getItem("localSudokuDB");
+      let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+  
+      filePuzzleMap.forEach((value, key) => {
+          // console.log('key: ' + key + ', value: ' + value);
+          if (!puzzleMap.has(key)) {
+              puzzleMap.set(key, value);
+          }
+      })
+       // Kreiere die JSON-Version des Speicherobjektes
+      // und speichere sie.
+      let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
+      localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+      
+      sudoApp.mySolverController.openDBBtnPressed();
+      //console.log(`${file.name} handled`);  
+    }
+  }
+  
 function start() {
 
     sudoApp = new SudokuMainApp();

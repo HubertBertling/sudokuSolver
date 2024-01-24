@@ -6144,7 +6144,7 @@ class SudokuPuzzleDBController {
     }
     puzzleDbUploadBtnPressed() {
         // Button on the puzzle DB view
-        this.myPuzzleDB.uploadPuzzleDb();
+        chooseAFile();
     }
 
 
