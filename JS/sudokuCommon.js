@@ -6048,8 +6048,11 @@ class SudokuPuzzleDBController {
             this.puzzleDBPrintBtnPressed();
         });
 
-        document.getElementById('db-puzzle-btn-download').addEventListener('click', () => {
+        document.getElementById('db-puzzle-btn-download-db').addEventListener('click', () => {
             this.puzzleDbDownloadBtnPressed();
+        });
+        document.getElementById('db-puzzle-btn-download-pz').addEventListener('click', () => {
+            this.puzzleDownloadBtnPressed();
         });
         document.getElementById('db-puzzle-btn-upload').addEventListener('click', () => {
             this.puzzleDbUploadBtnPressed();
@@ -6142,6 +6145,12 @@ class SudokuPuzzleDBController {
         // Button on the puzzle DB view
         this.myPuzzleDB.downloadPuzzleDb();
     }
+
+    puzzleDownloadBtnPressed() {
+        // Button on the puzzle DB view
+        this.myPuzzleDB.downloadPuzzle();
+    }
+
     puzzleDbUploadBtnPressed() {
         // Button on the puzzle DB view
         chooseAFile();
@@ -6862,10 +6871,10 @@ class SudokuPuzzleDB extends SudokuModel {
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
         return puzzleMap.has(uid);
     }
-    downloadPuzzleDb () {
+    downloadPuzzleDb() {
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         var blob1 = new Blob([str_puzzleMap], { type: "text/plain;charset=utf-8" });
-    
+
         //Check the Browser.
         var isIE = false || !!document.documentMode;
         if (isIE) {
@@ -6881,6 +6890,36 @@ class SudokuPuzzleDB extends SudokuModel {
             document.body.removeChild(a);
         }
     }
+
+    downloadPuzzle() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        // puzzleMap anlegen, die nur das selektierte Element enthält.
+        let newPuzzleMap = new Map();
+        if (puzzleMap.size > 0) {
+            let selectedKey = this.getSelectedUid();
+            let selectedPuzzle = this.getSelectedPuzzle();
+            newPuzzleMap.set(selectedKey, selectedPuzzle);
+            let str_newPuzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
+
+            var blob1 = new Blob([str_newPuzzleMap], { type: "text/plain;charset=utf-8" });
+
+            //Check the Browser.
+            var isIE = false || !!document.documentMode;
+            if (isIE) {
+                window.navigator.msSaveBlob(blob1, "puzzle-db.sudoku");
+            } else {
+                var url = window.URL || window.webkitURL;
+                var link = url.createObjectURL(blob1);
+                var a = document.createElement("a");
+                a.download = "puzzle-db.sudoku";
+                a.href = link;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+    }
 }
 
 class NavigationBar {
@@ -6888,7 +6927,7 @@ class NavigationBar {
     }
 
     init() {
-        
+
         /* Loop through all dropdown buttons to toggle between hiding and showing 
         its dropdown content - This allows the user to have multiple dropdowns 
         without any conflict */
@@ -6911,7 +6950,7 @@ class NavigationBar {
                     dropdownContent.style.display = "block";
                     noCaretImg.style.display = "none";
                     caretDownImg.style.display = "block";
-                   }
+                }
             });
         }
     }
@@ -6920,10 +6959,10 @@ class NavigationBar {
     }
     closeNav() {
         let dropdown = document.getElementById("dropdown-btn-new");
-            let dropdownContent = document.getElementById("dropdown-container-btn-new");
-            if (dropdownContent.style.display === "block") {
-                dropdown.click();
-            }
-            document.getElementById("mySidenav").style.width = "0";
+        let dropdownContent = document.getElementById("dropdown-container-btn-new");
+        if (dropdownContent.style.display === "block") {
+            dropdown.click();
+        }
+        document.getElementById("mySidenav").style.width = "0";
     }
 }
