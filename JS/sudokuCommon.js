@@ -6907,12 +6907,12 @@ class SudokuPuzzleDB extends SudokuModel {
             //Check the Browser.
             var isIE = false || !!document.documentMode;
             if (isIE) {
-                window.navigator.msSaveBlob(blob1, selectedPuzzle.name);
+                window.navigator.msSaveBlob(blob1, selectedPuzzle.name + '.sudoku');
             } else {
                 var url = window.URL || window.webkitURL;
                 var link = url.createObjectURL(blob1);
                 var a = document.createElement("a");
-                a.download = selectedPuzzle.name;
+                a.download = selectedPuzzle.name + '.sudoku';
                 a.href = link;
                 document.body.appendChild(a);
                 a.click();
