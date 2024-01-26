@@ -1151,7 +1151,7 @@ label {
 .db-puzzle-btns {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
     gap: 0.2rem;
     margin: 1rem;
 }
@@ -1159,7 +1159,7 @@ label {
 .db-puzzle-button {
     background-color: #ddd;
     text-align: center;
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size);
     display: grid;
     place-items: center;
     border-radius: 0.5rem;

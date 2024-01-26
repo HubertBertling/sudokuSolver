@@ -1,5 +1,5 @@
 let sudoApp;
-let VERSION = 200;
+let VERSION = 201;
 
 if ('launchQueue' in window) {
     console.log('File Handling API is supported!');
