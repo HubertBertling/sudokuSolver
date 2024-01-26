@@ -23,7 +23,7 @@
     {
       "action": "/sudokuSolver/",
       "accept": {
-        "text/*": [".sudoku"]
+        "text/*": [".txt", ".sudoku"]
       }
     }
   ]
