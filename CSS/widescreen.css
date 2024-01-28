@@ -250,7 +250,7 @@ html {
     margin: 0.4rem 0;
 }
 
-.menu-icon:active {
+.menu-icon:active, .share-icon:active {
     transform: translate(2px, 2px);
 }
 

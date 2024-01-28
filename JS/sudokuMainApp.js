@@ -4,45 +4,6 @@ let VERSION = 203;
 
 // sharing files
 
-let shareButton = document.getElementById('share-button');
-
-shareButton.addEventListener("click", async () => {
-    let str_puzzleMap = localStorage.getItem("localSudokuDB");
-    let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-    // puzzleMap anlegen, die nur das selektierte Element enthält.
-    let newPuzzleMap = new Map();
-    if (puzzleMap.size > 0) {
-        let selectedKey = this.getSelectedUid();
-        let selectedPuzzle = this.getSelectedPuzzle();
-        newPuzzleMap.set(selectedKey, selectedPuzzle);
-        let str_newPuzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
-        //var blob1 = new Blob([str_puzzleMap], { type: "text/plain;charset=utf-8" });
-        var file = new Blob([str_newPuzzleMap], { type: "text/plain;charset=utf-8" });
-        //const file = new File(data, "some.png", { type: "image/png" });
-
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            navigator.share({
-                files: [file],
-                title: 'Current Puzzle',
-                text: 'Puzzle in DB',
-            })
-                .then(() => console.log('Share was successful.'))
-                .catch((error) => console.log('Sharing failed', error));
-        } else {
-            console.log(`Your system doesn't support sharing files.`);
-        }
-        
-        try {
-            await navigator.share({
-                title: "Sudoku File",
-                files: [file]
-            });
-        } catch (err) {
-            console.error("Share failed:", err.message);
-        }
-    }
-});
-
 
 // file handling
 
@@ -157,7 +118,7 @@ class SudokuMainApp {
 
         this.myNewPuzzleStore = new NewPuzzleStore();
         this.myNavBar = new NavigationBar();
-
+        this.myWebAppFunctionality = new WebAppFunctionality();
         // There are two play-modes 'training' and 'solving'.
         this.playMode = 'solving';
     }

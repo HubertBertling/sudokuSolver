@@ -6425,7 +6425,7 @@ class NewPuzzleStore {
                 break;
             }
             default: {
-                 // throw new Error('Unexpected difficulty: ' + puzzleRecord.preRunRecord.level);
+                // throw new Error('Unexpected difficulty: ' + puzzleRecord.preRunRecord.level);
             }
         }
         if (this.runningGenerators > 0) {
@@ -6964,5 +6964,47 @@ class NavigationBar {
             dropdown.click();
         }
         document.getElementById("mySidenav").style.width = "0";
+    }
+}
+class WebAppFunctionality {
+    constructor() {
+        this.shareButton = document.getElementById('share-button');
+        this.shareButton.addEventListener("click", async () => {
+            let str_puzzleMap = localStorage.getItem("localSudokuDB");
+            let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+            // puzzleMap anlegen, die nur das selektierte Element enthält.
+            let newPuzzleMap = new Map();
+            if (puzzleMap.size > 0) {
+                let selectedKey = sudoApp.myPuzzleDB.getSelectedUid();
+                let selectedPuzzle = sudoApp.myPuzzleDB.getSelectedPuzzle();
+                newPuzzleMap.set(selectedKey, selectedPuzzle);
+                let str_newPuzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
+                //var blob1 = new Blob([str_puzzleMap], { type: "text/plain;charset=utf-8" });
+                var file = new Blob([str_newPuzzleMap], { type: "text/plain;charset=utf-8" });
+                //const file = new File(data, "some.png", { type: "image/png" });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({
+                        files: [file],
+                        title: 'Current Puzzle',
+                        text: 'Puzzle in DB',
+                    })
+                        .then(() => console.log('Share was successful.'))
+                        .catch((error) => console.log('Sharing failed', error));
+                } else {
+                    console.log(`Your system doesn't support sharing files.`);
+                }
+                /*
+                try {
+                    await navigator.share({
+                        title: "Sudoku File",
+                        files: [file]
+                    });
+                } catch (err) {
+                    console.error("Share failed:", err.message);
+                }
+                */
+            }
+        });
     }
 }
