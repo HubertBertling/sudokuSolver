@@ -6980,7 +6980,7 @@ class WebAppFunctionality {
                 newPuzzleMap.set(selectedKey, selectedPuzzle);
                 let str_newPuzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
                 //var blob1 = new Blob([str_puzzleMap], { type: "text/plain;charset=utf-8" });
-                var file = new File([str_newPuzzleMap], 'puzzle.sudoku' ,{ type: "text/*" });
+                var file = new File([str_newPuzzleMap], 'puzzle.txt' ,{ type: "text/plain" });
                 //const file = new File(data, "some.png", { type: "image/png" });
 
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
