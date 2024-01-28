@@ -6425,7 +6425,7 @@ class NewPuzzleStore {
                 break;
             }
             default: {
-                throw new Error('Unexpected difficulty: ' + puzzleRecord.preRunRecord.level);
+                 // throw new Error('Unexpected difficulty: ' + puzzleRecord.preRunRecord.level);
             }
         }
         if (this.runningGenerators > 0) {
