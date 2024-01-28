@@ -1,8 +1,9 @@
 {
   "name": "SudokuTrainer",
   "short_name": "SudokuTrainer",
-  "description": "This is a Sudoku-solver, -generator and -trainer.",
+  "description": "Diese App ist ein Trainer für klassisches Sudoku. Sie besteht aus drei Komponenten, (1) dem Sudoku-Solver, (2) dem Sudoku-Generator und (3) der Sudoku-Datenbank.",
 
+  "id": "SudokuTrainerPWAManifest",
   "scope": "/sudokuSolver/",
   "start_url": "/sudokuSolver/index.html",
 
@@ -12,12 +13,40 @@
   "display": "standalone",
 
   "icons": [
-    {
-      "src": "./images/sudoku.png",
+        {
+      "src": "./images/s256.png",
       "type": "image/png",
-      "sizes": "500x500"
+      "sizes": "256x256"
+    },
+    {
+      "src": "./images/s512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "./images/s1024.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
     }
   ],
+
+  "screenshots": [
+    {
+      "src": "./images/screenshot-282x563.jpg",
+      "sizes": "282x568",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "sudoku-trainer"
+    },
+    {
+      "src": "./images/screenshot-527x434.jpg",
+      "sizes": "527x434",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "sudoku-trainer"
+    }
+  ],
+
 
   "file_handlers": [
     {

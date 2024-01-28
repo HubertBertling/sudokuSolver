@@ -213,7 +213,7 @@ html {
 
 .app-name-header {
     display: grid;
-    grid-template-columns: 0.1fr 1.8fr 0.1fr;
+    grid-template-columns: 0.1fr 0.1fr 1.8fr 0.1fr;
     font-size: var(--font-size-xl);
     font-weight: bold;
     text-align: center;
@@ -239,7 +239,7 @@ html {
 }
 
 
-.menu-icon {
+.menu-icon , .share-icon {
     margin: 0.3rem;
 }
 
