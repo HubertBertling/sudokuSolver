@@ -1,6 +1,52 @@
 let sudoApp;
 let VERSION = 203;
 
+
+// sharing files
+
+let shareButton = document.getElementById('share-button');
+
+shareButton.addEventListener("click", async () => {
+    let str_puzzleMap = localStorage.getItem("localSudokuDB");
+    let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+    // puzzleMap anlegen, die nur das selektierte Element enthält.
+    let newPuzzleMap = new Map();
+    if (puzzleMap.size > 0) {
+        let selectedKey = this.getSelectedUid();
+        let selectedPuzzle = this.getSelectedPuzzle();
+        newPuzzleMap.set(selectedKey, selectedPuzzle);
+        let str_newPuzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
+        //var blob1 = new Blob([str_puzzleMap], { type: "text/plain;charset=utf-8" });
+        var file = new Blob([str_newPuzzleMap], { type: "text/plain;charset=utf-8" });
+        //const file = new File(data, "some.png", { type: "image/png" });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({
+                files: [file],
+                title: 'Current Puzzle',
+                text: 'Puzzle in DB',
+            })
+                .then(() => console.log('Share was successful.'))
+                .catch((error) => console.log('Sharing failed', error));
+        } else {
+            console.log(`Your system doesn't support sharing files.`);
+        }
+        
+        try {
+            await navigator.share({
+                title: "Sudoku File",
+                files: [file]
+            });
+        } catch (err) {
+            console.error("Share failed:", err.message);
+        }
+    }
+});
+
+
+// file handling
+
+
 if ('launchQueue' in window) {
     console.log('File Handling API is supported!');
 
@@ -13,77 +59,77 @@ if ('launchQueue' in window) {
 
 async function handleFiles(files) {
     for (const file of files) {
- 
+
         const blob = await file.getFile();
         blob.handle = file;
         let strFilePuzzleMap = await blob.text();
         let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
- 
+
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
         let puzzleMap = new Map(JSON.parse(str_puzzleMap));
- 
+
         filePuzzleMap.forEach((value, key) => {
             // console.log('key: ' + key + ', value: ' + value);
             if (!puzzleMap.has(key)) {
                 puzzleMap.set(key, value);
             }
         })
-         // Kreiere die JSON-Version des Speicherobjektes
+        // Kreiere die JSON-Version des Speicherobjektes
         // und speichere sie.
         let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
-        
+
         sudoApp.mySolverController.openDBBtnPressed();
         //console.log(`${file.name} handled`);
     }
 }
 
 async function chooseAFile() {
-    if (!window.showOpenFilePicker){
+    if (!window.showOpenFilePicker) {
         alert("Your current device does not support the File System API. Try again on desktop Chrome!");
     }
     else {
-      //here you specify the type of files you want to allow
-      let options = {
-        types: [{
-          description: "Sudoku", 
-          accept: {
-              "text/*": [".sudoku"],
-          },
-        }],
-        excludeAcceptAllOption: true,
-        multiple: false,
-      };
-      
-      // Open file picker and choose a file
-      let fileHandle = await window.showOpenFilePicker(options);
-      if (!fileHandle[0]){return;}
-      
-      // get the content of the file
-      let blob = await fileHandle[0].getFile();
-      blob.handle = fileHandle[0];
-      let strFilePuzzleMap = await blob.text();
-      let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
-  
-      let str_puzzleMap = localStorage.getItem("localSudokuDB");
-      let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-  
-      filePuzzleMap.forEach((value, key) => {
-          // console.log('key: ' + key + ', value: ' + value);
-          if (!puzzleMap.has(key)) {
-              puzzleMap.set(key, value);
-          }
-      })
-       // Kreiere die JSON-Version des Speicherobjektes
-      // und speichere sie.
-      let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
-      localStorage.setItem("localSudokuDB", update_str_puzzleMap);
-      
-      sudoApp.mySolverController.openDBBtnPressed();
-      //console.log(`${file.name} handled`);  
+        //here you specify the type of files you want to allow
+        let options = {
+            types: [{
+                description: "Sudoku",
+                accept: {
+                    "text/*": [".sudoku"],
+                },
+            }],
+            excludeAcceptAllOption: true,
+            multiple: false,
+        };
+
+        // Open file picker and choose a file
+        let fileHandle = await window.showOpenFilePicker(options);
+        if (!fileHandle[0]) { return; }
+
+        // get the content of the file
+        let blob = await fileHandle[0].getFile();
+        blob.handle = fileHandle[0];
+        let strFilePuzzleMap = await blob.text();
+        let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
+
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+
+        filePuzzleMap.forEach((value, key) => {
+            // console.log('key: ' + key + ', value: ' + value);
+            if (!puzzleMap.has(key)) {
+                puzzleMap.set(key, value);
+            }
+        })
+        // Kreiere die JSON-Version des Speicherobjektes
+        // und speichere sie.
+        let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
+        localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+
+        sudoApp.mySolverController.openDBBtnPressed();
+        //console.log(`${file.name} handled`);  
     }
-  }
-  
+}
+
 function start() {
 
     sudoApp = new SudokuMainApp();
@@ -108,7 +154,7 @@ class SudokuMainApp {
         // 2. The database component
         this.myPuzzleDB = new SudokuPuzzleDB();
         this.myPuzzleDBController = new SudokuPuzzleDBController(this.myPuzzleDB);
-     
+
         this.myNewPuzzleStore = new NewPuzzleStore();
         this.myNavBar = new NavigationBar();
 
@@ -131,7 +177,7 @@ class SudokuMainApp {
     displayAppVersion() {
         let versionNode = document.getElementById('appVersion');
         versionNode.innerHTML =
-        '<b>AppVersion:</b> &nbsp' + VERSION;
+            '<b>AppVersion:</b> &nbsp' + VERSION;
     }
 
     helpFunktion() {
@@ -141,25 +187,25 @@ class SudokuMainApp {
 
 // Example puzzle with 23 back tracks
 
-const back23 =   ["0","3","0","0","1","0","0","0","9",
-            "0","0","6","0","0","0","5","0","0",
-            "1","0","0","0","0","0","0","4","0",
-            "4","0","0","0","0","3","2","0","0",
-            "0","9","0","0","7","0","0","0","8",
-            "0","0","5","6","0","0","0","0","0",
-            "8","0","0","0","0","2","0","0","3",
-            "0","0","0","0","9","0","0","7","0",
-            "0","0","0","4","0","0","1","0","0"];
+const back23 = ["0", "3", "0", "0", "1", "0", "0", "0", "9",
+    "0", "0", "6", "0", "0", "0", "5", "0", "0",
+    "1", "0", "0", "0", "0", "0", "0", "4", "0",
+    "4", "0", "0", "0", "0", "3", "2", "0", "0",
+    "0", "9", "0", "0", "7", "0", "0", "0", "8",
+    "0", "0", "5", "6", "0", "0", "0", "0", "0",
+    "8", "0", "0", "0", "0", "2", "0", "0", "3",
+    "0", "0", "0", "0", "9", "0", "0", "7", "0",
+    "0", "0", "0", "4", "0", "0", "1", "0", "0"];
 
-const back9  =   ["1","4","0","0","0","6","8","0","0",
-            "0","0","0","0","5","0","0","0","2",
-            "0","0","0","0","9","4","0","6","0",
-            "0","0","4","0","0","0","0","0","0",
-            "0","0","0","0","0","8","0","3","6",
-            "7","5","0","0","0","1","9","0","0",
-            "0","0","0","3","0","0","0","1","0",
-            "0","9","0","0","0","0","0","0","5",
-            "8","0","0","0","0","0","7","0","0"];
+const back9 = ["1", "4", "0", "0", "0", "6", "8", "0", "0",
+    "0", "0", "0", "0", "5", "0", "0", "0", "2",
+    "0", "0", "0", "0", "9", "4", "0", "6", "0",
+    "0", "0", "4", "0", "0", "0", "0", "0", "0",
+    "0", "0", "0", "0", "0", "8", "0", "3", "6",
+    "7", "5", "0", "0", "0", "1", "9", "0", "0",
+    "0", "0", "0", "3", "0", "0", "0", "1", "0",
+    "0", "9", "0", "0", "0", "0", "0", "0", "5",
+    "8", "0", "0", "0", "0", "0", "7", "0", "0"];
 
 
 // Launch and initialize the app
