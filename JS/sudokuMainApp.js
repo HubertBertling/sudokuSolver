@@ -118,7 +118,7 @@ class SudokuMainApp {
 
         this.myNewPuzzleStore = new NewPuzzleStore();
         this.myNavBar = new NavigationBar();
-        this.myWebAppFunctionality = new WebAppFunctionality();
+        this.myWebAppSharing = new WebAppSharing();
         // There are two play-modes 'training' and 'solving'.
         this.playMode = 'solving';
     }

@@ -6920,6 +6920,23 @@ class SudokuPuzzleDB extends SudokuModel {
             }
         }
     }
+    getCurrentPuzzleFile() {
+        let str_puzzleMap = localStorage.getItem("localSudokuDB");
+            let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+            // puzzleMap anlegen, die nur das selektierte Element enthält.
+            let newPuzzleMap = new Map();
+            if (puzzleMap.size > 0) {
+                let selectedKey = sudoApp.myPuzzleDB.getSelectedUid();
+                let selectedPuzzle = sudoApp.myPuzzleDB.getSelectedPuzzle();
+                newPuzzleMap.set(selectedKey, selectedPuzzle);
+                let str_newPuzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
+                let blob1 = new Blob([str_newPuzzleMap], { type: "text/plain;charset=utf-8" });
+                let file = new File([blob1], 'puzzle.txt' ,{ type: "text/plain" });
+                return file;
+            } else {
+                return undefined;
+            }
+    }
 }
 
 class NavigationBar {
@@ -6966,45 +6983,29 @@ class NavigationBar {
         document.getElementById("mySidenav").style.width = "0";
     }
 }
-class WebAppFunctionality {
+class WebAppSharing {
     constructor() {
+        if(navigator.share && navigator.canShare){
+            // Web Share API ist Verfügbar!
         this.shareButton = document.getElementById('share-button');
         this.shareButton.addEventListener("click", async () => {
-            let str_puzzleMap = localStorage.getItem("localSudokuDB");
-            let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-            // puzzleMap anlegen, die nur das selektierte Element enthält.
-            let newPuzzleMap = new Map();
-            if (puzzleMap.size > 0) {
-                let selectedKey = sudoApp.myPuzzleDB.getSelectedUid();
-                let selectedPuzzle = sudoApp.myPuzzleDB.getSelectedPuzzle();
-                newPuzzleMap.set(selectedKey, selectedPuzzle);
-                let str_newPuzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
-                //var blob1 = new Blob([str_puzzleMap], { type: "text/plain;charset=utf-8" });
-                var file = new File([str_newPuzzleMap], 'puzzle.txt' ,{ type: "text/plain" });
-                //const file = new File(data, "some.png", { type: "image/png" });
-
+            let file = sudoApp.myPuzzleDBController.getCurrentPuzzleFile();
+            if (file != undefined) {
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     navigator.share({
                         files: [file],
                         title: 'Current Puzzle',
-                        text: 'Puzzle in DB',
+                        text: 'Current Puzzle in DB',
                     })
                         .then(() => console.log('Share was successful.'))
                         .catch((error) => console.log('Sharing failed', error));
                 } else {
                     console.log(`Your system doesn't support sharing files.`);
                 }
-                /*
-                try {
-                    await navigator.share({
-                        title: "Sudoku File",
-                        files: [file]
-                    });
-                } catch (err) {
-                    console.error("Share failed:", err.message);
-                }
-                */
             }
         });
+    } else {
+        console.log(`Web Share API not available.`);
+    }
     }
 }
