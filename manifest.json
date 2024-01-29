@@ -13,7 +13,7 @@
   "display": "standalone",
 
   "icons": [
-        {
+    {
       "src": "./images/s256.png",
       "type": "image/png",
       "sizes": "256x256"
@@ -47,28 +47,23 @@
     }
   ],
 
+  "share_target": {
+    "action": "/sudokuSolver/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "Sudoku App",
+      "text": "Sudoku Trainer",
+      "url": "/sudokuSolver/index.html",
+      "files": [
+        {
+          "name": "Puzzles",
+          "accept": [".txt", ".sudoku"]
+        }
+      ]
+    }
+  },
 
-
-  
-    "share_target": {
-      "action": "/sudokuSolver/",
-      "method": "POST",
-      "enctype": "multipart/form-data",
-      "params": {
-        "title": "Sudoku App",
-        "text": "Sudoku Trainer",
-        "url": "/sudokuSolver/index.html",
-        "files": [
-          {
-            "name": "Puzzles",
-            "accept": [".txt", ".sudoku"]
-          }
-        ]
-      }
-    },
-  
-  
-  
   "file_handlers": [
     {
       "action": "/sudokuSolver/",
