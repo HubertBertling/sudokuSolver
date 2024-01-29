@@ -6989,7 +6989,7 @@ class WebAppSharing {
             // Web Share API ist Verfügbar!
         this.shareButton = document.getElementById('share-button');
         this.shareButton.addEventListener("click", async () => {
-            let file = sudoApp.myPuzzleDBController.getCurrentPuzzleFile();
+            let file = sudoApp.myPuzzleDB.getCurrentPuzzleFile();
             if (file != undefined) {
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     navigator.share({
