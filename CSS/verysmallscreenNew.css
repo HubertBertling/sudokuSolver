@@ -215,7 +215,7 @@ app-empty-footer {
     margin-left: 0.3rem;
     margin-right: 0.3rem;
     display: grid;
-    grid-template-columns: 0.2fr 1.6fr 0.1fr; 
+    grid-template-columns: 0.2fr 0.2fr 1.4fr 0.1fr; 
     font-size: var(--font-size-xl);
     font-weight: bold;
     padding: 0.4rem;
@@ -239,8 +239,8 @@ app-empty-footer {
 
 
 
-.menu-icon {
-    margin: 0.1rem;
+.menu-icon, .share-icon {
+    margin: 0.3rem;
 }
 .menu-icon-line {
     width: 3rem;
@@ -249,7 +249,7 @@ app-empty-footer {
     margin: 0.3rem 0;
   }
   
-.menu-icon:active {
+.menu-icon:active, .share-icon:active {
     transform: translate(2px, 2px);
 }
 

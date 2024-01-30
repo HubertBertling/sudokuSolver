@@ -221,7 +221,7 @@ html {
     margin-left: 0.5rem;
     margin-right: 0.5rem;
     display: grid;
-    grid-template-columns: 0.2fr 1.6fr 0.2fr;
+    grid-template-columns: 0.2fr 0.2fr 1.4fr 0.2fr;
     font-size: var(--font-size-xl);
     font-weight: bold;
     text-align: center;
@@ -245,7 +245,7 @@ html {
     border: 0;
 }
 
-.menu-icon {
+.menu-icon , .share-icon {
     margin: 0.3rem;
 }
 
@@ -256,7 +256,7 @@ html {
     margin: 0.3rem 0;
 }
 
-.menu-icon:active {
+.menu-icon:active, .share-icon:active  {
     transform: translate(2px, 2px);
 }
 
