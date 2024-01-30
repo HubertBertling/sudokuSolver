@@ -6921,6 +6921,22 @@ class SudokuPuzzleDB extends SudokuModel {
         }
     }
     getCurrentPuzzleFile() {
+        let currentPuzzle = this.mySolver.myGrid.getPuzzleRecord();
+        let currentPuzzleId = this.mySolver.myGrid.loadedPuzzleId;
+        let currentPuzzleName = this.mySolver.myGrid.loadedPuzzleName;
+
+        if (currentPuzzleId == '' || currentPuzzleId == '-') {
+            // The current puzzle is not yet an element in the database.
+            // Save the current puzzle with a new ID and new name in the database.
+            let newPuzzelId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+            sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzelId, 'Geteilt (' + new Date().toLocaleString('de-DE') + ')', currentPuzzle);
+        } else {
+            // The current puzzle is element in the database.
+            // Before printing save the current state.
+            let currentPuzzle = this.mySolver.myGrid.getPuzzleRecord();
+            sudoApp.myPuzzleDB.mergePlayedPuzzle(currentPuzzleId, currentPuzzleName, currentPuzzle);
+        }
+
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
             let puzzleMap = new Map(JSON.parse(str_puzzleMap));
             // puzzleMap anlegen, die nur das selektierte Element enthält.
@@ -6990,7 +7006,7 @@ class WebAppSharing {
         this.shareButton = document.getElementById('share-button');
         this.shareButton.addEventListener("click", async () => {
             let file = sudoApp.myPuzzleDB.getCurrentPuzzleFile();
-            if (file != undefined) {
+            if (file !== undefined) {
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     navigator.share({
                         files: [file],
