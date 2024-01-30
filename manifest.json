@@ -58,7 +58,7 @@
       "files": [
         {
           "name": "Puzzles",
-          "accept": [".txt", ".sudoku"]
+          "accept": [".txt"]
         }
       ]
     }
@@ -68,7 +68,7 @@
     {
       "action": "/sudokuSolver/",
       "accept": {
-        "text/*": [".txt", ".sudoku"]
+        "text/*": [".txt"]
       }
     }
   ]
