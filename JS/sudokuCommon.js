@@ -6921,9 +6921,9 @@ class SudokuPuzzleDB extends SudokuModel {
         }
     }
     getCurrentPuzzleFile() {
-        let currentPuzzle = this.mySolver.myGrid.getPuzzleRecord();
-        let currentPuzzleId = this.mySolver.myGrid.loadedPuzzleId;
-        let currentPuzzleName = this.mySolver.myGrid.loadedPuzzleName;
+        let currentPuzzle = sudoApp.mySolver.myGrid.getPuzzleRecord();
+        let currentPuzzleId = sudoApp.mySolver.myGrid.loadedPuzzleId;
+        let currentPuzzleName = sudoApp.mySolver.myGrid.loadedPuzzleName;
 
         if (currentPuzzleId == '' || currentPuzzleId == '-') {
             // The current puzzle is not yet an element in the database.
@@ -6933,7 +6933,7 @@ class SudokuPuzzleDB extends SudokuModel {
         } else {
             // The current puzzle is element in the database.
             // Before printing save the current state.
-            let currentPuzzle = this.mySolver.myGrid.getPuzzleRecord();
+            let currentPuzzle = sudoApp.mySolver.myGrid.getPuzzleRecord();
             sudoApp.myPuzzleDB.mergePlayedPuzzle(currentPuzzleId, currentPuzzleName, currentPuzzle);
         }
 
