@@ -6936,22 +6936,27 @@ class SudokuPuzzleDB extends SudokuModel {
             let currentPuzzle = sudoApp.mySolver.myGrid.getPuzzleRecord();
             sudoApp.myPuzzleDB.mergePlayedPuzzle(currentPuzzleId, currentPuzzleName, currentPuzzle);
         }
+        // The saved and shared puzzle becomes the new current puzzle
+        let tmpPuzzleID = sudoApp.myPuzzleDB.getSelectedUid();
+        let puzzle = sudoApp.myPuzzleDB.getSelectedPuzzle();
+        sudoApp.mySolver.loadPuzzle(tmpPuzzleID, puzzle);
+        sudoApp.mySolver.notify();
 
         let str_puzzleMap = localStorage.getItem("localSudokuDB");
-            let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-            // puzzleMap anlegen, die nur das selektierte Element enthält.
-            let newPuzzleMap = new Map();
-            if (puzzleMap.size > 0) {
-                let selectedKey = sudoApp.myPuzzleDB.getSelectedUid();
-                let selectedPuzzle = sudoApp.myPuzzleDB.getSelectedPuzzle();
-                newPuzzleMap.set(selectedKey, selectedPuzzle);
-                let str_newPuzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
-                let blob1 = new Blob([str_newPuzzleMap], { type: "text/plain;charset=utf-8" });
-                let file = new File([blob1], 'puzzle.txt' ,{ type: "text/plain" });
-                return file;
-            } else {
-                return undefined;
-            }
+        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+        // puzzleMap anlegen, die nur das selektierte Element enthält.
+        let newPuzzleMap = new Map();
+        if (puzzleMap.size > 0) {
+            let selectedKey = sudoApp.myPuzzleDB.getSelectedUid();
+            let selectedPuzzle = sudoApp.myPuzzleDB.getSelectedPuzzle();
+            newPuzzleMap.set(selectedKey, selectedPuzzle);
+            let str_newPuzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
+            let blob1 = new Blob([str_newPuzzleMap], { type: "text/plain;charset=utf-8" });
+            let file = new File([blob1], 'puzzle.sudoku', { type: "text/plain" });
+            return file;
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -7001,27 +7006,27 @@ class NavigationBar {
 }
 class WebAppSharing {
     constructor() {
-        if(navigator.share && navigator.canShare){
+        if (navigator.share && navigator.canShare) {
             // Web Share API ist Verfügbar!
-        this.shareButton = document.getElementById('share-button');
-        this.shareButton.addEventListener("click", async () => {
-            let file = sudoApp.myPuzzleDB.getCurrentPuzzleFile();
-            if (file !== undefined) {
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    navigator.share({
-                        files: [file],
-                        title: 'Current Puzzle',
-                        text: 'Current Puzzle in DB',
-                    })
-                        .then(() => console.log('Share was successful.'))
-                        .catch((error) => console.log('Sharing failed', error));
-                } else {
-                    console.log(`Your system doesn't support sharing files.`);
+            this.shareButton = document.getElementById('share-button');
+            this.shareButton.addEventListener("click", async () => {
+                let file = sudoApp.myPuzzleDB.getCurrentPuzzleFile();
+                if (file !== undefined) {
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator.share({
+                            files: [file],
+                            title: 'Current Puzzle',
+                            text: 'Current Puzzle in DB',
+                        })
+                            .then(() => console.log('Share was successful.'))
+                            .catch((error) => console.log('Sharing failed', error));
+                    } else {
+                        console.log(`Your system doesn't support sharing files.`);
+                    }
                 }
-            }
-        });
-    } else {
-        console.log(`Web Share API not available.`);
-    }
+            });
+        } else {
+            console.log(`Web Share API not available.`);
+        }
     }
 }
