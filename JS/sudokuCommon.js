@@ -7014,6 +7014,7 @@ class WebAppSharing {
                 if (file !== undefined) {
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
                         navigator.share({
+                            url: '/sudokuSolver/',
                             files: [file],
                             title: 'Current Puzzle',
                             text: 'Current Puzzle in DB',

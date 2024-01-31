@@ -55,7 +55,7 @@ async function chooseAFile() {
             types: [{
                 description: "Sudoku",
                 accept: {
-                    "text/*": [".sudoku"],
+                    "text/*": [".txt", ".sudoku"],
                 },
             }],
             excludeAcceptAllOption: true,
@@ -90,6 +90,12 @@ async function chooseAFile() {
         //console.log(`${file.name} handled`);  
     }
 }
+
+async function getImageFileFromURL(imageURL, title) {
+    const response = await fetch(imageURL);
+    const blob = await response.blob();
+    return new File([blob], title, {type: blob.type});
+  }
 
 function start() {
 

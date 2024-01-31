@@ -10,7 +10,7 @@ var APP_PREFIX = 'sudo_';
 // you need to change this version (version_01, version_02…). 
 // If you don't change the version, the service worker will give your
 // users the old files!
-var VERSION = 'version_224';
+var VERSION = 'version_225';
 
 // The files to make available for offline use. make sure to add 
 // others to this list
@@ -51,45 +51,21 @@ var URLS = [
   ]
 
 const CACHE_NAME = APP_PREFIX + VERSION
-/*
-self.addEventListener('fetch', function (e) {
-  console.log('Fetch request : ' + e.request.url);
-  e.respondWith(
-    caches.match(e.request).then(function (request) {
-      if (request) {
-        console.log('Responding with cache : ' + e.request.url);
-        return request
-      } else {
-        console.log('File is not cached, fetching : ' + e.request.url);
-        return fetch(e.request)
-      }
-    })
-  )
-})
-*/
-self.addEventListener('fetch', function (e) {
-  console.log('Fetch request : ' + e.request.url);
-  e.respondWith(
-    caches.match(e.request).then(function (request) {
-      if (request) {
-        console.log('Responding with cache : ' + e.request.url);
-        return request
-      } else {
-        console.log('File is not cached, fetching : ' + e.request.url);
-        return fetch(e.request)
-      }
-    })
-  )
-})
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(function(reg){
-      console.log("Service worker registered.");
-   }).catch(function(err) {
-      console.log("Service worker not registered. This happened:", err)
-  });
-}
+self.addEventListener('fetch', function (e) {
+  console.log('Fetch request : ' + e.request.url);
+  e.respondWith(
+    caches.match(e.request).then(function (request) {
+      if (request) {
+        console.log('Responding with cache : ' + e.request.url);
+        return request
+      } else {
+        console.log('File is not cached, fetching : ' + e.request.url);
+        return fetch(e.request)
+      }
+    })
+  )
+})
 
 self.addEventListener('install', function (e) {
   e.waitUntil(
