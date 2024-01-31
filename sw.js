@@ -10,7 +10,7 @@ var APP_PREFIX = 'sudo_';
 // you need to change this version (version_01, version_02…). 
 // If you don't change the version, the service worker will give your
 // users the old files!
-var VERSION = 'version_222';
+var VERSION = 'version_224';
 
 // The files to make available for offline use. make sure to add 
 // others to this list
@@ -51,6 +51,7 @@ var URLS = [
   ]
 
 const CACHE_NAME = APP_PREFIX + VERSION
+/*
 self.addEventListener('fetch', function (e) {
   console.log('Fetch request : ' + e.request.url);
   e.respondWith(
@@ -65,6 +66,30 @@ self.addEventListener('fetch', function (e) {
     })
   )
 })
+*/
+self.addEventListener('fetch', function (e) {
+  console.log('Fetch request : ' + e.request.url);
+  e.respondWith(
+    caches.match(e.request).then(function (request) {
+      if (request) {
+        console.log('Responding with cache : ' + e.request.url);
+        return request
+      } else {
+        console.log('File is not cached, fetching : ' + e.request.url);
+        return fetch(e.request)
+      }
+    })
+  )
+})
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(function(reg){
+      console.log("Service worker registered.");
+   }).catch(function(err) {
+      console.log("Service worker not registered. This happened:", err)
+  });
+}
 
 self.addEventListener('install', function (e) {
   e.waitUntil(
@@ -91,3 +116,29 @@ self.addEventListener('activate', function (e) {
     })
   )
 })
+
+
+/*
+self.addEventListener('fetch', event => {
+    const url = new URL(event.request.url);
+
+    if (event.request.method === 'POST' && url.pathname === '/store-code-snippet') {
+        event.respondWith((async () => {
+            const data = await event.request.formData();
+
+            const filename = data.get('title');
+            const file = data.get('textFile');
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const textContent = e.target.result;
+
+                // Do something with the textContent here.
+
+            };
+            reader.readAsText(file);
+
+            return Response.redirect('/snippet-stored-success', 303);
+        })());
+    }
+});*/

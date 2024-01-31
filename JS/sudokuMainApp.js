@@ -91,31 +91,6 @@ async function chooseAFile() {
     }
 }
 
-/*
-self.addEventListener('fetch', event => {
-    const url = new URL(event.request.url);
-
-    if (event.request.method === 'POST' && url.pathname === '/store-code-snippet') {
-        event.respondWith((async () => {
-            const data = await event.request.formData();
-
-            const filename = data.get('title');
-            const file = data.get('textFile');
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const textContent = e.target.result;
-
-                // Do something with the textContent here.
-
-            };
-            reader.readAsText(file);
-
-            return Response.redirect('/snippet-stored-success', 303);
-        })());
-    }
-});*/
-
 function start() {
 
     sudoApp = new SudokuMainApp();
