@@ -91,28 +91,30 @@ async function chooseAFile() {
     }
 }
 
+/*
+self.addEventListener('fetch', event => {
+    const url = new URL(event.request.url);
 
-self.addEventListener("fetch", (event) => {
-    // Regular requests not related to Web Share Target.
-    if (event.request.method !== "POST") {
-      event.respondWith(fetch(event.request));
-      return;
+    if (event.request.method === 'POST' && url.pathname === '/store-code-snippet') {
+        event.respondWith((async () => {
+            const data = await event.request.formData();
+
+            const filename = data.get('title');
+            const file = data.get('textFile');
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const textContent = e.target.result;
+
+                // Do something with the textContent here.
+
+            };
+            reader.readAsText(file);
+
+            return Response.redirect('/snippet-stored-success', 303);
+        })());
     }
-  
-    // Requests related to Web Share Target.
-    event.respondWith(
-      (async () => {
-        const formData = await event.request.formData();
-        const link = formData.get("link") || "";
-        // Instead of the original URL `/save-bookmark/`, redirect
-        // the user to a URL returned by the `saveBookmark()`
-        // function, for example, `/`.
-        const responseUrl = await saveBookmark(link);
-        return Response.redirect(responseUrl, 303);
-      })(),
-    );
-  });
-  
+});*/
 
 function start() {
 
