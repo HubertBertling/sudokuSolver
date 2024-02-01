@@ -10,7 +10,7 @@ var APP_PREFIX = 'sudo_';
 // you need to change this version (version_01, version_02…). 
 // If you don't change the version, the service worker will give your
 // users the old files!
-var VERSION = 'version_227';
+var VERSION = 'version_228';
 
 // The files to make available for offline use. make sure to add 
 // others to this list
@@ -52,16 +52,29 @@ var URLS = [
 
 const CACHE_NAME = APP_PREFIX + VERSION
 
-self.addEventListener('fetch', function (e) {
-  console.log('Fetch request : ' + e.request.url);
-  e.respondWith(
-    caches.match(e.request).then(function (request) {
+self.addEventListener('fetch', function (event) {
+  const url = new URL(event.request.url);
+  if (event.request.method === 'POST' && url.pathname === '/' && url.searchParams.has('share-target')) {
+      event.respondWith(Response.redirect('/?receiving-file-share=1'));
+
+      event.waitUntil(async function () {
+          const client = await self.clients.get(event.resultingClientId);
+          const data = await event.request.formData();
+          const files = data.get('file');
+          client.postMessage({ files });
+      }());
+      return;
+  }
+ // ...
+  console.log('Fetch request : ' + event.request.url);
+  event.respondWith(
+    caches.match(event.request).then(function (request) {
       if (request) {
-        console.log('Responding with cache : ' + e.request.url);
+        console.log('Responding with cache : ' + event.request.url);
         return request
       } else {
-        console.log('File is not cached, fetching : ' + e.request.url);
-        return fetch(e.request)
+        console.log('File is not cached, fetching : ' + event.request.url);
+        return fetch(event.request)
       }
     })
   )
@@ -117,9 +130,10 @@ self.addEventListener('fetch', event => {
             return Response.redirect('/snippet-stored-success', 303);
         })());
     }
-});*/
+});
 
 //service-worker.js:
+https://mconverter.eu/blog/web_share_target_api/
 
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
@@ -138,3 +152,4 @@ self.addEventListener('fetch', (event) => {
  // ...
 
 });
+*/

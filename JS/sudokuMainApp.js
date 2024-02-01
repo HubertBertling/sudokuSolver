@@ -7,7 +7,7 @@ let VERSION = 203;
 
 navigator.serviceWorker.addEventListener('message', function (e) {
     if (searchParams.has('receiving-file-share')) {
-        console.log(e.data.files); //contains the file(s)
+        console.log('receiving-file-chare' + e.data.files); //contains the file(s)
         handleFiles(e.data.files);
     }
 });
