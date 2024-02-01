@@ -56,7 +56,7 @@
       "files": [
         {
           "name": "file",
-          "accept": ["text/plain"]
+          "accept": ["text/plain", ".txt"]
         }
       ]
     }
