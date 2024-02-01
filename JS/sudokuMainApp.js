@@ -1,24 +1,22 @@
 let sudoApp;
-let VERSION = 231;
+let VERSION = 233;
 
 if (navigator.share && navigator.canShare) {
     // Web Share API ist Verfügbar!
     let shareButton = document.getElementById('share-button');
-        shareButton.addEventListener("click", async () => {
+    shareButton.addEventListener("click", async () => {
         let file = sudoApp.myPuzzleDB.getCurrentPuzzleFile();
-        if (file !== undefined) {
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                navigator.share({
-                    url: '/sudokuSolver/',
-                    files: [file],
-                    title: 'Current Puzzle',
-                    text: 'Current Puzzle in DB',
-                })
-                    .then(() => console.log('Share was successful.'))
-                    .catch((error) => console.log('Sharing failed', error));
-            } else {
-                console.log(`Your system doesn't support sharing files.`);
-            }
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({
+                url: '/sudokuSolver/',
+                files: [file],
+                title: 'Current Puzzle',
+                text: 'Current Puzzle in DB',
+            })
+                .then(() => console.log('Share was successful.'))
+                .catch((error) => console.log('Sharing failed', error));
+        } else {
+            console.log(`Your system doesn't support sharing files.`);
         }
     });
 } else {
