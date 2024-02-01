@@ -3,7 +3,14 @@ let VERSION = 203;
 
 
 // sharing files
+//script in index.html:
 
+navigator.serviceWorker.addEventListener('message', function (e) {
+    if (searchParams.has('receiving-file-share')) {
+        console.log(e.data.files); //contains the file(s)
+        handleFiles(e.data.files);
+    }
+});
 
 // file handling
 

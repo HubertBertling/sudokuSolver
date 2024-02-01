@@ -55,8 +55,8 @@
       "title": "title",
       "files": [
         {
-          "name": "puzzles",
-          "accept": [".txt", ".sudoku"]
+          "name": "file",
+          "accept": ["text/plain", ".txt", ".sudoku"]
         }
       ]
     }

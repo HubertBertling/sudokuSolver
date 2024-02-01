@@ -10,7 +10,7 @@ var APP_PREFIX = 'sudo_';
 // you need to change this version (version_01, version_02…). 
 // If you don't change the version, the service worker will give your
 // users the old files!
-var VERSION = 'version_226';
+var VERSION = 'version_227';
 
 // The files to make available for offline use. make sure to add 
 // others to this list
@@ -118,3 +118,23 @@ self.addEventListener('fetch', event => {
         })());
     }
 });*/
+
+//service-worker.js:
+
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  if (event.request.method === 'POST' && url.pathname === '/' && url.searchParams.has('share-target')) {
+      event.respondWith(Response.redirect('/?receiving-file-share=1'));
+
+      event.waitUntil(async function () {
+          const client = await self.clients.get(event.resultingClientId);
+          const data = await event.request.formData();
+          const files = data.get('file');
+          client.postMessage({ files });
+      }());
+      return;
+  }
+
+ // ...
+
+});
