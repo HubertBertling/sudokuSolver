@@ -1,9 +1,29 @@
 let sudoApp;
-let VERSION = 203;
+let VERSION = 229;
 
-
-// sharing files
-//script in index.html:
+if (navigator.share && navigator.canShare) {
+    // Web Share API ist Verfügbar!
+    let shareButton = document.getElementById('share-button');
+        shareButton.addEventListener("click", async () => {
+        let file = sudoApp.myPuzzleDB.getCurrentPuzzleFile();
+        if (file !== undefined) {
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({
+                    url: '/sudokuSolver/',
+                    files: [file],
+                    title: 'Current Puzzle',
+                    text: 'Current Puzzle in DB',
+                })
+                    .then(() => console.log('Share was successful.'))
+                    .catch((error) => console.log('Sharing failed', error));
+            } else {
+                console.log(`Your system doesn't support sharing files.`);
+            }
+        }
+    });
+} else {
+    console.log(`Web Share API not available.`);
+}
 
 navigator.serviceWorker.addEventListener('message', function (e) {
     if (searchParams.has('receiving-file-share')) {
@@ -98,12 +118,6 @@ async function chooseAFile() {
     }
 }
 
-async function getImageFileFromURL(imageURL, title) {
-    const response = await fetch(imageURL);
-    const blob = await response.blob();
-    return new File([blob], title, {type: blob.type});
-  }
-
 function start() {
 
     sudoApp = new SudokuMainApp();
@@ -131,7 +145,6 @@ class SudokuMainApp {
 
         this.myNewPuzzleStore = new NewPuzzleStore();
         this.myNavBar = new NavigationBar();
-        this.myWebAppSharing = new WebAppSharing();
         // There are two play-modes 'training' and 'solving'.
         this.playMode = 'solving';
     }

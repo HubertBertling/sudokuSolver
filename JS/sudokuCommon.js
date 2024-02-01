@@ -7004,30 +7004,3 @@ class NavigationBar {
         document.getElementById("mySidenav").style.width = "0";
     }
 }
-class WebAppSharing {
-    constructor() {
-        if (navigator.share && navigator.canShare) {
-            // Web Share API ist Verfügbar!
-            this.shareButton = document.getElementById('share-button');
-            this.shareButton.addEventListener("click", async () => {
-                let file = sudoApp.myPuzzleDB.getCurrentPuzzleFile();
-                if (file !== undefined) {
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        navigator.share({
-                            url: '/sudokuSolver/',
-                            files: [file],
-                            title: 'Current Puzzle',
-                            text: 'Current Puzzle in DB',
-                        })
-                            .then(() => console.log('Share was successful.'))
-                            .catch((error) => console.log('Sharing failed', error));
-                    } else {
-                        console.log(`Your system doesn't support sharing files.`);
-                    }
-                }
-            });
-        } else {
-            console.log(`Web Share API not available.`);
-        }
-    }
-}
