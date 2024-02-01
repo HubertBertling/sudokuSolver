@@ -1,5 +1,5 @@
 let sudoApp;
-let VERSION = 234;
+let VERSION = 235;
 
 if (navigator.share && navigator.canShare) {
     // Web Share API ist Verfügbar!
@@ -23,9 +23,19 @@ if (navigator.share && navigator.canShare) {
     console.log(`Web Share API not available.`);
 }
 
+window.addEventListener('DOMContentLoaded', () => {
+    const parsedUrl = new URL(window.location);
+    // searchParams.get() will properly handle decoding the values.
+    console.log('Title shared: ' + parsedUrl.searchParams.get('title'));
+    console.log('Text shared: ' + parsedUrl.searchParams.get('text'));
+    console.log('URL shared: ' + parsedUrl.searchParams.get('url'));
+  });
+  
+
 navigator.serviceWorker.addEventListener('message', function (e) {
+    console.log('receiving-file-share');
     if (searchParams.has('receiving-file-share')) {
-        console.log('receiving-file-chare' + e.data.files); //contains the file(s)
+        console.log('receiving-file-share' + e.data.files); //contains the file(s)
         handleFiles(e.data.files);
     }
 });
