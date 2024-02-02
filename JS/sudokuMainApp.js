@@ -7,12 +7,12 @@ let VERSION = 235;
 
 const btnfile = document.getElementById('share-button');
 
-fetch("https://images.unsplash.com/photo-1655013090015-4ee419d8db1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80")
+fetch("images/s1024.png")
     .then(function(response) {
         return response.blob()
     })
     .then(function(blob) {
-        var image = new File([blob], "image.jpg", {type: 'image/jpeg'});
+        var file = new File([blob], "image.jpg", {type: 'image/png'});
 
         const shareFileData = {
             text: 'Bild vom Artikel',
