@@ -57,20 +57,19 @@
       "files": [
         {
           "name": "file",
-          "accept": ["text/plain", ".txt"]
+          "accept": ["text/*", ".txt"]
         }
       ]
     }
   },
-
-  
 
   "file_handlers": [
     {
       "action": "/sudokuSolver/",
       "accept": {
         "text/*": [".txt", ".sudoku"]
-      }
+      },
+      "launch_type": "single-client"
     }
   ]
 }

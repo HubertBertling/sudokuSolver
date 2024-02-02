@@ -1,36 +1,6 @@
 let sudoApp;
 let VERSION = 235;
 
-
-// Test
-
-
-const btnfile = document.getElementById('share-button');
-
-fetch("https://images.unsplash.com/photo-1655013090015-4ee419d8db1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80")
-    .then(function(response) {
-        return response.blob()
-    })
-    .then(function(blob) {
-        var file = new File([blob], "image.jpg", {type: 'image/png'});
-
-        const shareFileData = {
-            text: 'Bild vom Artikel',
-            files: [file]
-        }
-
-        if(navigator.share && navigator.canShare && navigator.canShare(shareFileData)){
-            btnfile.addEventListener('click',() => {
-                navigator.share(shareFileData);
-            });
-        }else{
-           // btnfile.remove();
-        }
-    })
-
-// Testende
-
-/*
 if (navigator.share && navigator.canShare) {
     // Web Share API ist Verfügbar!
     let shareButton = document.getElementById('share-button');
@@ -40,8 +10,8 @@ if (navigator.share && navigator.canShare) {
             navigator.share({
                 url: '/sudokuSolver/',
                 files: [file],
-                title: 'Current Puzzle',
-                text: 'Current Puzzle in DB',
+                title: 'Puzzle teilen',
+                text: 'Puzzle',
             })
                 .then(() => console.log('Share was successful.'))
                 .catch((error) => console.log('Sharing failed', error));
@@ -51,17 +21,10 @@ if (navigator.share && navigator.canShare) {
     });
 } else {
     console.log(`Web Share API not available.`);
+    // shareButton.remove();
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    const parsedUrl = new URL(window.location);
-    // searchParams.get() will properly handle decoding the values.
-    console.log('Title shared: ' + parsedUrl.searchParams.get('title'));
-    console.log('Text shared: ' + parsedUrl.searchParams.get('text'));
-    console.log('URL shared: ' + parsedUrl.searchParams.get('url'));
-  });
-  
-
+/*
 navigator.serviceWorker.addEventListener('message', function (e) {
     console.log('receiving-file-share');
     if (searchParams.has('receiving-file-share')) {
@@ -69,8 +32,8 @@ navigator.serviceWorker.addEventListener('message', function (e) {
         handleFiles(e.data.files);
     }
 });
-
 */
+
 // file handling
 
 

@@ -53,6 +53,8 @@ var URLS = [
 const CACHE_NAME = APP_PREFIX + VERSION
 
 self.addEventListener('fetch', function (event) {
+
+/*
   const url = new URL(event.request.url);
   if (event.request.method === 'POST' && url.pathname === '/' && url.searchParams.has('share-target')) {
       event.respondWith(Response.redirect('/?receiving-file-share=1'));
@@ -65,6 +67,7 @@ self.addEventListener('fetch', function (event) {
       }());
       return;
   }
+  */
  // ...
   console.log('Fetch request : ' + event.request.url);
   event.respondWith(
