@@ -1,5 +1,5 @@
 let sudoApp;
-let VERSION = 235;
+let VERSION = 238;
 
 if (navigator.share && navigator.canShare) {
     // Web Share API ist Verfügbar!
