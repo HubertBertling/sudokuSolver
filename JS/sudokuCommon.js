@@ -6952,7 +6952,7 @@ class SudokuPuzzleDB extends SudokuModel {
             newPuzzleMap.set(selectedKey, selectedPuzzle);
             let str_newPuzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
             let blob1 = new Blob([str_newPuzzleMap], { type: "text/plain;charset=utf-8" });
-            let file = new File([blob1], 'puzzle.txt', { type: "text/*" });
+            let file = new File([blob1], 'puzzle.txt', { type: "text/plain" });
             return file;
         } else {
             return undefined;
