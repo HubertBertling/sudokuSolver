@@ -1,7 +1,7 @@
 
 // Change this to your repository name
-var GHPATH = 'https://hubertbertling.github.io/sudokuSolver';
-// var GHPATH = 'http://localhost:8080/sudokuSolver';
+// var GHPATH = 'https://hubertbertling.github.io/sudokuSolver';
+var GHPATH = 'http://localhost:8080/sudokuSolver';
 
 // Choose a different app prefix name
 var APP_PREFIX = 'sudo_';

@@ -1,6 +1,36 @@
 let sudoApp;
 let VERSION = 235;
 
+
+// Test
+
+
+const btnfile = document.getElementById('share-button');
+
+fetch("https://images.unsplash.com/photo-1655013090015-4ee419d8db1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80")
+    .then(function(response) {
+        return response.blob()
+    })
+    .then(function(blob) {
+        var image = new File([blob], "image.jpg", {type: 'image/jpeg'});
+
+        const shareFileData = {
+            text: 'Bild vom Artikel',
+            files: [file]
+        }
+
+        if(navigator.share && navigator.canShare && navigator.canShare(shareFileData)){
+            btnfile.addEventListener('click',() => {
+                navigator.share(shareFileData);
+            });
+        }else{
+           // btnfile.remove();
+        }
+    })
+
+// Testende
+
+/*
 if (navigator.share && navigator.canShare) {
     // Web Share API ist Verfügbar!
     let shareButton = document.getElementById('share-button');
@@ -40,6 +70,7 @@ navigator.serviceWorker.addEventListener('message', function (e) {
     }
 });
 
+*/
 // file handling
 
 
