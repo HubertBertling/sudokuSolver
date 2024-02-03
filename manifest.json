@@ -53,11 +53,10 @@
     "enctype": "multipart/form-data",
     "params": {
       "title": "title",
-      "url": "link",
       "files": [
         {
-          "name": "file",
-          "accept": ["text/*", ".txt"]
+          "name": "puzzleFiles",
+          "accept": ["text/plain"]
         }
       ]
     }
@@ -67,7 +66,7 @@
     {
       "action": "/sudokuSolver/",
       "accept": {
-        "text/*": [".txt", ".sudoku"]
+        "text/plain": [".txt", ".sudoku"]
       },
       "launch_type": "single-client"
     }
