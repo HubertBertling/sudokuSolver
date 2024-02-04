@@ -1,6 +1,7 @@
 let sudoApp;
-let VERSION = 245;
+let VERSION = 246;
 
+console.log(BrowserDetect.OS);
 if (navigator.share && navigator.canShare) {
     // Web Share API ist Verfügbar!
     let shareButton = document.getElementById('share-button');
@@ -19,8 +20,8 @@ if (navigator.share && navigator.canShare) {
         }
     });
 } else {
-    console.log(`Web Share API not available.`);
-    // shareButton.remove();
+    console.log(`Web Share API not supported.`);
+    shareButton.remove();
 }
 
 /*
