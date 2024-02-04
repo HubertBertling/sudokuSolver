@@ -48,7 +48,7 @@
   ],
 
   "share_target": {
-    "action": "/sudokuSolver",
+    "action": "/sudokuSolver/",
     "method": "POST",
     "enctype": "multipart/form-data",
     "params": {
@@ -64,7 +64,7 @@
 
   "file_handlers": [
     {
-      "action": "/sudokuSolver",
+      "action": "/sudokuSolver/",
       "accept": {
         "text/plain": [".txt", ".sudoku"]
       },
