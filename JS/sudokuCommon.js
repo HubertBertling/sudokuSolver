@@ -6103,6 +6103,7 @@ class SudokuPuzzleDBController {
 
                 if (upLoadedKeys.length == 1) {
                     this.myPuzzleDB.selectedIndex = this.myPuzzleDB.getIndex(upLoadedKeys.pop());
+                    this.myPuzzleDB.notify();
                 }
                 sudoApp.mySolverController.openDBBtnPressed();
                 //console.log(`${file.name} handled`);         
