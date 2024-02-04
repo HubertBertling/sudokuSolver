@@ -1,5 +1,5 @@
 let sudoApp;
-let VERSION = 243;
+let VERSION = 244;
 
 if (navigator.share && navigator.canShare) {
     // Web Share API ist Verfügbar!
@@ -8,7 +8,6 @@ if (navigator.share && navigator.canShare) {
         let file = sudoApp.myPuzzleDB.getCurrentPuzzleFile();
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
             navigator.share({
-                url: '/sudokuSolver/',
                 files: [file],
                 title: 'Puzzle teilen',
                 text: 'Puzzle',
