@@ -6075,33 +6075,33 @@ class SudokuPuzzleDBController {
                     excludeAcceptAllOption: true,
                     multiple: false
                 };
-        
+
                 // Open file picker and choose a file
                 let [fileHandle] = await window.showOpenFilePicker(options);
                 if (!fileHandle) { return; }
-               // get the content of the file
-               let blob = await fileHandle.getFile();
-               blob.handle = fileHandle;
-               let strFilePuzzleMap = await blob.text();
-               let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
-       
-               let str_puzzleMap = localStorage.getItem("localSudokuDB");
-               let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-       
-               filePuzzleMap.forEach((value, key) => {
-                   // console.log('key: ' + key + ', value: ' + value);
-                   if (!puzzleMap.has(key)) {
-                       puzzleMap.set(key, value);
-                   }
-               })
-               // Kreiere die JSON-Version des Speicherobjektes
-               // und speichere sie.
-               let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
-               localStorage.setItem("localSudokuDB", update_str_puzzleMap);
-       
-               sudoApp.mySolverController.openDBBtnPressed();
-               //console.log(`${file.name} handled`);         
-        
+                // get the content of the file
+                let blob = await fileHandle.getFile();
+                blob.handle = fileHandle;
+                let strFilePuzzleMap = await blob.text();
+                let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
+
+                let str_puzzleMap = localStorage.getItem("localSudokuDB");
+                let puzzleMap = new Map(JSON.parse(str_puzzleMap));
+
+                filePuzzleMap.forEach((value, key) => {
+                    // console.log('key: ' + key + ', value: ' + value);
+                    if (!puzzleMap.has(key)) {
+                        puzzleMap.set(key, value);
+                        this.myPuzzleDB.selectedIndex = this.myPuzzleDB.getIndex(key);
+                    }
+                })
+                // Kreiere die JSON-Version des Speicherobjektes
+                // und speichere sie.
+                let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
+                localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+                sudoApp.mySolverController.openDBBtnPressed();
+                //console.log(`${file.name} handled`);         
+
             }
         });
 
