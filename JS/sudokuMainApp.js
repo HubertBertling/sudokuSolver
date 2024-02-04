@@ -1,10 +1,21 @@
 let sudoApp;
-let VERSION = 246;
+let VERSION = 247;
 
-console.log(BrowserDetect.OS);
+console.log(navigator.userAgent);
+
+if (window.navigator.userAgent.indexOf("Windows") != -1) {
+    console.log("The user is running Windows");
+} else if (window.navigator.userAgent.indexOf("Mac OS") != -1) {
+    console.log("The user is running Mac OS");
+} else if (window.navigator.userAgent.indexOf("Linux") != -1) {
+    console.log("The user is running Linux");
+} else {
+    console.log("The user's operating system could not be determined");
+}
+
+let shareButton = document.getElementById('share-button');
 if (navigator.share && navigator.canShare) {
     // Web Share API ist Verfügbar!
-    let shareButton = document.getElementById('share-button');
     shareButton.addEventListener("click", async () => {
         let file = sudoApp.myPuzzleDB.getCurrentPuzzleFile();
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -21,7 +32,6 @@ if (navigator.share && navigator.canShare) {
     });
 } else {
     console.log(`Web Share API not supported.`);
-    shareButton.remove();
 }
 
 /*
