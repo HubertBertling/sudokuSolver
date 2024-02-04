@@ -6088,20 +6088,24 @@ class SudokuPuzzleDBController {
                 let str_puzzleMap = localStorage.getItem("localSudokuDB");
                 let puzzleMap = new Map(JSON.parse(str_puzzleMap));
 
+                let upLoadedKeys = [];
                 filePuzzleMap.forEach((value, key) => {
                     // console.log('key: ' + key + ', value: ' + value);
                     if (!puzzleMap.has(key)) {
                         puzzleMap.set(key, value);
-                        this.myPuzzleDB.selectedIndex = this.myPuzzleDB.getIndex(key);
+                        upLoadedKeys.push(key);
                     }
                 })
                 // Kreiere die JSON-Version des Speicherobjektes
                 // und speichere sie.
                 let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
                 localStorage.setItem("localSudokuDB", update_str_puzzleMap);
+
+                if (upLoadedKeys.length == 1) {
+                    this.myPuzzleDB.selectedIndex = this.myPuzzleDB.getIndex(upLoadedKeys.pop());
+                }
                 sudoApp.mySolverController.openDBBtnPressed();
                 //console.log(`${file.name} handled`);         
-
             }
         });
 
