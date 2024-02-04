@@ -1,5 +1,5 @@
 let sudoApp;
-let VERSION = 239;
+let VERSION = 240;
 
 if (navigator.share && navigator.canShare) {
     // Web Share API ist Verfügbar!
@@ -73,7 +73,7 @@ async function handleFiles(files) {
         //console.log(`${file.name} handled`);
     }
 }
-
+/*
 async function chooseAFile() {
     if (!window.showOpenFilePicker) {
         alert("Your current device does not support the File System API. Try again on desktop Chrome!");
@@ -92,12 +92,12 @@ async function chooseAFile() {
         };
 
         // Open file picker and choose a file
-        let fileHandle = await window.showOpenFilePicker(options);
-        if (!fileHandle[0]) { return; }
+        let [fileHandle] = await window.showOpenFilePicker(options);
+        if (!fileHandle) { return; }
 
         // get the content of the file
-        let blob = await fileHandle[0].getFile();
-        blob.handle = fileHandle[0];
+        let blob = await fileHandle.getFile();
+        blob.handle = fileHandle;
         let strFilePuzzleMap = await blob.text();
         let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
 
@@ -119,7 +119,7 @@ async function chooseAFile() {
         //console.log(`${file.name} handled`);  
     }
 }
-
+*/
 function start() {
 
     sudoApp = new SudokuMainApp();
