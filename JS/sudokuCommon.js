@@ -6979,12 +6979,12 @@ class SudokuPuzzleDB extends SudokuModel {
         //Check the Browser.
         var isIE = false || !!document.documentMode;
         if (isIE) {
-            window.navigator.msSaveBlob(blob1, 'puzzle-db.sudoku');
+            window.navigator.msSaveBlob(blob1, 'puzzle-db.txt');
         } else {
             var url = window.URL || window.webkitURL;
             var link = url.createObjectURL(blob1);
             var a = document.createElement("a");
-            a.download = 'puzzle-db.sudoku';
+            a.download = 'puzzle-db.txt';
             a.href = link;
             document.body.appendChild(a);
             a.click();
@@ -7008,12 +7008,12 @@ class SudokuPuzzleDB extends SudokuModel {
             //Check the Browser.
             var isIE = false || !!document.documentMode;
             if (isIE) {
-                window.navigator.msSaveBlob(blob1, selectedPuzzle.name + '.sudoku');
+                window.navigator.msSaveBlob(blob1, selectedPuzzle.name + '.txt');
             } else {
                 var url = window.URL || window.webkitURL;
                 var link = url.createObjectURL(blob1);
                 var a = document.createElement("a");
-                a.download = selectedPuzzle.name + '.sudoku';
+                a.download = selectedPuzzle.name + '.txt';
                 a.href = link;
                 document.body.appendChild(a);
                 a.click();
