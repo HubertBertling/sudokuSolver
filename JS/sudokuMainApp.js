@@ -1,5 +1,37 @@
 let sudoApp;
-let VERSION = 251;
+let VERSION = 252;
+
+if (window.File && window.FileReader 
+    && window.FileList && window.Blob) {
+    // Dateiverarbeitung 
+ } else {
+    alert('Dieser Browser unterstützt den Zugriff auf lokale Dateien nicht');
+ }
+
+ window.onload = function() {
+    const asText = document.getElementById('asText');
+    //const textbox = document.getElementById('textbox');
+
+    asText.addEventListener('change', function(e) {
+        const file = asText.files[0];
+        const textType = /text.*/;
+
+        if (file.type.match(textType)) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                // textbox.innerText = reader.result;
+                let strFilePuzzleMap = reader.result;
+                sudoApp.myPuzzleDB.upLoadPuzzle(strFilePuzzleMap); 
+            }
+            reader.readAsText(file);    
+        } else {
+            throw new Error('Dateityp nicht unterstützt!');
+        }
+    });
+}
+
+
 
 console.log(navigator.userAgent);
 

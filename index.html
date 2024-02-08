@@ -29,6 +29,8 @@
 </head>
 
 <body>
+    <!-- <label for="Name">Name:</label>
+    <div id="textbox" name="Name"> </div> -->
 
     <div class="app-content noprint">
 
@@ -219,7 +221,7 @@
                     <button class="db-puzzle-button noprint" id="db-puzzle-btn-download-db">Download-DB</button>
                     <button class="db-puzzle-button noprint" id="db-puzzle-btn-download-pz">Download-PZ</button>
                     <button class="db-puzzle-button noprint" id="db-puzzle-btn-upload">Upload</button>
-
+                    <input type="file" style="display:none" id="asText">
                     <button class="db-puzzle-button noprint" id="pz-btn-ok">Schließen</button>
                 </div>
             </div>
@@ -373,7 +375,8 @@
                 </legend>
 
                 <div class="puzzle-io">
-                    <input type="checkbox" id="puzzle-io" name="puzzle-io" onchange="sudoApp.mySolverController.puzzleIOcheckboxOnchange()">
+                    <input type="checkbox" id="puzzle-io" name="puzzle-io"
+                        onchange="sudoApp.mySolverController.puzzleIOcheckboxOnchange()">
                     <label for="puzzle-io">Puzzle-Import, -Export zugeschaltet </label>
                 </div>
             </fieldset>
