@@ -1105,7 +1105,7 @@ label {
 .tableFixHead {
     overflow-y: auto;
     /* make the table scrollable if height is more than 200 px  */
-    height: 400px;
+    height: 420px;
     /* gives an initial height of 200px to the table */
 }
 
@@ -1126,7 +1126,7 @@ label {
 .db-puzzle-table th,
 .db-puzzle-table td {
     font-size: 1.2rem;
-    padding: 3px 3px;
+    padding: 4px 4px;
     border: 1px solid #ccc;
 }
 
