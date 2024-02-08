@@ -250,11 +250,18 @@ html {
     border: 0;
 }
 
-.menu-icon , .share-icon {
+.menu-icon {
     margin-top: 0.3rem;
     margin-bottom: 0.3rem;
-    margin-left: 0.9rem;
-    margin-right: 0.9rem;
+    margin-left: 0.3rem;
+    margin-right: 1.8rem;
+}
+
+.share-icon {
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+    margin-left: 1.8rem;
+    margin-right: 0.3rem;
 }
 
 .menu-icon-line {

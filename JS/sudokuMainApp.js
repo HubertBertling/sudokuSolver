@@ -1,30 +1,28 @@
 let sudoApp;
-let VERSION = 253;
+let VERSION = 254;
 
-if (window.File && window.FileReader 
+if (window.File && window.FileReader
     && window.FileList && window.Blob) {
     // Dateiverarbeitung 
- } else {
+} else {
     alert('Dieser Browser unterstützt den Zugriff auf lokale Dateien nicht');
- }
+}
 
- window.onload = function() {
+window.onload = function () {
     const asText = document.getElementById('asText');
-    //const textbox = document.getElementById('textbox');
-
-    asText.addEventListener('change', function(e) {
+    asText.addEventListener('change', function (e) {
         const file = asText.files[0];
         const textType = /text.*/;
 
         if (file.type.match(textType)) {
             const reader = new FileReader();
 
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 // textbox.innerText = reader.result;
                 let strFilePuzzleMap = reader.result;
-                sudoApp.myPuzzleDB.upLoadPuzzle(strFilePuzzleMap); 
+                sudoApp.myPuzzleDB.upLoadPuzzle(strFilePuzzleMap);
             }
-            reader.readAsText(file);    
+            reader.readAsText(file);
         } else {
             throw new Error('Dateityp nicht unterstützt!');
         }
