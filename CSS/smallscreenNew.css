@@ -1125,7 +1125,8 @@ label {
 
 .db-puzzle-table th,
 .db-puzzle-table td {
-    padding: 6px 6px;
+    font-size: var(--font-size);
+    padding: 3px 3px;
     border: 1px solid #ccc;
 }
 
