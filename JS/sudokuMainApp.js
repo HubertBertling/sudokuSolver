@@ -1,5 +1,5 @@
 let sudoApp;
-let VERSION = 255;
+let VERSION = 256;
 
 if (window.File && window.FileReader
     && window.FileList && window.Blob) {
@@ -64,18 +64,7 @@ if (navigator.share && navigator.canShare) {
     console.log(`Web Share API not supported.`);
 }
 
-/*
-navigator.serviceWorker.addEventListener('message', function (e) {
-    console.log('receiving-file-share');
-    if (searchParams.has('receiving-file-share')) {
-        console.log('receiving-file-share' + e.data.files); //contains the file(s)
-        handleFiles(e.data.files);
-    }
-});
-*/
-
 // file handling
-
 
 if ('launchQueue' in window) {
     console.log('File Handling API is supported!');
@@ -93,78 +82,13 @@ async function handleFiles(files) {
         const blob = await file.getFile();
         blob.handle = file;
         let strFilePuzzleMap = await blob.text();
-        let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
-
-        let str_puzzleMap = localStorage.getItem("localSudokuDB");
-        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-
-        filePuzzleMap.forEach((value, key) => {
-            // console.log('key: ' + key + ', value: ' + value);
-            if (!puzzleMap.has(key)) {
-                puzzleMap.set(key, value);
-            }
-        })
-        // Kreiere die JSON-Version des Speicherobjektes
-        // und speichere sie.
-        let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
-        localStorage.setItem("localSudokuDB", update_str_puzzleMap);
-
-        sudoApp.mySolverController.openDBBtnPressed();
-        //console.log(`${file.name} handled`);
+        sudoApp.myPuzzleDB.upLoadPuzzle(strFilePuzzleMap);       
     }
 }
-/*
-async function chooseAFile() {
-    if (!window.showOpenFilePicker) {
-        alert("Your current device does not support the File System API. Try again on desktop Chrome!");
-    }
-    else {
-        //here you specify the type of files you want to allow
-        let options = {
-            types: [{
-                description: "Sudoku",
-                accept: {
-                    "text/*": [".txt", ".sudoku"],
-                },
-            }],
-            excludeAcceptAllOption: true,
-            multiple: false,
-        };
 
-        // Open file picker and choose a file
-        let [fileHandle] = await window.showOpenFilePicker(options);
-        if (!fileHandle) { return; }
-
-        // get the content of the file
-        let blob = await fileHandle.getFile();
-        blob.handle = fileHandle;
-        let strFilePuzzleMap = await blob.text();
-        let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
-
-        let str_puzzleMap = localStorage.getItem("localSudokuDB");
-        let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-
-        filePuzzleMap.forEach((value, key) => {
-            // console.log('key: ' + key + ', value: ' + value);
-            if (!puzzleMap.has(key)) {
-                puzzleMap.set(key, value);
-            }
-        })
-        // Kreiere die JSON-Version des Speicherobjektes
-        // und speichere sie.
-        let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
-        localStorage.setItem("localSudokuDB", update_str_puzzleMap);
-
-        sudoApp.mySolverController.openDBBtnPressed();
-        //console.log(`${file.name} handled`);  
-    }
-}
-*/
 function start() {
-
     sudoApp = new SudokuMainApp();
     sudoApp.init();
-
 }
 class SudokuMainApp {
     constructor() {

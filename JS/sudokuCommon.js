@@ -321,7 +321,7 @@ class SudokuSolverController {
         this.mySolver.autoExecStop();
     }
 
-    initBtnPressed() {
+    initLinkPressed() {
         // navigation bar init pressed
         sudoApp.myNavBar.closeNav();
         this.myUndoActionStack = [];
@@ -331,7 +331,7 @@ class SudokuSolverController {
         sudoApp.mySolver.notifyAspect('puzzleLoading', undefined);
     }
 
-    resetBtnPressed() {
+    resetLinkPressed() {
         sudoApp.myNavBar.closeNav();
         this.myConfirmDlg.open('reset',
             "Puzzle zurücksetzen",
@@ -422,7 +422,7 @@ class SudokuSolverController {
         return new Promise(resolve => setTimeout(resolve, milliseconds));
     }
 
-    async generateBtnPressed(level) {
+    async generateLinkPressed(level) {
         sudoApp.myNavBar.closeNav();
         let puzzle = sudoApp.myNewPuzzleStore.popPuzzle(level);
         if (puzzle == undefined) {
@@ -488,7 +488,7 @@ class SudokuSolverController {
         sudoApp.mySolver.notify();
     }
 
-    openDBBtnPressed() {
+    openDBLinkPressed() {
         sudoApp.myPuzzleDBController.myPuzzleDBDialog.open();
         sudoApp.myPuzzleDB.notify();
         sudoApp.myNavBar.closeNav();
@@ -500,7 +500,7 @@ class SudokuSolverController {
         sudoApp.myNavBar.closeNav();
     }
 
-    printBtnPressed() {
+    printLinkPressed() {
         sudoApp.myNavBar.closeNav();
         this.mySolver.autoExecStop();
         this.mySuccessDialog.close();
@@ -6104,61 +6104,6 @@ class SudokuPuzzleDBController {
             document.getElementById('asText').click();
         });
 
-        /*
-        let btnUploadFile = document.getElementById('db-puzzle-btn-upload');
-        btnUploadFile.addEventListener('click', async () => {
-            if (!window.showOpenFilePicker) {
-                alert("Your current device does not support the File System API. Try again on desktop Chrome!");
-            }
-            else {
-                let options = {
-                    types: [{
-                        description: "Sudoku",
-                        accept: {
-                            "text/plain": [".txt", ".sudoku"],
-                        },
-                    }],
-                    excludeAcceptAllOption: true,
-                    multiple: false
-                };
-
-                // Open file picker and choose a file
-                let [fileHandle] = await window.showOpenFilePicker(options);
-                if (!fileHandle) { return; }
-                // get the content of the file
-                let blob = await fileHandle.getFile();
-                blob.handle = fileHandle;
-                let strFilePuzzleMap = await blob.text();
-                let filePuzzleMap = new Map(JSON.parse(strFilePuzzleMap));
-
-                let str_puzzleMap = localStorage.getItem("localSudokuDB");
-                let puzzleMap = new Map(JSON.parse(str_puzzleMap));
-
-                let upLoadedKeys = [];
-                filePuzzleMap.forEach((value, key) => {
-                    // console.log('key: ' + key + ', value: ' + value);
-                    if (!puzzleMap.has(key)) {
-                        puzzleMap.set(key, value);
-                        upLoadedKeys.push(key);
-                    }
-                })
-                // Kreiere die JSON-Version des Speicherobjektes
-                // und speichere sie.
-                let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
-                localStorage.setItem("localSudokuDB", update_str_puzzleMap);
-
-                if (upLoadedKeys.length == 1) {
-                    this.myPuzzleDB.selectedIndex = this.myPuzzleDB.getIndex(upLoadedKeys.pop());
-                    this.myPuzzleDB.notify();
-                }
-                sudoApp.mySolverController.openDBBtnPressed();
-                //console.log(`${file.name} handled`);         
-            }
-        });
-
-        */
-
-
         document.getElementById('pz-btn-ok').addEventListener('click', () => {
             this.closeBtnPressed();
         });
@@ -7043,10 +6988,10 @@ class SudokuPuzzleDB extends SudokuModel {
 
         if (upLoadedKeys.length == 1) {
             this.selectedIndex = this.getIndex(upLoadedKeys.pop());
-            this.notify();
+            sudoApp.myPuzzleDBController.loadBtnPressed();
+        } else {
+            sudoApp.mySolverController.openDBLinkPressed();
         }
-        sudoApp.mySolverController.openDBBtnPressed();
-        //console.log(`${file.name} handled`);         
     }
 
     getCurrentPuzzleFile() {
