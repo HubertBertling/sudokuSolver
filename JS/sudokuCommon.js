@@ -871,17 +871,20 @@ class SudokuSolverView extends SudokuView {
     }
     displayPuzzleIOTechniqueBtns(){
         let shareBtn = document.getElementById('share-button');
+        let appNameHeader = document.getElementById('app-name-header');
         let downloadDBButton = document.getElementById('db-puzzle-btn-download-db');
         let downloadPzButton = document.getElementById('db-puzzle-btn-download-pz');
         let uploadButton = document.getElementById('db-puzzle-btn-upload');
         
         if (this.mySolver.getPuzzleIOtechnique()) {
-            shareBtn.style.visibility = 'visible';
+            shareBtn.style.display = 'block';
+            appNameHeader.style.gridTemplateColumns = '0.1fr 0.1fr 1.7fr 0.1fr';
             downloadDBButton.style.display = 'block';
             downloadPzButton.style.display = 'block';
             uploadButton.style.display = 'block';        
         } else {
-            shareBtn.style.visibility = 'hidden';
+            shareBtn.style.display = 'none';
+            appNameHeader.style.gridTemplateColumns = '0.1fr 1.8fr 0.1fr';
             downloadDBButton.style.display = 'none';
             downloadPzButton.style.display = 'none';
             uploadButton.style.display = 'none';        
