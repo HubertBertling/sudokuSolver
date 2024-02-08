@@ -1,46 +1,28 @@
 let sudoApp;
-let VERSION = 256;
+let VERSION = 257;
 
 if (window.File && window.FileReader
     && window.FileList && window.Blob) {
     // Dateiverarbeitung 
+    window.onload = function () {
+        const asText = document.getElementById('asText');
+        asText.addEventListener('change', function (e) {
+            const file = asText.files[0];
+            const textType = /text.*/;
+            if (file.type.match(textType)) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    let strFilePuzzleMap = reader.result;
+                    sudoApp.myPuzzleDB.upLoadPuzzle(strFilePuzzleMap);
+                }
+                reader.readAsText(file);
+            } else {
+                alert('Dateityp nicht unterstützt!');
+            }
+        });
+    }    
 } else {
     alert('Dieser Browser unterstützt den Zugriff auf lokale Dateien nicht');
-}
-
-window.onload = function () {
-    const asText = document.getElementById('asText');
-    asText.addEventListener('change', function (e) {
-        const file = asText.files[0];
-        const textType = /text.*/;
-
-        if (file.type.match(textType)) {
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-                // textbox.innerText = reader.result;
-                let strFilePuzzleMap = reader.result;
-                sudoApp.myPuzzleDB.upLoadPuzzle(strFilePuzzleMap);
-            }
-            reader.readAsText(file);
-        } else {
-            throw new Error('Dateityp nicht unterstützt!');
-        }
-    });
-}
-
-
-
-console.log(navigator.userAgent);
-
-if (window.navigator.userAgent.indexOf("Windows") != -1) {
-    console.log("The user is running Windows");
-} else if (window.navigator.userAgent.indexOf("Mac OS") != -1) {
-    console.log("The user is running Mac OS");
-} else if (window.navigator.userAgent.indexOf("Linux") != -1) {
-    console.log("The user is running Linux");
-} else {
-    console.log("The user's operating system could not be determined");
 }
 
 let shareButton = document.getElementById('share-button');
@@ -78,7 +60,6 @@ if ('launchQueue' in window) {
 
 async function handleFiles(files) {
     for (const file of files) {
-
         const blob = await file.getFile();
         blob.handle = file;
         let strFilePuzzleMap = await blob.text();
