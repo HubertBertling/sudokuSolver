@@ -660,13 +660,15 @@ html {
 
 
 .pc-eval,
-.play-mode {
-    margin-top: 3rem;
+.play-mode,
+.io-technique {
+    margin-top: 1.6rem;
     margin-left: 1.2rem;
     margin-right: 1.2rem;
 }
 
-.pc-floatBlock {
+.pc-floatBlock,
+.puzzle-io {
     font-size: 1.2rem;
     padding: 1rem;
 }
@@ -675,7 +677,8 @@ html {
 /* Evaluation block                       */
 /* ======================================*/
 .eval-legend,
-.play-mode-legend {
+.play-mode-legend,
+.puzzle-io-legend {
     font-weight: bold;
     margin-left: 10px;
     font-size: var(--font-size-lg);
@@ -1087,7 +1090,7 @@ label {
 .tableFixHead {
     overflow-y: auto;
     /* make the table scrollable if height is more than 200 px  */
-    height: 440px;
+    height: 400px;
     /* gives an initial height of 200px to the table */
 }
 

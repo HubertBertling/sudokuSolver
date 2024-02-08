@@ -168,6 +168,7 @@ class SudokuSolverController {
                 localStorage.setItem("sudokuAppSetting", str_appSetting);
             })
         });
+
     }
 
     // ===============================================================
@@ -569,6 +570,16 @@ class SudokuSolverController {
     settingsClosePressed() {
         this.mySettingsDialog.close();
     }
+    puzzleIOcheckboxOnchange() {
+        let pIOcheckbox = document.getElementById('puzzle-io');
+        let appSetting = undefined;
+        let str_appSetting = localStorage.getItem("sudokuAppSetting");
+        appSetting = JSON.parse(str_appSetting);
+        appSetting.puzzleIOtechnique = pIOcheckbox.checked;
+        this.mySolver.setPuzzleIOtechnique(pIOcheckbox.checked);
+        str_appSetting = JSON.stringify(appSetting);
+        localStorage.setItem("sudokuAppSetting", str_appSetting);
+    }
 }
 
 
@@ -663,6 +674,7 @@ class SudokuSolverView extends SudokuView {
         this.displayEvalType(this.mySolver.getActualEvalType());
         this.displayPlayModeType(this.mySolver.getPlayMode());
         this.displayUndoRedo();
+        this.displayPuzzleIOTechniqueBtns();
 
         sudoApp.mySolver.myGridView.displayNameAndDifficulty();
     }
@@ -699,6 +711,10 @@ class SudokuSolverView extends SudokuView {
                         throw new Error('Unknown aspectValue playMode: ' + aspectValue);
                     }
                 }
+                break;
+            }
+            case 'puzzleIOTechnique': {
+                this.displayPuzzleIOTechniqueBtns();
                 break;
             }
             case 'puzzleLoading': {
@@ -851,6 +867,24 @@ class SudokuSolverView extends SudokuView {
             default: {
                 throw new Error('Unknown play-mode: ' + pt);
             }
+        }
+    }
+    displayPuzzleIOTechniqueBtns(){
+        let shareBtn = document.getElementById('share-button');
+        let downloadDBButton = document.getElementById('db-puzzle-btn-download-db');
+        let downloadPzButton = document.getElementById('db-puzzle-btn-download-pz');
+        let uploadButton = document.getElementById('db-puzzle-btn-upload');
+        
+        if (this.mySolver.getPuzzleIOtechnique()) {
+            shareBtn.style.visibility = 'visible';
+            downloadDBButton.style.display = 'block';
+            downloadPzButton.style.display = 'block';
+            uploadButton.style.display = 'block';        
+        } else {
+            shareBtn.style.visibility = 'hidden';
+            downloadDBButton.style.display = 'none';
+            downloadPzButton.style.display = 'none';
+            uploadButton.style.display = 'none';        
         }
     }
 
@@ -1209,6 +1243,13 @@ class SudokuSolver extends SudokuCalculator {
     getPlayMode() {
         return this.playMode;
     }
+    setPuzzleIOtechnique(pt) {
+        this.puzzleIOtechnique = pt;
+        this.notifyAspect('puzzleIOTechnique');       
+    }
+    getPuzzleIOtechnique() {
+        return this.puzzleIOtechnique;
+    }
 
     init() {
         super.init();
@@ -1218,7 +1259,8 @@ class SudokuSolver extends SudokuCalculator {
             // appSetting does not exist in localStorage
             appSetting = {
                 evalType: 'lazy-invisible',
-                playMode: 'training'
+                playMode: 'training',
+                puzzleIOtechnique: false
             }
             str_appSetting = JSON.stringify(appSetting);
             localStorage.setItem("sudokuAppSetting", str_appSetting);
@@ -1228,6 +1270,7 @@ class SudokuSolver extends SudokuCalculator {
         }
         this.setActualEvalType(appSetting.evalType);
         this.setPlayMode(appSetting.playMode);
+        this.setPuzzleIOtechnique(appSetting.puzzleIOtechnique);
         this.notify();
     }
     loadPuzzle(uid, puzzle) {

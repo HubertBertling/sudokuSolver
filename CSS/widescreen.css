@@ -639,13 +639,14 @@ html {
 /*======================================*/
 
 .pc-eval,
-.play-mode {
+.play-mode,
+.io-technique {
     margin-top: 2rem;
     margin-left: 1.2rem;
     margin-right: 1.2rem;
 }
 
-.pc-floatBlock {
+.pc-floatBlock, .puzzle-io {
     font-size: 1.2rem;
     padding: 1rem;
 }
@@ -654,7 +655,8 @@ html {
 /* Evaluation block                       */
 /* ======================================*/
 .eval-legend,
-.play-mode-legend {
+.play-mode-legend,
+.puzzle-io-legend {
     font-weight: bold;
     margin-left: 10px;
     font-size: var(--font-size);

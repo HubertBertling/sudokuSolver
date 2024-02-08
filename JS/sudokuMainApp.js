@@ -1,5 +1,5 @@
 let sudoApp;
-let VERSION = 248;
+let VERSION = 249;
 
 console.log(navigator.userAgent);
 

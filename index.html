@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     -->
-    <link rel="canonical" href="https://hubertbertling.github.io/sudokuSolver/"/> 
+    <link rel="canonical" href="https://hubertbertling.github.io/sudokuSolver/" />
     <!--<link rel="canonical" href="http://localhost:8080/sudokuSolver/" /> -->
     <link rel="manifest" href="manifest.json">
 
@@ -40,7 +40,7 @@
                 Neu
                 <i class="fa fa-caret-down">
                     <img src="images/caret-down.png" id="caret-down-img">
-                    <img src="images/no-caret.png"  id="no-caret-img">
+                    <img src="images/no-caret.png" id="no-caret-img">
                 </i>
             </button>
             <div class="dropdown-container" id="dropdown-container-btn-new">
@@ -53,11 +53,11 @@
             <a href="#" onclick="sudoApp.mySolverController.openDBBtnPressed()">Datenbank</a>
             <a href="#" onclick="sudoApp.mySolverController.openSettingsDlgPressed()">Einstellungen</a>
             <a href="#" onclick="sudoApp.myNavBar.closeNav()">Schließen</a>
-            <div id="appVersion" >
-               
+            <div id="appVersion">
+
             </div>
         </div>
-        
+
         <div class="app-name-header pc-element">
             <div class="menu-icon" onclick="sudoApp.myNavBar.openNav()">
                 <div class="menu-icon-line"></div>
@@ -219,7 +219,7 @@
                     <button class="db-puzzle-button noprint" id="db-puzzle-btn-download-db">Download-DB</button>
                     <button class="db-puzzle-button noprint" id="db-puzzle-btn-download-pz">Download-PZ</button>
                     <button class="db-puzzle-button noprint" id="db-puzzle-btn-upload">Upload</button>
-                    
+
                     <button class="db-puzzle-button noprint" id="pz-btn-ok">Schließen</button>
                 </div>
             </div>
@@ -363,7 +363,21 @@
                         </label>
                     </div>
                 </div>
+
             </fieldset>
+        </div>
+        <div class="io-technique">
+            <fieldset class="puzzle-io-fieldset">
+                <legend class="puzzle-io-legend">
+                    Technik
+                </legend>
+
+                <div class="puzzle-io">
+                    <input type="checkbox" id="puzzle-io" name="puzzle-io" onchange="sudoApp.mySolverController.puzzleIOcheckboxOnchange()">
+                    <label for="puzzle-io">Puzzle-Import, -Export zugeschaltet </label>
+                </div>
+            </fieldset>
+        </div>
         </div>
 
 
@@ -395,4 +409,5 @@
     <script src="./JS/sudokuCommon.js"></script>
     <script src="./JS/sudokuMainApp.js"></script>
 </body>
+
 </html>
