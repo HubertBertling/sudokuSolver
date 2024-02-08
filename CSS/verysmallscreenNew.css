@@ -220,6 +220,7 @@ app-empty-footer {
     font-weight: bold;
     padding: 0.4rem;
     text-align: center;
+    place-items: center;
     background-color: DimGray;
     color: white;
     border-radius: 0.6rem;
@@ -230,6 +231,11 @@ app-empty-footer {
 #help-button {
     width: 2.4rem;
     height: 2.4rem;
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+    margin-left: 0.9rem;
+    margin-right: 0.9rem;
+
     font-weight: bold;
     font-size: var(--font-size-lg);
     background-color: white;
@@ -240,8 +246,12 @@ app-empty-footer {
 
 
 .menu-icon, .share-icon {
-    margin: 0.3rem;
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+    margin-left: 0.9rem;
+    margin-right: 0.9rem;
 }
+
 .menu-icon-line {
     width: 3rem;
     height: 0.3rem;
