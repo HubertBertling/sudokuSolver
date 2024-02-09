@@ -5,7 +5,6 @@ class SudokuSolverController {
         // Used dialogs
         this.mySuccessDialog = new SuccessDialog();
         this.myInfoDialog = new InfoDialog();
-        this.myConfirmDlg = new ConfirmDialog();
         this.mySettingsDialog = new SettingsDialog();
         this.myUndoActionStack = [];
         this.myRedoActionStack = [];
@@ -333,7 +332,8 @@ class SudokuSolverController {
 
     resetLinkPressed() {
         sudoApp.myNavBar.closeNav();
-        this.myConfirmDlg.open('reset',
+        sudoApp.myConfirmDlg.open(sudoApp.mySolver,
+            sudoApp.mySolver.reset,
             "Puzzle zurücksetzen",
             "Alle Lösungsnummern werden gelöscht. Puzzle zurücksetzen?");
     }
@@ -395,27 +395,6 @@ class SudokuSolverController {
                 throw new Error('Unknown undo-redo-action: ' + action.operation);
             }
         }
-    }
-
-
-    confirmDlgOKPressed() {
-        this.myConfirmDlg.close();
-        this.myUndoActionStack = [];
-        this.myRedoActionStack = [];
-        switch (this.myConfirmDlg.confirmOperation()) {
-            case 'reset': {
-                this.mySolver.reset();
-                break;
-            }
-            default: {
-                throw new Error('Unknown confirm: ' + this.myConfirmDlg.confirmOperation());
-            }
-        }
-    }
-
-
-    confirmDlgCancelPressed() {
-        this.myConfirmDlg.close();
     }
 
     sleep(milliseconds) {
@@ -876,7 +855,7 @@ class SudokuSolverView extends SudokuView {
         let downloadPzButton = document.getElementById('db-puzzle-btn-download-pz');
         let uploadButton = document.getElementById('db-puzzle-btn-upload');
         let pIOcheckbox = document.getElementById('puzzle-io');
-       
+
 
         if (this.mySolver.getPuzzleIOtechnique()) {
             pIOcheckbox.checked = true;
@@ -1020,6 +999,11 @@ class SudokuCalculator extends SudokuModel {
         this.isInAutoExecMode = false;
 
     }
+
+    getLoadedPuzzleUID() {
+        return this.myGrid.getLoadedPuzzleUID();
+    }
+
     // =================================================
     // Other Methods
     // =================================================
@@ -1254,6 +1238,11 @@ class SudokuSolver extends SudokuCalculator {
         this.puzzleIOtechnique = pt;
         this.notifyAspect('puzzleIOTechnique');
     }
+
+    getLoadedPuzzleUID() {
+        return super.getLoadedPuzzleUID();
+    }
+
     getPuzzleIOtechnique() {
         return this.puzzleIOtechnique;
     }
@@ -1288,11 +1277,10 @@ class SudokuSolver extends SudokuCalculator {
         super.reloadNameOfLoadedPuzzle(uid, name);
     }
 
-    clearLoadedPuzzleInfo(key) {
+    clearLoadedPuzzle(key) {
         let loadedPuzzleId = this.myGrid.loadedPuzzleId;
         if (loadedPuzzleId == key) {
-            this.myGrid.loadedPuzzleId = '';
-            this.myGrid.loadedPuzzleName = '';
+            this.myGrid.init();
         }
     }
 
@@ -1416,6 +1404,8 @@ class SudokuSolver extends SudokuCalculator {
 
     reset() {
         super.reset();
+        sudoApp.mySolverController.myUndoActionStack = [];
+        sudoApp.mySolverController.myRedoActionStack = [];
         this.notify();
     }
 
@@ -1489,25 +1479,25 @@ class ConfirmDialog {
         this.myTextNode = document.getElementById("confirm-dlg-body");
         this.okNode = document.getElementById("btn-confirm-ok");
         this.cancelNode = document.getElementById("btn-confirm-cancel");
+        this.myRequestOperation = undefined;
+
         // Mit der Erzeugung des Wrappers werden 
         // auch der Eventhandler OK und Abbrechen gesetzt
         this.okNode.addEventListener('click', () => {
-            sudoApp.mySolverController.confirmDlgOKPressed();
+            sudoApp.myConfirmDlg.myRequestOperation.call(this.thisPointer);
+            sudoApp.myConfirmDlg.close();
         });
         this.cancelNode.addEventListener('click', () => {
-            sudoApp.mySolverController.confirmDlgCancelPressed();
+            sudoApp.myConfirmDlg.close();
         });
     }
-    open(rqOp, header, question) {
+    open(thisPointer, rqOp, header, question) {
         this.myOpen = true;
+        this.thisPointer = thisPointer;
         this.myRequestOperation = rqOp;
         this.myHeader.innerText = header;
         this.myTextNode.innerText = question;
         this.myConfirmDlgNode.showModal();
-    }
-
-    confirmOperation() {
-        return this.myRequestOperation;
     }
 
     close() {
@@ -4134,6 +4124,9 @@ class SudokuGrid extends SudokuModel {
         }
     }
 
+    getLoadedPuzzleUID() {
+        return this.loadedPuzzleId;
+    }
 
     loadPuzzle(uid, puzzleRecordToLoad) {
         this.loadedPuzzleId = uid;
@@ -6035,8 +6028,6 @@ class SudokuPuzzleDBController {
         this.myPuzzleDB = puzzleDb;
         this.myPuzzleDBDialog = new PuzzleDBDialog();
         this.myPuzzleRenameDialog = new PuzzleRenameDialog();
-
-
         //Click-Event für die Spaltenköpfe
         document.getElementById('col-name').addEventListener('click', () => {
             this.myPuzzleDB.sort('name');
@@ -6172,12 +6163,25 @@ class SudokuPuzzleDBController {
     }
 
     deleteBtnPressed() {
+        let pz = this.myPuzzleDB.getSelectedPuzzle();
+        let pzName = pz.name;
+        sudoApp.myConfirmDlg.open(sudoApp.myPuzzleDBController,
+            sudoApp.myPuzzleDBController.delete,
+            "Puzzle löschen",
+            'Soll das Puzzle >>' + pzName + '<< endgültig gelöscht werden?');
+    }
+
+    delete() {
         if (this.myPuzzleDB.getSize() > 0) {
+            let selectedId = this.myPuzzleDB.selectedKey();
+            let loadedPzUid = sudoApp.mySolver.getLoadedPuzzleUID();
+            if (loadedPzUid == selectedId) {
+                sudoApp.mySolver.init();
+            }
             this.myPuzzleDB.deleteSelected();
             this.nextBtnPressed();
         }
     }
-
 
     printSelectedPuzzle() {
         // Button on the solver view
@@ -6837,8 +6841,8 @@ class SudokuPuzzleDB extends SudokuModel {
         puzzleMap.delete(key);
         let update_str_puzzleMap = JSON.stringify(Array.from(puzzleMap.entries()));
         localStorage.setItem("localSudokuDB", update_str_puzzleMap);
-        //Clear loaded puzzle info, if loaded puzzle is deleted
-        sudoApp.mySolver.clearLoadedPuzzleInfo(key);
+        //Clear loaded puzzle, if loaded puzzle is deleted
+        sudoApp.mySolver.clearLoadedPuzzle(key);
         this.notify();
     }
 
@@ -6980,10 +6984,10 @@ class SudokuPuzzleDB extends SudokuModel {
         let upLoadedKeys = [];
         filePuzzleMap.forEach((value, key) => {
             // console.log('key: ' + key + ', value: ' + value);
-          //  if (!puzzleMap.has(key)) {
-                puzzleMap.set(key, value);
-                upLoadedKeys.push(key);
-          //  }
+            //  if (!puzzleMap.has(key)) {
+            puzzleMap.set(key, value);
+            upLoadedKeys.push(key);
+            //  }
         })
         // Kreiere die JSON-Version des Speicherobjektes
         // und speichere sie.

@@ -1,5 +1,5 @@
 let sudoApp;
-let VERSION = 263;
+let VERSION = 264;
 
 if (window.File && window.FileReader
     && window.FileList && window.Blob) {
@@ -94,6 +94,9 @@ class SudokuMainApp {
         this.myNavBar = new NavigationBar();
         // There are two play-modes 'training' and 'solving'.
         this.playMode = 'solving';
+
+        this.myConfirmDlg = new ConfirmDialog();
+   
     }
 
     init() {
