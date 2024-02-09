@@ -1161,7 +1161,7 @@ label {
     display: grid;
     grid-template-columns: 1fr;
     place-items: center;
-    padding: 0%;
+    padding: 0.3rem;
 
 }
 
