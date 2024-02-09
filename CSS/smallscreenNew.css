@@ -1105,7 +1105,7 @@ label {
 .tableFixHead {
     overflow-y: auto;
     /* make the table scrollable if height is more than 200 px  */
-    height: 420px;
+    height: 500px;
     /* gives an initial height of 200px to the table */
 }
 
