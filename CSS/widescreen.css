@@ -552,6 +552,7 @@ html {
 /*======================================*/
 
 .mobile-btn-container {
+    width: 40rem;
     height: fit-content;
     margin-left: 1rem;
     margin-right: 1rem;

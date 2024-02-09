@@ -875,14 +875,18 @@ class SudokuSolverView extends SudokuView {
         let downloadDBButton = document.getElementById('db-puzzle-btn-download-db');
         let downloadPzButton = document.getElementById('db-puzzle-btn-download-pz');
         let uploadButton = document.getElementById('db-puzzle-btn-upload');
+        let pIOcheckbox = document.getElementById('puzzle-io');
+       
 
         if (this.mySolver.getPuzzleIOtechnique()) {
+            pIOcheckbox.checked = true;
             shareBtn.style.display = 'block';
             appNameHeader.style.gridTemplateColumns = '0.1fr 0.1fr 1.7fr 0.1fr';
             downloadDBButton.style.display = 'block';
             downloadPzButton.style.display = 'block';
             uploadButton.style.display = 'block';
         } else {
+            pIOcheckbox.checked = false;
             shareBtn.style.display = 'none';
             appNameHeader.style.gridTemplateColumns = '0.1fr 1.8fr 0.1fr';
             downloadDBButton.style.display = 'none';
