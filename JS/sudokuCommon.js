@@ -6980,10 +6980,10 @@ class SudokuPuzzleDB extends SudokuModel {
         let upLoadedKeys = [];
         filePuzzleMap.forEach((value, key) => {
             // console.log('key: ' + key + ', value: ' + value);
-            if (!puzzleMap.has(key)) {
+          //  if (!puzzleMap.has(key)) {
                 puzzleMap.set(key, value);
                 upLoadedKeys.push(key);
-            }
+          //  }
         })
         // Kreiere die JSON-Version des Speicherobjektes
         // und speichere sie.
