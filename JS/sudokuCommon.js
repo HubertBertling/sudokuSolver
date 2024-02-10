@@ -967,6 +967,8 @@ class SudokuCalculator extends SudokuModel {
         // Die Matrix des Sudoku-Calculators
         this.myGrid = new SudokuGrid(this);
         //Die Calculator kennt zwei Betriebs-Phasen 'play' or 'define'
+        this.tmpLazy = false;
+        this.lazyCell = undefined;
         this.currentPhase = 'play';
         this.currentEvalType = 'lazy-invisible';
         // Der Calculator kennt zwei Ausführungsmodi: 
@@ -977,6 +979,19 @@ class SudokuCalculator extends SudokuModel {
         this.myStepper = new StepperOnGrid(this.myGrid);
         this.isStepExecutionObserver = false;
         this.init();
+    }
+    isTmpLazy() {
+        return this.tmpLazy;
+    }
+    setTmpLazy(cell) {
+        this.lazyCell = cell;
+        this.tmpLazy = true;
+        this.setActualEvalType('lazy');
+    }
+    unsetTmpLazy() {
+        this.lazyCell = undefined;
+        this.tmpLazy = false;
+        this.setActualEvalType('lazy-invisible');
     }
 
     init() {
@@ -1213,6 +1228,16 @@ class SudokuSolver extends SudokuCalculator {
         this.myGrid.setMyView(this.myGridView);
         super.setExecutionObserver();
         this.init();
+    }
+
+    isTmpLazy() {
+        return super.isTmpLazy();
+    }
+    setTmpLazy() {
+        super.setTmpLazy();
+    }
+    unsetTmpLazy() {
+        this.unsetActualEvalType();
     }
 
     setPlayMode(mode) {
@@ -1480,7 +1505,7 @@ class ConfirmDialog {
         this.okNode = document.getElementById("btn-confirm-ok");
         this.cancelNode = document.getElementById("btn-confirm-cancel");
         this.myRequestOperation = undefined;
-
+        this.thisPointer = undefined;
         // Mit der Erzeugung des Wrappers werden 
         // auch der Eventhandler OK und Abbrechen gesetzt
         this.okNode.addEventListener('click', () => {
@@ -3239,7 +3264,6 @@ class SudokuBlockView extends SudokuGroupView {
                 this.getMyBlock().myCells.forEach(sudoCell => {
                     if (sudoCell.getValue() == '0') {
                         sudoCell.myView.displayAdmissiblesInDetail(sudoCell.getAdmissibles());
-
                         sudoCell.myView.displayNecessary(sudoCell.myNecessarys);
                     }
                 })
@@ -5130,11 +5154,24 @@ class SudokuCellView extends SudokuView {
         if (tmpAdmissibles.size == 1
             && myCell.isSelected
             && sudoApp.mySolver.myStepper.indexSelected > -1) {
+
             let admissibleNr = Array.from(tmpAdmissibles)[0]
             let admissibleNrElement = document.createElement('div');
             admissibleNrElement.setAttribute('data-value', admissibleNr);
             admissibleNrElement.innerHTML = admissibleNr;
             this.getMyNode().appendChild(admissibleNrElement);
+
+            let redAdmissibles = myCell.getAdmissibles().difference(tmpAdmissibles);
+            redAdmissibles.forEach(redAdmissible => {
+                let admissibleNrElement = document.createElement('div');
+                admissibleNrElement.setAttribute('data-value', redAdmissible);
+                admissibleNrElement.innerHTML = redAdmissible;
+                admissibleNrElement.classList.add('inAdmissible');
+                this.getMyNode().appendChild(admissibleNrElement);        
+            });
+            //neu
+            // sudoApp.mySolver.myGrid.displaySelection();
+            // sudoApp.mySolver.setTmpLazy(cell);
             return true;
         } else {
             return false;
@@ -5416,6 +5453,9 @@ class SudokuCellView extends SudokuView {
                 sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
             } else if (tmpCell.getTotalAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
                 sudoApp.mySolver.myView.displayTechnique('Hidden Single ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' in dieser Zelle setzen.');
+
+                this.displayHiddenSingle(tmpCell);
+
             } else if (tmpCell.getTotalAdmissibles().size > 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
                 sudoApp.mySolver.myView.displayTechnique('Aus mehreren Kandidaten eine Nummer setzen.');
             }
@@ -5484,80 +5524,89 @@ class SudokuCellView extends SudokuView {
                 }
             }
 
-            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-                tmpCell.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
-                if (tmpCell.myLevel_gt0_inAdmissiblesFromPairs.has(adMissibleNrSelected)) {
-                    // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
-                    // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
-                    // verursacht werden.
-                    // Die Block, Spalte oder Zeile des Paares wird markiert.
-                    tmpCell.myLevel_gt0_inAdmissiblesFromPairs.forEach(pairInfo => {
-                        pairInfo.collection.myCells.forEach(cell => {
-                            if (cell !== tmpCell) {
-                                cell.myView.setBorderSelected();
-                            }
-                        });
-                        pairInfo.pairCell1.myView.setBorderRedSelected();
-                        pairInfo.pairCell2.myView.setBorderRedSelected();
-                    })
-                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Nacktem Paar" ');
-                    return;
-                }
-            }
+            this.displayHiddenSingle(tmpCell);
+       
+        }
+    }
 
-            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-                tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.size > 0) {
-                if (tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.has(adMissibleNrSelected)) {
-                    // Für ein Subpaar muss nicht jede einzelne Nummer geprüft werden.
-                    // 
-                    const [pairInfo] = tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
+
+    displayHiddenSingle(tmpCell) {
+        let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
+          
+        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+            tmpCell.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
+            if (tmpCell.myLevel_gt0_inAdmissiblesFromPairs.has(adMissibleNrSelected)) {
+                // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
+                // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
+                // verursacht werden.
+                // Die Block, Spalte oder Zeile des Paares wird markiert.
+                tmpCell.myLevel_gt0_inAdmissiblesFromPairs.forEach(pairInfo => {
                     pairInfo.collection.myCells.forEach(cell => {
-                        if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
-                            cell.myView.setBorderRedSelected();
-                        } else {
+                        if (cell !== tmpCell) {
                             cell.myView.setBorderSelected();
                         }
                     });
-                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Verstecktem Paar"')
-                    return;
-                }
-            }
-
-            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-                tmpCell.myLevel_gt0_inAdmissiblesFromIntersection.size > 0) {
-
-                let info = tmpCell.myLevel_gt0_inAdmissiblesFromIntersectionInfo.get(adMissibleNrSelected);
-                info.block.myCells.forEach(cell => {
-                    cell.myView.setBorderSelected();
-                });
-                info.rowCol.myCells.forEach(cell => {
-                    cell.myView.setBorderSelected();
-                });
-
-                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Überschneidung');
-                return;
-            }
-
-
-            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-                tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairs.size > 0) {
-
-                let info = tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairsInfo.get(adMissibleNrSelected);
-                info.rowCol.myCells.forEach(cell => {
-                    cell.myView.setBorderSelected();
-                });
-                info.pVector.myCells.forEach(cell => {
-                    if (cell.getValue() == '0' && cell.getTotalAdmissibles().has(adMissibleNrSelected)) {
-                        cell.myView.unsetSelected();
-                        cell.myView.setBorderRedSelected();
-                    }
+                    pairInfo.pairCell1.myView.setBorderRedSelected();
+                    pairInfo.pairCell2.myView.setBorderRedSelected();
                 })
-
-                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Pointing Pair');
+                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Nacktem Paar" ');
                 return;
             }
         }
+
+        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+            tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.size > 0) {
+            if (tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.has(adMissibleNrSelected)) {
+                // Für ein Subpaar muss nicht jede einzelne Nummer geprüft werden.
+                // 
+                const [pairInfo] = tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
+                pairInfo.collection.myCells.forEach(cell => {
+                    if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
+                        cell.myView.setBorderRedSelected();
+                    } else {
+                        cell.myView.setBorderSelected();
+                    }
+                });
+                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Verstecktem Paar"')
+                return;
+            }
+        }
+
+        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+            tmpCell.myLevel_gt0_inAdmissiblesFromIntersection.size > 0) {
+
+            let info = tmpCell.myLevel_gt0_inAdmissiblesFromIntersectionInfo.get(adMissibleNrSelected);
+            info.block.myCells.forEach(cell => {
+                cell.myView.setBorderSelected();
+            });
+            info.rowCol.myCells.forEach(cell => {
+                cell.myView.setBorderSelected();
+            });
+
+            sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Überschneidung');
+            return;
+        }
+
+
+        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+            tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairs.size > 0) {
+
+            let info = tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairsInfo.get(adMissibleNrSelected);
+            info.rowCol.myCells.forEach(cell => {
+                cell.myView.setBorderSelected();
+            });
+            info.pVector.myCells.forEach(cell => {
+                if (cell.getValue() == '0' && cell.getTotalAdmissibles().has(adMissibleNrSelected)) {
+                    cell.myView.unsetSelected();
+                    cell.myView.setBorderRedSelected();
+                }
+            })
+
+            sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Pointing Pair');
+            return;
+        }
     }
+
 
     unsetSelectStatus() {
         this.unsetSelected();
