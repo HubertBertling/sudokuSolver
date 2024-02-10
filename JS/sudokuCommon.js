@@ -5135,6 +5135,17 @@ class SudokuCellView extends SudokuView {
             admissibleNrElement.setAttribute('data-value', admissibleNr);
             admissibleNrElement.innerHTML = admissibleNr;
             this.getMyNode().appendChild(admissibleNrElement);
+
+
+            let redAdmissibles = myCell.getAdmissibles().difference(tmpAdmissibles);
+            redAdmissibles.forEach(redAdmissible => {
+                let admissibleNrElement = document.createElement('div');
+                admissibleNrElement.setAttribute('data-value', redAdmissible);
+                admissibleNrElement.innerHTML = redAdmissible;
+                admissibleNrElement.classList.add('inAdmissible');
+                this.getMyNode().appendChild(admissibleNrElement);        
+            });
+
             return true;
         } else {
             return false;
