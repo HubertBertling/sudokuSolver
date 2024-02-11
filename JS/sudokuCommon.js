@@ -451,13 +451,13 @@ class SudokuSolverController {
             let newPuzzleId = Date.now().toString(36) + Math.random().toString(36).substr(2);
             let newPuzzleName = 'PZ (' + new Date().toLocaleString('de-DE') + ')';
             sudoApp.myPuzzleDB.saveNamedPuzzle(newPuzzleId, newPuzzleName, currentPuzzle);
-            this.myInfoDialog.open('Spielstand gespeichert', "info",
+            this.myInfoDialog.open('Spielstand gespeichert', "positiv",
                 'Neues Puzzle: ' + newPuzzleName + ' gespeichert.');
         } else {
             // The current puzzle is already element in the database
             // So only the actual puzzle state needs to be saved
             sudoApp.myPuzzleDB.mergePlayedPuzzle(currentPuzzleId, currentPuzzleName, currentPuzzle);
-            this.myInfoDialog.open('Spielstand gespeichert', "info",
+            this.myInfoDialog.open('Spielstand gespeichert', "positiv",
                 'Puzzle: ' + currentPuzzleName);
         }
         // The saved puzzle becomes the new current puzzle
