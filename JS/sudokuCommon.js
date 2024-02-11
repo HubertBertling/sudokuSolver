@@ -978,6 +978,12 @@ class SudokuCalculator extends SudokuModel {
         this.isStepExecutionObserver = false;
         this.init();
     }
+    setStepLazy() {
+        this.myGrid.setStepLazy();
+    }
+    unsetStepLazy() {
+        this.myGrid.unsetStepLazy();
+    }
 
     init() {
         // Die App kann in verschiedenen Ausführungsmodi sein
@@ -1213,6 +1219,13 @@ class SudokuSolver extends SudokuCalculator {
         this.myGrid.setMyView(this.myGridView);
         super.setExecutionObserver();
         this.init();
+    }
+
+    setStepLazy() {
+        super.setStepLazy();
+    }
+    unsetStepLazy() {
+        super.unsetStepLazy();
     }
 
     setPlayMode(mode) {
@@ -1480,7 +1493,7 @@ class ConfirmDialog {
         this.okNode = document.getElementById("btn-confirm-ok");
         this.cancelNode = document.getElementById("btn-confirm-cancel");
         this.myRequestOperation = undefined;
-
+        this.thisPointer = undefined;
         // Mit der Erzeugung des Wrappers werden 
         // auch der Eventhandler OK und Abbrechen gesetzt
         this.okNode.addEventListener('click', () => {
@@ -2342,6 +2355,9 @@ class StepperOnGrid {
             // Aktion:
             // Setze die eindeutige Nummer
             let tmpAction = this.atCurrentSelectionSetAutoNumber(currentStep);
+            // If a hidden single has been set in this cell, 
+            // switch the evaluation mode back to 'No evaluation'.
+            this.myGrid.unsetStepLazy();
             this.lastNumberSet = currentStep.getValue();
             this.goneSteps++;
             // Falls die Nummernsetzung zur Unlösbarkeit führt
@@ -3239,7 +3255,6 @@ class SudokuBlockView extends SudokuGroupView {
                 this.getMyBlock().myCells.forEach(sudoCell => {
                     if (sudoCell.getValue() == '0') {
                         sudoCell.myView.displayAdmissiblesInDetail(sudoCell.getAdmissibles());
-
                         sudoCell.myView.displayNecessary(sudoCell.myNecessarys);
                     }
                 })
@@ -3752,6 +3767,7 @@ class SudokuGrid extends SudokuModel {
         // zulässigen Nummer
         this.adMissibleIndexSelected = -1;
 
+        this.stepLazy = false;
         this.loadedPuzzleId = '';
         this.loadedPuzzleName = '';
 
@@ -3801,6 +3817,17 @@ class SudokuGrid extends SudokuModel {
         // Erzeuge die interne Tabelle
         this.createSudoGrid();
         this.evaluateMatrix();
+    }
+
+    setStepLazy(cell) {
+        this.stepLazy = true;
+        this.myCalculator.setActualEvalType('lazy');
+    }
+    unsetStepLazy() {
+        if (this.stepLazy) {
+            this.stepLazy = false;
+            this.myCalculator.setActualEvalType('lazy-invisible');
+        }
     }
 
     // ========================================================
@@ -5130,12 +5157,12 @@ class SudokuCellView extends SudokuView {
         if (tmpAdmissibles.size == 1
             && myCell.isSelected
             && sudoApp.mySolver.myStepper.indexSelected > -1) {
+
             let admissibleNr = Array.from(tmpAdmissibles)[0]
             let admissibleNrElement = document.createElement('div');
             admissibleNrElement.setAttribute('data-value', admissibleNr);
             admissibleNrElement.innerHTML = admissibleNr;
             this.getMyNode().appendChild(admissibleNrElement);
-
 
             let redAdmissibles = myCell.getAdmissibles().difference(tmpAdmissibles);
             redAdmissibles.forEach(redAdmissible => {
@@ -5143,9 +5170,11 @@ class SudokuCellView extends SudokuView {
                 admissibleNrElement.setAttribute('data-value', redAdmissible);
                 admissibleNrElement.innerHTML = redAdmissible;
                 admissibleNrElement.classList.add('inAdmissible');
-                this.getMyNode().appendChild(admissibleNrElement);        
+                this.getMyNode().appendChild(admissibleNrElement);
             });
-
+            //To understand the hidden single of this cell, 
+            //we switch to lazy mode for this step.
+            sudoApp.mySolver.setStepLazy();
             return true;
         } else {
             return false;
@@ -5404,6 +5433,7 @@ class SudokuCellView extends SudokuView {
 
     setSelectStatus() {
         let tmpCell = this.getMyModel();
+        let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
         this.setSelected();
         if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
 
@@ -5433,7 +5463,7 @@ class SudokuCellView extends SudokuView {
         } else if (sudoApp.mySolver.getActualEvalType() == 'lazy') {
             // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
             // wird die verursachende collection angezeigt.
-            let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
+
             // Anzeige initialisieren
             // sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
             sudoApp.mySolver.myView.displayTechnique('');
@@ -5494,6 +5524,7 @@ class SudokuCellView extends SudokuView {
                     return;
                 }
             }
+
 
             if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
                 tmpCell.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
@@ -5567,8 +5598,10 @@ class SudokuCellView extends SudokuView {
                 sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Pointing Pair');
                 return;
             }
+
         }
     }
+
 
     unsetSelectStatus() {
         this.unsetSelected();
