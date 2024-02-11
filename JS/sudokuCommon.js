@@ -967,8 +967,6 @@ class SudokuCalculator extends SudokuModel {
         // Die Matrix des Sudoku-Calculators
         this.myGrid = new SudokuGrid(this);
         //Die Calculator kennt zwei Betriebs-Phasen 'play' or 'define'
-        this.tmpLazy = false;
-        this.lazyCell = undefined;
         this.currentPhase = 'play';
         this.currentEvalType = 'lazy-invisible';
         // Der Calculator kennt zwei Ausführungsmodi: 
@@ -980,18 +978,11 @@ class SudokuCalculator extends SudokuModel {
         this.isStepExecutionObserver = false;
         this.init();
     }
-    isTmpLazy() {
-        return this.tmpLazy;
+    setStepLazy() {
+        this.myGrid.setStepLazy();
     }
-    setTmpLazy(cell) {
-        this.lazyCell = cell;
-        this.tmpLazy = true;
-        this.setActualEvalType('lazy');
-    }
-    unsetTmpLazy() {
-        this.lazyCell = undefined;
-        this.tmpLazy = false;
-        this.setActualEvalType('lazy-invisible');
+    unsetStepLazy() {
+        this.myGrid.unsetStepLazy();
     }
 
     init() {
@@ -1230,14 +1221,11 @@ class SudokuSolver extends SudokuCalculator {
         this.init();
     }
 
-    isTmpLazy() {
-        return super.isTmpLazy();
+    setStepLazy() {
+        super.setStepLazy();
     }
-    setTmpLazy() {
-        super.setTmpLazy();
-    }
-    unsetTmpLazy() {
-        this.unsetActualEvalType();
+    unsetStepLazy() {
+        super.unsetStepLazy();
     }
 
     setPlayMode(mode) {
@@ -2367,6 +2355,9 @@ class StepperOnGrid {
             // Aktion:
             // Setze die eindeutige Nummer
             let tmpAction = this.atCurrentSelectionSetAutoNumber(currentStep);
+            // If a hidden single has been set in this cell, 
+            // switch the evaluation mode back to 'No evaluation'.
+            this.myGrid.unsetStepLazy();
             this.lastNumberSet = currentStep.getValue();
             this.goneSteps++;
             // Falls die Nummernsetzung zur Unlösbarkeit führt
@@ -3776,6 +3767,7 @@ class SudokuGrid extends SudokuModel {
         // zulässigen Nummer
         this.adMissibleIndexSelected = -1;
 
+        this.stepLazy = false;
         this.loadedPuzzleId = '';
         this.loadedPuzzleName = '';
 
@@ -3825,6 +3817,17 @@ class SudokuGrid extends SudokuModel {
         // Erzeuge die interne Tabelle
         this.createSudoGrid();
         this.evaluateMatrix();
+    }
+
+    setStepLazy(cell) {
+        this.stepLazy = true;
+        this.myCalculator.setActualEvalType('lazy');
+    }
+    unsetStepLazy() {
+        if (this.stepLazy) {
+            this.stepLazy = false;
+            this.myCalculator.setActualEvalType('lazy-invisible');
+        }
     }
 
     // ========================================================
@@ -5167,11 +5170,11 @@ class SudokuCellView extends SudokuView {
                 admissibleNrElement.setAttribute('data-value', redAdmissible);
                 admissibleNrElement.innerHTML = redAdmissible;
                 admissibleNrElement.classList.add('inAdmissible');
-                this.getMyNode().appendChild(admissibleNrElement);        
+                this.getMyNode().appendChild(admissibleNrElement);
             });
-            //neu
-            // sudoApp.mySolver.myGrid.displaySelection();
-            // sudoApp.mySolver.setTmpLazy(cell);
+            //To understand the hidden single of this cell, 
+            //we switch to lazy mode for this step.
+            sudoApp.mySolver.setStepLazy();
             return true;
         } else {
             return false;
@@ -5430,6 +5433,7 @@ class SudokuCellView extends SudokuView {
 
     setSelectStatus() {
         let tmpCell = this.getMyModel();
+        let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
         this.setSelected();
         if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
 
@@ -5453,16 +5457,13 @@ class SudokuCellView extends SudokuView {
                 sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
             } else if (tmpCell.getTotalAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
                 sudoApp.mySolver.myView.displayTechnique('Hidden Single ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' in dieser Zelle setzen.');
-
-                this.displayHiddenSingle(tmpCell);
-
             } else if (tmpCell.getTotalAdmissibles().size > 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
                 sudoApp.mySolver.myView.displayTechnique('Aus mehreren Kandidaten eine Nummer setzen.');
             }
         } else if (sudoApp.mySolver.getActualEvalType() == 'lazy') {
             // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
             // wird die verursachende collection angezeigt.
-            let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
+
             // Anzeige initialisieren
             // sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
             sudoApp.mySolver.myView.displayTechnique('');
@@ -5524,86 +5525,80 @@ class SudokuCellView extends SudokuView {
                 }
             }
 
-            this.displayHiddenSingle(tmpCell);
-       
-        }
-    }
 
+            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+                tmpCell.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
+                if (tmpCell.myLevel_gt0_inAdmissiblesFromPairs.has(adMissibleNrSelected)) {
+                    // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
+                    // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
+                    // verursacht werden.
+                    // Die Block, Spalte oder Zeile des Paares wird markiert.
+                    tmpCell.myLevel_gt0_inAdmissiblesFromPairs.forEach(pairInfo => {
+                        pairInfo.collection.myCells.forEach(cell => {
+                            if (cell !== tmpCell) {
+                                cell.myView.setBorderSelected();
+                            }
+                        });
+                        pairInfo.pairCell1.myView.setBorderRedSelected();
+                        pairInfo.pairCell2.myView.setBorderRedSelected();
+                    })
+                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Nacktem Paar" ');
+                    return;
+                }
+            }
 
-    displayHiddenSingle(tmpCell) {
-        let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
-          
-        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-            tmpCell.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
-            if (tmpCell.myLevel_gt0_inAdmissiblesFromPairs.has(adMissibleNrSelected)) {
-                // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
-                // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
-                // verursacht werden.
-                // Die Block, Spalte oder Zeile des Paares wird markiert.
-                tmpCell.myLevel_gt0_inAdmissiblesFromPairs.forEach(pairInfo => {
+            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+                tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.size > 0) {
+                if (tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.has(adMissibleNrSelected)) {
+                    // Für ein Subpaar muss nicht jede einzelne Nummer geprüft werden.
+                    // 
+                    const [pairInfo] = tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
                     pairInfo.collection.myCells.forEach(cell => {
-                        if (cell !== tmpCell) {
+                        if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
+                            cell.myView.setBorderRedSelected();
+                        } else {
                             cell.myView.setBorderSelected();
                         }
                     });
-                    pairInfo.pairCell1.myView.setBorderRedSelected();
-                    pairInfo.pairCell2.myView.setBorderRedSelected();
-                })
-                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Nacktem Paar" ');
-                return;
-            }
-        }
-
-        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-            tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.size > 0) {
-            if (tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.has(adMissibleNrSelected)) {
-                // Für ein Subpaar muss nicht jede einzelne Nummer geprüft werden.
-                // 
-                const [pairInfo] = tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
-                pairInfo.collection.myCells.forEach(cell => {
-                    if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
-                        cell.myView.setBorderRedSelected();
-                    } else {
-                        cell.myView.setBorderSelected();
-                    }
-                });
-                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Verstecktem Paar"')
-                return;
-            }
-        }
-
-        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-            tmpCell.myLevel_gt0_inAdmissiblesFromIntersection.size > 0) {
-
-            let info = tmpCell.myLevel_gt0_inAdmissiblesFromIntersectionInfo.get(adMissibleNrSelected);
-            info.block.myCells.forEach(cell => {
-                cell.myView.setBorderSelected();
-            });
-            info.rowCol.myCells.forEach(cell => {
-                cell.myView.setBorderSelected();
-            });
-
-            sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Überschneidung');
-            return;
-        }
-
-
-        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-            tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairs.size > 0) {
-
-            let info = tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairsInfo.get(adMissibleNrSelected);
-            info.rowCol.myCells.forEach(cell => {
-                cell.myView.setBorderSelected();
-            });
-            info.pVector.myCells.forEach(cell => {
-                if (cell.getValue() == '0' && cell.getTotalAdmissibles().has(adMissibleNrSelected)) {
-                    cell.myView.unsetSelected();
-                    cell.myView.setBorderRedSelected();
+                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Verstecktem Paar"')
+                    return;
                 }
-            })
+            }
 
-            sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Pointing Pair');
-            return;
+            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+                tmpCell.myLevel_gt0_inAdmissiblesFromIntersection.size > 0) {
+
+                let info = tmpCell.myLevel_gt0_inAdmissiblesFromIntersectionInfo.get(adMissibleNrSelected);
+                info.block.myCells.forEach(cell => {
+                    cell.myView.setBorderSelected();
+                });
+                info.rowCol.myCells.forEach(cell => {
+                    cell.myView.setBorderSelected();
+                });
+
+                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Überschneidung');
+                return;
+            }
+
+
+            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+                tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairs.size > 0) {
+
+                let info = tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairsInfo.get(adMissibleNrSelected);
+                info.rowCol.myCells.forEach(cell => {
+                    cell.myView.setBorderSelected();
+                });
+                info.pVector.myCells.forEach(cell => {
+                    if (cell.getValue() == '0' && cell.getTotalAdmissibles().has(adMissibleNrSelected)) {
+                        cell.myView.unsetSelected();
+                        cell.myView.setBorderRedSelected();
+                    }
+                })
+
+                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Pointing Pair');
+                return;
+            }
+
         }
     }
 
