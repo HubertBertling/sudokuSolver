@@ -643,6 +643,50 @@ html {
 /* Evaluation radio buttons             */
 /*======================================*/
 
+/*======================= */
+
+.first-label-container {
+    margin-top: 0.8rem;
+}
+
+.label-container {
+    display: inline-grid;
+    grid-template-columns: auto 1fr;
+    grid-auto-rows: auto;
+    grid-template-areas:
+      'input prefix-text'
+      'empty label-text';
+  }
+  
+  .radio-eval-type {
+    grid-area: input;
+    align-self: center;
+    margin: 0;
+  }
+  
+  .label-text:first-of-type {
+    grid-area: prefix-text;
+    align-self: center;
+  }
+  
+  .label-text:last-of-type {
+    grid-area: label-text;
+  }
+  
+  .prefix {
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .text-spacing {
+    padding-inline-start: 8px;
+    padding-inline-end: 4px;
+  }
+  /*======================= */
+
+
+
+
 .pc-eval,
 .play-mode,
 .io-technique {
@@ -653,7 +697,7 @@ html {
 
 .pc-floatBlock, .puzzle-io {
     font-size: 1.2rem;
-    padding: 1rem;
+    padding: 0.4rem;
 }
 
 /* ======================================*/
@@ -663,8 +707,9 @@ html {
 .play-mode-legend,
 .puzzle-io-legend {
     font-weight: bold;
+    margin-top: 1.0rem;
     margin-left: 10px;
-    font-size: var(--font-size);
+    font-size: var(--font-size-lg);
 }
 
 /*======================================*/
@@ -921,7 +966,7 @@ label {
 }
 
 .infoDlgBody {
-    font-size: var(--font-size);
+    font-size: var(--font-size-lg);
     margin-left: 10px;
 }
 
@@ -1007,7 +1052,7 @@ label {
 /*=======================================*/
 
 .settings-dlg {
-    width: 40rem;
+    width: 60rem;
 
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;

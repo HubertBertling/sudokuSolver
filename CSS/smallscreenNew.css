@@ -664,6 +664,48 @@ html {
 /* Evaluation radio buttons             */
 /*======================================*/
 
+/*======================= */
+
+.first-label-container {
+    margin-top: 0.4rem;
+}
+
+.label-container {
+    display: inline-grid;
+    grid-template-columns: auto 1fr;
+    grid-auto-rows: auto;
+    grid-template-areas:
+      'input prefix-text'
+      'empty label-text';
+  }
+  
+  .radio-eval-type {
+    grid-area: input;
+    align-self: center;
+    margin: 0;
+  }
+  
+  .label-text:first-of-type {
+    grid-area: prefix-text;
+    align-self: center;
+  }
+  
+  .label-text:last-of-type {
+    grid-area: label-text;
+  }
+  
+  .prefix {
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .text-spacing {
+    padding-inline-start: 6px;
+    padding-inline-end: 3px;
+  }
+  /*======================= */
+
+
 .eval-btn-block {
     margin-top: 10px;
     font-size: 1.2rem;
@@ -677,15 +719,15 @@ html {
 .pc-eval,
 .play-mode,
 .io-technique {
-    margin-top: 1.6rem;
-    margin-left: 1.2rem;
-    margin-right: 1.2rem;
+    margin-top: 1.2rem;
+    margin-left: 0.8rem;
+    margin-right: 0.8rem;
 }
 
 .pc-floatBlock,
 .puzzle-io {
-    font-size: 1.2rem;
-    padding: 1rem;
+    font-size: 1.0rem;
+    padding: 0.4rem;
 }
 
 /* ======================================*/

@@ -314,37 +314,71 @@
                     Kandidatenauswertung
                 </legend>
 
+                <label class="label-container first-label-container">
+                    <input type="radio" id="pc-no-eval" class="radio-eval-type" data="lazy-invisible" name="pc-auswertung"> 
+                    <div class="label-text text-spacing prefix">Keine Kandidatenanzeige</div>
+                    <div class="label-text text-spacing">Im Hintergrund erfolgt die Kandidatenauswertung im Lazy-Modus.
+                    </div>
+                 </label>
+                 <label class="label-container">
+                    <input type="radio" id="pc-lazy" class="radio-eval-type" data="lazy" name="pc-auswertung">
+                    <div class="label-text text-spacing prefix">Lazy</div>
+                    <div class="label-text text-spacing">Die Lazy-Auswertungsmethode praktiziert eine verzögerte
+                        Auswertung. Die Auswertung erfolgt nur soweit, bis die nächste notwendige Nummer oder die
+                        nächste Single-Nummer oder die nächste versteckte Single-Nummer bestimmt ist.
+                    </div>
+                 </label>
+                 <label class="label-container">
+                    <input type="radio" id="pc-strict-plus" class="radio-eval-type" data="strict-plus"  name="pc-auswertung">
+                    <div class="label-text text-spacing prefix">Strikt + (Strikt-Plus)</div>
+                    <div class="label-text text-spacing">Diese
+                        Auswertungsmethode führt eine vollständige Auswertung durch. Alle aktuell unzulässigen
+                        Kandidaten, alle notwendigen Nummern, alle Singles und versteckten Singles werden ermittelt
+                        und angezeigt.
+                    </div>
+                 </label>
+                 <label class="label-container">
+                    <input type="radio"id="pc-strict-minus" class="radio-eval-type" data="strict-minus"  name="pc-auswertung">
+                    <div class="label-text text-spacing prefix">Strikt - (Strikt-Minus)</div>
+                    <div class="label-text text-spacing">Wie
+                        Strikt +. Jedoch werden die errechneten unzulässigen Kandidaten ausgeblendet.
+                    </div>
+                 </label>
+                 
+                <!--
                 <div id="pc-evaluation" name="pc-evaluation" class="pc-evaluation-options">
                     <div id="pcNoEval" class="pc-floatBlock">
-                        <label for="pc-no-eval"> <input id="pc-no-eval" class="pc-eval-type" name="pc-auswertung"
+                        <label for="pc-no-eval"> <input id="pc-no-eval" class="pc-eval-type" style="float:left" name="pc-auswertung"
                                 type="radio" value="lazy-invisible" checked />
-                            Keine: Keine Kandidatenanzeige. Im Hintergrund erfolgt die Kandidatenauswertung im
+                                <span style="font-weight: bold">Keine Kandidatenanzeige:</span> Im Hintergrund erfolgt die Kandidatenauswertung im
                             Lazy-Modus.
                         </label>
                     </div>
 
                     <div id="pcLazy" class="pc-floatBlock">
-                        <label for="pc-lazy"> <input id="pc-lazy" class="pc-eval-type" name="pc-auswertung" type="radio"
-                                value="lazy" /> Lazy: Die Lazy-Auswertungsmethode praktiziert eine verzögerte
+                        <label for="pc-lazy"> <input id="pc-lazy" class="pc-eval-type" style="float:left" name="pc-auswertung" type="radio"
+                                value="lazy" /> <span style="font-weight: bold">Lazy:</span> Die Lazy-Auswertungsmethode praktiziert eine verzögerte
                             Auswertung. Die Auswertung erfolgt nur soweit, bis die nächste notwendige Nummer oder die
                             nächste Single-Nummer oder die nächste versteckte Single-Nummer bestimmt ist.</label>
                     </div>
 
                     <div id="pcStrictPlus" class="pc-floatBlock">
-                        <label for="pc-strict-plus"> <input id="pc-strict-plus" class="pc-eval-type"
-                                name="pc-auswertung" type="radio" value="strict-plus" /> Strikt + (Strikt-Plus): Diese
+                        <label for="pc-strict-plus"> <input id="pc-strict-plus" class="pc-eval-type" style="float:left"
+                                name="pc-auswertung" type="radio" value="strict-plus" /><span style="font-weight: bold">Strikt + (Strikt-Plus):</span> Diese
                             Auswertungsmethode führt eine vollständige Auswertung durch. Alle aktuell unzulässigen
                             Kandidaten, alle notwendigen Nummern, alle Singles und versteckten Singles werden ermittelt
                             und angezeigt.
                         </label>
                     </div>
                     <div id="pcStrictMinus" class="pc-floatBlock">
-                        <label for="pc-strict-minus"> <input id="pc-strict-minus" class="pc-eval-type"
-                                name="pc-auswertung" type="radio" value="strict-minus" /> Strikt - (Strikt-Minus): Wie
+                        <label for="pc-strict-minus"> <input id="pc-strict-minus" class="pc-eval-type" style="float:left"
+                                name="pc-auswertung" type="radio" value="strict-minus"/><span style="font-weight: bold">Strikt - (Strikt-Minus):</span> Wie
                             Strikt +. Jedoch werden die errechneten unzulässigen Kandidaten ausgeblendet.
                         </label>
                     </div>
                 </div>
+                -->
+                
             </fieldset>
         </div>
 
@@ -354,20 +388,33 @@
                     Spielmodus
                 </legend>
 
+                <label class="label-container first-label-container">
+                    <input type="radio" id="pc-training" class="play-mode-type" data="training" name="pc-play-mode">
+                    <div class="label-text text-spacing prefix">Trainieren</div>
+                    <div class="label-text text-spacing">Automatik-Buttons ausgeblendet
+                    </div>
+                 </label>
+                 <label class="label-container">
+                    <input type="radio" id="pc-solving" class="play-mode-type" data="solving" name="pc-play-mode">
+                    <div class="label-text text-spacing prefix">Automatisch lösen</div>
+                    <div class="label-text text-spacing">Automatik-Buttons eingeblendet
+                    </div>
+                 </label>
+                <!--
                 <div id="pc-play-mode" name="pc-play-mode" class="pc-play-mode-options">
                     <div id="pcTraining" class="pc-floatBlock">
                         <label for="pc-training"> <input id="pc-training" class="play-mode-type" name="pc-play-mode"
-                                type="radio" value="training" /> Trainieren (Puzzle manuell lösen)
+                                type="radio" value="training" /> Trainieren (Automatik-Buttons ausgeblendet)
                         </label>
                     </div>
 
                     <div id="pcSolving" class="pc-floatBlock">
                         <label for="pc-solving"> <input id="pc-solving" class="play-mode-type" name="pc-play-mode"
-                                type="radio" value="solving" checked /> Lösen (Puzzle automatisch lösen lassen)
+                                type="radio" value="solving" checked /> Automatisch lösen (Automatik-Buttons eingeblendet)
                         </label>
                     </div>
                 </div>
-
+                -->
             </fieldset>
         </div>
         <div class="io-technique">
@@ -376,11 +423,21 @@
                     Technik
                 </legend>
 
+                <label class="label-container first-label-container">
+                    <input type="checkbox" id="puzzle-io" name="puzzle-io"
+                    onchange="sudoApp.mySolverController.puzzleIOcheckboxOnchange()">
+                    <div class="label-text text-spacing prefix">Import/Export</div>
+                    <div class="label-text text-spacing">In der Hauptansicht ist der Teile-Button zugeschaltet. 
+                        In der Datenbankansicht sind die Buttons für Puzzle-Download und -Import zugeschaltet. 
+                    </div>
+                 </label>
+               <!--
                 <div class="puzzle-io">
                     <input type="checkbox" id="puzzle-io" name="puzzle-io"
                         onchange="sudoApp.mySolverController.puzzleIOcheckboxOnchange()">
                     <label for="puzzle-io">Puzzle-Import, -Export zugeschaltet </label>
                 </div>
+                -->
             </fieldset>
         </div>
         </div>

@@ -140,15 +140,15 @@ class SudokuSolverController {
         });
 
         // Radio button eval type: No-evaluation, Lazy, Strikt+ oder Strikt-
-        let mobileRadioEvalNodes = document.querySelectorAll('.pc-eval-type');
+        let mobileRadioEvalNodes = document.querySelectorAll('.radio-eval-type');
         mobileRadioEvalNodes.forEach(radioNode => {
             radioNode.addEventListener('click', () => {
                 let appSetting = undefined;
                 let str_appSetting = localStorage.getItem("sudokuAppSetting");
                 //The item appSetting exists already
                 appSetting = JSON.parse(str_appSetting);
-                appSetting.evalType = radioNode.value;
-                this.mySolver.setActualEvalType(radioNode.value);
+                appSetting.evalType = radioNode.getAttribute('data');
+                this.mySolver.setActualEvalType(radioNode.getAttribute('data'));
                 str_appSetting = JSON.stringify(appSetting);
                 localStorage.setItem("sudokuAppSetting", str_appSetting);
             })
@@ -161,8 +161,9 @@ class SudokuSolverController {
                 let str_appSetting = localStorage.getItem("sudokuAppSetting");
                 //The item appSetting exists already
                 appSetting = JSON.parse(str_appSetting);
-                appSetting.playMode = radioNode.value;
-                this.mySolver.setPlayMode(radioNode.value);
+        
+                appSetting.playMode = radioNode.getAttribute('data');
+                this.mySolver.setPlayMode(radioNode.getAttribute('data'));
                 str_appSetting = JSON.stringify(appSetting);
                 localStorage.setItem("sudokuAppSetting", str_appSetting);
             })
@@ -554,7 +555,7 @@ class SudokuSolverController {
         let appSetting = undefined;
         let str_appSetting = localStorage.getItem("sudokuAppSetting");
         appSetting = JSON.parse(str_appSetting);
-        appSetting.puzzleIOtechnique = pIOcheckbox.checked;
+        appSetting.puzzleIOtechnique = pIOcheckbox.checked.toString();
         this.mySolver.setPuzzleIOtechnique(pIOcheckbox.checked);
         str_appSetting = JSON.stringify(appSetting);
         localStorage.setItem("sudokuAppSetting", str_appSetting);
@@ -1269,7 +1270,7 @@ class SudokuSolver extends SudokuCalculator {
             appSetting = {
                 evalType: 'lazy-invisible',
                 playMode: 'training',
-                puzzleIOtechnique: false
+                puzzleIOtechnique: false.toString()
             }
             str_appSetting = JSON.stringify(appSetting);
             localStorage.setItem("sudokuAppSetting", str_appSetting);
@@ -1279,7 +1280,7 @@ class SudokuSolver extends SudokuCalculator {
         }
         this.setActualEvalType(appSetting.evalType);
         this.setPlayMode(appSetting.playMode);
-        this.setPuzzleIOtechnique(appSetting.puzzleIOtechnique);
+        this.setPuzzleIOtechnique(Boolean(appSetting.puzzleIOtechnique));
         this.notify();
     }
     loadPuzzle(uid, puzzle) {
@@ -3819,14 +3820,14 @@ class SudokuGrid extends SudokuModel {
         this.evaluateMatrix();
     }
 
-    setStepLazy(cell) {
+    setStepLazy() {
         this.stepLazy = true;
-        this.myCalculator.setActualEvalType('lazy');
+        sudoApp.mySolver.setActualEvalType('lazy');
     }
     unsetStepLazy() {
         if (this.stepLazy) {
             this.stepLazy = false;
-            this.myCalculator.setActualEvalType('lazy-invisible');
+            sudoApp.mySolver.setActualEvalType('lazy-invisible');
         }
     }
 

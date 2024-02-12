@@ -18,4 +18,4 @@ Die Installation ist sehr einfach: einfach den Dialogen folgen. Betriebssystemse
 
 Viel Spaß mit der App und neue Einsichten über das Wesen klassischer Sudokus.
 
-Hubert Bertling
+Hubert Bertling  
