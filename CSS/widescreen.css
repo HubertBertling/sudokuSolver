@@ -112,7 +112,8 @@ html {
 #share-app-btn {
     padding: 4px;
     border: 6px solid grey;
-    color: black;
+    background-color: black;
+    color: white;
     cursor: pointer;
     border-radius: 12px;
 }

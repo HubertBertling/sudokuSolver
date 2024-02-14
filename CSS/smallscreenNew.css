@@ -102,17 +102,21 @@ html {
     visibility: visible;
 }
 
+.navbar-element {
+    margin-top: 2rem;
+    margin-left: 1.2rem;
+    color: white;
+}
 
 #appVersion {
     margin-top: 5rem;
-    margin-left: 2rem;
-    color: white;
 }
 
 #share-app-btn {
     padding: 4px;
     border: 6px solid grey;
-    color: black;
+    background-color: black;
+    color: white;
     cursor: pointer;
     border-radius: 12px;
 }
