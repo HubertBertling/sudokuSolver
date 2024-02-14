@@ -1,7 +1,7 @@
 {
   "name": "SudokuTrainer",
   "short_name": "SudokuTrainer",
-  "description": "Diese App ist ein Trainer für klassisches Sudoku. Sie besteht aus drei Komponenten, (1) dem Sudoku-Solver, (2) dem Sudoku-Generator und (3) der Sudoku-Datenbank.",
+  "description": "Die App ist ein Trainer für klassisches Sudoku.",
 
   "id": "SudokuTrainerPWAManifest",
   "scope": "/sudokuSolver/",

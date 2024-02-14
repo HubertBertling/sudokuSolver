@@ -1,5 +1,5 @@
 let sudoApp;
-let VERSION = 275;
+let VERSION = 276;
 
 if (window.File && window.FileReader
     && window.FileList && window.Blob) {
@@ -66,29 +66,9 @@ async function handleFiles(files) {
         sudoApp.myPuzzleDB.upLoadPuzzle(strFilePuzzleMap);       
     }
 }
-/*
-const shareData = {
-    title: "Sudoku Trainer",
-    text: "Übe Sudoku mit dem Sudoku-Trainer",
-    url: "https://hubertbertling.github.io/sudokuSolver",
-};
-*/
-// Share must be triggered by "user activation"
-
 
 let btn = document.getElementById('share-app-btn');
 const resultPara = document.querySelector(".result");
-
-/*
-btn.addEventListener("click", async () => {
-    try {
-      await navigator.share(shareData);
-      resultPara.textContent = "Sudoku-Trainer shared successfully";
-    } catch (err) {
-      resultPara.textContent = `Error: ${err}`;
-    }
-});
-*/
 if (navigator.share && navigator.canShare) {
     // Web Share API ist Verfügbar!
     btn.addEventListener("click", async () => {
@@ -97,7 +77,7 @@ if (navigator.share && navigator.canShare) {
             navigator.share(
                 {
                     title: "Sudoku Trainer",
-                    text: "Übe Sudoku mit dem Sudoku-Trainer",
+                    text: "Viel Spaß und neue Einsichten mit dem Sudoku-Trainer",
                     url: "https://hubertbertling.github.io/sudokuSolver",
                 }
             )
