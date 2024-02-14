@@ -109,6 +109,15 @@ html {
     color: white;
 }
 
+#share-app-btn {
+    padding: 4px;
+    border: 6px solid grey;
+    color: black;
+    cursor: pointer;
+    border-radius: 12px;
+}
+
+
 /*=====================================================*/
 /* Side Navigation */
 /*=====================================================*/
@@ -187,12 +196,14 @@ html {
 
 /* Optional: Style the caret down icon */
 
-.fa-caret-down, .no-caret {
+.fa-caret-down,
+.no-caret {
     float: right;
     padding-right: 8px;
 }
 
-#caret-down-img, #no-caret-img {
+#caret-down-img,
+#no-caret-img {
     width: 2.4rem;
     height: 2.4rem;
 }
@@ -271,7 +282,8 @@ html {
     margin: 0.3rem 0;
 }
 
-.menu-icon:active, .share-icon:active  {
+.menu-icon:active,
+.share-icon:active {
     transform: translate(2px, 2px);
 }
 
@@ -675,35 +687,36 @@ html {
     grid-template-columns: auto 1fr;
     grid-auto-rows: auto;
     grid-template-areas:
-      'input prefix-text'
-      'empty label-text';
-  }
-  
-  .radio-eval-type {
+        'input prefix-text'
+        'empty label-text';
+}
+
+.radio-eval-type {
     grid-area: input;
     align-self: center;
     margin: 0;
-  }
-  
-  .label-text:first-of-type {
+}
+
+.label-text:first-of-type {
     grid-area: prefix-text;
     align-self: center;
-  }
-  
-  .label-text:last-of-type {
+}
+
+.label-text:last-of-type {
     grid-area: label-text;
-  }
-  
-  .prefix {
+}
+
+.prefix {
     font-weight: bold;
     font-size: 1.2rem;
-  }
-  
-  .text-spacing {
+}
+
+.text-spacing {
     padding-inline-start: 6px;
     padding-inline-end: 3px;
-  }
-  /*======================= */
+}
+
+/*======================= */
 
 
 .eval-btn-block {

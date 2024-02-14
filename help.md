@@ -6,11 +6,11 @@ layout: default
 
 ## Ein Trainer für klassisches Sudoku
 
-Diese App ist ein Trainer für klassisches Sudoku. Der Sudoku-Trainer kann manuell oder automatisch genutzt werden. Seine Besonderheit: man kann ihm bei der automatischen Suche nach der Lösung zuschauen. Bei jeder automatischen Setzung einer Nummer zeigt der Solver den logischen Grund für die Setzung. Der Anwender kann ein Puzzle manuell lösen, oder er kann den Solver einen nächsten möglichen Schritt machen lassen. Es ist auch möglich, das Puzzle vollständig automatisch lösen zu lassen. Automatisch löst der Solver jedes Puzzle in wenigen Sekunden oder erkennt es als nicht lösbar (weil es widersprüchlich ist).
+Diese App ist ein Trainer für klassisches Sudoku. Der [Sudoku-Trainer](https://hubertbertling.github.io/sudokuSolver/) kann manuell oder automatisch genutzt werden. Seine Besonderheit: man kann ihm bei der automatischen Suche nach der Lösung zuschauen. Bei jeder automatischen Setzung einer Nummer zeigt der Solver den logischen Grund für die Setzung. Der Anwender kann ein Puzzle manuell lösen, oder er kann den Solver einen nächsten möglichen Schritt machen lassen. Es ist auch möglich, das Puzzle vollständig automatisch lösen zu lassen. Automatisch löst der Solver jedes Puzzle in wenigen Sekunden oder erkennt es als nicht lösbar (weil es widersprüchlich ist).
 
 ## Sudoku-Trainer Installation
 
-Technisch gesehen ist die App [Sudoku-Trainer](https://hubertbertling.github.io/sudokuSolver/) eine progressive Web-App (PWA) . Als solche besitzt sie eine URL. Für die Installation benötigt man lediglich diese URL. Moderne Browser erkennen an der App-URL, dass es sich um eine Web-App handelt, und zeigen die Möglichkeit der Installation an. Die Installation einer Web-App in einem Browser ist sehr einfach, siehe etwa [Installation-Web-App](https://support.google.com/chrome/answer/9658361?hl=de&co=GENIE.Platform%3DAndroid&oco=1). 
+Technisch gesehen ist die App Sudoku-Trainer eine progressive Web-App (PWA) . Als solche besitzt sie eine URL. Für die Installation benötigt man lediglich diese URL. Moderne Browser erkennen an der Manifest-Datei im Startverzeichnis, dass es sich um eine Web-App handelt, und zeigen die Möglichkeit der Installation an. Die Installation einer Web-App in einem Browser ist sehr einfach, siehe etwa [Installation-Web-App](https://support.google.com/chrome/answer/9658361?hl=de&co=GENIE.Platform%3DAndroid&oco=1). 
 
 Sudoku-Trainer installieren:
 
@@ -45,10 +45,10 @@ Der Spieler kann sich bei der Lösungssuche unterstützen lassen, indem er in de
 
 ## Typischer Ablauf der Lösung eines Sudoku-Puzzles
 
-1. **Sudoku-Puzzle eingeben:** "Definieren" wählen und die Zellen mit den Givens des Puzzles setzen.
-2. **Sudoku-Puzzle lösen:** "Lösen" wählen und die Zellen mit den vermutet richtigen Nummern belegen.
+1. **Sudoku-Puzzle eingeben:** Taste "Puzzle eingeben" klicken und die Zellen mit den Givens des Puzzles setzen.
+2. **Sudoku-Puzzle lösen:** Taste "Puzzle lösen" klicken und die Zellen mit den vermutet richtigen Nummern belegen.
 
-Beim Definieren wie auch beim Lösen besteht ein Lösungsschritt aus zwei Subschritten:
+Beim Eingeben wie auch beim Lösen besteht ein Lösungsschritt aus zwei Subschritten:
 
 1. **Sudoku-Zelle selektieren**.
 1. **Nummer setzen**: D.h. eine Nummer im rechten Tastenblock wählen. Es kann auch einfach nur eine Nummerntaste auf der Tastatur für die Eingabe einer Nummer benutzt werden.
@@ -74,8 +74,8 @@ Soll eine Nummern-Setzung zurückgenommen werden, muss die betroffene Zelle sele
 
 |Phase  |Bedeutung  |
 |---------|---------|
-|![Definieren](./images/define.png)|Die Taste **Definieren**. Das Drücken dieser Taste versetzt den Solver in die Definitionsphase. In dieser Phase überträgt man das zu lösende Puzzle, sprich die Givens des Puzzles, in den Solver. Nach der Initialisierung ist diese Taste automatisch gesetzt.|
-|![Spielen](./images/play.png)|Die Taste **Lösen**. Das Drücken dieser Taste versetzt den Solver in die Lösungsphase. Gleichzeitig ermittelt der Solver den Schwierigkeitsgrad des eingegebenen Puzzles. Die Lösungsphase kann manuell oder automatisch durchgeführt werden. Wird die automatische Ausführung gestartet, wird diese Taste automatisch gesetzt.|
+|![Definieren](./images/define.png)|Die Taste **Puzzle eingeben**. Das Drücken dieser Taste versetzt den Solver in die Definitionsphase. In dieser Phase überträgt man das zu lösende Puzzle, sprich die Givens des Puzzles, in den Solver. Nach der Initialisierung ist diese Taste automatisch gesetzt.|
+|![Spielen](./images/play.png)|Die Taste **Puzzles lösen**. Das Drücken dieser Taste versetzt den Solver in die Lösungsphase. Gleichzeitig ermittelt der Solver den Schwierigkeitsgrad des eingegebenen Puzzles. Die Lösungsphase kann manuell oder automatisch durchgeführt werden. Wird die automatische Ausführung gestartet, wird diese Taste automatisch gesetzt.|
 
 Hinweis: Gegebene Nummern, die Givens - dies sind blaue Nummern - können in der Lösungsphase nicht gelöscht werden. Falls Givens gelöscht werden sollen, muss man zuvor die Definieren-Taste drücken.
 
@@ -122,8 +122,6 @@ Die Lösungsphase kann alternativ auch automatisch durchgeführt werden. Die aut
 
 Durch Klicken der Menü-Taste im Header des Trainers öffnet sich die Menü-Leiste.
 
-<img src="./images/menuEinstellung.png" width="100px"/>
-
 |Option  |Bedeutung  |
 |---------|---------|
 |**Initialisieren**|Durch das Drücken dieser Option wird das aktuelle Puzzle des Solvers initialisiert. Danach ist die Sudoku-Tabelle leer.|
@@ -138,7 +136,7 @@ Durch Klicken der Menü-Taste im Header des Trainers öffnet sich die Menü-Leis
 
 ## Kandidaten und unzulässige Nummern
 
-Für eine noch nicht belegte Zelle der Sudoku-Tabelle unterscheiden wir Kandidatnummern und Nicht-Kandidatennummern. Nicht-Kandidatennummern bezeichen wir auch als unzulässge Nummern. Für eine unbelegte Zelle ist eine Nummer **unzulässig**, wenn in dem Block, in der Reihe oder Spalte dieser Zelle eine andere Zelle existiert, in der diese Nummer bereits gesetzt ist. Alle anderen Nummern heißen **Kandidatnummern** oder einfach **Kandidaten** dieser Zelle. In einer unbelegten Zelle werden die Kandidaten der Zelle angezeigt, sofern im Feld Kandidatenauswertung nicht der Wert "Keine" gesetzt ist.
+Für eine noch nicht belegte Zelle der Sudoku-Tabelle unterscheiden wir Kandidatnummern und Nicht-Kandidatennummern. Nicht-Kandidatennummern bezeichen wir auch als unzulässge Nummern. Für eine unbelegte Zelle ist eine Nummer **direkt unzulässig**, wenn in dem Block, in der Reihe oder Spalte dieser Zelle eine andere Zelle existiert, in der diese Nummer bereits gesetzt ist. Alle anderen Nummern heißen **Kandidatnummern** oder einfach **Kandidaten** dieser Zelle. In einer unbelegten Zelle werden die Kandidaten der Zelle angezeigt, sofern im Feld Kandidatenauswertung nicht der Wert "Keine" gesetzt ist.
 
 ## Notwendige Nummern
 
@@ -204,11 +202,13 @@ Es können mehrere dieser Bedingungen gleichzeitig vorliegen. Der vorliegende So
 
 ## Widerspruchsvolle Zellen
 
-<img src= "./images/nochoice.png" width="100px"/>
-<img src= "./images/twoNeccessary.png" width="100px" />
-<img src= "./images/conflct.png" width="100px"/>
+Widerspruchsvolle Zellen hatten wir oben schon kennengelernt. Es sind dies Zellen ohne zulässige Kandidaten, Zellen mit zwei notwendigen Nummern gleichzeitig und Zellen, die mit einer direkt unzulässigen Nummer belegt sind.
 
-Widerspruchsvolle Zellen hatten wir oben schon kennengelernt. Es sind dies Zellen mit leerer Option, Zellen mit zwei notwendigen Nummern gleichzeitig und Zellen, die mit einer direkt unzulässigen Nummer belegt sind..
+<img src= "./images/nochoice2.png"/>
+<img src= "./images/nochoice.png"/>
+<img src= "./images/twoNeccessary.png" />
+<img src= "./images/conflct.png"/>
+
 
 ## Widerspruchsvolle Gruppen
 
@@ -290,13 +290,16 @@ Beim Abspeichern erhält das gespeicherte Puzzle automatisch einen Namen, das ak
 |Pfeiltasten| **Navigieren.** Mit den Pfeiltasten kann in der Tabelle vorwärts und rückwärts navigiert werden. Durch Klicken auf eine Reihe der Tabelle kann ein Puzzle direkt selektiert werden.|
 |Laden| **Puzzle laden.** Durch Drücken der Lade-Taste wird das selektierte Puzzle in den Sudoku-Solver geladen.|
 |Löschen| **Puzzle löschen.** Gespeicherte Puzzles können auch wieder gelöscht werden.|
-|Drucken| **Puzzle drucken.** Mittels der Taste Drucken kann das aktuell selektierte Puzzle gedruckt werden. Dabei wird nur die Aufgabe, nicht aber die Lösung ausgedruckt. Dies ist besonders dann nützlich wenn man ein generiertes Puzzle von Hand auf dem Papier lösen möchte.
+|Drucken| **Puzzle drucken.** Mittels der Taste Drucken kann das aktuell selektierte Puzzle gedruckt werden. Dabei wird nur die Aufgabe, nicht aber die Lösung ausgedruckt. Dies ist besonders dann nützlich wenn man ein generiertes Puzzle von Hand auf dem Papier lösen möchte. 
+|Download Puzzle-DB|**Puzzle-Datenbank exportieren.** Durch Drücken dieser Taste wird die aktuelle Puzzle-Datenbank in ein txt-File 'Puzzle-DB.txt' ausgegeben. Es befindet sich im Download-Ordner.|
+|Download Puzzle|**Puzzle exportieren.** Durch Drücken dieser Taste wird die aktuelle Puzzle mit dem Namen >>PuzzleName<<  in ein txt-File '>>PuzzleName<<.txt' ausgegeben. Es befindet sich im Download-Ordner.|
+|Puzzle teilen <img src="./images/sharebutton.png" width="100px"/>|**Puzzle teilen.** Die Sudoku-Trainer-App ist Progressive Web App (PWA). Wie eine native App kann sie daher Inhalte, in unserem Fall ein Puzzle-File, mit anderen Apps teilen, z.B. mit WhatsApp oder einer EMAIL-App. Auf dem PC startet bei Doppel-Click auf diese Datei die Sudoku-App. Auf dem Android-Handy ist dies leider noch nicht möglich.|
 
 ## Die initiale Datenbank ist nicht leer
 
 Sie enthält zwei sehr schwere Puzzles. Also Puzzles, die nur durch Backtracking gelöst werden können. Der Einsteiger in diese App kann damit die automatische Lösungssuche dieses Trainers ausprobieren. In den Zeitungen und Zeitschriften findet man solche Puzzles nicht. Im Internet gibt es unter anderen diese bekannte Adresse [SoEinDing](https://sudoku.soeinding.de/sudokuExtraTeuflischSchwer.php), an der man solche Puzzles finden kann.
 
-## Sudoku im Internet
+## Sudoku-Trainer: eine App für Gelegenheitsspieler
 
 Eine herausragende Seite für Sudoku-Interessierte ist die Seite von [Andrew Stuart](https://www.sudokuwiki.org/Main_Page). Dort findest Du einen kompletten Überblick über logische Lösungsstrategien für klassisches Sudoku und auch einen Überblick über nicht klassische Sudoku-Varianten.
 

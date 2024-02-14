@@ -100,12 +100,21 @@ html {
 .tooltip:hover .tooltiptext {
     visibility: visible;
 }
-  /*=======================================================*/
 
-  #appVersion {
+/*=======================================================*/
+
+#appVersion {
     margin-top: 5rem;
     margin-left: 2rem;
     color: white;
+}
+
+#share-app-btn {
+    padding: 4px;
+    border: 6px solid grey;
+    color: black;
+    cursor: pointer;
+    border-radius: 12px;
 }
 
 /*=====================================================*/
@@ -184,12 +193,14 @@ html {
 }
 
 /* Optional: Style the caret down icon */
-.fa-caret-down, .no-caret {
+.fa-caret-down,
+.no-caret {
     float: right;
     padding-right: 8px;
 }
 
-#caret-down-img, #no-caret-img {
+#caret-down-img,
+#no-caret-img {
     width: 2.4rem;
     height: 2.4rem;
 }
@@ -215,7 +226,7 @@ app-empty-footer {
     margin-left: 0.3rem;
     margin-right: 0.3rem;
     display: grid;
-    grid-template-columns: 0.2fr 0.2fr 1.4fr 0.1fr; 
+    grid-template-columns: 0.2fr 0.2fr 1.4fr 0.1fr;
     font-size: var(--font-size-xl);
     font-weight: bold;
     padding: 0.4rem;
@@ -262,9 +273,10 @@ app-empty-footer {
     height: 0.3rem;
     background-color: white;
     margin: 0.3rem 0;
-  }
-  
-.menu-icon:active, .share-icon:active {
+}
+
+.menu-icon:active,
+.share-icon:active {
     transform: translate(2px, 2px);
 }
 
@@ -489,6 +501,7 @@ app-empty-footer {
 .sudoku-grid-cell.hover-white {
     border: 5px dashed white;
 }
+
 .sudoku-grid-cell.hover-black {
     border: 5px dashed black;
 }
@@ -531,6 +544,7 @@ app-empty-footer {
     padding: 3px 3px;
     margin-bottom: 5px;
 }
+
 .pz-name {
     text-align: left;
     width: 100%;
@@ -587,8 +601,9 @@ app-empty-footer {
     padding: 0.2rem;
 }
 
-.btn-undo-off > img, .btn-redo-off > img {
-    opacity: 0.3; 
+.btn-undo-off>img,
+.btn-redo-off>img {
+    opacity: 0.3;
 }
 
 .btn-define {
@@ -634,6 +649,7 @@ app-empty-footer {
     width: 1rem;
     height: 1rem;
 }
+
 .btn-with-image {
     padding-top: 0.2rem;
     font-size: var(--font-size-lg);
@@ -655,35 +671,36 @@ app-empty-footer {
     grid-template-columns: auto 1fr;
     grid-auto-rows: auto;
     grid-template-areas:
-      'input prefix-text'
-      'empty label-text';
-  }
-  
-  .radio-eval-type {
+        'input prefix-text'
+        'empty label-text';
+}
+
+.radio-eval-type {
     grid-area: input;
     align-self: center;
     margin: 0;
-  }
-  
-  .label-text:first-of-type {
+}
+
+.label-text:first-of-type {
     grid-area: prefix-text;
     align-self: center;
-  }
-  
-  .label-text:last-of-type {
+}
+
+.label-text:last-of-type {
     grid-area: label-text;
-  }
-  
-  .prefix {
+}
+
+.prefix {
     font-weight: bold;
     font-size: 1.2rem;
-  }
-  
-  .text-spacing {
+}
+
+.text-spacing {
     padding-inline-start: 0.6rem;
     padding-inline-end: 0.3rem;
-  }
-  /*======================= */
+}
+
+/*======================= */
 
 .eval-btn-block {
     margin-top: 0.8rem;
@@ -695,13 +712,16 @@ app-empty-footer {
 /* ======================================*/
 
 
-.pc-eval, .play-mode, .io-technique {
+.pc-eval,
+.play-mode,
+.io-technique {
     margin-top: 1.2rem;
     margin-left: 0.8rem;
     margin-right: 0.8rem;
 }
 
-.pc-floatBlock, .puzzle-io {
+.pc-floatBlock,
+.puzzle-io {
     font-size: 1.2rem;
     padding: 0.8rem;
 }
@@ -709,7 +729,9 @@ app-empty-footer {
 /* ======================================*/
 /* Evaluation block                       */
 /* ======================================*/
-.eval-legend, .play-mode-legend, .puzzle-io-legend {
+.eval-legend,
+.play-mode-legend,
+.puzzle-io-legend {
     font-weight: bold;
     margin-left: 10px;
     font-size: var(--font-size-lg);
@@ -1035,8 +1057,10 @@ label {
 }
 
 #confirm-ok-cancel-btns {
-    display: grid;   justify-content: center;   align-items: center;
-    grid-template-columns: 1fr 1fr; 
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 1fr 1fr;
     margin-top: 20px;
     margin-bottom: 10px;
     margin-left: 20px;
@@ -1097,7 +1121,7 @@ label {
     height: 100vh;
     border: none;
     background-color: #500;
- 
+
 }
 
 #db-puzzle-dialog::backdrop {
@@ -1122,34 +1146,42 @@ label {
 }
 
 .tableFixHead {
-    overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
-    height:360px; /* gives an initial height of 200px to the table */
-  }
-  .tableFixHead thead th {
-    position: sticky; /* make the table heads sticky */
-    top:0px; /* table head will be placed from the top of the table and sticks to it */
-  }
-  .db-puzzle-table {
-    border-collapse: collapse; /* make the table borders collapse to each other */
+    overflow-y: auto;
+    /* make the table scrollable if height is more than 200 px  */
+    height: 360px;
+    /* gives an initial height of 200px to the table */
+}
+
+.tableFixHead thead th {
+    position: sticky;
+    /* make the table heads sticky */
+    top: 0px;
+    /* table head will be placed from the top of the table and sticks to it */
+}
+
+.db-puzzle-table {
+    border-collapse: collapse;
+    /* make the table borders collapse to each other */
     width: 100%;
-   
-  }
-  .db-puzzle-table th,
-  .db-puzzle-table td {
+
+}
+
+.db-puzzle-table th,
+.db-puzzle-table td {
     padding: 6px 6px;
     border: 1px solid #ccc;
-  }
+}
 
-  .db-puzzle-table th {
+.db-puzzle-table th {
     /* background: #eee; */
     background: #818181;
-    color:white;
+    color: white;
 }
 
 #col-status-given,
 #col-status-solved,
 #col-status-open {
-    writing-mode:vertical-rl;
+    writing-mode: vertical-rl;
     padding: 0.8rem;
 }
 
@@ -1157,10 +1189,12 @@ label {
     background-color: var(--defined-cell-bg-color);
     color: white;
 }
+
 #col-status-solved {
     background-color: var(--played-cell-bg-color);
     color: black;
 }
+
 #col-status-open {
     background-color: var(--nested-cell-bg-color);
     color: black;
@@ -1234,7 +1268,7 @@ label {
 
 #search-level {
     width: 14rem;
-    left:20%;
+    left: 20%;
     top: 20%;
     margin-top: 20px;
     padding: 3rem;
@@ -1242,6 +1276,7 @@ label {
     color: black;
     background-color: white;
 }
+
 /* Safari */
 @-webkit-keyframes spin {
     0% {

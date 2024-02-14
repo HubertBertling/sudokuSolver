@@ -99,11 +99,24 @@ html {
     visibility: visible;
 }
 
-#appVersion {
-    margin-top: 4rem;
-    margin-left: 2rem;
+.navbar-element {
+    margin-top: 2rem;
+    margin-left: 1.2rem;
     color: white;
 }
+
+#appVersion {
+    margin-top: 4rem;
+}
+
+#share-app-btn {
+    padding: 4px;
+    border: 6px solid grey;
+    color: black;
+    cursor: pointer;
+    border-radius: 12px;
+}
+
 /*=====================================================*/
 /* Side Navigation */
 /*=====================================================*/
@@ -177,12 +190,14 @@ html {
 }
 
 /* Optional: Style the caret down icon */
-.fa-caret-down, .no-caret {
+.fa-caret-down,
+.no-caret {
     float: right;
     padding-right: 8px;
 }
 
-#caret-down-img, #no-caret-img {
+#caret-down-img,
+#no-caret-img {
     width: 2.4rem;
     height: 2.4rem;
 }
@@ -234,7 +249,7 @@ html {
     margin-bottom: 0.3rem;
     margin-left: 0.9rem;
     margin-right: 0.9rem;
-  
+
     font-weight: bold;
     font-size: var(--font-size-lg);
     background-color: white;
@@ -243,7 +258,8 @@ html {
 }
 
 
-.menu-icon , .share-icon {
+.menu-icon,
+.share-icon {
     margin: 0.3rem;
 }
 
@@ -254,7 +270,8 @@ html {
     margin: 0.4rem 0;
 }
 
-.menu-icon:active, .share-icon:active {
+.menu-icon:active,
+.share-icon:active {
     transform: translate(2px, 2px);
 }
 
@@ -283,6 +300,7 @@ html {
     background-color: black;
     margin: 0.1em;
 }
+
 .mainLoading {
     animation: zoom-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -518,8 +536,9 @@ html {
     display: flex;
     padding: 3px 3px;
     margin-bottom: 5px;
-    
+
 }
+
 .pz-name {
     text-align: left;
     width: 100%;
@@ -654,35 +673,36 @@ html {
     grid-template-columns: auto 1fr;
     grid-auto-rows: auto;
     grid-template-areas:
-      'input prefix-text'
-      'empty label-text';
-  }
-  
-  .radio-eval-type {
+        'input prefix-text'
+        'empty label-text';
+}
+
+.radio-eval-type {
     grid-area: input;
     align-self: center;
     margin: 0;
-  }
-  
-  .label-text:first-of-type {
+}
+
+.label-text:first-of-type {
     grid-area: prefix-text;
     align-self: center;
-  }
-  
-  .label-text:last-of-type {
+}
+
+.label-text:last-of-type {
     grid-area: label-text;
-  }
-  
-  .prefix {
+}
+
+.prefix {
     font-weight: bold;
     font-size: 1.2rem;
-  }
-  
-  .text-spacing {
+}
+
+.text-spacing {
     padding-inline-start: 8px;
     padding-inline-end: 4px;
-  }
-  /*======================= */
+}
+
+/*======================= */
 
 
 
@@ -695,7 +715,8 @@ html {
     margin-right: 1.2rem;
 }
 
-.pc-floatBlock, .puzzle-io {
+.pc-floatBlock,
+.puzzle-io {
     font-size: 1.2rem;
     padding: 0.4rem;
 }
@@ -1096,6 +1117,7 @@ label {
     border: none;
 
 }
+
 .puzzle-table-dlg::backdrop {
     background: hsl(201 50% 40% /.5);
 }
@@ -1116,8 +1138,9 @@ label {
     color: white;
     text-align: right;
     font-size: 3.8rem;
-    margin-right:3rem;
+    margin-right: 3rem;
 }
+
 #db-close-btn:active {
     transform: translate(8x, 8px);
 }
