@@ -319,7 +319,7 @@ In der Sudoku-Trainer-App kann die URL der App geteilt werden. Dies ist dann bes
 1. WhatsApp selektieren
 1. Kontakt selektieren und senden
 
-|Schritt 1  |Schritt2  |
+|Teile Taste  |WhatsApp selektieren |
 |---------|---------|
 |<img src="./images/teilenURLApp.png" width="100px"/>|<img src="./images/teilenURLApp2.png" width="100px"/>|
 
@@ -345,17 +345,36 @@ In diesem Beispiel wird das aktuelle Puzzle >>DemoPuzzle<< verschickt.
 1. Die App Soduku-Trainer starten.
 1. In der App den Datenbank-Dialog öffnen (Menü Datenbank).
 1. Die Taste Import-Puzzle klicken.
-1. Die Aktion Dateien auswählen 
+1. Die Aktion Dateien auswählen <img src="./images/aktionDateien.png" style="margin-left: 20px" width="100px"/>
 
-<img src="./images/aktionDateien.png" style="margin-left: 30px" width="100px"/>
+1. Die im Download-Ordner abgelegte Datei >>DemoPuzzle.txt<< selektieren.
 
-7. Die im Download-Ordner abgelegte Datei >>DemoPuzzle.txt<< selektieren.
+## Puzzle Datenbank vom PC auf das Smartphone übertragen
+
+**Absender-Smartphone**
+
+1. Sudoku-Trainer starten
+1. In den Datenbank-Dialog wechseln
+1. <img src="./images/downloadDB.png" style="margin-left: 20px" width="200px"/>
+1. Download-DB-Taste in der Hauptansicht klicken.
+1. WhatsApp starten (oder eine MAIL App).
+1. Datei in den Anhang laden
+1. Kontakt selektieren und senden.
+
+**Ziel-SmartPhone**
+
+1. WhatsApp starten.
+1. Die in der empfangenen Nachricht enthaltene Datei downloaden.
+1. Die App Soduku-Trainer starten.
+1. In der App den Datenbank-Dialog öffnen (Menü Datenbank).
+1. Die Taste Import-Puzzle klicken.
+1. Die Aktion Dateien auswählen <img src="./images/aktionDateien.png" style="margin-left: 20px" width="100px"/>
 
 ## Die initiale Datenbank ist nicht leer
 
 Sie enthält zwei sehr schwere Puzzles. Also Puzzles, die nur durch Backtracking gelöst werden können. Der Einsteiger in diese App kann damit die automatische Lösungssuche dieses Trainers ausprobieren. In den Zeitungen und Zeitschriften findet man solche Puzzles nicht. Im Internet gibt es unter anderen diese bekannte Adresse [SoEinDing](https://sudoku.soeinding.de/sudokuExtraTeuflischSchwer.php), bei der man solche Puzzles finden kann.
 
-## Sudoku-Trainer, eine App für den Gelegenheitsspieler
+## Sudoku-Trainer, ein Trainer für Gelegenheitsspieler
 
 Eine herausragende Seite für Sudoku-Interessierte ist die Seite von [Andrew Stuart](https://www.sudokuwiki.org/Main_Page). Dort findest Du einen kompletten Überblick über logische Lösungsstrategien für klassisches Sudoku und auch einen Überblick über nicht klassische Sudoku-Varianten.
 
