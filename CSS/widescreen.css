@@ -116,8 +116,14 @@ html {
     color: white;
     cursor: pointer;
     border-radius: 12px;
+    display: grid;
+    grid-template-columns: 0.4fr 1.2fr 0.1fr;
+    text-align: center;
+    place-items: center;
 }
-
+.share-imageURL {
+    margin-right: 5rem;
+}
 /*=====================================================*/
 /* Side Navigation */
 /*=====================================================*/
