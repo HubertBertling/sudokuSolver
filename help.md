@@ -10,8 +10,7 @@ Diese App ist ein Trainer für klassisches Sudoku. Der [Sudoku-Trainer](https://
 
 ## Sudoku-Trainer Installation
 
-Technisch gesehen ist die App Sudoku-Trainer eine progressive Web-App (PWA) . Als solche besitzt sie eine URL. Für die Installation benötigt man lediglich diese URL. Moderne Browser erkennen an der Manifest-Datei im Startverzeichnis, dass es sich um eine Web-App handelt, und zeigen die Möglichkeit der Installation an. Die Installation einer Web-App in einem Browser ist sehr einfach, siehe etwa [Installation-Web-App](https://support.google.com/chrome/answer/9658361?hl=de&co=GENIE.Platform%3DAndroid&oco=1). 
-
+Technisch gesehen ist die App Sudoku-Trainer eine progressive Web-App (PWA) . Als solche besitzt sie eine URL. Für die Installation benötigt man lediglich diese URL. Moderne Browser erkennen an der Manifest-Datei im Startverzeichnis, dass es sich um eine Web-App handelt, und zeigen die Möglichkeit der Installation an. Die Installation einer Web-App in einem Browser ist sehr einfach, siehe etwa [Installation-Web-App](https://support.google.com/chrome/answer/9658361?hl=de&co=GENIE.Platform%3DAndroid&oco=1).  
 Sudoku-Trainer installieren:
 
 1. Öffnen Sie auf Ihrem Android-Gerät den Browser Chrome.
@@ -39,7 +38,6 @@ Die nachfolgend verwendeten Bezeichnungen sind im Laufe der Entwicklung dieses T
 Ein Sudoku-Puzzle ist eine partiell gefüllte Tabelle. Die Tabelle hat 9 Reihen, 9 Spalten und 9 Blöcke. Die initial gesetzten Nummern heißen Givens. Sie werden blau unterlegt angezeigt. Grün unterlegte Zellen enthalten Lösungsnummern, die vom Spieler oder dem Solver gesetzt wurden. Die Tabelle besitzt Reihen, Spalten und Blöcke. Eine Reihe, eine Spalte oder ein Block wird auch als Gruppe bezeichnet.
 
 Der Spieler kann sich bei der Lösungssuche unterstützen lassen, indem er in den noch nicht gesetzten Zellen Kandidatennummern anzeigen lässt. Kandidatennummern einer Zelle sind Nummern, die ohne Widerspruch gesetzt werden können. Damit die Kandidatennummern angezeigt werden, muss der Spieler in der Navigationsleiste die Option "Einstellungen" wählen und dort in dem Feld Kandidatenauswertung eine Option ungleich "Keine" selektieren, beispielsweise "Lazy". Weiter unten wird das Konzept der Kandidatenauswertung im Detail eingeführt.
-
 
 ![Anwendungsansicht](./images/AppView2.png)
 
@@ -293,15 +291,65 @@ Beim Abspeichern erhält das gespeicherte Puzzle automatisch einen Namen, das ak
 |Drucken| **Puzzle drucken.** Mittels der Taste Drucken kann das aktuell selektierte Puzzle gedruckt werden. Dabei wird nur die Aufgabe, nicht aber die Lösung ausgedruckt. Dies ist besonders dann nützlich wenn man ein generiertes Puzzle von Hand auf dem Papier lösen möchte. 
 |Download Puzzle-DB|**Puzzle-Datenbank exportieren.** Durch Drücken dieser Taste wird die aktuelle Puzzle-Datenbank in ein txt-File 'Puzzle-DB.txt' ausgegeben. Es befindet sich im Download-Ordner.|
 |Download Puzzle|**Puzzle exportieren.** Durch Drücken dieser Taste wird die aktuelle Puzzle mit dem Namen >>PuzzleName<<  in ein txt-File '>>PuzzleName<<.txt' ausgegeben. Es befindet sich im Download-Ordner.|
+|Import Puzzle(s)|**Puzzle(s) importieren.** Mit dieser Taste wird ein File-Selection-Dialog gestartet. nur txt-Files können selektiert werden.
 |Puzzle teilen <img src="./images/shareButton.png" width="100px"/>|**Puzzle teilen.** Die Sudoku-Trainer-App ist Progressive Web App (PWA). Wie eine native App kann sie daher Inhalte, in unserem Fall ein Puzzle-File, mit anderen Apps teilen, z.B. mit WhatsApp oder einer EMAIL-App. Auf dem PC startet bei Doppel-Click auf diese Datei die Sudoku-App. Auf dem Android-SmartPhone ist dies leider noch nicht möglich.|
 
-## Beispiele für das Teilen
+## Import/Export und Teilen von Puzzles
 
-## Puzzle vom SmartPhone zum PC
+Die Möglichkeiten für Import/Export und Teilen sind abhängig vom Betriebssystem und vom Browser. Die nachfolgende Tabelle beschreibt die Situation, die dem Autor dieser Hilfe vorlag. Der Sudoku-Trainer kann Quelle und Ziel von Teilen-Operationen sein, Ziel aber leider nicht für das Teilen von Files unter Android.
 
-## Puzzle vom PC zum SmartPhone
+|Operation |Inhalt    |Smartphone Android V12 Chrome 121|Desktop PC Windows 11 Chrome 121|
+|---------------------|-------|-------------|-----------|
+|Teilen Quelle        |URL    | Ja          | Ja        |
+|Teilen Ziel          |URL    | Ja          | Ja        |
+|Teilen Quelle        |File   | Ja          | Ja        |
+|Teilen Ziel          |File   | Nein        | Ja        |
+|Puzzle-DB exportieren|File   | Ja          | Ja        |
+|Puzzle exportieren   |File   | Ja          | Ja        |
+|Puzzle importieren   |File   | Ja          | Ja        |
+
+Nachfolgend einige Beispiele für den Austausch von Puzzles zwischen Sudoku-Trainer-Apps
+
+## Teilen der Sudoku-Trainer-App URL
+
+In der Sudoku-Trainer-App kann die URL der App geteilt werden. Dies ist dann besonders nützlich, wenn man die App weitergeben will.
+
+**Absender-Smartphone**
+1. Teile-Taste
+1. WhatsApp selektieren
+1. Kontakt selektieren und senden
+
+|Schritt 1  |Schritt2  |
+|---------|---------|
+|<img src="./images/teilenURLApp.png" width="100px"/>|<img src="./images/teilenURLApp2.png" width="100px"/>|
+
+**Ziel-SmartPhone**
+
+1. In WhatsApp in der empfangenen Nachricht auf den Link klicken.
+1. In der geöffneten Web-Seite die PWAP-App installieren.
 
 ## Puzzle vom SmartPhone zum SmartPhone
+
+In diesem Beispiel wird das aktuelle Puzzle >>DemoPuzzle<< verschickt.
+
+**Absender-Smartphone**
+
+1. Teile-Taste in der Hauptansicht klicken.
+1. WhatsApp selektieren (oder eine MAIL App).
+1. Kontakt selektieren und senden.
+
+**Ziel-SmartPhone**
+
+1. WhatsApp starten.
+1. Die in der empfangenen Nachricht enthaltene Datei >>DemoPuzzle.txt<< downloaden.
+1. Die App Soduku-Trainer starten.
+1. In der App den Datenbank-Dialog öffnen (Menü Datenbank).
+1. Die Taste Import-Puzzle klicken.
+1. Die Aktion Dateien auswählen 
+
+<img src="./images/aktionDateien.png" style="margin-left: 30px" width="100px"/>
+
+7. Die im Download-Ordner abgelegte Datei >>DemoPuzzle.txt<< selektieren.
 
 ## Die initiale Datenbank ist nicht leer
 
@@ -312,7 +360,7 @@ Sie enthält zwei sehr schwere Puzzles. Also Puzzles, die nur durch Backtracking
 Eine herausragende Seite für Sudoku-Interessierte ist die Seite von [Andrew Stuart](https://www.sudokuwiki.org/Main_Page). Dort findest Du einen kompletten Überblick über logische Lösungsstrategien für klassisches Sudoku und auch einen Überblick über nicht klassische Sudoku-Varianten.
 
 Stuarts Sudoku-Solver stellt die Anwendung logischer Lösungsstrategien in den Mittelpunkt. Ein Lösungsschritt besteht aus der Anwendung einer logischen Schlussregel. Das kann die Elimination von Kandidaten in mehreren Zellen sein aufgrund eines 'nackten Paares' oder die Setzung von 'versteckten Singles' (notwendigen Nummern) in mehreren Zellen gleichzeitig. Puzzles, die keine Lösung per logischem Schließen haben, löst der Solver (absichtlich) nicht. Echte Sudoku-Fans verzichten auf Backtracking.
-Stuarts Sudoku-Solver richtet sich an Sudoku-Strategie-Experten bzw. an solche, die es werden wollen. 
+Stuarts Sudoku-Solver richtet sich an Sudoku-Strategie-Experten bzw. an solche, die es werden wollen.
 
 Der von mir hier präsentierte Sudoku-Trainer wendet sich an Gelegenheits-Sudoku-Spieler, die ein Puzzle z.B. aus einer Zeitschrift lösen wollen. Sie bekommen auf jeden Fall eine Lösung ihres Puzzles sowie einen Schritt für Schritt Lösungsweg und den Schwierigkeitsgrad des eingegebenen Puzzles.
 

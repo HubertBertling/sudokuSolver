@@ -1,5 +1,5 @@
 let sudoApp;
-let VERSION = 278;
+let VERSION = 279;
 
 if (window.File && window.FileReader
     && window.FileList && window.Blob) {
@@ -76,8 +76,8 @@ if (navigator.share && navigator.canShare) {
         if (navigator.canShare) {
             navigator.share(
                 {
-                    title: "Sudoku Trainer",
-                    text: "Viel Spaß und neue Einsichten beim Spielen mit dem Sudoku-Trainer",
+                    title: "Sudoku-Trainer",
+                    text: "Üben und Lösen von Puzzles mit der Sudoku-Trainer-App",
                     url: "https://hubertbertling.github.io/sudokuSolver",
                 }
             )
