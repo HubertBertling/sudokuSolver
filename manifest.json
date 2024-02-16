@@ -3,7 +3,7 @@
   "short_name": "SudokuTrainer",
   "description": "Die App ist ein Trainer für klassisches Sudoku.",
 
-  "id": "SudokuTrainerPWAManifest",
+  "id": "/sudokuSolver/index.html",
   "scope": "/sudokuSolver/",
   "start_url": "/sudokuSolver/index.html",
 
