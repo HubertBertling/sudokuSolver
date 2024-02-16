@@ -56,7 +56,7 @@
       "files": [
         {
           "name": "puzzleFiles",
-          "accept": ["text/plain", ".txt"]
+          "accept": ["text/plain", ".text"]
         }
       ]
     }
@@ -66,7 +66,7 @@
     {
       "action": "/sudokuSolver/",
       "accept": {
-        "text/plain": [".txt", ".sudoku"]
+        "text/plain": [".text", ".sudoku"]
       },
       "launch_type": "single-client"
     }

@@ -6977,12 +6977,12 @@ class SudokuPuzzleDB extends SudokuModel {
         //Check the Browser.
         var isIE = false || !!document.documentMode;
         if (isIE) {
-            window.navigator.msSaveBlob(blob1, 'puzzle-db.txt');
+            window.navigator.msSaveBlob(blob1, 'puzzle-db.text');
         } else {
             var url = window.URL || window.webkitURL;
             var link = url.createObjectURL(blob1);
             var a = document.createElement("a");
-            a.download = 'puzzle-db.txt';
+            a.download = 'puzzle-db.text';
             a.href = link;
             document.body.appendChild(a);
             a.click();
@@ -7006,12 +7006,12 @@ class SudokuPuzzleDB extends SudokuModel {
             //Check the Browser.
             var isIE = false || !!document.documentMode;
             if (isIE) {
-                window.navigator.msSaveBlob(blob1, selectedPuzzle.name + '.txt');
+                window.navigator.msSaveBlob(blob1, selectedPuzzle.name + '.text');
             } else {
                 var url = window.URL || window.webkitURL;
                 var link = url.createObjectURL(blob1);
                 var a = document.createElement("a");
-                a.download = selectedPuzzle.name + '.txt';
+                a.download = selectedPuzzle.name + '.text';
                 a.href = link;
                 document.body.appendChild(a);
                 a.click();
@@ -7079,7 +7079,7 @@ class SudokuPuzzleDB extends SudokuModel {
             newPuzzleMap.set(selectedKey, selectedPuzzle);
             let str_newPuzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
             let blob1 = new Blob([str_newPuzzleMap], { type: "text/plain;charset=utf-8" });
-            let file = new File([blob1], selectedPuzzle.name + '.txt', { type: "text/plain" });
+            let file = new File([blob1], selectedPuzzle.name + '.text', { type: "text/plain" });
             return file;
         } else {
             return undefined;
