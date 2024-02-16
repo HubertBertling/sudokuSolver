@@ -7006,12 +7006,12 @@ class SudokuPuzzleDB extends SudokuModel {
             //Check the Browser.
             var isIE = false || !!document.documentMode;
             if (isIE) {
-                window.navigator.msSaveBlob(blob1, selectedPuzzle.name + '.text');
+                window.navigator.msSaveBlob(blob1, 'downloadedPuzzle.text');
             } else {
                 var url = window.URL || window.webkitURL;
                 var link = url.createObjectURL(blob1);
                 var a = document.createElement("a");
-                a.download = selectedPuzzle.name + '.text';
+                a.download = 'downloadedPuzzle.text';
                 a.href = link;
                 document.body.appendChild(a);
                 a.click();
@@ -7079,7 +7079,7 @@ class SudokuPuzzleDB extends SudokuModel {
             newPuzzleMap.set(selectedKey, selectedPuzzle);
             let str_newPuzzleMap = JSON.stringify(Array.from(newPuzzleMap.entries()));
             let blob1 = new Blob([str_newPuzzleMap], { type: "text/plain;charset=utf-8" });
-            let file = new File([blob1], selectedPuzzle.name + '.text', { type: "text/plain" });
+            let file = new File([blob1], 'sharedPuzzle.text', { type: "text/plain" });
             return file;
         } else {
             return undefined;
