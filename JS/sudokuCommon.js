@@ -6768,7 +6768,7 @@ class SudokuPuzzleDB extends SudokuModel {
         // Overwrite stored puzzle having the id puzzleId
         let storedPuzzle = this.getPuzzle(puzzleId);
         // Steps mischen
-        //     if (puzzleRecord.status == 'gelöst') {
+        // old feature not used anymore
         if (puzzleRecord.statusOpen == 0) {
             if (puzzleRecord.stepsLazy == 0) {
                 puzzleRecord.stepsLazy = storedPuzzle.stepsLazy;
@@ -6779,6 +6779,8 @@ class SudokuPuzzleDB extends SudokuModel {
             puzzleRecord.stepsLazy = storedPuzzle.stepsLazy;
             puzzleRecord.stepsStrict = storedPuzzle.stepsStrict;
         }
+        //Stored puzzles save their creation date
+        puzzleRecord.date = storedPuzzle.date;
         this.savePuzzle(puzzleId, puzzleName, puzzleRecord);
         this.notify();
     }
