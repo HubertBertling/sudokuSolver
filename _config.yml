@@ -1,11 +1,9 @@
-theme: jekyll-theme-cayman
 # Site settings
 
 title: Sudoku Trainer
 email: h.bertling@web.de
 description: > # this means to ignore newlines until "baseurl:"
     Ein Trainer für klassisches Sudoku.
-baseurl: "" # the subpath of your site, e.g. /blog/
-url: "https://hubertbertling.github.io" # the base hostname & protocol for your site
 
 # Build settings
+theme: jekyll-theme-cayman
