@@ -2,7 +2,7 @@
 layout: default
 ---
 
-# Inhalt
+# Sudoku-Trainer
 - [Sudoku-Trainer Installation](#sudoku-trainer-installation)
 - [Einführung in die App](#einführung-in-die-app)
     - [Ein Trainer für klassisches Sudoku](#ein-trainer-für-klassisches-sudoku)

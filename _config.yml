@@ -3,7 +3,9 @@
 title: Sudoku-Trainer
 email: h.bertling@web.de
 description: > # this means to ignore newlines until "baseurl:"
-    Ein Trainer für klassisches Sudoku.
+    Ein Trainer für klassisches Sudoku. Er löst nicht nur jedes Puzzle sondern erklärt auch jeden einzelnen Schritt auf dem Weg zur Lösung. 
+    Ein manueller Lösungsversuch kann jederzeit mit automatischen Schritten fortgesetzt werden. D.h. Sudoku-Puzzles lösen mit garantiertem Erfolg verbunden
+    mit neuen Einsichten, wie man Lösungen finden kann. Viel Spaß dabei. 
 
 # Build settings
 theme: jekyll-theme-cayman
