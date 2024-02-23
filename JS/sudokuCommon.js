@@ -2825,7 +2825,8 @@ class SudokuGroup extends SudokuModel {
         // Iteriere über die Gruppe
         for (let i = 0; i < 9; i++) {
             if (this.myCells[i].getValue() == '0') {
-                let permNumbers = this.myCells[i].getAdmissibles();
+                // let permNumbers = this.myCells[i].getAdmissibles();
+                let permNumbers = this.myCells[i].getTotalAdmissibles();
                 permNumbers.forEach(nr => {
                     let iNr = parseInt(nr);
                     // Für jede Nummer die Indices ihres Auftretens speichern
