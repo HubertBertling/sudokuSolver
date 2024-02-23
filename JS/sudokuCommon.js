@@ -5905,6 +5905,8 @@ class SudokuCell extends SudokuModel {
             this.adMissibleIndexSelected = nextIndex;
             return nextIndex;
         } else {
+            // Für einen erneuten Durchlauf zurücksetzen
+            this.adMissibleIndexSelected = -1;
             return -1;
         }
     }
