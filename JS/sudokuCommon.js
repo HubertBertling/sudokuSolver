@@ -161,7 +161,7 @@ class SudokuSolverController {
                 let str_appSetting = localStorage.getItem("sudokuAppSetting");
                 //The item appSetting exists already
                 appSetting = JSON.parse(str_appSetting);
-        
+
                 appSetting.playMode = radioNode.getAttribute('data');
                 this.mySolver.setPlayMode(radioNode.getAttribute('data'));
                 str_appSetting = JSON.stringify(appSetting);
@@ -266,7 +266,7 @@ class SudokuSolverController {
     }
 
     sudokuCellPressed(index) {
-        if (this.mySolver.isInAutoExecution() && 
+        if (this.mySolver.isInAutoExecution() &&
             this.mySolver.indexSelected() !== index) {
             // Another cell selected during automatic execution
             // The stepper is stopped and terminated
@@ -1230,7 +1230,7 @@ class SudokuSolver extends SudokuCalculator {
     indexSelected() {
         return super.indexSelected();
     }
-   
+
 
     setStepLazy() {
         super.setStepLazy();
@@ -5544,6 +5544,7 @@ class SudokuCellView extends SudokuView {
                     // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
                     // verursacht werden.
                     // Die Block, Spalte oder Zeile des Paares wird markiert.
+                    let pairArray = [];
                     tmpCell.myLevel_gt0_inAdmissiblesFromPairs.forEach(pairInfo => {
                         pairInfo.collection.myCells.forEach(cell => {
                             if (cell !== tmpCell) {
@@ -5552,8 +5553,18 @@ class SudokuCellView extends SudokuView {
                         });
                         pairInfo.pairCell1.myView.setBorderRedSelected();
                         pairInfo.pairCell2.myView.setBorderRedSelected();
+
+                        if (pairArray.length == 0) {
+                            pairArray = Array.from(pairInfo.pairCell1.getTotalAdmissibles());
+                        }
                     })
-                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Nacktem Paar" ');
+
+                    sudoApp.mySolver.myView.displayTechnique(
+                        adMissibleNrSelected 
+                        + ' unzulässig wegen "Nacktem Paar" {'
+                        + pairArray[0]
+                        + ', '
+                        + pairArray[1] + '}');
                     return;
                 }
             }
@@ -5563,15 +5574,24 @@ class SudokuCellView extends SudokuView {
                 if (tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.has(adMissibleNrSelected)) {
                     // Für ein Subpaar muss nicht jede einzelne Nummer geprüft werden.
                     // 
+                    let pairArray = [];
                     const [pairInfo] = tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
                     pairInfo.collection.myCells.forEach(cell => {
                         if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
                             cell.myView.setBorderRedSelected();
+                            if (pairArray.length == 0) {
+                                pairArray = Array.from(cell.getTotalAdmissibles());
+                            }
                         } else {
                             cell.myView.setBorderSelected();
                         }
                     });
-                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen "Verstecktem Paar"')
+                    sudoApp.mySolver.myView.displayTechnique(
+                        adMissibleNrSelected 
+                        + ' unzulässig wegen "Verstecktem Paar" {' 
+                        + pairArray[0]
+                        + ', '
+                        + pairArray[1] + '}');
                     return;
                 }
             }
@@ -5606,7 +5626,8 @@ class SudokuCellView extends SudokuView {
                     }
                 })
 
-                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Pointing Pair');
+                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected 
+                    + ' unzulässig wegen Pointing Pair');
                 return;
             }
 
