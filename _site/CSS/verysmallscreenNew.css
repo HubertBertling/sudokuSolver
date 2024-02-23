@@ -1,0 +1,1350 @@
+:root {
+    /* app colors */
+    /*    --screen-bg-color: white; */
+    --screen-bg-color: #F2E2F2;
+    --screen-color: #0d1117;
+    --standard-btn-bg-color: rgba(0, 0, 0, .25);
+    --standard-btn-color: black;
+    --standard-btn-height: 20px;
+    --delete-btn-bg-color: #e91e63;
+    --delete-btn-color: white;
+
+    --help-color: #4e67c8;
+
+    /* Cell colors */
+    --defined-cell-bg-color: #7986CB;
+    --defined-cell-color: #FFF9C4;
+
+    --played-cell-bg-color: #4DB6AC;
+    --played-cell-color: #0d1117;
+
+    --nested-cell-bg-color: #ebdaa4;
+    --nested-cell-color: black;
+
+    --selected-cell-bg-color: black;
+    --selected-cell-color: white;
+    --selected-cell-border-color: Magenta;
+
+
+
+
+    --error-cell-bg-color: #e91e63;
+    --error-cell-color: white;
+
+    /* Other definitions */
+    --sudoku-cell-size: 9.8vw;
+    --border-radius: 5px;
+    --space-y: 20px;
+    --font-size-btn: 1.4rem;
+
+    --font-size-xsm: 0.4rem;
+    --font-size-sm: 0.8rem;
+    --font-size: 1.1rem;
+    --font-size-lg: 1.4rem;
+    --font-size-xl: 1.8rem;
+
+    /* Setting the global font size */
+    /* Prozent von der Browser Font-Einstellung */
+    font-size: 50%;
+    /* Effekt: 1rem = 10px; */
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    /* padding and border are included in the width and height */
+    box-sizing: border-box;
+}
+
+/* Set height of body and the document to 100% */
+body,
+
+html {
+    font-family: 'Open Sans', sans-serif;
+    /* height: 95vh; */
+    background-color: var(--screen-bg-color);
+    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+}
+
+/*======================================*/
+/* Global definitions */
+/*======================================*/
+
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 70px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    top: -30px;
+    left: 50%;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+/*=======================================================*/
+.navbar-element {
+    margin-top: 2rem;
+    margin-left: 1.2rem;
+    color: white;
+}
+
+#appVersion {
+    margin-top: 5rem;
+}
+
+#share-app-btn {
+    padding: 4px;
+    border: 6px solid grey;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    border-radius: 12px;
+    display: grid;
+    grid-template-columns: 0.4fr 1.2fr 0.1fr;
+    text-align: center;
+    place-items: center;
+}
+.share-imageURL {
+    margin-right: 5rem;
+}
+/*=====================================================*/
+/* Side Navigation */
+/*=====================================================*/
+
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 3;
+    /* top: 0;
+    left: 0; */
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 10px;
+}
+
+
+.sidenav a,
+.dropdown-btn {
+    padding: 8px 8px 8px 24px;
+    text-decoration: none;
+    font-size: 25px;
+    color: white;
+    /*color: #818181;*/
+    display: block;
+
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+}
+
+.closebtn {
+    text-align: right;
+    padding: 8px 8px 8px 8px;
+    text-decoration: none;
+    font-size: 48px;
+    color: white;
+    /*color: #818181;*/
+    display: block;
+    border: none;
+    background: none;
+    width: 100%;
+    cursor: pointer;
+    outline: none;
+    margin-bottom: 40px;
+}
+
+/* Hover not possible on touch devices */
+.sidenav a:active,
+.dropdown-btn:active {
+    color: white;
+}
+
+.closebtn:active {
+    color: white;
+}
+
+
+.active {
+    background-color: green;
+    color: white;
+}
+
+/* Dropdown container (hidden by default). Optional: add a lighter background color 
+   and some left padding to change the design of the dropdown content */
+.dropdown-container {
+    display: none;
+    background-color: #262626;
+    padding-left: 18px;
+}
+
+/* Optional: Style the caret down icon */
+.fa-caret-down,
+.no-caret {
+    float: right;
+    padding-right: 8px;
+}
+
+#caret-down-img,
+#no-caret-img {
+    width: 2.4rem;
+    height: 2.4rem;
+}
+
+/*===========================================================*/
+
+.app-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+}
+
+/* App-header */
+
+
+
+app-empty-footer {
+    display: none;
+}
+
+.app-name-header {
+    margin-left: 0.3rem;
+    margin-right: 0.3rem;
+    display: grid;
+    grid-template-columns: 0.2fr 0.2fr 1.4fr 0.1fr;
+    font-size: var(--font-size-xl);
+    font-weight: bold;
+    padding: 0.4rem;
+    text-align: center;
+    place-items: center;
+    background-color: DimGray;
+    color: white;
+    border-radius: 0.6rem;
+}
+
+
+
+#help-button {
+    width: 2.4rem;
+    height: 2.4rem;
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+    margin-left: 0.9rem;
+    margin-right: 0.9rem;
+
+    font-weight: bold;
+    font-size: var(--font-size-lg);
+    background-color: white;
+    border-radius: 0.3rem;
+    border: 0;
+}
+
+.menu-icon {
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+    margin-left: 0.3rem;
+    margin-right: 1.8rem;
+}
+
+.share-icon {
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+    margin-left: 1.8rem;
+    margin-right: 0.3rem;
+}
+
+.menu-icon-line {
+    width: 3rem;
+    height: 0.3rem;
+    background-color: white;
+    margin: 0.3rem 0;
+}
+
+.menu-icon:active,
+.share-icon:active {
+    transform: translate(2px, 2px);
+}
+
+
+/*==============================================*/
+
+
+.sudoku-solver-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    height: 85vh;
+}
+
+/*======================================*/
+/* Sudoku grid block */
+/*======================================*/
+
+.gridArea {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(1, auto);
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid gray;
+}
+
+.main-sudoku-grid {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    background-color: black;
+    margin: 0.1em;
+}
+
+.mainLoading {
+    animation: zoom-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.grid-plus-explainer {
+    border: 1px solid black;
+}
+
+.sudoku-block {
+    margin: 0.2rem;
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    place-items: center;
+}
+
+.sudoku-grid-cell {
+    position: relative;
+    height: 9.8vw;
+    width: 9.8vw;
+    display: grid;
+    font-size: var(--font-size-xl);
+    place-items: center;
+    margin: 0.05rem;
+}
+
+.sudoku-grid-cell.define {
+    background-color: var(--defined-cell-bg-color);
+    color: var(--defined-cell-color);
+}
+
+.sudoku-grid-cell.play {
+    background-color: var(--played-cell-bg-color);
+    color: var(--played-cell-color);
+}
+
+
+.auto-step-number {
+    grid-area: step;
+}
+
+.auto-value-number {
+    grid-area: value;
+}
+
+.auto-value-option1 {
+    grid-area: option1;
+}
+
+.auto-value-option2 {
+    grid-area: option2;
+}
+
+.auto-value-option3 {
+    grid-area: option3;
+}
+
+.auto-value-cell {
+    display: grid;
+    grid-template-areas:
+        'step value value value'
+        'step option1 option2 option3';
+    gap: 0.1rem;
+    background-color: grey;
+    color: var(--played-cell-color);
+}
+
+.auto-value-cell>div {
+    background-color: var(--played-cell-bg-color);
+    text-align: center;
+    padding: 0.2rem 0.1rem;
+}
+
+.auto-value-cell>div.auto-step-number {
+    background-color: darkgrey;
+    color: black;
+    font-size: 0.8rem;
+    width: 1rem;
+}
+
+.auto-value-cell>div.auto-value-number {
+    font-size: 1.2rem;
+}
+
+.auto-value-cell>div.auto-value-option1 {
+    font-size: 1rem;
+    width: 0.8rem;
+    padding: 0.1rem;
+}
+
+.auto-value-cell>div.auto-value-option2 {
+    font-size: 1rem;
+    width: 0.8rem;
+    padding: 0.1rem;
+}
+
+.auto-value-cell>div.auto-value-option3 {
+    font-size: 1rem;
+    width: 0.8rem;
+    padding: 0.1rem;
+}
+
+.auto-value-cell>div.open {
+    font-size: 0.8rem;
+    background-color: var(--nested-cell-bg-color);
+}
+
+.sudoku-grid-cell.nested {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    place-items: center;
+    font-size: 1.2rem;
+    background-color: var(--nested-cell-bg-color);
+    color: var(--nested-cell-color);
+}
+
+.sudoku-grid-cell.selected {
+    background-color: var(--selected-cell-bg-color);
+    color: var(--selected-cell-color);
+    border: 2px solid var(--selected-cell-bg-color);
+}
+
+.nested>div.neccessary {
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+
+    border-radius: 0.3rem;
+    font-size: 1.0rem;
+    background-color: #56c7aa;
+    color: #0d1117;
+    border: 0.1rem solid white;
+}
+
+.nested>div.neccessary-big {
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+
+    border-radius: 0.3rem;
+    font-size: 1.8rem;
+    background-color: #56c7aa;
+    color: #0d1117;
+    border: 0.1rem solid white;
+}
+
+.nested>div.indirect-neccessary {
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+
+    border-radius: 0.3rem;
+    font-size: 1.2rem;
+    background-color: #56c7aa;
+    color: #0d1117;
+    border: 0.1rem solid white;
+}
+
+.nested>div.inAdmissible {
+    font-weight: bold;
+    font-size: 1.0rem;
+    color: Crimson;
+}
+
+/*
+.nested.err>div.inAdmissible {
+    background-color: white;
+}
+*/
+.nested.err>div.neccessary.inAdmissible {
+    background-color: #56c7aa;
+}
+
+
+.sudoku-grid-cell.hover {
+    border: 2px solid var(--selected-cell-border-color);
+}
+
+.sudoku-grid-cell.hover-red {
+    border: 3px dashed Magenta;
+}
+
+.sudoku-grid-cell.hover-green {
+    border: 3px dashed green;
+}
+
+.sudoku-grid-cell.hover-white {
+    border: 5px dashed white;
+}
+
+.sudoku-grid-cell.hover-black {
+    border: 5px dashed black;
+}
+
+
+.sudoku-block.err {
+    background-color: var(--error-cell-bg-color);
+    color: var(--error-cell-color);
+}
+
+.sudoku-grid-cell.row-err,
+.sudoku-grid-cell.col-err {
+    border: 3px solid var(--error-cell-bg-color);
+}
+
+.sudoku-grid-cell.col-err {
+    border-top: 2px solid var(--error-cell-bg-color);
+    border-bottom: 2px solid var(--error-cell-bg-color);
+}
+
+.sudoku-grid-cell.row-err {
+    border-left: 2px solid var(--error-cell-bg-color);
+    border-right: 2px solid var(--error-cell-bg-color);
+}
+
+.sudoku-grid-cell.err,
+.sudoku-grid-cell.wrong {
+    /* background-color: var(--error-cell-bg-color); 
+    color: var(--error-cell-color); */
+    border: 4px solid Crimson;
+}
+
+.sudoku-grid-cell.err.selected {
+    background-color: black;
+}
+
+.loaded-evaluations {
+    font-size: var(--font-size);
+    display: flex;
+    padding: 3px 3px;
+    margin-bottom: 5px;
+}
+
+.pz-name {
+    text-align: left;
+    width: 100%;
+}
+
+.pz-level {
+    text-align: right;
+    width: 50%;
+}
+
+
+.technique,
+.reasonInsolvability {
+    height: 18px;
+    font-size: var(--font-size);
+    display: flex;
+    padding-top: 3px;
+    padding-left: 2px;
+    padding-bottom: 3px;
+    /* border: 1px solid black; */
+    background-color: lightgrey;
+}
+
+.reasonInsolvability {
+    color: Crimson;
+}
+
+/*======================================*/
+/* Button container                  */
+/*======================================*/
+
+.mobile-btn-container {
+    margin-left: 0.6rem;
+    margin-right: 0.6rem;
+    padding: 1rem;
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 0.4rem;
+}
+
+
+.mobile-btn {
+    background-color: var(--standard-btn-bg-color);
+    text-align: center;
+    font-size: var(--font-size-lg);
+    border-radius: 0.3rem;
+    border: none;
+    display: grid;
+    gap: 4px;
+    grid-template-columns: 1fr;
+    place-items: center;
+    padding: 0.2rem;
+}
+
+.btn-undo-off>img,
+.btn-redo-off>img {
+    opacity: 0.3;
+}
+
+.btn-define {
+    background-color: var(--defined-cell-bg-color);
+    color: var(--defined-cell-color);
+}
+
+.btn-play {
+    background-color: var(--played-cell-bg-color);
+}
+
+.btn-define.pressed {
+    /* transform: translate(2px, 2px); */
+    border: 3px solid darkblue;
+}
+
+.btn-play.pressed {
+    border: 3px solid darkgreen;
+}
+
+
+.mobile-btn:active {
+    transform: translate(2px, 2px);
+}
+
+.btn:active {
+    transform: translate(2px, 2px);
+}
+
+.btn-delete-cell {
+    background-color: var(--delete-btn-bg-color);
+    color: var(--delete-btn-color);
+}
+
+#btn-autoStep {
+    grid-column-start: 4;
+    grid-column-end: 6;
+    grid-row-start: 4;
+    grid-row-end: 4;
+}
+
+.btn-image {
+    width: 1rem;
+    height: 1rem;
+}
+
+.btn-with-image {
+    padding-top: 0.2rem;
+    font-size: var(--font-size-lg);
+}
+
+/*======================================*/
+/* Evaluation radio buttons             */
+/*======================================*/
+
+
+/*======================= */
+
+.first-label-container {
+    margin-top: 0.4rem;
+}
+
+.label-container {
+    display: inline-grid;
+    grid-template-columns: auto 1fr;
+    grid-auto-rows: auto;
+    grid-template-areas:
+        'input prefix-text'
+        'empty label-text';
+}
+
+.radio-eval-type {
+    grid-area: input;
+    align-self: center;
+    margin: 0;
+}
+
+.label-text:first-of-type {
+    grid-area: prefix-text;
+    align-self: center;
+}
+
+.label-text:last-of-type {
+    grid-area: label-text;
+}
+
+.prefix {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.text-spacing {
+    padding-inline-start: 0.6rem;
+    padding-inline-end: 0.3rem;
+}
+
+/*======================= */
+
+.eval-btn-block {
+    margin-top: 0.8rem;
+    font-size: 1.2rem;
+}
+
+/* ======================================*/
+/* Evaluation block                       */
+/* ======================================*/
+
+
+.pc-eval,
+.play-mode,
+.io-technique {
+    margin-top: 1.2rem;
+    margin-left: 0.8rem;
+    margin-right: 0.8rem;
+}
+
+.pc-floatBlock,
+.puzzle-io {
+    font-size: 1.2rem;
+    padding: 0.8rem;
+}
+
+/* ======================================*/
+/* Evaluation block                       */
+/* ======================================*/
+.eval-legend,
+.play-mode-legend,
+.puzzle-io-legend {
+    font-weight: bold;
+    margin-left: 10px;
+    font-size: var(--font-size-lg);
+}
+
+
+/*======================================*/
+/* Progress block */
+/*======================================*/
+
+.progress-box {
+    /* border-bottom: 3px solid #0d1117; */
+    padding-top: 3px;
+    padding-bottom: 3px;
+    color: var(--screen-color);
+    font-size: var(--font-size);
+}
+
+.progress-block {
+    margin-top: 5px;
+    line-height: 16px;
+    display: grid;
+    grid-template-columns: 1.1fr 0.2fr 0.9fr;
+    gap: 2px;
+}
+
+.checkbox {
+    margin-left: 3px;
+    background-color: var(--screen-bg-color);
+}
+
+.step-count-box {
+    line-height: 16px;
+    height: 16px;
+    display: flex;
+    margin-right: 5px;
+    /*  width: 145px; */
+    width: 100%;
+}
+
+.forward-backward-image {
+    width: 15px;
+    height: 15px;
+}
+
+.forward,
+.backward {
+    height: 16px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.autoMode-radio-btns {
+    place-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background-color: var(--screen-bg-color);
+    font-size: var(--font-size-lg);
+}
+
+.forward.checked,
+.backward.checked {
+    background-color: var(--played-cell-bg-color);
+}
+
+#myProgress {
+    position: relative;
+    width: 100%;
+    height: 16px;
+    font-size: var(--font-size);
+    text-align: right;
+    padding-right: 5px;
+    background-color: var(--nested-cell-bg-color);
+}
+
+#myBarDef,
+#myBarPlay {
+    position: absolute;
+    width: 20%;
+    height: 16px;
+    line-height: 16px;
+}
+
+#myBarDef {
+    z-index: 2;
+    background-color: var(--defined-cell-bg-color);
+    color: white;
+    text-align: center;
+}
+
+#myBarPlay {
+    z-index: 1;
+    background-color: var(--played-cell-bg-color);
+    color: black;
+    text-align: right;
+    padding-right: 5px;
+}
+
+.total-bar-value {
+    line-height: 16px;
+    vertical-align: center;
+}
+
+/*=======================================*/
+/* DB-Dialog 
+/*=======================================*/
+
+.puzzle-header {
+    font-size: var(--font-size-xl);
+    display: inline-block;
+    color: black;
+    margin-top: 10px;
+}
+
+
+/* ===================================================*/
+/*  Save and rename dialogs                           */
+/*====================================================*/
+
+.puzzle-dlg {
+    position: relative;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 1.4rem;
+}
+
+.puzzle-dlg::backdrop {
+    background: hsl(201 50% 40% /.5);
+}
+
+.dlg-header {
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    margin: 5px;
+    text-align: center;
+}
+
+label {
+    font-size: var(--font-size-lg);
+    margin-left: 1.2rem;
+    margin-bottom: 1.2rem;
+}
+
+.puzzle-name-input-dlg {
+    width: 90%;
+    margin-left: 1.2rem;
+    padding: 0.8rem;
+    font-size: var(--font-size-lg);
+}
+
+.ok-cancel-btns {
+    margin: 2.4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+}
+
+/*{
+    width: 50%;
+    margin-top: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 15px;
+}
+
+*/
+
+/*=======================================*/
+/* Success-Dialog 
+/*=======================================*/
+.successDlg::backdrop {
+    background: hsl(201 50% 40% /.5);
+}
+
+.successDlg {
+    width: 60%;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    position: absolute;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.dlg-header {
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    margin: 1.2rem;
+    text-align: center;
+}
+
+.further-row {
+    display: flex;
+    margin-top: auto;
+    margin-left: 10px;
+}
+
+label {
+    margin-left: 10px;
+}
+
+.successImg {
+    margin-left: 10px;
+    margin-right: auto;
+    height: 85%;
+    width: 85%;
+}
+
+.successDlg-OK-Btn {
+    width: 100px;
+    margin-top: 10px;
+    /* margin-left: auto; */
+    float: right;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+/*=======================================*/
+/* Info-Dialog 
+/*=======================================*/
+
+
+.infoDlg::backdrop {
+    background: hsl(201 50% 40% /.5);
+}
+
+.infoDlg {
+    width: 30rem;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    position: absolute;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.infoDlgHeader {
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    margin: 10px;
+    text-align: center;
+}
+
+.infoDlgBodyRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.infoDlgBody {
+    font-size: var(--font-size-lg);
+    margin-left: 10px;
+}
+
+.infoIcon {
+    margin-left: 5px;
+    margin-right: 10px;
+    height: 60px;
+    width: 60px;
+    background-color: white;
+}
+
+.infoDlg-OK-Btn {
+    width: 100px;
+    margin-top: 10px;
+    /* margin-left: auto; */
+    float: right;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+/*=======================================*/
+/* Confirm-Dialog 
+/*=======================================*/
+
+.confirm-dlg::backdrop {
+    background: hsl(201 50% 40% /.5);
+}
+
+.confirm-dlg {
+    width: 30rem;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    position: absolute;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.confirm-dlg-header {
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    margin: 10px;
+    text-align: center;
+}
+
+.confirm-dlg-body {
+    font-size: var(--font-size-lg);
+    margin-left: 10px;
+}
+
+.confirm-icon {
+    margin-left: 5px;
+    margin-right: 10px;
+    height: 40px;
+    width: 40px;
+    background-color: white;
+}
+
+#confirm-ok-cancel-btns {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    gap: 10px;
+    margin-right: 20px;
+}
+
+#btn-confirm-ok,
+#btn-confirm-cancel {
+    text-align: center;
+    font-size: var(--font-size);
+}
+
+
+/*=======================================*/
+/* Settings-Dialog 
+/*=======================================*/
+
+.settings-dlg {
+    width: 100%;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    position: absolute;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+.settings-dlg::backdrop {
+    background: hsl(201 50% 40% /.5);
+}
+
+#settings-dlg-close-btn {
+    width: 100px;
+    margin-top: 10px;
+    /* margin-left: auto; */
+    float: right;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+
+
+/*=======================================*/
+/* Puzzle-Datenbank 
+/*=======================================*/
+
+
+/* 1. Dialogebene */
+.puzzle-table-dlg {
+    margin: auto;
+    width: 100vh;
+    height: 100vh;
+    border: none;
+    background-color: #500;
+
+}
+
+#db-puzzle-dialog::backdrop {
+    background: #500
+}
+
+.db-puzzle-header {
+    font-size: var(--font-size-xl);
+    font-weight: bold;
+    padding: 1rem;
+    text-align: center;
+    color: white;
+    background-color: #500;
+}
+
+
+#db-close-btn {
+    font-weight: bold;
+    color: white;
+    text-align: right;
+    font-size: 3.4rem;
+}
+
+.tableFixHead {
+    overflow-y: auto;
+    /* make the table scrollable if height is more than 200 px  */
+    height: 360px;
+    /* gives an initial height of 200px to the table */
+}
+
+.tableFixHead thead th {
+    position: sticky;
+    /* make the table heads sticky */
+    top: 0px;
+    /* table head will be placed from the top of the table and sticks to it */
+}
+
+.db-puzzle-table {
+    border-collapse: collapse;
+    /* make the table borders collapse to each other */
+    width: 100%;
+
+}
+
+.db-puzzle-table th,
+.db-puzzle-table td {
+    padding: 6px 6px;
+    border: 1px solid #ccc;
+}
+
+.db-puzzle-table th {
+    /* background: #eee; */
+    background: #818181;
+    color: white;
+}
+
+#col-status-given,
+#col-status-solved,
+#col-status-open {
+    writing-mode: vertical-rl;
+    padding: 0.8rem;
+}
+
+#col-status-given {
+    background-color: var(--defined-cell-bg-color);
+    color: white;
+}
+
+#col-status-solved {
+    background-color: var(--played-cell-bg-color);
+    color: black;
+}
+
+#col-status-open {
+    background-color: var(--nested-cell-bg-color);
+    color: black;
+}
+
+
+.db-puzzle-tbody tr td {
+    background-color: #ddd;
+}
+
+.db-puzzle-tbody tr.selected td {
+    background-color: lightcyan;
+}
+
+.db-puzzle-btns {
+    margin: 2rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+
+.db-puzzle-button {
+    background-color: #ddd;
+    text-align: center;
+    border-radius: 0.3rem;
+    border: none;
+    font-size: var(--font-size);
+    display: grid;
+    grid-template-columns: 1fr;
+    place-items: center;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+}
+
+.db-puzzle-button:active {
+    transform: translate(2px, 2px);
+}
+
+
+/*======================================*/
+/* Print */
+/*======================================*/
+.print-content {
+    display: none;
+}
+
+/* ========================================*/
+
+
+
+#loader {
+    display: none;
+    position: absolute;
+    left: 20%;
+    top: 20%;
+    z-index: 2;
+    width: 200px;
+    height: 200px;
+    border: 48px solid #fbf9f900;
+    border-radius: 50%;
+    border-top: 48px solid var(--defined-cell-bg-color);
+    border-bottom: 48px solid black;
+    border-right: 48px solid var(--played-cell-bg-color);
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+
+#search-level {
+    width: 14rem;
+    left: 20%;
+    top: 20%;
+    margin-top: 20px;
+    padding: 3rem;
+    font-size: var(--font-size-lg);
+    color: black;
+    background-color: white;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+/*======================================*/
+/* Global block */
+/*======================================*/
+.zoom-in {
+    animation: zoom-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes zoom-in {
+    0% {
+        transform: scale(3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.cell-err {
+    animation: zoom-out-shake 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+
+@keyframes zoom-out-shake {
+    0% {
+        transform: scale(2);
+    }
+
+    25% {
+        transform: scale(2) rotate(30deg);
+    }
+
+    50% {
+        transform: scale(2) rotate(-30deg);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}

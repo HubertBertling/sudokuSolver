@@ -4937,7 +4937,7 @@ class SudokuGrid extends SudokuModel {
             if (this.adMissibleIndexSelected == -1) {
                 // Die Gesamtselektion besitzt keine Subselektion
                 // Die Gesamtselektion wird deselektiert.
-                // this.deselect();
+                this.deselect();
             } else {
                 // Setze die nächste Subselektion
                 let adMissibleIndexSelected = sudoCell.nextAdMissibleIndex();
@@ -4945,6 +4945,7 @@ class SudokuGrid extends SudokuModel {
                     // Die Gesamtselektion besitzt keine weitere Subselektion
                     // Die Gesamtselektion wird deselektiert.
                     // this.deselect();
+                    // 
                 } else {
                     this.setAdMissibleIndexSelected(adMissibleIndexSelected);
                 }
@@ -5896,17 +5897,23 @@ class SudokuCell extends SudokuModel {
             //Subindex is display relevant if the candidate is red.
             if (this.isDisplayRelevant(nextAdmissible)) {
                 found = true;
+                this.adMissibleIndexSelected = nextIndex;
+                return nextIndex; 
             } else {
                 nextIndex++;
+                if (nextIndex == maxIndex){
+                    nextIndex = 0;
+                }
             }
         }
-
+        /*
         if (found) {
             this.adMissibleIndexSelected = nextIndex;
             return nextIndex;
         } else {
             return -1;
         }
+        */
     }
 
     isDisplayRelevant(admissibleNr) {

@@ -1,0 +1,74 @@
+{
+  "name": "SudokuTrainer",
+  "short_name": "SudokuTrainer",
+  "description": "Die App ist ein Trainer für klassisches Sudoku.",
+
+  "id": "/sudokuSolver/index.html",
+  "scope": "/sudokuSolver/",
+  "start_url": "/sudokuSolver/index.html",
+
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+
+  "display": "standalone",
+
+  "icons": [
+    {
+      "src": "./images/s256.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "./images/s512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "./images/s1024.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
+    }
+  ],
+
+  "screenshots": [
+    {
+      "src": "./images/screenshot-282x563.jpg",
+      "sizes": "282x568",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "sudoku-trainer"
+    },
+    {
+      "src": "./images/screenshot-527x434.jpg",
+      "sizes": "527x434",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "sudoku-trainer"
+    }
+  ],
+
+  "share_target": {
+    "action": "/sudokuSolver/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "files": [
+        {
+          "name": "puzzleFiles",
+          "accept": ["text/plain", ".text"]
+        }
+      ]
+    }
+  },
+
+  "file_handlers": [
+    {
+      "action": "/sudokuSolver/",
+      "accept": {
+        "text/plain": [".text"]
+      },
+      "launch_type": "single-client"
+    }
+  ]
+}
