@@ -1,5 +1,5 @@
 let sudoApp;
-let VERSION = 303;
+let VERSION = 304;
 
 if (window.File && window.FileReader
     && window.FileList && window.Blob) {
@@ -130,7 +130,7 @@ class SudokuMainApp {
         this.mySolver.notify();
         this.myPuzzleDB.init();
         this.myPuzzleDB.importBackRunPuzzle(back23, 'Backtrack_23', 'lqwgzcback23g2ak');
-        this.myPuzzleDB.importBackRunPuzzle(back9, 'Backtrack_9', 'lqgwgzcback9hpfg2ak');
+        this.myPuzzleDB.importBackRunPuzzle(back10, 'Backtrack_10', 'lqgwgzcback9hpfg2ak');
 
         this.myNewPuzzleStore.init();
         this.myNavBar.init();
@@ -159,7 +159,7 @@ const back23 = ["0", "3", "0", "0", "1", "0", "0", "0", "9",
     "0", "0", "0", "0", "9", "0", "0", "7", "0",
     "0", "0", "0", "4", "0", "0", "1", "0", "0"];
 
-const back9 = ["1", "4", "0", "0", "0", "6", "8", "0", "0",
+const back10 = ["1", "4", "0", "0", "0", "6", "8", "0", "0",
     "0", "0", "0", "0", "5", "0", "0", "0", "2",
     "0", "0", "0", "0", "9", "4", "0", "6", "0",
     "0", "0", "4", "0", "0", "0", "0", "0", "0",

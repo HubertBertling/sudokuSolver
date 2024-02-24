@@ -4440,16 +4440,15 @@ class SudokuGrid extends SudokuModel {
             // derive_inAdmissiblesFromSingles kann es nicht mehr geben,
             // aus dem gleichen Grund.
 
-            if (this.derive_inAdmissiblesFromHiddenPairs()) {
-                inAdmissiblesAdded = true;
-            } else if (this.derive_inAdmissiblesFromNakedPairs()) {
+            if (this.derive_inAdmissiblesFromNakedPairs()) {
                 inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromIntersection()) {
                 inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromPointingPairs()) {
                 inAdmissiblesAdded = true;
+            } else if (this.derive_inAdmissiblesFromHiddenPairs()) {
+                inAdmissiblesAdded = true;
             }
-
         }
     }
 
@@ -5570,33 +5569,7 @@ class SudokuCellView extends SudokuView {
                 }
             }
 
-            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-                tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.size > 0) {
-                if (tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.has(adMissibleNrSelected)) {
-                    // Für ein Subpaar muss nicht jede einzelne Nummer geprüft werden.
-                    // 
-                    let pairArray = [];
-                    const [pairInfo] = tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
-                    pairInfo.collection.myCells.forEach(cell => {
-                        if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
-                            cell.myView.setBorderRedSelected();
-                            if (pairArray.length == 0) {
-                                pairArray = Array.from(cell.getTotalAdmissibles());
-                            }
-                        } else {
-                            cell.myView.setBorderSelected();
-                        }
-                    });
-                    sudoApp.mySolver.myView.displayTechnique(
-                        adMissibleNrSelected 
-                        + ' unzulässig wegen "Verstecktem Paar" {' 
-                        + pairArray[0]
-                        + ', '
-                        + pairArray[1] + '}');
-                    return;
-                }
-            }
-
+           
             if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
                 tmpCell.myLevel_gt0_inAdmissiblesFromIntersection.size > 0) {
 
@@ -5630,6 +5603,33 @@ class SudokuCellView extends SudokuView {
                 sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected 
                     + ' unzulässig wegen Pointing Pair');
                 return;
+            }
+
+            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+                tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.size > 0) {
+                if (tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.has(adMissibleNrSelected)) {
+                    // Für ein Subpaar muss nicht jede einzelne Nummer geprüft werden.
+                    // 
+                    let pairArray = [];
+                    const [pairInfo] = tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
+                    pairInfo.collection.myCells.forEach(cell => {
+                        if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
+                            cell.myView.setBorderRedSelected();
+                            if (pairArray.length == 0) {
+                                pairArray = Array.from(cell.getTotalAdmissibles());
+                            }
+                        } else {
+                            cell.myView.setBorderSelected();
+                        }
+                    });
+                    sudoApp.mySolver.myView.displayTechnique(
+                        adMissibleNrSelected 
+                        + ' unzulässig wegen "Verstecktem Paar" {' 
+                        + pairArray[0]
+                        + ', '
+                        + pairArray[1] + '}');
+                    return;
+                }
             }
 
         }
