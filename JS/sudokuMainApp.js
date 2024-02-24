@@ -1,5 +1,5 @@
 let sudoApp;
-let VERSION = 304;
+let VERSION = 305;
 
 if (window.File && window.FileReader
     && window.FileList && window.Blob) {

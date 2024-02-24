@@ -65,6 +65,7 @@ class SudokuGenerator extends SudokuCalculator {
     init() {
         super.init();
         super.setActualEvalType('strict-plus');
+        super.setPlayMode('solving');
     }
 
     generateVerySimplePuzzle() {

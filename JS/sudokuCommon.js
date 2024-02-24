@@ -684,7 +684,8 @@ class SudokuSolverView extends SudokuView {
                         this.setTrainingButtons();
                         break;
                     }
-                    case 'solving': {
+                    case 'solving':
+                    case 'solving-trace': {
                         this.setSolvingButtons();
                         break;
                     }
@@ -833,16 +834,25 @@ class SudokuSolverView extends SudokuView {
     displayPlayModeType(pt) {
         let trainingNode = document.getElementById('pc-training');
         let solvingNode = document.getElementById('pc-solving');
+        let solvingNodeTrace = document.getElementById('pc-solving-trace');
 
         switch (pt) {
             case 'training': {
                 trainingNode.checked = true;
                 solvingNode.checked = false;
+                solvingNodeTrace.checked = false;
                 break;
             }
             case 'solving': {
                 solvingNode.checked = true;
                 trainingNode.checked = false;
+                solvingNodeTrace.checked = false;
+                break;
+            }
+            case 'solving-trace': {
+                solvingNode.checked = false;
+                trainingNode.checked = false;
+                solvingNodeTrace.checked = true;
                 break;
             }
             default: {
@@ -971,6 +981,8 @@ class SudokuCalculator extends SudokuModel {
         //Die Calculator kennt zwei Betriebs-Phasen 'play' or 'define'
         this.currentPhase = 'play';
         this.currentEvalType = 'lazy-invisible';
+
+        this.playMode = 'solving';
         // Der Calculator kennt zwei Ausführungsmodi: 
         // manuelle oder automatische Ausführung
         this.isInAutoExecMode = false;
@@ -980,6 +992,31 @@ class SudokuCalculator extends SudokuModel {
         this.isStepExecutionObserver = false;
         this.init();
     }
+
+    setPlayMode(mode) {
+        switch (mode) {
+            case 'training': {
+                this.playMode = 'training';
+                break;
+            }
+            case 'solving': {
+                this.playMode = 'solving';
+                break;
+            }
+            case 'solving-trace': {
+                this.playMode = 'solving-trace';
+                break;
+            }
+            default: {
+                throw new Error('Unknown playMode: ' + mode);
+            }
+        }
+        this.notifyAspect('playMode', mode);
+    }
+    getPlayMode() {
+        return this.playMode;
+    }
+
     setStepLazy() {
         this.myGrid.setStepLazy();
     }
@@ -1240,24 +1277,13 @@ class SudokuSolver extends SudokuCalculator {
     }
 
     setPlayMode(mode) {
-        switch (mode) {
-            case 'training': {
-                this.playMode = 'training';
-                break;
-            }
-            case 'solving': {
-                this.playMode = 'solving';
-                break;
-            }
-            default: {
-                throw new Error('Unknown playMode: ' + mode);
-            }
-        }
+        super.setPlayMode(mode);
         this.notifyAspect('playMode', mode);
     }
     getPlayMode() {
-        return this.playMode;
+        return super.getPlayMode();
     }
+
     setPuzzleIOtechnique(pt) {
         this.puzzleIOtechnique = pt;
         this.notifyAspect('puzzleIOTechnique');
@@ -2380,6 +2406,9 @@ class StepperOnGrid {
                 let autoStepResult = {
                     processResult: 'inProgress',
                     action: tmpAction
+                }
+                if (this.myGrid.myCalculator.getPlayMode() == 'solving-trace') {
+                    this.stopAsyncLoop();
                 }
                 return autoStepResult;
             } else if (this.myGrid.isFinished()) {
@@ -5498,6 +5527,9 @@ class SudokuCellView extends SudokuView {
                     });
                     sudoApp.mySolver.myView.displayTechnique(Array.from(tmpCell.myNecessarys)[0] +
                         ' notwendig, weil in der Gruppe einzig hier Kandidat.');
+                    if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
+                        sudoApp.mySolver.autoExecPause();
+                    }
                     return;
                 }
             }
@@ -5532,6 +5564,9 @@ class SudokuCellView extends SudokuView {
                         }
                     })
                     sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen notwendiger Nummer: ' + adMissibleNrSelected);
+                    if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
+                        sudoApp.mySolver.autoExecPause();
+                    }
                     return;
                 }
             }
@@ -5560,16 +5595,19 @@ class SudokuCellView extends SudokuView {
                     })
 
                     sudoApp.mySolver.myView.displayTechnique(
-                        adMissibleNrSelected 
+                        adMissibleNrSelected
                         + ' unzulässig wegen "Nacktem Paar" {'
                         + pairArray[0]
                         + ', '
                         + pairArray[1] + '}');
+                    if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
+                        sudoApp.mySolver.autoExecPause();
+                    }
                     return;
                 }
             }
 
-           
+
             if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
                 tmpCell.myLevel_gt0_inAdmissiblesFromIntersection.size > 0) {
 
@@ -5582,6 +5620,9 @@ class SudokuCellView extends SudokuView {
                 });
 
                 sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Überschneidung');
+                if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
+                    sudoApp.mySolver.autoExecPause();
+                }
                 return;
             }
 
@@ -5600,8 +5641,11 @@ class SudokuCellView extends SudokuView {
                     }
                 })
 
-                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected 
+                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected
                     + ' unzulässig wegen Pointing Pair');
+                if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
+                    sudoApp.mySolver.autoExecPause();
+                }
                 return;
             }
 
@@ -5623,11 +5667,14 @@ class SudokuCellView extends SudokuView {
                         }
                     });
                     sudoApp.mySolver.myView.displayTechnique(
-                        adMissibleNrSelected 
-                        + ' unzulässig wegen "Verstecktem Paar" {' 
+                        adMissibleNrSelected
+                        + ' unzulässig wegen "Verstecktem Paar" {'
                         + pairArray[0]
                         + ', '
                         + pairArray[1] + '}');
+                    if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
+                        sudoApp.mySolver.autoExecPause();
+                    }
                     return;
                 }
             }

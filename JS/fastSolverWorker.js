@@ -50,6 +50,7 @@ class SudokuFastSolver extends SudokuCalculator {
     init() {
         super.init();
         super.setActualEvalType('strict-plus');
+        super.setPlayMode('solving');
     }
     solvePuzzle(puzzleArray) {
         // this.init();
