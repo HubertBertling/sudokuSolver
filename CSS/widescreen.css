@@ -429,6 +429,12 @@ html {
     border: 2px solid var(--selected-cell-bg-color);
 }
 
+.sudoku-grid-cell.auto-selected {
+    background-color: var(--selected-cell-bg-color);
+    color: var(--selected-cell-color);
+    border: 2px solid white;
+}
+
 .nested>div.neccessary {
     padding-top: 0.1rem;
     padding-bottom: 0.1rem;
@@ -505,7 +511,6 @@ html {
 .sudoku-grid-cell.hover-black {
     border: 5px dashed black;
 }
-
 
 .sudoku-block.err {
     background-color: var(--error-cell-bg-color);

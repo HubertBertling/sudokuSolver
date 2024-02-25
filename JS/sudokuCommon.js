@@ -203,21 +203,21 @@ class SudokuSolverController {
             // Number button pressed during automatic execution
             // The stepper is stopped and terminated
             this.mySolver.autoExecStop();
-        } else {
-            let action = {
-                operation: 'setNr',
-                cellIndex: this.mySolver.myGrid.indexSelected,
-                cellValue: nr
-            }
-            this.mySolver.atCurrentSelectionSetNumber(nr);
-            if (action.cellIndex > -1) {
-                this.myUndoActionStack.push(action);
-            }
-            this.mySolver.notify();
-            if (this.mySolver.succeeds()) {
-                this.mySuccessDialog.open();
-            }
         }
+        let action = {
+            operation: 'setNr',
+            cellIndex: this.mySolver.myGrid.indexSelected,
+            cellValue: nr
+        }
+        this.mySolver.atCurrentSelectionSetNumber(nr);
+        if (action.cellIndex > -1) {
+            this.myUndoActionStack.push(action);
+        }
+        this.mySolver.notify();
+        if (this.mySolver.succeeds()) {
+            this.mySuccessDialog.open();
+        }
+        this.mySolver.myGrid.unsetStepLazy();
     }
 
     handleDeleteKeyPressed(event) {
@@ -264,14 +264,7 @@ class SudokuSolverController {
         this.mySolver.deleteSelected();
         this.mySolver.notify();
     }
-
     sudokuCellPressed(index) {
-        if (this.mySolver.isInAutoExecution() &&
-            this.mySolver.indexSelected() !== index) {
-            // Another cell selected during automatic execution
-            // The stepper is stopped and terminated
-            this.mySolver.autoExecStop();
-        }
         this.mySolver.select(index);
     }
 
@@ -1153,8 +1146,14 @@ class SudokuCalculator extends SudokuModel {
     isInAutoExecution() {
         return this.isInAutoExecMode;
     }
-
+    
     atCurrentSelectionSetNumber(number) {
+        if (this.myStepper.indexSelected !== -1 && this.indexSelected() !== this.myStepper.indexSelected) {
+            // Eine manuelle Nummernsetzung bei laufender automatischer Ausführung
+            // führt zum Abbruch der automatischen Ausführung, weil der Backtrack-Stack
+            // inkonsistent wird.
+            this.autoExecStop();
+        }
         this.myGrid.atCurrentSelectionSetNumber(number, this.currentPhase, false);
     }
     deleteSelected() {
@@ -1200,9 +1199,10 @@ class SudokuCalculator extends SudokuModel {
         this.myStepper.stopAsyncLoop();
         // 2. Der ExecMode des Calculators wird abgeschaltet.
         this.isInAutoExecMode = false;
-        this.myGrid.deselect();
+        //this.myGrid.deselect();
         this.myGrid.clearAutoExecCellInfos();
-        this.myStepper.init();
+        // this.myStepper.init();
+        this.myStepper = new StepperOnGrid(this.myGrid);
     }
 
     setActualEvalType(value) {
@@ -1415,7 +1415,6 @@ class SudokuSolver extends SudokuCalculator {
     succeeds() {
         return this.myGrid.isFinished() && !this.myGrid.isInsolvable();
     }
-
     atCurrentSelectionSetNumber(number) {
         super.atCurrentSelectionSetNumber(number);
         this.notify();
@@ -2110,7 +2109,6 @@ class StepperOnGrid {
 
     init() {
         this.lastNumberSet = '0';
-        this.indexSelected = this.myGrid.indexSelected;
         this.myResult = undefined;
         this.goneSteps = 0;
         this.countBackwards = 0;
@@ -2440,6 +2438,7 @@ class StepperOnGrid {
 
     deleteSelected(phase) {
         this.myGrid.deleteSelected(phase);
+        this.myGrid.unsetStepLazy();
         this.deselect();
     }
 
@@ -3736,6 +3735,7 @@ class SudokuGridView extends SudokuView {
         }
         this.displayWrongNumbers();
         this.displaySelection();
+        this.displayAutoSelection();
     }
 
     displayNameAndDifficulty() {
@@ -3761,6 +3761,23 @@ class SudokuGridView extends SudokuView {
             selectedCellView.setSelectStatus();
         }
     }
+
+    displayAutoSelection() {
+        let grid = this.getMyModel();
+        if (sudoApp.mySolver.myStepper !== undefined
+            && sudoApp.mySolver.myStepper.indexSelected !== -1) {
+            let selectedCell = grid.sudoCells[sudoApp.mySolver.myStepper.indexSelected];
+            let selectedCellView = selectedCell.getMyView();
+            selectedCellView.unsetAutoSelectStatus();
+            selectedCellView.setAutoSelectStatus();
+        } else {
+            grid.sudoCells.forEach(cell => {
+                let cellView = cell.getMyView();
+                cellView.unsetAutoSelectStatus();
+            })
+        }
+    }
+
 
     getMyNode() {
         return this.myNode;
@@ -4966,14 +4983,14 @@ class SudokuGrid extends SudokuModel {
             if (this.adMissibleIndexSelected == -1) {
                 // Die Gesamtselektion besitzt keine Subselektion
                 // Die Gesamtselektion wird deselektiert.
-                // this.deselect();
+                this.deselect();
             } else {
                 // Setze die nächste Subselektion
                 let adMissibleIndexSelected = sudoCell.nextAdMissibleIndex();
                 if (adMissibleIndexSelected == -1) {
                     // Die Gesamtselektion besitzt keine weitere Subselektion
                     // Die Gesamtselektion wird deselektiert.
-                    // this.deselect();
+                    this.deselect();
                 } else {
                     this.setAdMissibleIndexSelected(adMissibleIndexSelected);
                 }
@@ -5444,6 +5461,12 @@ class SudokuCellView extends SudokuView {
         this.myNode.classList.remove('selected');
     }
 
+    setAutoSelected() {
+        this.myNode.classList.add('auto-selected');
+    }
+    unsetAutoSelected() {
+        this.myNode.classList.remove('auto-selected');
+    }
 
     setBorderSelected() {
         this.myNode.classList.add('hover');
@@ -5469,6 +5492,14 @@ class SudokuCellView extends SudokuView {
         this.myNode.classList.remove('hover-green');
         this.myNode.classList.remove('hover-white');
         this.myNode.classList.remove('hover-black');
+    }
+
+    setAutoSelectStatus() {
+        this.setAutoSelected();
+    }
+
+    unsetAutoSelectStatus() {
+        this.unsetAutoSelected();
     }
 
     setSelectStatus() {
@@ -5692,6 +5723,11 @@ class SudokuCellView extends SudokuView {
             sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
         }
     }
+
+    unsetAutoSelectStatus() {
+        this.unsetAutoSelected();
+    }
+
     displayWrongNumber() {
         let cell = this.getMyModel();
         if (cell.isWrong()) {
