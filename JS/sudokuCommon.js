@@ -1146,7 +1146,7 @@ class SudokuCalculator extends SudokuModel {
     isInAutoExecution() {
         return this.isInAutoExecMode;
     }
-    
+
     atCurrentSelectionSetNumber(number) {
         if (this.myStepper.indexSelected !== -1 && this.indexSelected() !== this.myStepper.indexSelected) {
             // Eine manuelle Nummernsetzung bei laufender automatischer Ausführung
@@ -3068,6 +3068,7 @@ class SudokuGroup extends SudokuModel {
                                         pairCell1: this.myGrid.sudoCells[this.myPairInfos[i].pairIndices[0]],
                                         pairCell2: this.myGrid.sudoCells[this.myPairInfos[i].pairIndices[1]]
                                     }
+
                                     this.myCells[j].myLevel_gt0_inAdmissiblesFromPairs.set(inAdNr, inAdmissiblePairInfo);
                                 })
                             }
@@ -5610,21 +5611,17 @@ class SudokuCellView extends SudokuView {
                     // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
                     // verursacht werden.
                     // Die Block, Spalte oder Zeile des Paares wird markiert.
+                    // ???
                     let pairArray = [];
-                    tmpCell.myLevel_gt0_inAdmissiblesFromPairs.forEach(pairInfo => {
-                        pairInfo.collection.myCells.forEach(cell => {
-                            if (cell !== tmpCell) {
-                                cell.myView.setBorderSelected();
-                            }
-                        });
-                        pairInfo.pairCell1.myView.setBorderRedSelected();
-                        pairInfo.pairCell2.myView.setBorderRedSelected();
-
-                        if (pairArray.length == 0) {
-                            pairArray = Array.from(pairInfo.pairCell1.getTotalAdmissibles());
+                    let pairInfo = tmpCell.myLevel_gt0_inAdmissiblesFromPairs.get(adMissibleNrSelected);
+                    pairInfo.collection.myCells.forEach(cell => {
+                        if (cell !== tmpCell) {
+                            cell.myView.setBorderSelected();
                         }
-                    })
-
+                    });
+                    pairInfo.pairCell1.myView.setBorderRedSelected();
+                    pairInfo.pairCell2.myView.setBorderRedSelected();
+                    pairArray = Array.from(pairInfo.pairCell1.getTotalAdmissibles());
                     sudoApp.mySolver.myView.displayTechnique(
                         adMissibleNrSelected
                         + ' unzulässig wegen "Nacktem Paar" {'
@@ -5637,7 +5634,6 @@ class SudokuCellView extends SudokuView {
                     return;
                 }
             }
-
 
             if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
                 tmpCell.myLevel_gt0_inAdmissiblesFromIntersection.size > 0) {
@@ -5713,14 +5709,13 @@ class SudokuCellView extends SudokuView {
         }
     }
 
-
     unsetSelectStatus() {
         this.unsetSelected();
         this.unsetBorderSelected();
         if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
             sudoApp.mySolver.myView.displayTechnique('');
         } else {
-            sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
+            sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit roter Nummer &gt');
         }
     }
 
