@@ -5611,7 +5611,6 @@ class SudokuCellView extends SudokuView {
                     // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
                     // verursacht werden.
                     // Die Block, Spalte oder Zeile des Paares wird markiert.
-                    // ???
                     let pairArray = [];
                     let pairInfo = tmpCell.myLevel_gt0_inAdmissiblesFromPairs.get(adMissibleNrSelected);
                     pairInfo.collection.myCells.forEach(cell => {
@@ -5621,7 +5620,7 @@ class SudokuCellView extends SudokuView {
                     });
                     pairInfo.pairCell1.myView.setBorderRedSelected();
                     pairInfo.pairCell2.myView.setBorderRedSelected();
-                    pairArray = Array.from(pairInfo.pairCell1.getTotalAdmissibles());
+                    pairArray = Array.from(pairInfo.pairCell1.getAdmissibles());
                     sudoApp.mySolver.myView.displayTechnique(
                         adMissibleNrSelected
                         + ' unzulässig wegen "Nacktem Paar" {'
