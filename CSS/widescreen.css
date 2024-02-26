@@ -418,7 +418,7 @@ html {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     place-items: center;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     background-color: var(--nested-cell-bg-color);
     color: var(--nested-cell-color);
 }
@@ -470,7 +470,7 @@ html {
     padding-right: 0.4rem;
 
     border-radius: 0.3rem;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     background-color: #56c7aa;
     color: #0d1117;
     border: 0.1rem solid white;
@@ -478,7 +478,7 @@ html {
 
 .nested>div.inAdmissible {
     font-weight: bold;
-    font-size: 1.0rem;
+    font-size: 1.4rem;
     color: Crimson;
 }
 
