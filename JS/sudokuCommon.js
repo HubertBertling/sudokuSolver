@@ -290,6 +290,10 @@ class SudokuSolverController {
         if (this.mySolver.getGamePhase() == 'define') {
             this.mySolver.getPuzzlePreRunDataUsingWebworker();
         }
+        if (this.mySolver.isRunningClockedLoop()){
+            this.mySolver.autoExecPause();
+            return;
+        }
         let stepResult = this.mySolver.executeSingleStep();
         if (stepResult.action !== undefined) {
             this.myUndoActionStack.push(stepResult.action);
@@ -301,7 +305,7 @@ class SudokuSolverController {
         if (!this.mySolver.isInAutoExecution()) {
             this.mySolver.getPuzzlePreRunDataUsingWebworker();
         }
-        this.mySolver.startSolverLoop();
+        this.mySolver.startClockedSolverLoop();
         this.myUndoActionStack = [];
         this.myRedoActionStack = [];
 
@@ -1038,7 +1042,7 @@ class SudokuCalculator extends SudokuModel {
     init() {
         // Die App kann in verschiedenen Ausführungsmodi sein
         // 'automatic' 'manual'
-        this.myStepper.stopAsyncLoop();
+        this.myStepper.stopClockedLoop();
         this.currentPhase = 'define';
         this.isInAutoExecMode = false;
         this.myGrid.init();
@@ -1047,7 +1051,7 @@ class SudokuCalculator extends SudokuModel {
         // Ein neuer Stepper wird angelegt und initialisert
     }
     reset() {
-        this.myStepper.stopAsyncLoop();
+        this.myStepper.stopClockedLoop();
         this.myStepper = new StepperOnGrid(this.myGrid);
         this.myGrid.reset();
         this.myStepper.init();
@@ -1079,11 +1083,11 @@ class SudokuCalculator extends SudokuModel {
     }
 
 
-    startAsyncLoop() {
+    startClockedLoop() {
         if (this.isInAutoExecMode) {
             // Im automatischen Ausführungsmodus
             // muss lediglich die zeitgetacktete Loop gestartet werden.
-            this.myStepper.startAsyncLoop();
+            this.myStepper.startClockedLoop();
         } else {
             if (this.myStepper.deadlockReached()) {
                 this.setInAutoExecMode();
@@ -1095,7 +1099,7 @@ class SudokuCalculator extends SudokuModel {
                 // Der Calculator wird in den Auto-Modus gesetzt
                 // und die zeitgetacktete Loop wird gestartet.
                 this.setInAutoExecMode();
-                this.myStepper.startAsyncLoop();
+                this.myStepper.startClockedLoop();
             }
         }
     }
@@ -1149,7 +1153,7 @@ class SudokuCalculator extends SudokuModel {
     tryMoreSolutions() {
         this.myStepper.setAutoDirection('backward');
         this.myStepper.myResult = undefined;
-        this.myStepper.startAsyncLoop();
+        this.myStepper.startClockedLoop();
     }
 
     setExecutionObserver() {
@@ -1160,7 +1164,11 @@ class SudokuCalculator extends SudokuModel {
     isInAutoExecution() {
         return this.isInAutoExecMode;
     }
-
+    
+    isRunningClockedLoop() {
+        return this.myStepper.isRunningClockedLoop();
+    }
+    
     atCurrentSelectionSetNumber(number) {
         if (this.myStepper.indexSelected !== -1 && this.indexSelected() !== this.myStepper.indexSelected) {
             // Eine manuelle Nummernsetzung bei laufender automatischer Ausführung
@@ -1199,18 +1207,18 @@ class SudokuCalculator extends SudokuModel {
     }
 
     autoExecPause() {
-        this.myStepper.stopAsyncLoop();
+        this.myStepper.stopClockedLoop();
     }
 
     autoExecProceed() {
         //  this.myGrid.deselect();
-        this.myStepper.startAsyncLoop();
+        this.myStepper.startClockedLoop();
     }
 
     autoExecStop() {
         // Die automatische Ausführung des Calculators wird gestoppt.
         // 1. Die eventuell laufende asynchrone Loop wird angehalten
-        this.myStepper.stopAsyncLoop();
+        this.myStepper.stopClockedLoop();
         // 2. Der ExecMode des Calculators wird abgeschaltet.
         this.isInAutoExecMode = false;
         //this.myGrid.deselect();
@@ -1417,15 +1425,27 @@ class SudokuSolver extends SudokuCalculator {
         webworkerFastSolver.postMessage(str_request);
     }
 
-    startSolverLoop() {
+    startClockedSolverLoop() {
         // Der Solver nutzt die asynchrone solution loop.
-        super.startAsyncLoop();
+        super.startClockedLoop();
     }
 
     isInAutoExecution() {
         return super.isInAutoExecution();
     }
 
+    isRunningClockedLoop() {
+        return super.isRunningClockedLoop();
+    }
+
+    autoExecPause() {
+        super.autoExecPause();
+    }
+    autoExecProceed() {
+        super.autoExecProceed();
+    }
+
+    
     succeeds() {
         return this.myGrid.isFinished() && !this.myGrid.isInsolvable();
     }
@@ -2150,7 +2170,7 @@ class StepperOnGrid {
         return this.autoDirection;
     }
 
-    isRunningAsyncLoop() {
+    isRunningClockedLoop() {
         // StepExecution-Observer sind Sudoku-Calculators, die jede einzelne Schrittausführung
         // beobachten. Sie benutzen daher eine zeit-getaktete asynchrone Schrittausführung.
         // 
@@ -2181,25 +2201,25 @@ class StepperOnGrid {
     // Other methods
     // =============================================================
 
-    startAsyncLoop() {
+    startClockedLoop() {
         this.lastNumberSet = '0';
         if (this.indexSelected !== this.myGrid.indexSelected && this.indexSelected !== -1) {
             this.myGrid.select(this.indexSelected);
         }
-        if (!this.isRunningAsyncLoop()) {
+        if (!this.isRunningClockedLoop()) {
             this.timer = window.setInterval(() => {
                 if (this.myResult == undefined || this.myResult.processResult == 'inProgress') {
                     this.myResult = this.asyncObservedStep();
                 } else {
-                    this.stopAsyncLoop();
+                    this.stopClockedLoop();
                     this.cleanupFinishedLoop();
                 }
             }, this.execSpeed);
         }
     }
 
-    stopAsyncLoop() {
-        if (this.isRunningAsyncLoop()) {
+    stopClockedLoop() {
+        if (this.isRunningClockedLoop()) {
             // Die automatische Ausführung
             window.clearInterval(this.timer);
             this.timer = false;
@@ -2420,7 +2440,7 @@ class StepperOnGrid {
                     action: tmpAction
                 }
                 if (this.myGrid.myCalculator.getPlayMode() == 'solving-trace') {
-                    this.stopAsyncLoop();
+                    this.stopClockedLoop();
                 }
                 return autoStepResult;
             } else if (this.myGrid.isFinished()) {
