@@ -743,10 +743,10 @@ class SudokuSolverView extends SudokuView {
         btnRun.style.gridColumnEnd = 4;
         btnRun.style.gridRowStart = 4;
         btnRun.style.gridRowEnd = 4;
-     
+
         btnPause.style.display = 'none';
         btnStop.style.display = 'none';
-     
+
         btnStep.style.display = 'grid';
         btnStep.style.gridColumnStart = 4;
         btnStep.style.gridColumnEnd = 6;
@@ -5104,7 +5104,7 @@ class SudokuGrid extends SudokuModel {
 class SudokuCellView extends SudokuView {
     constructor(cell) {
         super(cell);
-
+        this.myCell = cell;
     }
     upDate() {
         let tmpCellNode = document.createElement("div");
@@ -5484,7 +5484,10 @@ class SudokuCellView extends SudokuView {
     }
 
     setBorderSelected() {
-        this.myNode.classList.add('hover');
+        if (this.myCell.myGrid.myCalculator.myStepper.indexSelected !==
+            this.myCell.myIndex) {
+            this.myNode.classList.add('hover');
+        }
     }
     setBorderRedSelected() {
         this.myNode.classList.add('hover-red');
