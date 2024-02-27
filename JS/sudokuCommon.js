@@ -5620,7 +5620,7 @@ class SudokuCellView extends SudokuView {
                     });
                     pairInfo.pairCell1.myView.setBorderRedSelected();
                     pairInfo.pairCell2.myView.setBorderRedSelected();
-                    pairArray = Array.from(pairInfo.pairCell1.getAdmissibles());
+                    pairArray = Array.from(pairInfo.pairCell1.getTotalAdmissibles());
                     sudoApp.mySolver.myView.displayTechnique(
                         adMissibleNrSelected
                         + ' unzulässig wegen "Nacktem Paar" {'
