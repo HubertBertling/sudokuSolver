@@ -39,7 +39,7 @@
 
     --font-size-xsm: 0.4rem;
     --font-size-sm: 0.8rem;
-    --font-size: 1.1rem;
+    --font-size: 1.2rem;
     --font-size-lg: 1.4rem;
     --font-size-xl: 1.8rem;
 
@@ -242,11 +242,11 @@ html {
     margin-left: 0.5rem;
     margin-right: 0.5rem;
     display: grid;
-    grid-template-columns: 0.2fr 0.2fr 1.4fr 0.2fr;
+    grid-template-columns: 0.1fr 0.1fr 0.7fr 0.1fr;
     font-size: var(--font-size-xl);
     font-weight: bold;
-    text-align: center;
-    place-items: center;
+  /*  text-align: center;
+    place-items: center; */
     padding: 0.5rem;
     background-color: DimGray;
     color: white;
@@ -261,8 +261,6 @@ html {
     width: 3.8rem;
     margin-top: 0.3rem;
     margin-bottom: 0.3rem;
-    margin-left: 0.9rem;
-    margin-right: 0.9rem;
     padding: 0.3rem;
     font-weight: bold;
     font-size: var(--font-size-lg);
@@ -274,15 +272,15 @@ html {
 .menu-icon {
     margin-top: 0.3rem;
     margin-bottom: 0.3rem;
-    margin-left: 0.3rem;
-    margin-right: 1.8rem;
+    width: 5rem;
+   
 }
 
 .share-icon {
     margin-top: 0.3rem;
     margin-bottom: 0.3rem;
-    margin-left: 1.8rem;
-    margin-right: 0.3rem;
+    width: 5rem;
+   
 }
 
 .menu-icon-line {

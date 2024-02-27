@@ -712,15 +712,17 @@ class SudokuSolverView extends SudokuView {
         let btnPause = document.getElementById('btn-pause');
         let btnStop = document.getElementById('btn-stop');
         let btnStep = document.getElementById('btn-autoStep');
+        let btnShowWrongNumbers = document.getElementById('btn-showWrongNumbers');
 
         btnRun.style.display = 'none';
         btnPause.style.display = 'none';
         btnStop.style.display = 'none';
+        btnStep.style.display = 'none';
 
-        btnStep.style.gridColumnStart = 2;
-        btnStep.style.gridColumnEnd = 6;
-        btnStep.style.gridRowStart = 4;
-        btnStep.style.gridRowEnd = 4;
+        btnShowWrongNumbers.style.gridColumnStart = 1;
+        btnShowWrongNumbers.style.gridColumnEnd = 6;
+        btnShowWrongNumbers.style.gridRowStart = 4;
+        btnShowWrongNumbers.style.gridRowEnd = 4;
 
     }
 
@@ -729,12 +731,24 @@ class SudokuSolverView extends SudokuView {
         let btnPause = document.getElementById('btn-pause');
         let btnStop = document.getElementById('btn-stop');
         let btnStep = document.getElementById('btn-autoStep');
+        let btnShowWrongNumbers = document.getElementById('btn-showWrongNumbers');
+
+        btnShowWrongNumbers.style.gridColumnStart = 1;
+        btnShowWrongNumbers.style.gridColumnEnd = 2;
+        btnShowWrongNumbers.style.gridRowStart = 4;
+        btnShowWrongNumbers.style.gridRowEnd = 4;
 
         btnRun.style.display = 'grid';
-        btnPause.style.display = 'grid';
-        btnStop.style.display = 'grid';
-
-        btnStep.style.gridColumnStart = 5;
+        btnRun.style.gridColumnStart = 2;
+        btnRun.style.gridColumnEnd = 4;
+        btnRun.style.gridRowStart = 4;
+        btnRun.style.gridRowEnd = 4;
+     
+        btnPause.style.display = 'none';
+        btnStop.style.display = 'none';
+     
+        btnStep.style.display = 'grid';
+        btnStep.style.gridColumnStart = 4;
         btnStep.style.gridColumnEnd = 6;
         btnStep.style.gridRowStart = 4;
         btnStep.style.gridRowEnd = 4;
