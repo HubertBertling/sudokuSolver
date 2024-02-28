@@ -435,17 +435,18 @@ app-empty-footer {
     color: var(--nested-cell-color);
 }
 
+
 .sudoku-grid-cell.selected {
     /*background-color: lightgrey;*/
-    background-image: url("../images/selectBG2.png");
-    border: 2px solid blue;
+    /*background-image: url("../images/selectBG2.png");*/
+    background-color: lightgray;
+    border: 2px solid grey;
 }
 
 .sudoku-grid-cell.auto-selected {
     background-image: url("../images/selectBG1.png");
     border: 2px solid grey;
 }
-
 
 
 .nested>div.neccessary {
