@@ -10,7 +10,7 @@ var APP_PREFIX = 'sudo_';
 // you need to change this version (version_01, version_02…). 
 // If you don't change the version, the service worker will give your
 // users the old files!
-var VERSION = 'version_315';
+var VERSION = 'version_316';
 
 // The files to make available for offline use. make sure to add 
 // others to this list
@@ -33,6 +33,9 @@ var URLS = [
   `${GHPATH}/images/teilenURLApp.png`,
   `${GHPATH}/images/teilenURLApp2.png`,
   `${GHPATH}/images/downloadDB.png`,
+
+  `${GHPATH}/images/selectBG1.png`,
+  `${GHPATH}/images/selectBG2.png`,
   
   `${GHPATH}/images/exampleStep1.png`,
   `${GHPATH}/images/exampleStep2.png`,

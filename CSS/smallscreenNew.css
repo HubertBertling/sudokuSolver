@@ -433,6 +433,9 @@ html {
     background-color: var(--nested-cell-bg-color);
 }
 
+
+
+
 .sudoku-grid-cell.nested {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -443,16 +446,18 @@ html {
 }
 
 .sudoku-grid-cell.selected {
-    /*background-color: var(--selected-cell-bg-color);*/
-    background-color: lightgrey;
-    /* color: var(--selected-cell-color);*/
-    border: 4px solid black;
+    /*background-color: lightgrey;*/
+    background-image: url("../images/selectBG1.png");
+    border: 2px solid white;
 }
 
 .sudoku-grid-cell.auto-selected {
-    background-color: lightgrey;
-    border: 4px dashed black;
+    background-image: url("../images/selectBG2.png");
+    border: 2px solid blue;
 }
+
+
+
 .nested>div.neccessary {
     padding-top: 0.1rem;
     padding-bottom: 0.1rem;
@@ -522,11 +527,11 @@ html {
 }
 
 .sudoku-grid-cell.hover-white {
-    border: 5px dashed white;
+    border: 3px dashed white;
 }
 
 .sudoku-grid-cell.hover-black {
-    border: 5px dashed black;
+    border: 3px dashed black;
 }
 
 
