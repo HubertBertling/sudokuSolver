@@ -425,13 +425,13 @@ html {
 
 .sudoku-grid-cell.selected {
     /*background-color: lightgrey;*/
-    background-image: url("../images/selectBG1.png");
-    border: 2px solid white;
+    background-image: url("../images/selectBG2.png");
+    border: 2px solid blue;
 }
 
 .sudoku-grid-cell.auto-selected {
-    background-image: url("../images/selectBG2.png");
-    border: 2px solid blue;
+    background-image: url("../images/selectBG1.png");
+    border: 2px solid grey;
 }
 
 .nested>div.neccessary {

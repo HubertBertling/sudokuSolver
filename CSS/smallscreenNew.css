@@ -447,13 +447,13 @@ html {
 
 .sudoku-grid-cell.selected {
     /*background-color: lightgrey;*/
-    background-image: url("../images/selectBG1.png");
-    border: 2px solid white;
+    background-image: url("../images/selectBG2.png");
+    border: 2px solid blue;
 }
 
 .sudoku-grid-cell.auto-selected {
-    background-image: url("../images/selectBG2.png");
-    border: 2px solid blue;
+    background-image: url("../images/selectBG1.png");
+    border: 2px solid grey;
 }
 
 
@@ -474,11 +474,11 @@ html {
 .nested>div.neccessary-big {
     padding-top: 0.1rem;
     padding-bottom: 0.1rem;
-    padding-left: 0.4rem;
-    padding-right: 0.4rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
 
     border-radius: 0.3rem;
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     background-color: #56c7aa;
     color: #0d1117;
     border: 0.1rem solid white;
