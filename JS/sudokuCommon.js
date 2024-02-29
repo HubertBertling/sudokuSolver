@@ -290,7 +290,7 @@ class SudokuSolverController {
         if (this.mySolver.getGamePhase() == 'define') {
             this.mySolver.getPuzzlePreRunDataUsingWebworker();
         }
-        if (this.mySolver.isRunningClockedLoop()){
+        if (this.mySolver.isRunningClockedLoop()) {
             this.mySolver.autoExecPause();
             return;
         }
@@ -1024,8 +1024,13 @@ class SudokuCalculator extends SudokuModel {
         }
         this.notifyAspect('playMode', mode);
     }
+
     getPlayMode() {
         return this.playMode;
+    }
+
+    getAutoDirection() {
+        return this.myStepper.autoDirection;
     }
 
     setStepLazy() {
@@ -1164,11 +1169,11 @@ class SudokuCalculator extends SudokuModel {
     isInAutoExecution() {
         return this.isInAutoExecMode;
     }
-    
+
     isRunningClockedLoop() {
         return this.myStepper.isRunningClockedLoop();
     }
-    
+
     atCurrentSelectionSetNumber(number) {
         if (this.myStepper.indexSelected !== -1 && this.indexSelected() !== this.myStepper.indexSelected) {
             // Eine manuelle Nummernsetzung bei laufender automatischer Ausführung
@@ -1221,9 +1226,7 @@ class SudokuCalculator extends SudokuModel {
         this.myStepper.stopClockedLoop();
         // 2. Der ExecMode des Calculators wird abgeschaltet.
         this.isInAutoExecMode = false;
-        //this.myGrid.deselect();
         this.myGrid.clearAutoExecCellInfos();
-        // this.myStepper.init();
         this.myStepper = new StepperOnGrid(this.myGrid);
     }
 
@@ -1304,6 +1307,10 @@ class SudokuSolver extends SudokuCalculator {
     }
     getPlayMode() {
         return super.getPlayMode();
+    }
+
+    getAutoDirection() {
+        return super.getAutoDirection();
     }
 
     setPuzzleIOtechnique(pt) {
@@ -1445,7 +1452,7 @@ class SudokuSolver extends SudokuCalculator {
         super.autoExecProceed();
     }
 
-    
+
     succeeds() {
         return this.myGrid.isFinished() && !this.myGrid.isInsolvable();
     }
@@ -2392,7 +2399,6 @@ class StepperOnGrid {
                 let tmpValue = '0';
                 if (tmpSelection.options.length == 1) { tmpValue = tmpSelection.options[0]; }
                 if (tmpSelection.necessaryOnes.length == 1) { tmpValue = tmpSelection.necessaryOnes[0]; }
-                // if (tmpSelection.indirectNecessaryOnes.length == 1) { tmpValue = tmpSelection.indirectNecessaryOnes[0]; }
                 if (!(tmpValue == '0')) {
                     // Die Selektion hat eine eindeutige Nummer. D.h. es geht eindeutig weiter.
                     // Lege neuen Realstep mit der eindeutigen Nummer an
@@ -5564,6 +5570,12 @@ class SudokuCellView extends SudokuView {
                     ' in dieser Gruppe setzen.');
             } else if (tmpCell.getAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
                 sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
+
+                if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
+                    if (tmpCell.getAdmissibles().size == 1 && tmpCell.myNecessarys.size == 0 && sudoApp.mySolver.getAutoDirection() == 'forward') {
+                        sudoApp.mySolver.autoExecPause();
+                    }
+                }
             } else if (tmpCell.getTotalAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
                 sudoApp.mySolver.myView.displayTechnique('Hidden Single ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' in dieser Zelle setzen.');
             } else if (tmpCell.getTotalAdmissibles().size > 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
@@ -5575,6 +5587,14 @@ class SudokuCellView extends SudokuView {
 
             // Anzeige initialisieren
             // sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
+
+            sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
+            if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
+                if (tmpCell.getAdmissibles().size == 1 && tmpCell.myNecessarys.size == 0 && sudoApp.mySolver.getAutoDirection() == 'forward') {
+                    sudoApp.mySolver.autoExecPause();
+                }
+            }
+
             sudoApp.mySolver.myView.displayTechnique('');
 
             if (tmpCell.myNecessarys.size > 0
@@ -5596,9 +5616,9 @@ class SudokuCellView extends SudokuView {
                     });
                     sudoApp.mySolver.myView.displayTechnique(Array.from(tmpCell.myNecessarys)[0] +
                         ' notwendig, weil in der Gruppe einzig hier Kandidat.');
-                    if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                        sudoApp.mySolver.autoExecPause();
-                    }
+                    /*    if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
+                            sudoApp.mySolver.autoExecPause();
+                        } */
                     return;
                 }
             }
