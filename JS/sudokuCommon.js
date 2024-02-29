@@ -924,10 +924,14 @@ class SudokuSolverView extends SudokuView {
         if (this.mySolver.getActualEvalType() == 'lazy') {
             if (tech.includes('notwendig, weil')) {
                 evalNode.style.color = 'darkgreen';
+            } else if (tech.includes('Single') || 
+                tech.includes('Aus mehreren') ||
+                tech.includes('Notwendig')) {
+                evalNode.style.color = 'black';
             } else {
                 evalNode.style.color = 'Crimson';
             }
-            evalNode.innerHTML = '<b>Erläuterung:</b> &nbsp' + tech;
+            evalNode.innerHTML = tech;
         } else if (this.mySolver.getActualEvalType() == 'lazy-invisible') {
             evalNode.style.color = 'darkgreen';
             evalNode.innerHTML = tech;
@@ -2352,6 +2356,7 @@ class StepperOnGrid {
     }
 
     stepForward() {
+        //???
         let currentStep = this.myBackTracker.getCurrentStep();
         if (this.indexSelected == -1) {
             // Annahmen:
@@ -3744,7 +3749,6 @@ class SudokuGridView extends SudokuView {
                         });
                     }
 
-                    // If there is no necessary and no single number the first hidden single number will be displayed       
                     if (!necessaryCandidateExists
                         && !singleCandidateExists
                         && !hiddenSingleCandidateExists) {
@@ -3864,7 +3868,7 @@ class SudokuGrid extends SudokuModel {
         this.indexSelected = -1;
         // In der selektierten Zelle die Indices der selektierten
         // zulässigen Nummer
-        this.adMissibleIndexSelected = -1;
+        this.candidateIndexSelected = -1;
 
         this.stepLazy = false;
         this.loadedPuzzleId = '';
@@ -3894,7 +3898,7 @@ class SudokuGrid extends SudokuModel {
     init() {
         // Speichert die aktuell selektierte Zelle und ihren Index
         this.indexSelected = -1;
-        this.adMissibleIndexSelected = -1;
+        this.candidateIndexSelected = -1;
 
         this.loadedPuzzleId = '';
         this.loadedPuzzleName = '';
@@ -3948,7 +3952,7 @@ class SudokuGrid extends SudokuModel {
     }
 
     setAdMissibleIndexSelected(nr) {
-        this.adMissibleIndexSelected = nr;
+        this.candidateIndexSelected = nr;
     }
 
     // ========================================================
@@ -4432,7 +4436,7 @@ class SudokuGrid extends SudokuModel {
             // Lösche die Selektionsinformation der Tabelle
             this.selectedCell().unsetSelected();
             this.indexSelected = -1;
-            this.adMissibleIndexSelected = -1;
+            this.candidateIndexSelected = -1;
         }
     }
 
@@ -4440,9 +4444,6 @@ class SudokuGrid extends SudokuModel {
         let cell = this.sudoCells[index];
         cell.setSelected();
         this.indexSelected = index;
-        // Erste Subselektion setzen
-        // Subselektion kann leer sein.
-        this.adMissibleIndexSelected = cell.nextAdMissibleIndex();
     }
 
     isCellSelected() {
@@ -5021,20 +5022,14 @@ class SudokuGrid extends SudokuModel {
 
         if (oldIndex == index) {
             // Die selektierte Zelle bleibt unverändert
-            if (this.adMissibleIndexSelected == -1) {
-                // Die Gesamtselektion besitzt keine Subselektion
+            // Setze die nächste Subselektion
+            let candidateIndexSelected = sudoCell.nextAdMissibleIndex();
+            if (candidateIndexSelected == -1) {
+                // Die Gesamtselektion besitzt keine weitere Subselektion
                 // Die Gesamtselektion wird deselektiert.
                 this.deselect();
             } else {
-                // Setze die nächste Subselektion
-                let adMissibleIndexSelected = sudoCell.nextAdMissibleIndex();
-                if (adMissibleIndexSelected == -1) {
-                    // Die Gesamtselektion besitzt keine weitere Subselektion
-                    // Die Gesamtselektion wird deselektiert.
-                    this.deselect();
-                } else {
-                    this.setAdMissibleIndexSelected(adMissibleIndexSelected);
-                }
+                this.setAdMissibleIndexSelected(candidateIndexSelected);
             }
         } else {
             this.deselect();
@@ -5272,6 +5267,7 @@ class SudokuCellView extends SudokuView {
             });
             //To understand the hidden single of this cell, 
             //we switch to lazy mode for this step.
+            //???
             sudoApp.mySolver.setStepLazy();
             return true;
         } else {
@@ -5546,18 +5542,57 @@ class SudokuCellView extends SudokuView {
         this.unsetAutoSelected();
     }
 
-    setSelectStatus() {
+    displayTasks() {
         let tmpCell = this.getMyModel();
         let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
-        this.setSelected();
-        if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
 
-            if (tmpCell.myNecessarys.size > 0 && sudoApp.mySolver.myStepper.indexSelected > -1) {
+        if (tmpCell.myNecessarys.size > 0) {
+            let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
+            collection.myCells.forEach(e => {
+                if (e !== tmpCell) {
+                    if (e.getValue() == '0') {
+                        e.myView.setBorderGreenSelected();
+                        e.myInfluencers.forEach(cell => {
+                            if (cell.getValue() == Array.from(tmpCell.myNecessarys)[0]) {
+                                cell.myView.setBorderWhiteSelected();
+                            }
+                        });
+                    }
+                }
+            });
+            sudoApp.mySolver.myView.displayTechnique('Notwendige ' + Array.from(tmpCell.myNecessarys)[0] +
+                ' in dieser Gruppe setzen.');
+            return;
+        }
+        if (tmpCell.getAdmissibles().size == 1) {
+            sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
+            sudoApp.mySolver.autoExecPause();
+            return;
+        }
+        if (tmpCell.getTotalAdmissibles().size == 1) {
+            sudoApp.mySolver.myView.displayTechnique('Hidden Single ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' in dieser Zelle setzen.');
+            sudoApp.mySolver.autoExecPause();
+            return;
+        }
+        if (tmpCell.getTotalAdmissibles().size > 1) {
+            sudoApp.mySolver.myView.displayTechnique('Aus mehreren Kandidaten eine Nummer setzen.');
+        }
+        return;
+    }
+
+    displayReasons() {
+        let tmpCell = this.getMyModel();
+        let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
+
+        if (tmpCell.myNecessarys.size > 0
+            // && sudoApp.mySolver.myStepper.indexSelected > -1
+        ) {
+            if (adMissibleNrSelected == Array.from(tmpCell.myNecessarys)[0]) {
                 let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
                 collection.myCells.forEach(e => {
                     if (e !== tmpCell) {
                         if (e.getValue() == '0') {
-                            e.myView.setBorderGreenSelected();
+                            e.myView.setBorderGreenSelected()
                             e.myInfluencers.forEach(cell => {
                                 if (cell.getValue() == Array.from(tmpCell.myNecessarys)[0]) {
                                     cell.myView.setBorderWhiteSelected();
@@ -5568,211 +5603,176 @@ class SudokuCellView extends SudokuView {
                 });
                 sudoApp.mySolver.myView.displayTechnique('Notwendige ' + Array.from(tmpCell.myNecessarys)[0] +
                     ' in dieser Gruppe setzen.');
-            } else if (tmpCell.getAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
-                sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
-
-                if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                    if (tmpCell.getAdmissibles().size == 1 && tmpCell.myNecessarys.size == 0 && sudoApp.mySolver.getAutoDirection() == 'forward') {
-                        sudoApp.mySolver.autoExecPause();
-                    }
-                }
-            } else if (tmpCell.getTotalAdmissibles().size == 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
-                sudoApp.mySolver.myView.displayTechnique('Hidden Single ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' in dieser Zelle setzen.');
-            } else if (tmpCell.getTotalAdmissibles().size > 1 && sudoApp.mySolver.myStepper.indexSelected > -1) {
-                sudoApp.mySolver.myView.displayTechnique('Aus mehreren Kandidaten eine Nummer setzen.');
-            }
-        } else if (sudoApp.mySolver.getActualEvalType() == 'lazy') {
-            // Wenn die selektierte Zelle eine notwendige Nummer hat, dann
-            // wird die verursachende collection angezeigt.
-
-            // Anzeige initialisieren
-            // sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit grüner oder roter Nummer &gt');
-
-            sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
-            if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                if (tmpCell.getAdmissibles().size == 1 && tmpCell.myNecessarys.size == 0 && sudoApp.mySolver.getAutoDirection() == 'forward') {
-                    sudoApp.mySolver.autoExecPause();
-                }
-            }
-
-            sudoApp.mySolver.myView.displayTechnique('');
-
-            if (tmpCell.myNecessarys.size > 0
-                // && sudoApp.mySolver.myStepper.indexSelected > -1
-            ) {
-                if (adMissibleNrSelected == Array.from(tmpCell.myNecessarys)[0]) {
-                    let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
-                    collection.myCells.forEach(e => {
-                        if (e !== tmpCell) {
-                            if (e.getValue() == '0') {
-                                e.myView.setBorderGreenSelected()
-                                e.myInfluencers.forEach(cell => {
-                                    if (cell.getValue() == Array.from(tmpCell.myNecessarys)[0]) {
-                                        cell.myView.setBorderWhiteSelected();
-                                    }
-                                });
-                            }
-                        }
-                    });
-                    sudoApp.mySolver.myView.displayTechnique(Array.from(tmpCell.myNecessarys)[0] +
-                        ' notwendig, weil in der Gruppe einzig hier Kandidat.');
-                    /*    if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                            sudoApp.mySolver.autoExecPause();
-                        } */
-                    return;
-                }
-            }
-
-            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-                tmpCell.myLevel_gt0_inAdmissiblesFromNecessarys.size > 0) {
-                if (tmpCell.myLevel_gt0_inAdmissiblesFromNecessarys.has(adMissibleNrSelected)) {
-                    // Wenn die selektierte Zelle eine rote Nummer enthält, die durch eine notwendige
-                    // Nummer verursacht ist, wird dies angezeigt.
-                    let necessaryCell = undefined;
-                    // Bestimme die Zelle der notwendigen Nummer
-                    tmpCell.myInfluencers.forEach(cell => {
-                        if (cell.getNecessarys().has(adMissibleNrSelected)) {
-                            necessaryCell = cell;
-                        }
-                    })
-                    // Bestimme die gemeinsame Gruppe der Zelle mit der roten Nummer
-                    // und der Zelle mit der notwendigen Nummer
-                    let tmpGroup = undefined;
-                    if (tmpCell.myBlock == necessaryCell.myBlock) {
-                        tmpGroup = tmpCell.myBlock;
-                    } else if (tmpCell.myRow == necessaryCell.myRow) {
-                        tmpGroup = tmpCell.myRow;
-                    } else if (tmpCell.myCol == necessaryCell.myCol) {
-                        tmpGroup = tmpCell.myCol;
-                    }
-                    // Gebe die Gruppe aus
-                    tmpGroup.myCells.forEach(cell => {
-                        cell.myView.setBorderSelected();
-                        if (cell.getNecessarys().has(adMissibleNrSelected)) {
-                            cell.myView.setBorderRedSelected();
-                        }
-                    })
-                    sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen notwendiger Nummer: ' + adMissibleNrSelected);
-                    if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                        sudoApp.mySolver.autoExecPause();
-                    }
-                    return;
-                }
-            }
-
-
-            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-                tmpCell.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
-                if (tmpCell.myLevel_gt0_inAdmissiblesFromPairs.has(adMissibleNrSelected)) {
-                    // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
-                    // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
-                    // verursacht werden.
-                    // Die Block, Spalte oder Zeile des Paares wird markiert.
-                    let pairArray = [];
-                    let pairInfo = tmpCell.myLevel_gt0_inAdmissiblesFromPairs.get(adMissibleNrSelected);
-                    pairInfo.collection.myCells.forEach(cell => {
-                        if (cell !== tmpCell) {
-                            cell.myView.setBorderSelected();
-                        }
-                    });
-                    pairInfo.pairCell1.myView.setBorderRedSelected();
-                    pairInfo.pairCell2.myView.setBorderRedSelected();
-                    pairArray = Array.from(pairInfo.pairCell1.getTotalAdmissibles());
-                    sudoApp.mySolver.myView.displayTechnique(
-                        adMissibleNrSelected
-                        + ' unzulässig wegen "Nacktem Paar" {'
-                        + pairArray[0]
-                        + ', '
-                        + pairArray[1] + '}');
-                    if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                        sudoApp.mySolver.autoExecPause();
-                    }
-                    return;
-                }
-            }
-
-            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-                tmpCell.myLevel_gt0_inAdmissiblesFromIntersection.size > 0) {
-
-                let info = tmpCell.myLevel_gt0_inAdmissiblesFromIntersectionInfo.get(adMissibleNrSelected);
-                info.block.myCells.forEach(cell => {
-                    cell.myView.setBorderSelected();
-                });
-                info.rowCol.myCells.forEach(cell => {
-                    cell.myView.setBorderSelected();
-                });
-
-                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Überschneidung');
-                if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                    sudoApp.mySolver.autoExecPause();
-                }
                 return;
             }
+        }
 
-
-            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-                tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairs.size > 0) {
-
-                let info = tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairsInfo.get(adMissibleNrSelected);
-                info.rowCol.myCells.forEach(cell => {
+        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+            tmpCell.myLevel_gt0_inAdmissiblesFromNecessarys.size > 0) {
+            if (tmpCell.myLevel_gt0_inAdmissiblesFromNecessarys.has(adMissibleNrSelected)) {
+                // Wenn die selektierte Zelle eine rote Nummer enthält, die durch eine notwendige
+                // Nummer verursacht ist, wird dies angezeigt.
+                let necessaryCell = undefined;
+                // Bestimme die Zelle der notwendigen Nummer
+                tmpCell.myInfluencers.forEach(cell => {
+                    if (cell.getNecessarys().has(adMissibleNrSelected)) {
+                        necessaryCell = cell;
+                    }
+                })
+                // Bestimme die gemeinsame Gruppe der Zelle mit der roten Nummer
+                // und der Zelle mit der notwendigen Nummer
+                let tmpGroup = undefined;
+                if (tmpCell.myBlock == necessaryCell.myBlock) {
+                    tmpGroup = tmpCell.myBlock;
+                } else if (tmpCell.myRow == necessaryCell.myRow) {
+                    tmpGroup = tmpCell.myRow;
+                } else if (tmpCell.myCol == necessaryCell.myCol) {
+                    tmpGroup = tmpCell.myCol;
+                }
+                // Gebe die Gruppe aus
+                tmpGroup.myCells.forEach(cell => {
                     cell.myView.setBorderSelected();
-                });
-                info.pVector.myCells.forEach(cell => {
-                    if (cell.getValue() == '0' && cell.getTotalAdmissibles().has(adMissibleNrSelected)) {
-                        cell.myView.unsetSelected();
+                    if (cell.getNecessarys().has(adMissibleNrSelected)) {
                         cell.myView.setBorderRedSelected();
                     }
                 })
-
-                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected
-                    + ' unzulässig wegen Pointing Pair');
+                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen notwendiger Nummer: ' + adMissibleNrSelected);
                 if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
                     sudoApp.mySolver.autoExecPause();
                 }
                 return;
             }
 
-            if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-                tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.size > 0) {
-                if (tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.has(adMissibleNrSelected)) {
-                    // Für ein Subpaar muss nicht jede einzelne Nummer geprüft werden.
-                    // 
-                    let pairArray = [];
-                    const [pairInfo] = tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
-                    pairInfo.collection.myCells.forEach(cell => {
-                        if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
-                            cell.myView.setBorderRedSelected();
-                            if (pairArray.length == 0) {
-                                pairArray = Array.from(cell.getTotalAdmissibles());
-                            }
-                        } else {
-                            cell.myView.setBorderSelected();
-                        }
-                    });
-                    sudoApp.mySolver.myView.displayTechnique(
-                        adMissibleNrSelected
-                        + ' unzulässig wegen "Verstecktem Paar" {'
-                        + pairArray[0]
-                        + ', '
-                        + pairArray[1] + '}');
-                    if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                        sudoApp.mySolver.autoExecPause();
-                    }
-                    return;
-                }
-            }
+        }
 
+
+        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+            tmpCell.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
+            if (tmpCell.myLevel_gt0_inAdmissiblesFromPairs.has(adMissibleNrSelected)) {
+                // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
+                // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
+                // verursacht werden.
+                // Die Block, Spalte oder Zeile des Paares wird markiert.
+                let pairArray = [];
+                let pairInfo = tmpCell.myLevel_gt0_inAdmissiblesFromPairs.get(adMissibleNrSelected);
+                pairInfo.collection.myCells.forEach(cell => {
+                    if (cell !== tmpCell) {
+                        cell.myView.setBorderSelected();
+                    }
+                });
+                pairInfo.pairCell1.myView.setBorderRedSelected();
+                pairInfo.pairCell2.myView.setBorderRedSelected();
+                pairArray = Array.from(pairInfo.pairCell1.getTotalAdmissibles());
+                sudoApp.mySolver.myView.displayTechnique(
+                    adMissibleNrSelected
+                    + ' unzulässig wegen "Nacktem Paar" {'
+                    + pairArray[0]
+                    + ', '
+                    + pairArray[1] + '}');
+                if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
+                    sudoApp.mySolver.autoExecPause();
+                }
+                return;
+            }
+        }
+
+        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+            tmpCell.myLevel_gt0_inAdmissiblesFromIntersection.size > 0) {
+
+            let info = tmpCell.myLevel_gt0_inAdmissiblesFromIntersectionInfo.get(adMissibleNrSelected);
+            info.block.myCells.forEach(cell => {
+                cell.myView.setBorderSelected();
+            });
+            info.rowCol.myCells.forEach(cell => {
+                cell.myView.setBorderSelected();
+            });
+
+            sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Überschneidung');
+            if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
+                sudoApp.mySolver.autoExecPause();
+            }
+            return;
+        }
+
+
+        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+            tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairs.size > 0) {
+
+            let info = tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairsInfo.get(adMissibleNrSelected);
+            info.rowCol.myCells.forEach(cell => {
+                cell.myView.setBorderSelected();
+            });
+            info.pVector.myCells.forEach(cell => {
+                if (cell.getValue() == '0' && cell.getTotalAdmissibles().has(adMissibleNrSelected)) {
+                    cell.myView.unsetSelected();
+                    cell.myView.setBorderRedSelected();
+                }
+            })
+
+            sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected
+                + ' unzulässig wegen Pointing Pair');
+            if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
+                sudoApp.mySolver.autoExecPause();
+            }
+            return;
+        }
+
+        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
+            tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.size > 0) {
+            if (tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.has(adMissibleNrSelected)) {
+                // Für ein Subpaar muss nicht jede einzelne Nummer geprüft werden.
+                // 
+                let pairArray = [];
+                const [pairInfo] = tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
+                pairInfo.collection.myCells.forEach(cell => {
+                    if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
+                        cell.myView.setBorderRedSelected();
+                        if (pairArray.length == 0) {
+                            pairArray = Array.from(cell.getTotalAdmissibles());
+                        }
+                    } else {
+                        cell.myView.setBorderSelected();
+                    }
+                });
+                sudoApp.mySolver.myView.displayTechnique(
+                    adMissibleNrSelected
+                    + ' unzulässig wegen "Verstecktem Paar" {'
+                    + pairArray[0]
+                    + ', '
+                    + pairArray[1] + '}');
+                if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
+                    sudoApp.mySolver.autoExecPause();
+                }
+                return;
+            }
+        }
+    };
+
+
+
+    setSelectStatus() {
+        // ???
+        let tmpCell = this.getMyModel();
+        let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
+        this.setSelected();
+
+        if (tmpCell.candidateIndexSelected == -1) {
+            this.displayTasks();
+        } else {
+            this.displayReasons();
         }
     }
 
     unsetSelectStatus() {
         this.unsetSelected();
         this.unsetBorderSelected();
+        /*  ???
         if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
             sudoApp.mySolver.myView.displayTechnique('');
         } else {
             sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit roter Nummer &gt');
-        }
+        }*/
+        sudoApp.mySolver.myView.displayTechnique('');
     }
 
     unsetAutoSelectStatus() {
@@ -5868,7 +5868,7 @@ class SudokuCell extends SudokuModel {
         this.myAutoStepNumber = -1;
 
         this.isSelected = false;
-        this.adMissibleIndexSelected = -1;
+        this.candidateIndexSelected = -1;
         // 'manual' oder 'auto'
         this.myValueType = 'manual';
         // Speichert die aktuell unzulässigen Zahlen für diese Zelle
@@ -5916,11 +5916,11 @@ class SudokuCell extends SudokuModel {
     }
     getAdMissibleNrSelected() {
         let adMissibleArray = Array.from(this.getAdmissibles());
-        return adMissibleArray[this.adMissibleIndexSelected];
+        return adMissibleArray[this.candidateIndexSelected];
     }
 
     setAdMissibleIndexSelected(nr) {
-        this.adMissibleIndexSelected = nr;
+        this.candidateIndexSelected = nr;
     }
 
 
@@ -6003,7 +6003,7 @@ class SudokuCell extends SudokuModel {
 
     setSelected() {
         this.isSelected = true;
-        this.adMissibleIndexSelected = -1;
+        this.candidateIndexSelected = -1;
     }
 
     unsetSelected() {
@@ -6039,11 +6039,11 @@ class SudokuCell extends SudokuModel {
         if (this.myNecessarys.size > 0) {
             necessaryNr = Array.from(this.myNecessarys)[0];
             necessaryIndex = adMissibleArray.indexOf(necessaryNr);
-            this.adMissibleIndexSelected = necessaryIndex;
+            this.candidateIndexSelected = necessaryIndex;
             return necessaryIndex;
         }
 
-        let nextIndex = this.adMissibleIndexSelected + 1;
+        let nextIndex = this.candidateIndexSelected + 1;
         let nextAdmissible = '-1';
         let found = false;
 
@@ -6058,11 +6058,11 @@ class SudokuCell extends SudokuModel {
         }
 
         if (found) {
-            this.adMissibleIndexSelected = nextIndex;
+            this.candidateIndexSelected = nextIndex;
             return nextIndex;
         } else {
             // Für einen erneuten Durchlauf zurücksetzen
-            this.adMissibleIndexSelected = -1;
+            this.candidateIndexSelected = -1;
             return -1;
         }
     }
