@@ -924,7 +924,7 @@ class SudokuSolverView extends SudokuView {
         if (this.mySolver.getActualEvalType() == 'lazy') {
             if (tech.includes('notwendig, weil')) {
                 evalNode.style.color = 'darkgreen';
-            } else if (tech.includes('Single') || 
+            } else if (tech.includes('Single') ||
                 tech.includes('Aus mehreren') ||
                 tech.includes('Notwendig')) {
                 evalNode.style.color = 'black';
@@ -5566,12 +5566,16 @@ class SudokuCellView extends SudokuView {
         }
         if (tmpCell.getAdmissibles().size == 1) {
             sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
-            sudoApp.mySolver.autoExecPause();
+            if (sudoApp.mySolver.getAutoDirection() == 'forward') {
+                sudoApp.mySolver.autoExecPause();
+            }
             return;
         }
         if (tmpCell.getTotalAdmissibles().size == 1) {
             sudoApp.mySolver.myView.displayTechnique('Hidden Single ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' in dieser Zelle setzen.');
-            sudoApp.mySolver.autoExecPause();
+            if (sudoApp.mySolver.getAutoDirection() == 'forward') {
+                sudoApp.mySolver.autoExecPause();
+            }
             return;
         }
         if (tmpCell.getTotalAdmissibles().size > 1) {
