@@ -426,13 +426,14 @@ html {
 .sudoku-grid-cell.selected {
     /*background-color: lightgrey;*/
     /*background-image: url("../images/selectBG2.png");*/
-    background-color: lightgrey;
-    border: 2px solid grey;
+    background-color: #f39795fb;
+    border: 2px solid white;
 }
 
 .sudoku-grid-cell.auto-selected {
-    background-image: url("../images/selectBG1.png");
-    border: 2px solid grey;
+    /*  background-image: url("../images/selectBG1.png");*/
+    background-color: hsl(0, 67%, 84%);
+    border: 2px solid white;
 }
 
 .nested>div.neccessary {
