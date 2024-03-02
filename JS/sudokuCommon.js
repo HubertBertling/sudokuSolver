@@ -5566,14 +5566,15 @@ class SudokuCellView extends SudokuView {
         }
         if (tmpCell.getAdmissibles().size == 1) {
             sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
-            if (sudoApp.mySolver.getAutoDirection() == 'forward') {
+            // ??? 
+            if (sudoApp.mySolver.getPlayMode() == 'solving-trace' && sudoApp.mySolver.getAutoDirection() == 'forward') {
                 sudoApp.mySolver.autoExecPause();
             }
             return;
         }
         if (tmpCell.getTotalAdmissibles().size == 1) {
             sudoApp.mySolver.myView.displayTechnique('Hidden Single ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' in dieser Zelle setzen.');
-            if (sudoApp.mySolver.getAutoDirection() == 'forward') {
+            if (sudoApp.mySolver.getPlayMode() == 'solving-trace' && sudoApp.mySolver.getAutoDirection() == 'forward') {
                 sudoApp.mySolver.autoExecPause();
             }
             return;
