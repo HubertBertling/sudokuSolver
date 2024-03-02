@@ -331,10 +331,11 @@ class SudokuSolverController {
 
     resetLinkPressed() {
         sudoApp.myNavBar.closeNav();
-        sudoApp.myConfirmDlg.open(sudoApp.mySolver,
+        sudoApp.mySolver.reset();
+        /* sudoApp.myConfirmDlg.open(sudoApp.mySolver,
             sudoApp.mySolver.reset,
             "Puzzle zurücksetzen",
-            "Alle Lösungsnummern werden gelöscht. Puzzle zurücksetzen?");
+            "Alle Lösungsnummern werden gelöscht. Puzzle zurücksetzen?"); */
     }
 
     undoBtnPressed() {
