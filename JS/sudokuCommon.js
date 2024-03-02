@@ -922,9 +922,7 @@ class SudokuSolverView extends SudokuView {
         let myGrid = this.getMyModel().getMyGrid();
         let evalNode = document.getElementById("technique");
         if (this.mySolver.getActualEvalType() == 'lazy') {
-            if (tech.includes('notwendig, weil')) {
-                evalNode.style.color = 'darkgreen';
-            } else if (tech.includes('Single') ||
+            if (tech.includes('Single') ||
                 tech.includes('Aus mehreren') ||
                 tech.includes('Notwendig')) {
                 evalNode.style.color = 'black';
@@ -2356,7 +2354,6 @@ class StepperOnGrid {
     }
 
     stepForward() {
-        //???
         let currentStep = this.myBackTracker.getCurrentStep();
         if (this.indexSelected == -1) {
             // Annahmen:
@@ -5267,7 +5264,6 @@ class SudokuCellView extends SudokuView {
             });
             //To understand the hidden single of this cell, 
             //we switch to lazy mode for this step.
-            //???
             sudoApp.mySolver.setStepLazy();
             return true;
         } else {
@@ -5544,7 +5540,6 @@ class SudokuCellView extends SudokuView {
 
     displayTasks() {
         let tmpCell = this.getMyModel();
-        let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
 
         if (tmpCell.myNecessarys.size > 0) {
             let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
@@ -5566,7 +5561,6 @@ class SudokuCellView extends SudokuView {
         }
         if (tmpCell.getAdmissibles().size == 1) {
             sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
-            // ??? 
             if (sudoApp.mySolver.getPlayMode() == 'solving-trace' && sudoApp.mySolver.getAutoDirection() == 'forward') {
                 sudoApp.mySolver.autoExecPause();
             }
@@ -5590,7 +5584,6 @@ class SudokuCellView extends SudokuView {
         let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
 
         if (tmpCell.myNecessarys.size > 0
-            // && sudoApp.mySolver.myStepper.indexSelected > -1
         ) {
             if (adMissibleNrSelected == Array.from(tmpCell.myNecessarys)[0]) {
                 let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
@@ -5641,7 +5634,7 @@ class SudokuCellView extends SudokuView {
                         cell.myView.setBorderRedSelected();
                     }
                 })
-                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen notwendiger Nummer: ' + adMissibleNrSelected);
+                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen notwendiger Nummer: ' + necessaryCell);
                 if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
                     sudoApp.mySolver.autoExecPause();
                 }
@@ -5649,8 +5642,6 @@ class SudokuCellView extends SudokuView {
             }
 
         }
-
-
         if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
             tmpCell.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
             if (tmpCell.myLevel_gt0_inAdmissiblesFromPairs.has(adMissibleNrSelected)) {
@@ -5698,7 +5689,6 @@ class SudokuCellView extends SudokuView {
             }
             return;
         }
-
 
         if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
             tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairs.size > 0) {
@@ -5753,17 +5743,19 @@ class SudokuCellView extends SudokuView {
         }
     };
 
-
-
     setSelectStatus() {
-        // ???
         let tmpCell = this.getMyModel();
-        let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
         this.setSelected();
-
         if (tmpCell.candidateIndexSelected == -1) {
+            // Nach dem ersten Click auf die Zelle ist noch 
+            // kein Kandidat in der Zelle selektiert.
+            // Der Anwender bekommt einen Hinweis, was er jetzt tun soll.
             this.displayTasks();
         } else {
+            // Durch erneutes Clicken auf die bereits selektierte Zelle
+            // selektiert der Solver der Reihe nach unzulässige Kandidaten
+            // in der Zelle. Für jeden unzulässigen Kandidaten zeigt die
+            // Anwendung den Grund der Unzulässigkeit an.
             this.displayReasons();
         }
     }
@@ -5771,12 +5763,6 @@ class SudokuCellView extends SudokuView {
     unsetSelectStatus() {
         this.unsetSelected();
         this.unsetBorderSelected();
-        /*  ???
-        if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
-            sudoApp.mySolver.myView.displayTechnique('');
-        } else {
-            sudoApp.mySolver.myView.displayTechnique('&lt Selektiere Zelle mit roter Nummer &gt');
-        }*/
         sudoApp.mySolver.myView.displayTechnique('');
     }
 
@@ -5795,7 +5781,7 @@ class SudokuCellView extends SudokuView {
         let mySolverView = sudoApp.mySolver.getMyView();
         // 1) Nachfolgend wird der Basiswiderspruch des Sudokus definiert. Mit ihm allein würde der Solver
         // erfolgreich durch Backtracking die Puzzles lösen. Allerdings müssten sehr viel mehr Zellen
-        // gesetzt werden, bis das ein vorhandener Widerspruch mit diesem Kriterium aufgedeckt würde.
+        // gesetzt werden, bis dass ein vorhandener Widerspruch mit diesem Kriterium aufgedeckt würde.
         // Alle weiteren Kriterien dienen lediglich der früheren Aufdeckung von Widersprüchen.
         if (cell.getValue() !== '0' && cell.myDirectInAdmissibles().has(cell.getValue())) {
             cell.myInfluencers.forEach(influencerCell => {
@@ -5843,8 +5829,6 @@ class SudokuCellView extends SudokuView {
         mySolverView.displayReasonInsolvability('');
         return false;
     }
-
-
 }
 
 class SudokuCell extends SudokuModel {
