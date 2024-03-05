@@ -198,12 +198,12 @@ Der Generator generiert nur faire Puzzles mit den Schwierigkeitsgraden 'Sehr lei
 
 ### Einstellung Spielmodus
 
-- Trainieren (Automatik-Buttons ausgeblendet)
-- Automatisch lösen (Automatik-Buttons eingeblendet)
+- Manuelles Lösen (Automatik-Buttons ausgeblendet)
+- Automatisches Lösen mit oder ohne Haltepunkte (Automatik-Buttons eingeblendet)
 
-Der Spielmodus "Trainieren", bewirkt, dass die Tasten für die automatische Ausführung ausgeblendet werden. Der Spielmodus "Automatisch lösen" schaltet sie wieder zu.
+Der Spielmodus "Manuelles Lösen", bewirkt, dass die Tasten für die automatische Ausführung ausgeblendet werden. Der Spielmodus "Automatisches Lösen" schaltet sie wieder zu.
 
-|Tastenauswahl Manuelle Ausführung|Tastenauswahl Automatische Ausführung|
+|Tastenauswahl Manuelles Lösen|Tastenauswahl Automatisches Lösen|
 |---------|---------|
 |![ButtonsManual](./images/TastenauswahlManuell.png){:width=auto}|![ButtonsAutomatic](./images/tastenauswahlAutomatik.png){: width=auto}|
 
@@ -233,43 +233,34 @@ Der Solver zeigt an, wie er im Suchprozess vorwärts und rückwärts geht. Im Fa
 
 Der Solver zeigt die Anzahl der zurückgelegten Schritte an. Jedes Setzen einer Zelle sowie die Rücknahme einer Setzung erhöht den Zähler um 1. Ebenso zeigt der Solver die Anzahl der Rückwärtsläufe an.
 
-# Nutzungsformen des Sudoku-Trainers
+# 3 Nutzungsformen des Sudoku-Trainers
 
-Wir unterscheiden 4 verschiedene Nutzungsformen des Sudoku-Trainers
-1. Manuelles Lösen pur
-1. Trainieren (Automatische Schrittausführung nur im Bedarfsfall)
-1. Trainieren (Ausschließlich automatische Schrittausführung)
-1. Vollautomatisches Lösen
+Wir unterscheiden 3 Nutzungsformen des Sudoku-Trainers
+1. Manuelles Lösen
+1. Automatisches Lösen mit Haltepunkten
+1. Automatisches Lösen ohne Haltepunkte
 
-## Rein manuelles Lösen
+## Manuelles Lösen
 
-Sinnvolle Werkzeugeinstellung:
+Werkzeugeinstellung:
 - **Kandidatenauswertung:** Keine Kandidatenanzeige
-- **Spielmodus:** Trainieren
+- **Spielmodus:** Manuelles Lösen
 
-Manuelle Ausführung bedeutet, dass der Spieler die Lösungsnummern (grün) in den Zellen setzt. Will der Spieler sich der Herausforderung einer manuellen Lösungssuche ernsthaft stellen, verzichtet er auf jede Hilfe durch den Solver. Keine Kandidatenanzeige: denn sie würde ja die notwendigen Kandidaten anzeigen. Spielmodus Trainieren, um den "versehentlichen" Start der automatischen Lösung zu vermeiden.
+Manuelles Lösen bedeutet, dass der Spieler die Lösungsnummern (grün) in den Zellen setzt. Will der Spieler sich der Herausforderung einer manuellen Lösungssuche ernsthaft stellen, verzichtet er auf jede Hilfe durch den Solver. Keine Kandidatenanzeige: denn sie würde ja die notwendigen Kandidaten anzeigen.
 
-Beim manuellen Lösen kann es passieren, dass eine Nummer falsch gesetzt wird. Viele Setzungen danach laufen in Abhängigkeit von dieser ersten Fehlersetzung Gefahr ebenfalls falsch gesetzt zu werden. Mit der Prüfen-Taste kann in diesem Fall geprüft werden, ob und welche bisherigen Setzungen bereits fehlerhaft sind. Doch ein wenig Werkzeugunterstützung!
+Beim manuellen Lösen kann es passieren, dass eine Nummer falsch gesetzt wird. Viele Setzungen danach laufen in Abhängigkeit von dieser ersten Fehlersetzung Gefahr ebenfalls falsch gesetzt zu werden. Mit der Prüfen-Taste kann in diesem Fall geprüft werden, ob und welche bisherigen Setzungen bereits fehlerhaft sind.
 
 {: style="text-align:center"}
 ![Prüfen](./images/pruefungfehler.png){: width="150px"}
 
-## Training (Automatische Schrittausführung nur im Bedarfsfall)
+## Automatisches Lösen mit Haltepunkten
 
-Sinnvolle Werkzeugeinstellung:
+Werkzeugeinstellung:
 
-- **Kandidatenauswertung:** Keine Kandidatenanzeige
-- **Spielmodus:** Trainieren
+- **Kandidatenauswertung:** Keine Kandidatenanzeige oder Lazy
+- **Spielmodus:** Automatisches Lösen mit Haltepunkten
 
-Diese Nutzungsform ist ein Manuelles Lösen, jetzt aber mit mit Rückgriff auf automatische Schritte. Sie ist hilfreich, wenn man keine Idee für eine nächste Nummernsetzung mehr hat. Durch Betätigen der Schritt-Taste führt der Trainer automatisch eine nächste Nummernsetzung durch. Danach kann der Spieler fortfahren das Puzzle manuell zu lösen.
-
-## Training (Ausschließlich automatische Schrittausführung)  
-
-Sinnvolle Werkzeugeinstellung:
-- **Kandidatenauswertung:** Keine Kandidatenanzeige
-- **Spielmodus:** Trainieren
-
-In dieser Nutzungsform zeigt der Sudoku-Trainer seinen vollen Funktionsumfang. Sie ist damit besonders lehrreich. Deshalb an dieser Stelle eine Übersicht über die Arten automatischer Schritte. Die folgenden Darstellungen nehmen Bezug auf das Puzzle "Backtrack_9". Es ist in jeder Puzzle-Datenbank vorhanden. Dies ist ein Puzzle mit dem Schwierigkeitsgrad "Sehr schwer".
+In dieser Nutzungsform zeigt der Sudoku-Trainer seinen vollen Funktionsumfang. Sie ist damit besonders lehrreich. Der Spieler beobachtet die Lösungssuche anstatt selber die Lösung zu suchen, indem er automatische Lösungsschritte ausführen lässt. Deshalb an dieser Stelle eine Übersicht über die Arten automatischer Schritte. Die folgenden Darstellungen nehmen Bezug auf das Puzzle "Backtrack_10". Es ist in jeder Puzzle-Datenbank vorhanden. Dies ist ein Puzzle mit dem Schwierigkeitsgrad "Sehr schwer".
 
 **Schritt 1: Zelle mit mehreren Optionen.** Schon im ersten Schritt erweist sich dieses Puzzle als sehr schwer, da der Solver keine Zelle mit eindeutiger Nummernbelegung findet und stattdessen eine Zelle mit 2 Optionen selektiert: 1 und 8. Der Solver versucht zuerst die 1.
 
