@@ -21,16 +21,16 @@ layout: default
     - [Trainer-Einstellungen](#trainer-einstellungen)
         - [Einstellung Kandidatenauswertung](#einstellung-kandidatenauswertung)
         - [Einstellung Spielmodus](#einstellung-spielmodus)
+        - [Einstellung Haltepunkte](#einstellung-haltepunkte)
         - [Einstellung Technik](#einstellung-technik)
     - [Die Lösungssuche des Solvers](#die-lösungssuche-des-solvers)
         - [Wie wählt der Solver die nächste Zelle und die in ihr zu setzende Nummer?](#wie-wählt-der-solver-die-nächste-zelle-und-die-in-ihr-zu-setzende-nummer)
         - [Wie prüft der Solver die neu gesetzte Nummer?](#wie-prüft-der-solver-die-neu-gesetzte-nummer)
         - [Vorwärts und Rückwärts (Backtracking)](#vorwärts-und-rückwärts-backtracking)
 - [Nutzungsformen des Sudoku-Trainers](#nutzungsformen-des-sudoku-trainers)
-    - [Rein manuelles Lösen](#rein-manuelles-lösen)
-    - [Training (Automatische Schrittausführung nur im Bedarfsfall)](#training-automatische-schrittausführung-nur-im-bedarfsfall)
-    - [Training (Ausschließlich automatische Schrittausführung)](#training-ausschließlich-automatische-schrittausführung)
-    - [Vollautomatisches Lösen](#vollautomatisches-lösen)
+    - [Manuelles Lösen](#manuelles-lösen)
+    - [Automatisches Lösen mit Haltepunkten](#automatisches-lösen-mit-haltepunkten)
+    - [Automatisches Lösen ohne Haltepunkte](#automatisches-lösen-ohne-haltepunkte)
 - [Puzzle-Datenbank](#puzzle-datenbank)
     - [Operationen der Datenbank](#operationen-der-datenbank)
     - [Import/Export und Teilen von Puzzles](#importexport-und-teilen-von-puzzles)
@@ -207,6 +207,17 @@ Der Spielmodus "Manuelles Lösen", bewirkt, dass die Tasten für die automatisch
 |---------|---------|
 |![ButtonsManual](./images/TastenauswahlManuell.png){:width=auto}|![ButtonsAutomatic](./images/tastenauswahlAutomatik.png){: width=auto}|
 
+Die Tasten der automatischen Ausführung haben folgende Bedeutung:
+
+|Taste  |Bedeutung  |
+|---------|---------|
+|**Start**|Der Solver startet den automatischen Lösungssuchprozess. Zusätzlich wird ein Timer gestartet, der die Ausführung automatischer Suchschritte anstößt.|
+|**Schritt/Pause**|Der Solver führt den nächsten automatischen Suchschritt aus. Falls noch nicht geschehen, startet er zuvor den Suchprozess überhaupt. Mit dieser Taste kann man den Solver Schritt für Schritt arbeiten lassen und so jeden einzelnen seiner Schritte beobachten und verstehen. Bei laufender Ausführung wird diese angehalten (Pause) und kann bei Bedarf wieder fortgesetzt werden durch die Starttaste.|
+
+### Einstellung Haltepunkte
+
+Auf der Einstellungsseite können verschiedene Haltepunkte des automatischen Lösungslaufes gesetzt und abgewählt werden. Wenn man für ein neues Puzzle seinen Schwierigkeitsgrad z.B. 'Mittel' prüfen will, kann man die Haltepunkte 'Single'und 'Hidden Single' setzen. Der Solver dürfte dann ausschließlich bei 'Single'-Schritten anhalten. Es muss mindestens einen geben und es darf keine 'Hidden-Single'-Schritte geben.
+
 ### Einstellung Technik
 
 - **Import/Export == on:** In der Hauptansicht ist der Teile-Button zugeschaltet. In der Datenbankansicht sind die Buttons für Puzzle-Download und -Import zugeschaltet.
@@ -233,7 +244,7 @@ Der Solver zeigt an, wie er im Suchprozess vorwärts und rückwärts geht. Im Fa
 
 Der Solver zeigt die Anzahl der zurückgelegten Schritte an. Jedes Setzen einer Zelle sowie die Rücknahme einer Setzung erhöht den Zähler um 1. Ebenso zeigt der Solver die Anzahl der Rückwärtsläufe an.
 
-# 3 Nutzungsformen des Sudoku-Trainers
+# Nutzungsformen des Sudoku-Trainers
 
 Wir unterscheiden 3 Nutzungsformen des Sudoku-Trainers
 1. Manuelles Lösen
@@ -257,8 +268,9 @@ Beim manuellen Lösen kann es passieren, dass eine Nummer falsch gesetzt wird. V
 
 Werkzeugeinstellung:
 
-- **Kandidatenauswertung:** Keine Kandidatenanzeige oder Lazy
-- **Spielmodus:** Automatisches Lösen mit Haltepunkten
+- **Kandidatenauswertung:** Keine Kandidatenanzeige oder Lazy.
+- **Spielmodus:** Automatisches Lösen mit Haltepunkten.
+- **Haltepunkte:** Alle Haltepunkte sind gesetzt.
 
 In dieser Nutzungsform zeigt der Sudoku-Trainer seinen vollen Funktionsumfang. Sie ist damit besonders lehrreich. Der Spieler beobachtet die Lösungssuche anstatt selber die Lösung zu suchen, indem er automatische Lösungsschritte ausführen lässt. Deshalb an dieser Stelle eine Übersicht über die Arten automatischer Schritte. Die folgenden Darstellungen nehmen Bezug auf das Puzzle "Backtrack_10". Es ist in jeder Puzzle-Datenbank vorhanden. Dies ist ein Puzzle mit dem Schwierigkeitsgrad "Sehr schwer".
 
@@ -277,7 +289,7 @@ In dieser Nutzungsform zeigt der Sudoku-Trainer seinen vollen Funktionsumfang. S
 {: style="text-align:center"}
 ![Schritt 30](./images/exampleStep30.png){: max-width="75%"}
 
-**Schritt 60: Zweiter Besuch in der Zelle.** Im Schritt 60 kehrt der Solver in die Zelle zurück, in der er beim ersten Besuch die 1 gewählt hatte. Nun schaltet er wieder in den Vorwärts-Modus, grüner Pfeil rechts, und selektiert den zweiten Kandidaten mit der Nummer 8.
+**Schritt 60: Zweiter Besuch in der Zelle.** Im Schritt 60 kehrt der Solver in die Zelle zurück, in der er beim ersten Besuch die 1 gewählt hatte. Zu sehen an der unterstrichenen 1. Nun schaltet er wieder in den Vorwärts-Modus, grüner Pfeil rechts, und selektiert den zweiten Kandidaten mit der Nummer 8.
 
 {: style="text-align:center"}
 ![Schritt 60](./images/exampleStep60.png){: max-width="75%"}
@@ -292,26 +304,39 @@ In dieser Nutzungsform zeigt der Sudoku-Trainer seinen vollen Funktionsumfang. S
 {: style="text-align:center"}
 ![Schritt 66](./images/exampleStep66.png){: max-width="75%"}
 
-**Schritt 410: Alle Zellen belegt.** Im Schritt 410 belegt  der Solver die letzte offene Zelle. Das Puzzle ist gelöst.
+**Schritt 285: Zelle mit Hidden Single.** Im Schritt 285 selektiert der Solver eine Zelle mit einem Hidden Single, die 7.
 
 {: style="text-align:center"}
-![Schritt 66](./images/exampleStep410.png){: max-width="75%"}
+![Schritt 285_1](./images/exampleStep285_1.png){: max-width="75%"}
 
-## Vollautomatisches Lösen
+Die 5 und die 9 sind unzulässige Kandidaten wegen dem "Nackten Paar" {5, 9}. Durch Kicken auf die Zelle wird das sichtbar. 
+
+{: style="text-align:center"}
+![Schritt 285_2](./images/exampleStep285_2.png){: max-width="75%"}
+
+Es stellt sich vielleicht die Frage, warum in dem einen Paar die rote 3 und die rote 7 unzulässig sind. Durch Klicken in dieser Zelle wird auch dies deutlich.
+
+{: style="text-align:center"}
+![Schritt 285_3](./images/exampleStep285_3.png){: max-width="75%"}
+
+Die 3 ist unzulässig wegen Überschneidung mit der Zeile 6. Und nach einem erneuten Klick auf die Zelle erfährt man, dass die 7 unzulässig ist wegen der Überschneidung mit der Zeile 5.
+
+{: style="text-align:center"}
+![Schritt 285_4](./images/exampleStep285_4.png){: max-width="75%"}
+
+**Schritt 482: Alle Zellen belegt.** Im Schritt 482 belegt der Solver die letzte offene Zelle. Das Puzzle ist gelöst.
+
+{: style="text-align:center"}
+![Schritt 482](./images/exampleStep410.png){: max-width="75%"}
+
+## Automatisches Lösen ohne Haltepunkte
 
 Sinnvolle Werkzeugeinstellung:
 
 - **Kandidatenauswertung:** Strikt+ oder Strikt-
-- **Spielmodus:** Automatisch lösen
+- **Spielmodus:** Automatisch lösen ohne Haltepunkte
 
-In dieser Nutzungsform nutzt der Sudoku-Trainer seinen vollen Funktionsumfang. Jedoch für den Spieler nicht sichtbar. Die automatische Lösungssuche kann jederzeit mit der Start-Taste gestartet werden. So können auch bereits manuell teilweise gelöste Puzzles automatisch komplett gelöst werden. Die Tasten der automatischen Ausführung haben folgende Bedeutung:
-
-|Taste  |Bedeutung  |
-|---------|---------|
-|**Start**|Der Solver startet den automatischen Lösungssuchprozess. Zusätzlich wird ein Timer gestartet, der die Ausführung automatischer Suchschritte anstößt.|
-|**Pause**|Der Taktgeber der automatischen Ausführung wird angehalten, nicht jedoch der Suchprozess abgebrochen. Der Spieler kann jetzt weitere automatische Suchschritte mit der Schritt-Taste von Hand anstoßen. Oder er kann durch das erneute Drücken der Start-Taste die getaktete automatische Ausführung fortsetzen.|
-|**Stop**|Der Taktgeber der automatischen Ausführung wird angehalten und der aktuelle Suchprozess wird abgebrochen.|
-|**Schritt**|Der Solver führt den nächsten automatischen Suchschritt aus. Falls noch nicht geschehen, startet er zuvor den Suchprozess überhaupt. Mit dieser Taste kann man den Solver Schritt für Schritt arbeiten lassen und so jeden einzelnen seiner Schritte beobachten und verstehen.|
+In dieser Nutzungsform nutzt der Sudoku-Trainer seinen vollen Funktionsumfang. Jedoch für den Spieler nicht sichtbar. Die automatische Lösungssuche kann jederzeit mit der Start-Taste gestartet werden. So können auch bereits manuell teilweise gelöste Puzzles automatisch komplett gelöst werden.
 
 # Die Puzzle-Datenbank
 

@@ -2037,7 +2037,6 @@ class BackTrackOptionStep {
         return sudoApp.mySolver.myGrid.sudoCells[this.myCellIndex];
     }
     isOpen(nr) {
-        //???
         // Die Nummer nr ist offen, wenn sie noch nicht probiert wurde,
         // d.h. sie befindet sich noch in der NextOption-Liste
         for (let i = 0; i < this.myNextOptions.length; i++) {
@@ -5386,7 +5385,6 @@ class SudokuCellView extends SudokuView {
     }
 
     upDateMultipleOptions() {
-        //???
         let myCell = this.getMyModel();
         // Eine selektierte Zelle mit Optionen
         this.getMyNode().classList.add('nested');
@@ -5402,7 +5400,6 @@ class SudokuCellView extends SudokuView {
             return false;
         }
     }
-    //???
 
     displayAdmissibles() {
         let cell = this.getMyModel();
@@ -5694,8 +5691,6 @@ class SudokuCellView extends SudokuView {
                 candidate.style = "text-decoration: underline";
             }
         }
-        // ???
-        //sudoApp.mySolver.myView.displayTechnique('Aus mehreren Kandidaten eine Nummer setzen.');
     }
 
     unsetAutoSelectStatus() {
