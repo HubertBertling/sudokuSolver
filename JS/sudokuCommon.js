@@ -664,10 +664,6 @@ class SudokuSolverView extends SudokuView {
 
     upDateAspect(aspect, aspectValue) {
         switch (aspect) {
-            case 'optionSelected': {
-                sudoApp.mySolver.myGridView.displayAutoSelection(aspectValue);
-                break;
-            }
             case 'puzzleGenerator': {
                 switch (aspectValue.op) {
                     case 'started': {
@@ -2391,15 +2387,16 @@ class StepperOnGrid {
             // d.h.die nächste Selektion ist die nächste Option dieses Schrittes
             if (currentStep instanceof BackTrackOptionStep &&
                 currentStep.getCellIndex() !== -1) {
-                this.myGrid.myCalculator.notifyAspect('optionSelected',
-                    currentStep.getCellIndex());
+       //         this.myGrid.myCalculator.notifyAspect('optionSelected',
+       //             currentStep.getCellIndex());
                 // Lege einen neuen Step an mit der Nummer der nächsten Option
                 let realStep = this.myBackTracker.getNextBackTrackRealStep();
                 // Selektiere die Zelle des Optionsteps, deren Index auch im neuen Realstep gespeichert ist
                 this.select(realStep.getCellIndex());
                 let autoStepResult = {
                     processResult: 'inProgress',
-                    action: 'backward2forward'
+       //             action: 'backward2forward'
+                    action: undefined
                 }
                 this.myGrid.myCalculator.autoExecPause();
                 return autoStepResult;
@@ -3801,8 +3798,8 @@ class SudokuGridView extends SudokuView {
             this.displayInsolvability();
         }
         this.displayWrongNumbers();
-        this.displaySelection(this.myGrid.indexSelected);
-        this.displayAutoSelection(this.myGrid.indexSelected);
+        this.displaySelection();
+        this.displayAutoSelection();
     }
 
     displayNameAndDifficulty() {
@@ -3814,25 +3811,26 @@ class SudokuGridView extends SudokuView {
             '<span class="pz-level"><b>Level:</b> &nbsp' + this.myModel.preRunRecord.level + '</span>'
     }
 
-    displaySelection(indexSelected) {
+    displaySelection() {
         let grid = this.getMyModel();
-        if (indexSelected == -1) {
+        if (grid.indexSelected == -1) {
             grid.sudoCells.forEach(cell => {
                 let cellView = cell.getMyView();
                 cellView.unsetSelectStatus();
             })
         } else {
-            let selectedCell = grid.sudoCells[indexSelected];
+            let selectedCell = grid.sudoCells[grid.indexSelected];
             let selectedCellView = selectedCell.getMyView();
             selectedCellView.unsetSelectStatus();
             selectedCellView.setSelectStatus();
         }
     }
 
-    displayAutoSelection(indexSelected) {
+    displayAutoSelection() {
         let grid = this.getMyModel();
-        if (indexSelected > -1) {
-            let selectedCell = grid.sudoCells[indexSelected];
+        if (sudoApp.mySolver.myStepper !== undefined
+            && sudoApp.mySolver.myStepper.indexSelected !== -1) {
+            let selectedCell = grid.sudoCells[sudoApp.mySolver.myStepper.indexSelected];
             let selectedCellView = selectedCell.getMyView();
             selectedCellView.unsetAutoSelectStatus();
             selectedCellView.setAutoSelectStatus();
@@ -5312,7 +5310,7 @@ class SudokuCellView extends SudokuView {
             return false;
         }
     }
-
+//???
 
     displayAdmissibles() {
         let cell = this.getMyModel();
@@ -5577,30 +5575,47 @@ class SudokuCellView extends SudokuView {
         // Die Zelle als automatisch selektiert markieren
         this.setAutoSelected();
         let currentStep = sudoApp.mySolver.myStepper.myBackTracker.currentStep;
-        let tmpStep = currentStep;
-        let allOptions = new SudokuSet(tmpStep.myOptionList)
-        let openOptions = new SudokuSet(tmpStep.myNextOptions);
+        let tmpStep = undefined;
+        let allOptions = undefined;
+        let openOptions = undefined;
 
+        if (currentStep instanceof BackTrackOptionStep){
+            tmpStep = currentStep;
+        } else {
+            tmpStep = currentStep.previousStep();
+        }
+        allOptions = new SudokuSet(tmpStep.myOptionList)
+        openOptions = new SudokuSet(tmpStep.myNextOptions);    
+    
         let cell = this.getMyModel();
         if (cell.myValue == '0' && this.myNode.children.length == 0) {
             // Die Zelle ist noch nicht gesetzt
-                this.displayAdmissibles();
-                this.displayNecessary(cell.myNecessarys);
-                this.displayLevel_gt0_inAdmissibles(cell.myLevel_gt0_inAdmissibles, cell.myNecessarys);
+            this.displayAdmissibles();
+            this.displayNecessary(cell.myNecessarys);
+            this.displayLevel_gt0_inAdmissibles(cell.myLevel_gt0_inAdmissibles, cell.myNecessarys);
         }
 
         for (let candidate of this.myNode.children) {
             if (allOptions.has(candidate.getAttribute('data-value'))
-                && !openOptions.has(candidate.getAttribute('data-value'))) {
+                && !openOptions.has(candidate.getAttribute('data-value'))
+                && currentStep.myCellValue !== candidate.getAttribute('data-value')) {
                 candidate.style = "text-decoration: underline";
             }
         }
+        // ???
+        //sudoApp.mySolver.myView.displayTechnique('Aus mehreren Kandidaten eine Nummer setzen.');
     }
 
     unsetAutoSelectStatus() {
         this.unsetAutoSelected();
-        for (let candidate of this.myNode.children) {
-            candidate.style = "text-decoration: ";
+        if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
+            while (this.myNode.firstChild) {
+                this.myNode.removeChild(this.myNode.lastChild);
+            }
+        } else {
+            for (let candidate of this.myNode.children) {
+                candidate.style = "text-decoration: ";
+            }
         }
     }
 
