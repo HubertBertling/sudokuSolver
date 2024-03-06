@@ -149,7 +149,8 @@
                 <button class="mobile-interface mobile-btn mobile-number" value="2">2</button>
                 <button class="mobile-interface mobile-btn mobile-number" value="3">3</button>
 
-                <button class="mobile-interface mobile-btn btn-showWrongNumbers" id="btn-showWrongNumbers">Prüfen</button>
+                <button class="mobile-interface mobile-btn btn-showWrongNumbers"
+                    id="btn-showWrongNumbers">Prüfen</button>
                 <button class="mobile-interface mobile-btn btn-with-image btn-run" id="btn-run">
                     <img src="images/play-96.png" class="btn-image">
                     Start
@@ -374,7 +375,36 @@
                     <input type="radio" id="pc-solving-trace" class="play-mode-type" data="solving-trace"
                         name="pc-play-mode">
                     <div class="label-text text-spacing prefix">Automatisches Lösen mit Haltepunkten</div>
-                    <div class="label-text text-spacing">Automatik-Buttons eingeblendet. Haltepunkte bei Singles, bei Hidden-Singles und bei Widerspruch.
+                    <div class="label-text text-spacing">Siehe nachfolgende Auswahl der Haltepunkte.
+                        <div class="breakpoint-settings">
+                            <label class="label-container">
+                                <input type="checkbox" id="breakpoint-single" class="breakpoint" name="breakpoint">
+                                <div class="label-text text-spacing prefix">Haltepunkt bei Single</div>
+                                <div class="label-text text-spacing">So kann man prüfen, ob generierte Puzzle 'Mittel' sind.
+                                </div>
+                            </label>
+                            <label class="label-container">
+                                <input type="checkbox" id="breakpoint-hidden-single" class="breakpoint"
+                                    name="breakpoint">
+                                <div class="label-text text-spacing prefix">Haltepunkt bei Hidden Single</div>
+                                <div class="label-text text-spacing"> Durch Klicken auf die selektierte oder auf anderen Zellen wird der Grund für roten Kandidaten angezeigt.
+                                </div>
+                            </label>
+                            <label class="label-container">
+                                <input type="checkbox" id="breakpoint-multiple-candidates" class="breakpoint"
+                                    name="breakpoint">
+                                <div class="label-text text-spacing prefix">Haltepunkt bei Selektionsoptionen</div>
+                                <div class="label-text text-spacing">Schon erprobte Optionen werden mit Unterstrich angezeigt.
+                                </div>
+                            </label>
+                            <label class="label-container">
+                                <input type="checkbox" id="breakpoint-contradiction" class="breakpoint"
+                                    name="breakpoint">
+                                <div class="label-text text-spacing prefix">Haltepunkt bei Widerspruch</div>
+                                <div class="label-text text-spacing">Der Widerspruch wid angezeigt.
+                                </div>
+                            </label>
+                        </div>
                     </div>
                 </label>
                 <label class="label-container">
@@ -385,6 +415,8 @@
                 </label>
             </fieldset>
         </div>
+        </label>
+
         <div class="io-technique">
             <fieldset class="puzzle-io-fieldset">
                 <legend class="puzzle-io-legend">

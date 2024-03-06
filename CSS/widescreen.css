@@ -745,6 +745,18 @@ html {
     margin-left: 10px;
     font-size: var(--font-size-lg);
 }
+.breakpoints-legend {
+    font-weight: bold;
+    margin-top: 1.0rem;
+    margin-left: 1.0rem;
+    font-size: var(--font-size);
+}
+
+.breakpoint-settings {
+    margin-top: 0.5rem;
+    margin-left:2.0rem;
+}
+
 
 /*======================================*/
 /* Progress block */

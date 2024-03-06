@@ -169,6 +169,53 @@ class SudokuSolverController {
             })
         });
 
+        let checkBoxContradiction = document.getElementById('breakpoint-contradiction');
+        checkBoxContradiction.addEventListener('click', () => {
+            let appSetting = undefined;
+            let str_appSetting = localStorage.getItem("sudokuAppSetting");
+            //The item appSetting exists already
+            appSetting = JSON.parse(str_appSetting);
+            appSetting.breakpoints.contradiction = checkBoxContradiction.checked;
+            this.mySolver.getMyBreakpoints().contradiction = checkBoxContradiction.checked;
+            str_appSetting = JSON.stringify(appSetting);
+            localStorage.setItem("sudokuAppSetting", str_appSetting);
+        })
+
+        let checkBoxMC = document.getElementById('breakpoint-multiple-candidates');
+        checkBoxMC.addEventListener('click', () => {
+            let appSetting = undefined;
+            let str_appSetting = localStorage.getItem("sudokuAppSetting");
+            //The item appSetting exists already
+            appSetting = JSON.parse(str_appSetting);
+            appSetting.breakpoints.multipleOption = checkBoxMC.checked;
+            this.mySolver.getMyBreakpoints().multipleOption = checkBoxMC.checked;
+            str_appSetting = JSON.stringify(appSetting);
+            localStorage.setItem("sudokuAppSetting", str_appSetting);
+        })
+
+        let checkBoxSingle = document.getElementById('breakpoint-single');
+        checkBoxSingle.addEventListener('click', () => {
+            let appSetting = undefined;
+            let str_appSetting = localStorage.getItem("sudokuAppSetting");
+            //The item appSetting exists already
+            appSetting = JSON.parse(str_appSetting);
+            appSetting.breakpoints.single = checkBoxSingle.checked;
+            this.mySolver.getMyBreakpoints().single = checkBoxSingle.checked;
+            str_appSetting = JSON.stringify(appSetting);
+            localStorage.setItem("sudokuAppSetting", str_appSetting);
+        })
+
+        let checkBoxHiddenSingle = document.getElementById('breakpoint-hidden-single');
+        checkBoxHiddenSingle.addEventListener('click', () => {
+            let appSetting = undefined;
+            let str_appSetting = localStorage.getItem("sudokuAppSetting");
+            //The item appSetting exists already
+            appSetting = JSON.parse(str_appSetting);
+            appSetting.breakpoints.hiddenSingle = checkBoxHiddenSingle.checked;
+            this.mySolver.getMyBreakpoints().hiddenSingle = checkBoxHiddenSingle.checked;
+            str_appSetting = JSON.stringify(appSetting);
+            localStorage.setItem("sudokuAppSetting", str_appSetting);
+        })
     }
 
     // ===============================================================
@@ -656,6 +703,7 @@ class SudokuSolverView extends SudokuView {
         this.displayProgress();
         this.displayEvalType(this.mySolver.getActualEvalType());
         this.displayPlayModeType(this.mySolver.getPlayMode());
+        this.displayBreakpoints(this.mySolver.getMyBreakpoints());
         this.displayUndoRedo();
         this.displayPuzzleIOTechniqueBtns();
 
@@ -847,6 +895,18 @@ class SudokuSolverView extends SudokuView {
             }
         }
     }
+
+    displayBreakpoints(breakpoints) {
+        let singleNode = document.getElementById('breakpoint-single');
+        let hiddenSingleNode = document.getElementById('breakpoint-hidden-single');
+        let multipleNode = document.getElementById('breakpoint-multiple-candidates');
+        let contradictionNode = document.getElementById('breakpoint-contradiction');
+        singleNode.checked = breakpoints.single;
+        hiddenSingleNode.checked = breakpoints.hiddenSingle;
+        multipleNode.checked = breakpoints.multipleOption;
+        contradictionNode.checked = breakpoints.contradiction;
+    }
+
     displayPlayModeType(pt) {
         let trainingNode = document.getElementById('pc-training');
         let solvingNode = document.getElementById('pc-solving');
@@ -999,7 +1059,12 @@ class SudokuCalculator extends SudokuModel {
         //Die Calculator kennt zwei Betriebs-Phasen 'play' or 'define'
         this.currentPhase = 'play';
         this.currentEvalType = 'lazy-invisible';
-
+        this.myBreakpoints = {
+            contradiction: true,
+            multipleOption: true,
+            single: true,
+            hiddenSingle: true
+        }
         this.playMode = 'solving';
         // Der Calculator kennt zwei Ausführungsmodi: 
         // manuelle oder automatische Ausführung
@@ -1013,6 +1078,15 @@ class SudokuCalculator extends SudokuModel {
 
     notifyAspect(aspect, aspectValue) {
         super.notifyAspect(aspect, aspectValue);
+    }
+    setBreakpoints(breakpoints) {
+        this.myBreakpoints.contradiction = breakpoints.contradiction;
+        this.myBreakpoints.multipleOption = breakpoints.multipleOption;
+        this.myBreakpoints.single = breakpoints.single;
+        this.myBreakpoints.hiddenSingle = breakpoints.hiddenSingle;
+    }
+    getMyBreakpoints() {
+        return this.myBreakpoints;
     }
 
     setPlayMode(mode) {
@@ -1319,6 +1393,9 @@ class SudokuSolver extends SudokuCalculator {
     getPlayMode() {
         return super.getPlayMode();
     }
+    getMyBreakpoints() {
+        return super.getMyBreakpoints();
+    }
 
     getAutoDirection() {
         return super.getAutoDirection();
@@ -1340,23 +1417,36 @@ class SudokuSolver extends SudokuCalculator {
     init() {
         super.init();
         let appSetting = undefined;
+        let tmpBreakpoints = {
+            contradiction: true,
+            multipleOption: true,
+            single: true,
+            hiddenSingle: true
+        }
         let str_appSetting = localStorage.getItem("sudokuAppSetting");
         if (str_appSetting == null) {
             // appSetting does not exist in localStorage
             appSetting = {
                 evalType: 'lazy-invisible',
                 playMode: 'training',
-                puzzleIOtechnique: false.toString()
+                puzzleIOtechnique: false.toString(),
+                breakpoints: tmpBreakpoints
             }
             str_appSetting = JSON.stringify(appSetting);
             localStorage.setItem("sudokuAppSetting", str_appSetting);
         } else {
             // appSetting exists already
             appSetting = JSON.parse(str_appSetting);
+            if (appSetting.breakpoints == undefined) {
+                appSetting.breakpoints = tmpBreakpoints;
+                str_appSetting = JSON.stringify(appSetting);
+                localStorage.setItem("sudokuAppSetting", str_appSetting);
+            }
         }
         this.setActualEvalType(appSetting.evalType);
         this.setPlayMode(appSetting.playMode);
         this.setPuzzleIOtechnique(Boolean(appSetting.puzzleIOtechnique));
+        this.setBreakpoints(appSetting.breakpoints)
         this.notify();
     }
     loadPuzzle(uid, puzzle) {
@@ -2387,18 +2477,17 @@ class StepperOnGrid {
             // d.h.die nächste Selektion ist die nächste Option dieses Schrittes
             if (currentStep instanceof BackTrackOptionStep &&
                 currentStep.getCellIndex() !== -1) {
-       //         this.myGrid.myCalculator.notifyAspect('optionSelected',
-       //             currentStep.getCellIndex());
                 // Lege einen neuen Step an mit der Nummer der nächsten Option
                 let realStep = this.myBackTracker.getNextBackTrackRealStep();
                 // Selektiere die Zelle des Optionsteps, deren Index auch im neuen Realstep gespeichert ist
                 this.select(realStep.getCellIndex());
                 let autoStepResult = {
                     processResult: 'inProgress',
-       //             action: 'backward2forward'
                     action: undefined
                 }
-                this.myGrid.myCalculator.autoExecPause();
+                if (this.myGrid.myCalculator.getPlayMode() == 'solving-trace' && this.myGrid.myCalculator.myBreakpoints.multipleOption) {
+                    this.myGrid.myCalculator.autoExecPause();
+                }
                 return autoStepResult;
             }
             // ====================================================================================
@@ -2469,7 +2558,9 @@ class StepperOnGrid {
                     action: tmpAction
                 }
                 if (this.myGrid.myCalculator.getPlayMode() == 'solving-trace') {
-                    this.stopClockedLoop();
+                    if (this.myGrid.myCalculator.getMyBreakpoints().multipleOption) {
+                        this.stopClockedLoop();
+                    }
                 }
                 return autoStepResult;
             } else if (this.myGrid.isFinished()) {
@@ -5146,6 +5237,7 @@ class SudokuCellView extends SudokuView {
         super(cell);
         this.myCell = cell;
     }
+
     upDate() {
         let tmpCellNode = document.createElement("div");
         tmpCellNode.setAttribute("class", "sudoku-grid-cell");
@@ -5310,7 +5402,7 @@ class SudokuCellView extends SudokuView {
             return false;
         }
     }
-//???
+    //???
 
     displayAdmissibles() {
         let cell = this.getMyModel();
@@ -5579,14 +5671,14 @@ class SudokuCellView extends SudokuView {
         let allOptions = undefined;
         let openOptions = undefined;
 
-        if (currentStep instanceof BackTrackOptionStep){
+        if (currentStep instanceof BackTrackOptionStep) {
             tmpStep = currentStep;
         } else {
             tmpStep = currentStep.previousStep();
         }
         allOptions = new SudokuSet(tmpStep.myOptionList)
-        openOptions = new SudokuSet(tmpStep.myNextOptions);    
-    
+        openOptions = new SudokuSet(tmpStep.myNextOptions);
+
         let cell = this.getMyModel();
         if (cell.myValue == '0' && this.myNode.children.length == 0) {
             // Die Zelle ist noch nicht gesetzt
@@ -5643,21 +5735,27 @@ class SudokuCellView extends SudokuView {
         if (tmpCell.getAdmissibles().size == 1) {
             sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
             if (sudoApp.mySolver.getPlayMode() == 'solving-trace' && sudoApp.mySolver.getAutoDirection() == 'forward') {
-                sudoApp.mySolver.autoExecPause();
+                if (sudoApp.mySolver.getMyBreakpoints().single) {
+                    sudoApp.mySolver.autoExecPause();
+                }
             }
             return;
         }
         if (tmpCell.getTotalAdmissibles().size == 1) {
             sudoApp.mySolver.myView.displayTechnique('Hidden Single ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' in dieser Zelle setzen.');
             if (sudoApp.mySolver.getPlayMode() == 'solving-trace' && sudoApp.mySolver.getAutoDirection() == 'forward') {
-                sudoApp.mySolver.autoExecPause();
+                if (sudoApp.mySolver.getMyBreakpoints().hiddenSingle) {
+                    sudoApp.mySolver.autoExecPause();
+                }
             }
             return;
         }
         if (tmpCell.getTotalAdmissibles().size > 1) {
             sudoApp.mySolver.myView.displayTechnique('Aus mehreren Kandidaten eine Nummer setzen.');
             if (sudoApp.mySolver.getPlayMode() == 'solving-trace' && sudoApp.mySolver.getAutoDirection() == 'forward') {
-                sudoApp.mySolver.autoExecPause();
+                if (sudoApp.mySolver.getMyBreakpoints().multipleOption) {
+                    sudoApp.mySolver.autoExecPause();
+                }
             }
         }
         return;
@@ -5720,7 +5818,9 @@ class SudokuCellView extends SudokuView {
                 })
                 sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen notwendiger Nummer: ' + necessaryCell);
                 if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                    sudoApp.mySolver.autoExecPause();
+                    if (sudoApp.mySolver.getMyBreakpoints().hiddenSingle) {
+                        sudoApp.mySolver.autoExecPause();
+                    }
                 }
                 return;
             }
@@ -5750,7 +5850,9 @@ class SudokuCellView extends SudokuView {
                     + ', '
                     + pairArray[1] + '}');
                 if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                    sudoApp.mySolver.autoExecPause();
+                    if (sudoApp.mySolver.getMyBreakpoints().hiddenSingle) {
+                        sudoApp.mySolver.autoExecPause();
+                    }
                 }
                 return;
             }
@@ -5769,7 +5871,9 @@ class SudokuCellView extends SudokuView {
 
             sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Überschneidung');
             if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                sudoApp.mySolver.autoExecPause();
+                if (sudoApp.mySolver.getMyBreakpoints().hiddenSingle) {
+                    sudoApp.mySolver.autoExecPause();
+                }
             }
             return;
         }
@@ -5791,7 +5895,9 @@ class SudokuCellView extends SudokuView {
             sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected
                 + ' unzulässig wegen Pointing Pair');
             if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                sudoApp.mySolver.autoExecPause();
+                if (sudoApp.mySolver.getMyBreakpoints().hiddenSingle) {
+                    sudoApp.mySolver.autoExecPause();
+                }
             }
             return;
         }
@@ -5820,7 +5926,9 @@ class SudokuCellView extends SudokuView {
                     + ', '
                     + pairArray[1] + '}');
                 if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                    sudoApp.mySolver.autoExecPause();
+                    if (sudoApp.mySolver.getMyBreakpoints().hiddenSingle) {
+                        sudoApp.mySolver.autoExecPause();
+                    }
                 }
                 return;
             }
