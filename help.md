@@ -180,9 +180,8 @@ Der Generator generiert nur faire Puzzles mit den Schwierigkeitsgraden 'Sehr lei
 
 ## Trainer-Einstellungen
 
-|Menü  |Einstellungen  |
-|---------|---------|
-|![Menue](./images/menuEinstellung.png){: width="150px"}|![Settings](./images/einstellungen.png){:width="auto"}|
+{: style="text-align:center"}
+![Menue](./images/menuEinstellung.png){: width="150px"}
 
 **Menü-Option: Einstellungen.** Aktuell kennt der Sudoku-Trainer 3 Einstellungsparameter
 1. Kandidatenauswertung
@@ -191,15 +190,13 @@ Der Generator generiert nur faire Puzzles mit den Schwierigkeitsgraden 'Sehr lei
 
 ### Einstellung Kandidatenauswertung
 
-- **Keine Kandidatenanzeige:** Im Hintergrund erfolgt die Kandidatenauswertung im Lazy-Modus.
-- **Lazy:** Die Lazy-Auswertungsmethode praktiziert eine verzögerte Auswertung. Die Auswertung erfolgt nur soweit, bis die nächste notwendige Nummer oder die nächste Single-Nummer oder die nächste versteckte Single-Nummer bestimmt ist.
-- **Strikt + (Strikt-Plus):** Diese Auswertungsmethode führt eine vollständige Auswertung durch. Alle aktuell unzulässigen Kandidaten, alle notwendigen Nummern, alle Singles und versteckten Singles werden ermittelt und angezeigt.
-- **Strikt - (Strikt-Minus):** Wie Strikt +. Jedoch werden die errechneten unzulässigen Kandidaten ausgeblendet.
+{: style="text-align:center"}
+![KandidatenAuswertung](./images/einstellungKandidatenAuswertung.png){: width="150px"}
 
 ### Einstellung Spielmodus
 
-- Manuelles Lösen (Automatik-Buttons ausgeblendet)
-- Automatisches Lösen mit oder ohne Haltepunkte (Automatik-Buttons eingeblendet)
+{: style="text-align:center"}
+![Spielmodus](./images/einstellungSpielmodus.png){: width="150px"}
 
 Der Spielmodus "Manuelles Lösen", bewirkt, dass die Tasten für die automatische Ausführung ausgeblendet werden. Der Spielmodus "Automatisches Lösen" schaltet sie wieder zu.
 
