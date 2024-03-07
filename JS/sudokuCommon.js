@@ -5811,15 +5811,11 @@ class SudokuCellView extends SudokuView {
                         cell.myView.setBorderRedSelected();
                     }
                 })
-                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen notwendiger Nummer: ' + necessaryCell);
-                if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                    if (sudoApp.mySolver.getMyBreakpoints().hiddenSingle) {
-                        sudoApp.mySolver.autoExecPause();
-                    }
-                }
+                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected 
+                            + ' unzulässig wegen notwendiger Nummer: ' 
+                            + adMissibleNrSelected);
                 return;
             }
-
         }
         if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
             tmpCell.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
@@ -5844,11 +5840,6 @@ class SudokuCellView extends SudokuView {
                     + pairArray[0]
                     + ', '
                     + pairArray[1] + '}');
-                if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                    if (sudoApp.mySolver.getMyBreakpoints().hiddenSingle) {
-                        sudoApp.mySolver.autoExecPause();
-                    }
-                }
                 return;
             }
         }
@@ -5865,11 +5856,6 @@ class SudokuCellView extends SudokuView {
             });
 
             sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected + ' unzulässig wegen Überschneidung');
-            if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                if (sudoApp.mySolver.getMyBreakpoints().hiddenSingle) {
-                    sudoApp.mySolver.autoExecPause();
-                }
-            }
             return;
         }
 
@@ -5886,14 +5872,8 @@ class SudokuCellView extends SudokuView {
                     cell.myView.setBorderRedSelected();
                 }
             })
-
             sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected
                 + ' unzulässig wegen Pointing Pair');
-            if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                if (sudoApp.mySolver.getMyBreakpoints().hiddenSingle) {
-                    sudoApp.mySolver.autoExecPause();
-                }
-            }
             return;
         }
 
@@ -5920,11 +5900,6 @@ class SudokuCellView extends SudokuView {
                     + pairArray[0]
                     + ', '
                     + pairArray[1] + '}');
-                if (sudoApp.mySolver.getPlayMode() == 'solving-trace') {
-                    if (sudoApp.mySolver.getMyBreakpoints().hiddenSingle) {
-                        sudoApp.mySolver.autoExecPause();
-                    }
-                }
                 return;
             }
         }
