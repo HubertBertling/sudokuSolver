@@ -2557,7 +2557,7 @@ class StepperOnGrid {
                     action: tmpAction
                 }
                 if (this.myGrid.myCalculator.getPlayMode() == 'solving-trace') {
-                    if (this.myGrid.myCalculator.getMyBreakpoints().multipleOption) {
+                    if (this.myGrid.myCalculator.getMyBreakpoints().contradiction) {
                         this.stopClockedLoop();
                     }
                 }
