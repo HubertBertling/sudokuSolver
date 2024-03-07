@@ -191,12 +191,12 @@ Der Generator generiert nur faire Puzzles mit den Schwierigkeitsgraden 'Sehr lei
 ### Einstellung Kandidatenauswertung
 
 {: style="text-align:center"}
-![KandidatenAuswertung](./images/einstellungKandidatenAuswertung.png){: width="150px"}
+![KandidatenAuswertung](./images/einstellungKandidatenAuswertung.png){:max-width="75%"}
 
 ### Einstellung Spielmodus
 
 {: style="text-align:center"}
-![Spielmodus](./images/einstellungSpielmodus.png){: width="150px"}
+![Spielmodus](./images/einstellungSpielmodus.png){:max-width="75%"}
 
 Der Spielmodus "Manuelles Lösen", bewirkt, dass die Tasten für die automatische Ausführung ausgeblendet werden. Der Spielmodus "Automatisches Lösen" schaltet sie wieder zu.
 
