@@ -5270,13 +5270,14 @@ class SudokuCellView extends SudokuView {
             // Die Zelle ist mit einer Nummer belegt
             // Setze die Klassifizierung in der DOM-Zelle
             this.displayGamePhase(cell.myGamePhase);
-            if (cell.myValueType == 'auto') {
+            /* if (cell.myValueType == 'auto') {
                 //        this.displayAutoValue(cell.myValue);
                 //      The simpler view is more attractiv
                 this.displayMainValueNode(cell.myValue);
             } else {
                 this.displayMainValueNode(cell.myValue);
-            }
+            }*/
+            this.displayMainValueNode(cell.myValue);
         }
     }
 
@@ -5729,6 +5730,25 @@ class SudokuCellView extends SudokuView {
         }
         if (tmpCell.getAdmissibles().size == 1) {
             sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
+            
+            if (tmpCell.getAdmissibles().size == 1) {
+                let single = Array.from(tmpCell.getAdmissibles())[0];
+                let numberSet = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+                numberSet.forEach(nr => {
+                    if (nr !== single) {
+                        let coveredNrs = new SudokuSet();
+                        tmpCell.myInfluencers.forEach(cell => {
+                            if (cell.getValue() == nr) {
+                                if (!coveredNrs.has(nr)) {
+                                    cell.myView.setBorderWhiteSelected();
+                                    coveredNrs.add(nr);
+                                }
+                            }
+                        })
+                    }
+                })
+            }
+                
             if (sudoApp.mySolver.getPlayMode() == 'solving-trace' && sudoApp.mySolver.getAutoDirection() == 'forward') {
                 if (sudoApp.mySolver.getMyBreakpoints().single) {
                     sudoApp.mySolver.autoExecPause();
@@ -5760,8 +5780,7 @@ class SudokuCellView extends SudokuView {
         let tmpCell = this.getMyModel();
         let adMissibleNrSelected = tmpCell.getAdMissibleNrSelected();
 
-        if (tmpCell.myNecessarys.size > 0
-        ) {
+        if (tmpCell.myNecessarys.size > 0) {
             if (adMissibleNrSelected == Array.from(tmpCell.myNecessarys)[0]) {
                 let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
                 collection.myCells.forEach(e => {
@@ -5811,9 +5830,9 @@ class SudokuCellView extends SudokuView {
                         cell.myView.setBorderRedSelected();
                     }
                 })
-                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected 
-                            + ' unzulässig wegen notwendiger Nummer: ' 
-                            + adMissibleNrSelected);
+                sudoApp.mySolver.myView.displayTechnique(adMissibleNrSelected
+                    + ' unzulässig wegen notwendiger Nummer: '
+                    + adMissibleNrSelected);
                 return;
             }
         }
