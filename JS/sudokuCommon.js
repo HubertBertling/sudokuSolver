@@ -1090,6 +1090,7 @@ class SudokuCalculator extends SudokuModel {
     }
 
     setPlayMode(mode) {
+        this.autoExecStop();
         switch (mode) {
             case 'training': {
                 this.playMode = 'training';
@@ -5730,7 +5731,7 @@ class SudokuCellView extends SudokuView {
         }
         if (tmpCell.getAdmissibles().size == 1) {
             sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
-            
+
             if (tmpCell.getAdmissibles().size == 1) {
                 let single = Array.from(tmpCell.getAdmissibles())[0];
                 let numberSet = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
@@ -5748,7 +5749,7 @@ class SudokuCellView extends SudokuView {
                     }
                 })
             }
-                
+
             if (sudoApp.mySolver.getPlayMode() == 'solving-trace' && sudoApp.mySolver.getAutoDirection() == 'forward') {
                 if (sudoApp.mySolver.getMyBreakpoints().single) {
                     sudoApp.mySolver.autoExecPause();
@@ -5927,17 +5928,19 @@ class SudokuCellView extends SudokuView {
     setSelectStatus() {
         let tmpCell = this.getMyModel();
         this.setSelected();
-        if (tmpCell.candidateIndexSelected == -1) {
-            // Nach dem ersten Click auf die Zelle ist noch 
-            // kein Kandidat in der Zelle selektiert.
-            // Der Anwender bekommt einen Hinweis, was er jetzt tun soll.
-            this.displayTasks();
-        } else {
-            // Durch erneutes Clicken auf die bereits selektierte Zelle
-            // selektiert der Solver der Reihe nach unzulässige Kandidaten
-            // in der Zelle. Für jeden unzulässigen Kandidaten zeigt die
-            // Anwendung den Grund der Unzulässigkeit an.
-            this.displayReasons();
+        if (sudoApp.mySolver.isInAutoExecution()) {
+            if (tmpCell.candidateIndexSelected == -1) {
+                // Nach dem ersten Click auf die Zelle ist noch 
+                // kein Kandidat in der Zelle selektiert.
+                // Der Anwender bekommt einen Hinweis, was er jetzt tun soll.
+                this.displayTasks();
+            } else {
+                // Durch erneutes Clicken auf die bereits selektierte Zelle
+                // selektiert der Solver der Reihe nach unzulässige Kandidaten
+                // in der Zelle. Für jeden unzulässigen Kandidaten zeigt die
+                // Anwendung den Grund der Unzulässigkeit an.
+                this.displayReasons();
+            }
         }
     }
 
