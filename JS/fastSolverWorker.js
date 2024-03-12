@@ -39,8 +39,8 @@ class SudokuFastSolverApp {
     }
 }
 
-class SudokuFastSolver extends SudokuCalculator {
-    // Der FastSolver erweitert den SudokuCalculator lediglich
+class SudokuFastSolver extends StepByStepSolver {
+    // Der FastSolver erweitert den StepByStepSolver lediglich
     // um eine Methode, die Solve-Methode.
     constructor() {
         super();

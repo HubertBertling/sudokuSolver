@@ -1047,8 +1047,8 @@ class SudokuSolverView extends SudokuView {
 }
 
 
-class SudokuCalculator extends SudokuModel {
-    // SudokuCalculator ist abstrakte Oberklaase für den Solver und Generator.
+class StepByStepSolver extends SudokuModel {
+    // StepByStepSolver ist abstrakte Oberklaase für den Solver und Generator.
     // Der Generator und der Solver verwenden dieselben
     // Grid-Operationen.
 
@@ -1225,8 +1225,8 @@ class SudokuCalculator extends SudokuModel {
     }
 
     notifyLoopFinished() {
-        if (this.myGrid.myCalculator.isStepExecutionObserver) {
-            this.myGrid.myCalculator.onLoopFinish();
+        if (this.myGrid.myStepByStepSolver.isStepExecutionObserver) {
+            this.myGrid.myStepByStepSolver.onLoopFinish();
         }
     }
 
@@ -1357,7 +1357,7 @@ class SudokuCalculator extends SudokuModel {
 
 
 
-class SudokuSolver extends SudokuCalculator {
+class SudokuSolver extends StepByStepSolver {
     // Der Solver erweitert den Calculator um
     // um die Ansichtsklassen, die die Matrix 
     // über den DOM-Tree sichtbar machen.
@@ -2267,8 +2267,8 @@ class StepperOnGrid {
     }
 
     notifyStepExecuted() {
-        if (this.myGrid.myCalculator.isStepExecutionObserver) {
-            this.myGrid.myCalculator.onStepExecution();
+        if (this.myGrid.myStepByStepSolver.isStepExecutionObserver) {
+            this.myGrid.myStepByStepSolver.onStepExecution();
         }
     }
 
@@ -2291,7 +2291,7 @@ class StepperOnGrid {
         // D.h. wenn der Owner des Steppers der ein Observer ist,
         // dann können wir den Timer prüfen. Im Web-Worker kann der Generator den Timer nicht benutzen.
 
-        let myCalculator = this.myGrid.myCalculator;
+        let myCalculator = this.myGrid.myStepByStepSolver;
         if (myCalculator.isStepExecutionObserver) {
             // Trickprogrammierung:
             // Der timer ist ungleich false, wenn er läuft.
@@ -2375,7 +2375,7 @@ class StepperOnGrid {
                 this.myGrid.preRunRecord.level = this.myGrid.difficulty;
                 this.myGrid.preRunRecord.backTracks = this.myGrid.backTracks;
                 //
-                this.myGrid.myCalculator.notifyLoopFinished();
+                this.myGrid.myStepByStepSolver.notifyLoopFinished();
                 break;
             }
             case 'fail': {
@@ -2387,7 +2387,7 @@ class StepperOnGrid {
                     this.myGrid.difficulty = 'unlösbar';
                     this.myGrid.backTracks = this.countBackwards;
                     this.myGrid.steps = this.goneSteps;
-                    this.myGrid.myCalculator.notifyLoopFinished();
+                    this.myGrid.myStepByStepSolver.notifyLoopFinished();
                 }
                 break;
             }
@@ -2485,8 +2485,8 @@ class StepperOnGrid {
                     processResult: 'inProgress',
                     action: undefined
                 }
-                if (this.myGrid.myCalculator.getPlayMode() == 'solving-trace' && this.myGrid.myCalculator.myBreakpoints.multipleOption) {
-                    this.myGrid.myCalculator.autoExecPause();
+                if (this.myGrid.myStepByStepSolver.getPlayMode() == 'solving-trace' && this.myGrid.myStepByStepSolver.myBreakpoints.multipleOption) {
+                    this.myGrid.myStepByStepSolver.autoExecPause();
                 }
                 return autoStepResult;
             }
@@ -2557,8 +2557,8 @@ class StepperOnGrid {
                     processResult: 'inProgress',
                     action: tmpAction
                 }
-                if (this.myGrid.myCalculator.getPlayMode() == 'solving-trace') {
-                    if (this.myGrid.myCalculator.getMyBreakpoints().contradiction) {
+                if (this.myGrid.myStepByStepSolver.getPlayMode() == 'solving-trace') {
+                    if (this.myGrid.myStepByStepSolver.getMyBreakpoints().contradiction) {
                         this.stopClockedLoop();
                     }
                 }
@@ -3128,10 +3128,10 @@ class SudokuGroup extends SudokuModel {
             let newInAdmissibles1 = tmpAdmissibles1.difference(new SudokuSet([hiddenPair.nr1, hiddenPair.nr2]));
 
             if (newInAdmissibles1.size > 0) {
-                let oldInAdmissibles = new SudokuSet(cell1.myLevel_gt0_inAdmissibles);
-                cell1.myLevel_gt0_inAdmissibles =
-                    cell1.myLevel_gt0_inAdmissibles.union(newInAdmissibles1);
-                let localAdded = !oldInAdmissibles.equals(cell1.myLevel_gt0_inAdmissibles);
+                let oldInAdmissibles = new SudokuSet(cell1.inAdmissibleCandidates);
+                cell1.inAdmissibleCandidates =
+                    cell1.inAdmissibleCandidates.union(newInAdmissibles1);
+                let localAdded = !oldInAdmissibles.equals(cell1.inAdmissibleCandidates);
                 if (localAdded) {
                     newInAdmissibles1.forEach(inAdNr => {
                         let inAdmissibleSubPairInfo = {
@@ -3139,7 +3139,7 @@ class SudokuGroup extends SudokuModel {
                             subPairCell1: this.myCells[hiddenPair.pos1],
                             subPairCell2: this.myCells[hiddenPair.pos2]
                         }
-                        cell1.myLevel_gt0_inAdmissiblesFromHiddenPairs.set(inAdNr, inAdmissibleSubPairInfo);
+                        cell1.inAdmissibleCandidatesFromHiddenPairs.set(inAdNr, inAdmissibleSubPairInfo);
                     })
                     inAdmissiblesAdded = true;
                 }
@@ -3151,10 +3151,10 @@ class SudokuGroup extends SudokuModel {
             let newInAdmissibles2 = tmpAdmissibles2.difference(new SudokuSet([hiddenPair.nr1, hiddenPair.nr2]));
 
             if (newInAdmissibles2.size > 0) {
-                let oldInAdmissibles = new SudokuSet(cell2.myLevel_gt0_inAdmissibles);
-                cell2.myLevel_gt0_inAdmissibles =
-                    cell2.myLevel_gt0_inAdmissibles.union(newInAdmissibles2);
-                let localAdded = !oldInAdmissibles.equals(cell2.myLevel_gt0_inAdmissibles);
+                let oldInAdmissibles = new SudokuSet(cell2.inAdmissibleCandidates);
+                cell2.inAdmissibleCandidates =
+                    cell2.inAdmissibleCandidates.union(newInAdmissibles2);
+                let localAdded = !oldInAdmissibles.equals(cell2.inAdmissibleCandidates);
                 if (localAdded) {
                     newInAdmissibles2.forEach(inAdNr => {
                         let inAdmissibleSubPairInfo = {
@@ -3162,7 +3162,7 @@ class SudokuGroup extends SudokuModel {
                             subPairCell1: this.myCells[hiddenPair.pos1],
                             subPairCell2: this.myCells[hiddenPair.pos2]
                         }
-                        cell2.myLevel_gt0_inAdmissiblesFromHiddenPairs.set(inAdNr, inAdmissibleSubPairInfo);
+                        cell2.inAdmissibleCandidatesFromHiddenPairs.set(inAdNr, inAdmissibleSubPairInfo);
                     })
                     inAdmissiblesAdded = true;
                 }
@@ -3175,15 +3175,15 @@ class SudokuGroup extends SudokuModel {
         let inAdmissiblesAdded = false;
         this.myCells.forEach(cell => {
             if (cell.getValue() == '0' && cell !== necessaryCell) {
-                let oldInAdmissibles = new SudokuSet(cell.myLevel_gt0_inAdmissibles);
+                let oldInAdmissibles = new SudokuSet(cell.inAdmissibleCandidates);
                 if (cell.getAdmissibles().has(necessaryNr)) {
                     // Nur zulässige können neu unzulässig werden.
-                    cell.myLevel_gt0_inAdmissibles =
-                        cell.myLevel_gt0_inAdmissibles.add(necessaryNr);
-                    let localAdded = !oldInAdmissibles.equals(cell.myLevel_gt0_inAdmissibles);
+                    cell.inAdmissibleCandidates =
+                        cell.inAdmissibleCandidates.add(necessaryNr);
+                    let localAdded = !oldInAdmissibles.equals(cell.inAdmissibleCandidates);
                     if (localAdded) {
                         // Die Liste der indirekt unzulässigen verursacht von necessarys wird gesetzt
-                        cell.myLevel_gt0_inAdmissiblesFromNecessarys.add(necessaryNr);
+                        cell.inAdmissibleCandidatesFromNecessarys.add(necessaryNr);
                         inAdmissiblesAdded = true;
                     }
                 }
@@ -3207,15 +3207,15 @@ class SudokuGroup extends SudokuModel {
                             // Zelle der Gruppe, die nicht Paar-Zelle ist
                             let tmpAdmissibles = this.myCells[j].getTotalAdmissibles();
                             let tmpIntersection = tmpAdmissibles.intersection(pair);
-                            let oldInAdmissibles = new SudokuSet(this.myCells[j].myLevel_gt0_inAdmissibles);
-                            this.myCells[j].myLevel_gt0_inAdmissibles =
-                                this.myCells[j].myLevel_gt0_inAdmissibles.union(tmpIntersection);
+                            let oldInAdmissibles = new SudokuSet(this.myCells[j].inAdmissibleCandidates);
+                            this.myCells[j].inAdmissibleCandidates =
+                                this.myCells[j].inAdmissibleCandidates.union(tmpIntersection);
 
-                            let localAdded = !oldInAdmissibles.equals(this.myCells[j].myLevel_gt0_inAdmissibles);
+                            let localAdded = !oldInAdmissibles.equals(this.myCells[j].inAdmissibleCandidates);
                             inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
                             if (localAdded) {
                                 let newInAdmissibles =
-                                    this.myCells[j].myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
+                                    this.myCells[j].inAdmissibleCandidates.difference(oldInAdmissibles);
                                 newInAdmissibles.forEach(inAdNr => {
                                     let inAdmissiblePairInfo = {
                                         collection: this,
@@ -3223,7 +3223,7 @@ class SudokuGroup extends SudokuModel {
                                         pairCell2: this.myGrid.sudoCells[this.myPairInfos[i].pairIndices[1]]
                                     }
 
-                                    this.myCells[j].myLevel_gt0_inAdmissiblesFromPairs.set(inAdNr, inAdmissiblePairInfo);
+                                    this.myCells[j].inAdmissibleCandidatesFromPairs.set(inAdNr, inAdmissiblePairInfo);
                                 })
                             }
                         }
@@ -3972,7 +3972,7 @@ class SudokuGrid extends SudokuModel {
         // noch nicht in der DB befinden. 
         // Sie besitzen daher auch noch keine Id.
 
-        this.myCalculator = calculator;
+        this.myStepByStepSolver = calculator;
 
         // Aktuelle Selektion
         this.indexSelected = -1;
@@ -4194,9 +4194,9 @@ class SudokuGrid extends SudokuModel {
         puzzleRecord.statusGiven = this.numberOfGivens();
         puzzleRecord.statusSolved = this.numberOfSolvedCells();
         puzzleRecord.statusOpen = this.numberOfOpenCells();;
-        if (this.myCalculator.currentEvalType == 'lazy-invisible' || this.myCalculator.currentEvalType == 'lazy') {
+        if (this.myStepByStepSolver.currentEvalType == 'lazy-invisible' || this.myStepByStepSolver.currentEvalType == 'lazy') {
             puzzleRecord.stepsLazy = this.steps;
-        } else if (this.myCalculator.currentEvalType == 'strict-plus' || this.myCalculator.currentEvalType == 'strict-minus') {
+        } else if (this.myStepByStepSolver.currentEvalType == 'strict-plus' || this.myStepByStepSolver.currentEvalType == 'strict-minus') {
             puzzleRecord.stepsStrict = this.steps;
         }
         // }
@@ -4239,9 +4239,9 @@ class SudokuGrid extends SudokuModel {
         puzzleRecord.statusSolved = this.numberOfSolvedCells();
         puzzleRecord.statusOpen = this.numberOfOpenCells();
 
-        if (this.myCalculator.currentEvalType == 'lazy' || this.myCalculator.currentEvalType == 'lazy-invisible') {
+        if (this.myStepByStepSolver.currentEvalType == 'lazy' || this.myStepByStepSolver.currentEvalType == 'lazy-invisible') {
             puzzleRecord.stepsLazy = this.steps;
-        } else if (this.myCalculator.currentEvalType == 'strict-plus' || this.myCalculator.currentEvalType == 'strict-minus') {
+        } else if (this.myStepByStepSolver.currentEvalType == 'strict-plus' || this.myStepByStepSolver.currentEvalType == 'strict-minus') {
             puzzleRecord.stepsStrict = this.steps;
         }
         // }
@@ -4299,9 +4299,9 @@ class SudokuGrid extends SudokuModel {
     // Other methods
     // ========================================================
     evaluateMatrix() {
-        if (this.myCalculator.currentEvalType == 'lazy-invisible') this.evaluateGridLazy();
-        if (this.myCalculator.currentEvalType == 'lazy') this.evaluateGridLazy();
-        if (this.myCalculator.currentEvalType == 'strict-plus' || this.myCalculator.currentEvalType == 'strict-minus') this.evaluateGridStrict();
+        if (this.myStepByStepSolver.currentEvalType == 'lazy-invisible') this.evaluateGridLazy();
+        if (this.myStepByStepSolver.currentEvalType == 'lazy') this.evaluateGridLazy();
+        if (this.myStepByStepSolver.currentEvalType == 'strict-plus' || this.myStepByStepSolver.currentEvalType == 'strict-minus') this.evaluateGridStrict();
     }
 
     clearAutoExecCellInfos() {
@@ -4622,7 +4622,7 @@ class SudokuGrid extends SudokuModel {
         // Berechne das Grid nur soweit, 
         // dass der nächste eindeutige Schritt getan werden kann
         this.clearEvaluations();
-        this.calculate_level_0_inAdmissibles();
+        this.calculateInAdmissibles();
 
         let inAdmissiblesAdded = true;
         while (inAdmissiblesAdded && !this.isInsolvable()) {
@@ -4652,7 +4652,7 @@ class SudokuGrid extends SudokuModel {
 
     evaluateGridStrict() {
         this.clearEvaluations();
-        this.calculate_level_0_inAdmissibles();
+        this.calculateInAdmissibles();
 
         this.calculateNecessarys();
 
@@ -4719,7 +4719,7 @@ class SudokuGrid extends SudokuModel {
                         singlesInContext = singlesInContext.union(cell.getTotalSingles());
                     }
                 })
-                let oldInAdmissibles = new SudokuSet(this.sudoCells[i].myLevel_gt0_inAdmissibles);
+                let oldInAdmissibles = new SudokuSet(this.sudoCells[i].inAdmissibleCandidates);
                 let mySingle = this.sudoCells[i].getTotalSingles();
                 if (mySingle.size == 1 && singlesInContext.isSuperset(mySingle)) {
                     // Das ist die Situation: Dieselbe Single zweimal in einer Block, Spalte oder Reihe.
@@ -4732,15 +4732,15 @@ class SudokuGrid extends SudokuModel {
                     let tmpAdmissibles = this.sudoCells[i].getAdmissibles();
                     let inAdmissiblesFromSingles = tmpAdmissibles.intersection(singlesInContext);
                     // Die indirekt unzulässigen werden neu gesetzt
-                    this.sudoCells[i].myLevel_gt0_inAdmissibles =
-                        this.sudoCells[i].myLevel_gt0_inAdmissibles.union(inAdmissiblesFromSingles);
+                    this.sudoCells[i].inAdmissibleCandidates =
+                        this.sudoCells[i].inAdmissibleCandidates.union(inAdmissiblesFromSingles);
 
-                    let localAdded = !oldInAdmissibles.equals(this.sudoCells[i].myLevel_gt0_inAdmissibles);
+                    let localAdded = !oldInAdmissibles.equals(this.sudoCells[i].inAdmissibleCandidates);
                     inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
                     if (localAdded) {
                         let newInAdmissibles =
-                            this.sudoCells[i].myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
-                        this.sudoCells[i].myLevel_gt0_inAdmissiblesFromSingles = newInAdmissibles;
+                            this.sudoCells[i].inAdmissibleCandidates.difference(oldInAdmissibles);
+                        this.sudoCells[i].inAdmissibleCandidatesFromSingles = newInAdmissibles;
                     }
                 }
             }
@@ -4805,26 +4805,26 @@ class SudokuGrid extends SudokuModel {
             let tmpCell = tmpBlock.getBlockCellAt(row, col);
 
             if (tmpCell.getValue() == '0') {
-                let oldInAdmissibles = new SudokuSet(tmpCell.myLevel_gt0_inAdmissibles);
+                let oldInAdmissibles = new SudokuSet(tmpCell.inAdmissibleCandidates);
                 let tmpAdmissibles = tmpCell.getTotalAdmissibles();
                 let inAdmissiblesFromIntersection = tmpAdmissibles.intersection(strongNumbers);
 
                 if (inAdmissiblesFromIntersection.size > 0) {
-                    tmpCell.myLevel_gt0_inAdmissibles =
-                        tmpCell.myLevel_gt0_inAdmissibles.union(inAdmissiblesFromIntersection);
-                    let localAdded = !oldInAdmissibles.equals(tmpCell.myLevel_gt0_inAdmissibles);
+                    tmpCell.inAdmissibleCandidates =
+                        tmpCell.inAdmissibleCandidates.union(inAdmissiblesFromIntersection);
+                    let localAdded = !oldInAdmissibles.equals(tmpCell.inAdmissibleCandidates);
                     inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
                     if (localAdded) {
                         let newInAdmissibles =
-                            tmpCell.myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
+                            tmpCell.inAdmissibleCandidates.difference(oldInAdmissibles);
                         // Die Liste der indirekt unzulässigen verursacht von overlap wird gesetzt
-                        tmpCell.myLevel_gt0_inAdmissiblesFromIntersection = newInAdmissibles;
+                        tmpCell.inAdmissibleCandidatesFromIntersection = newInAdmissibles;
                         newInAdmissibles.forEach(inAdNr => {
                             let overlapInfo = {
                                 block: tmpBlock,
                                 rowCol: strongRow
                             }
-                            tmpCell.myLevel_gt0_inAdmissiblesFromIntersectionInfo.set(inAdNr, overlapInfo);
+                            tmpCell.inAdmissibleCandidatesFromIntersectionInfo.set(inAdNr, overlapInfo);
                         })
                     }
                 }
@@ -4842,27 +4842,27 @@ class SudokuGrid extends SudokuModel {
             let tmpCell = tmpBlock.getBlockCellAt(row, col);
 
             if (tmpCell.getValue() == '0') {
-                let oldInAdmissibles = new SudokuSet(tmpCell.myLevel_gt0_inAdmissibles);
+                let oldInAdmissibles = new SudokuSet(tmpCell.inAdmissibleCandidates);
                 let tmpAdmissibles = tmpCell.getTotalAdmissibles();
                 let inAdmissiblesFromIntersection = tmpAdmissibles.intersection(strongNumbers);
 
                 if (inAdmissiblesFromIntersection.size > 0) {
 
-                    tmpCell.myLevel_gt0_inAdmissibles =
-                        tmpCell.myLevel_gt0_inAdmissibles.union(inAdmissiblesFromIntersection);
-                    let localAdded = !oldInAdmissibles.equals(tmpCell.myLevel_gt0_inAdmissibles);
+                    tmpCell.inAdmissibleCandidates =
+                        tmpCell.inAdmissibleCandidates.union(inAdmissiblesFromIntersection);
+                    let localAdded = !oldInAdmissibles.equals(tmpCell.inAdmissibleCandidates);
                     inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
                     if (localAdded) {
                         let newInAdmissibles =
-                            tmpCell.myLevel_gt0_inAdmissibles.difference(oldInAdmissibles);
-                        tmpCell.myLevel_gt0_inAdmissiblesFromIntersection = newInAdmissibles;
+                            tmpCell.inAdmissibleCandidates.difference(oldInAdmissibles);
+                        tmpCell.inAdmissibleCandidatesFromIntersection = newInAdmissibles;
 
                         newInAdmissibles.forEach(inAdNr => {
                             let overlapInfo = {
                                 block: tmpBlock,
                                 rowCol: strongCol
                             }
-                            tmpCell.myLevel_gt0_inAdmissiblesFromIntersectionInfo.set(inAdNr, overlapInfo);
+                            tmpCell.inAdmissibleCandidatesFromIntersectionInfo.set(inAdNr, overlapInfo);
                         })
                     }
                 }
@@ -4914,23 +4914,23 @@ class SudokuGrid extends SudokuModel {
                 let tmpCell = this.getCellAt(rowIndex, col);
                 if (tmpCell.getValue() == '0') {
                     // Die Zelle ist ungesetzt
-                    let oldInAdmissibles = new SudokuSet(tmpCell.myLevel_gt0_inAdmissibles);
+                    let oldInAdmissibles = new SudokuSet(tmpCell.inAdmissibleCandidates);
                     let tmpAdmissibles = tmpCell.getTotalAdmissibles();
 
                     if (tmpAdmissibles.has(pointingNr)) {
-                        tmpCell.myLevel_gt0_inAdmissibles.add(pointingNr);
+                        tmpCell.inAdmissibleCandidates.add(pointingNr);
 
-                        let localAdded = !oldInAdmissibles.equals(tmpCell.myLevel_gt0_inAdmissibles);
+                        let localAdded = !oldInAdmissibles.equals(tmpCell.inAdmissibleCandidates);
                         inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
 
                         if (localAdded) {
-                            tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairs.add(pointingNr);
+                            tmpCell.inAdmissibleCandidatesFromPointingPairs.add(pointingNr);
                             let pointingPairInfo = {
                                 pNr: pointingNr,
                                 pVector: pointingVector,
                                 rowCol: this.sudoRows[rowIndex]
                             }
-                            tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairsInfo.set(pointingNr, pointingPairInfo);
+                            tmpCell.inAdmissibleCandidatesFromPointingPairsInfo.set(pointingNr, pointingPairInfo);
                         }
                     }
                 }
@@ -4954,23 +4954,23 @@ class SudokuGrid extends SudokuModel {
 
                 if (tmpCell.getValue() == '0') {
                     // Die Zelle ist ungesetzt
-                    let oldInAdmissibles = new SudokuSet(tmpCell.myLevel_gt0_inAdmissibles);
+                    let oldInAdmissibles = new SudokuSet(tmpCell.inAdmissibleCandidates);
                     let tmpAdmissibles = tmpCell.getTotalAdmissibles();
 
                     if (tmpAdmissibles.has(pointingNr)) {
-                        tmpCell.myLevel_gt0_inAdmissibles.add(pointingNr);
+                        tmpCell.inAdmissibleCandidates.add(pointingNr);
 
-                        let localAdded = !oldInAdmissibles.equals(tmpCell.myLevel_gt0_inAdmissibles);
+                        let localAdded = !oldInAdmissibles.equals(tmpCell.inAdmissibleCandidates);
                         inAdmissiblesAdded = inAdmissiblesAdded || localAdded;
 
                         if (localAdded) {
-                            tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairs.add(pointingNr);
+                            tmpCell.inAdmissibleCandidatesFromPointingPairs.add(pointingNr);
                             let pointingPairInfo = {
                                 pNr: pointingNr,
                                 pVector: pointingVector,
                                 rowCol: this.sudoCols[colIndex]
                             }
-                            tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairsInfo.set(pointingNr, pointingPairInfo);
+                            tmpCell.inAdmissibleCandidatesFromPointingPairsInfo.set(pointingNr, pointingPairInfo);
                         }
                     }
                 }
@@ -5091,12 +5091,12 @@ class SudokuGrid extends SudokuModel {
     }
 
 
-    calculate_level_0_inAdmissibles() {
+    calculateInAdmissibles() {
         // Berechne für jede nicht gesetzte Zelle 
         // die noch möglichen Nummern
         for (let i = 0; i < 81; i++) {
             let tmpCell = this.sudoCells[i];
-            tmpCell.calculate_level_0_inAdmissibles();
+            tmpCell.calculateInAdmissibles();
             tmpCell.candidatesEvaluated = true;
         }
     }
@@ -5262,7 +5262,7 @@ class SudokuCellView extends SudokuView {
             if (cell.candidatesEvaluated) {
                 this.displayAdmissibles();
                 this.displayNecessary(cell.myNecessarys);
-                this.displayLevel_gt0_inAdmissibles(cell.myLevel_gt0_inAdmissibles, cell.myNecessarys);
+                this.displayLevel_gt0_inAdmissibles(cell.inAdmissibleCandidates, cell.myNecessarys);
             } else {
                 // Leere Zelle anzeigen
                 this.myNode.classList.add('nested');
@@ -5451,10 +5451,10 @@ class SudokuCellView extends SudokuView {
         }
     }
 
-    displayLevel_gt0_inAdmissibles(myLevel_gt0_inAdmissibles, myNecessarys) {
+    displayLevel_gt0_inAdmissibles(inAdmissibleCandidates, myNecessarys) {
         let admissibleNodes = this.myNode.children;
         for (let i = 0; i < admissibleNodes.length; i++) {
-            if (myLevel_gt0_inAdmissibles.has(admissibleNodes[i].getAttribute('data-value'))) {
+            if (inAdmissibleCandidates.has(admissibleNodes[i].getAttribute('data-value'))) {
                 // In der Menge der unzulässigen Nummern gibt es die Knotennummer
                 if (!myNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
                     // Die Knotennummer wird als unzulässig markiert, aber
@@ -5511,7 +5511,7 @@ class SudokuCellView extends SudokuView {
     }
 
     setBorderSelected() {
-        if (this.myCell.myGrid.myCalculator.myStepper.indexSelected !==
+        if (this.myCell.myGrid.myStepByStepSolver.myStepper.indexSelected !==
             this.myCell.myIndex) {
             this.myNode.classList.add('hover');
         }
@@ -5560,7 +5560,7 @@ class SudokuCellView extends SudokuView {
             // Die Zelle ist noch nicht gesetzt
             this.displayAdmissibles();
             this.displayNecessary(cell.myNecessarys);
-            this.displayLevel_gt0_inAdmissibles(cell.myLevel_gt0_inAdmissibles, cell.myNecessarys);
+            this.displayLevel_gt0_inAdmissibles(cell.inAdmissibleCandidates, cell.myNecessarys);
         }
 
         for (let candidate of this.myNode.children) {
@@ -5589,7 +5589,7 @@ class SudokuCellView extends SudokuView {
         let tmpCell = this.getMyModel();
 
         if (tmpCell.myNecessarys.size > 0) {
-            let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
+            let collection = tmpCell.myNecessaryGroups.get(Array.from(tmpCell.myNecessarys)[0]);
             collection.myCells.forEach(e => {
                 if (e !== tmpCell) {
                     if (e.getValue() == '0') {
@@ -5660,7 +5660,7 @@ class SudokuCellView extends SudokuView {
 
         if (tmpCell.myNecessarys.size > 0) {
             if (adMissibleNrSelected == Array.from(tmpCell.myNecessarys)[0]) {
-                let collection = tmpCell.myNecessaryCollections.get(Array.from(tmpCell.myNecessarys)[0]);
+                let collection = tmpCell.myNecessaryGroups.get(Array.from(tmpCell.myNecessarys)[0]);
                 collection.myCells.forEach(e => {
                     if (e !== tmpCell) {
                         if (e.getValue() == '0') {
@@ -5679,9 +5679,9 @@ class SudokuCellView extends SudokuView {
             }
         }
 
-        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-            tmpCell.myLevel_gt0_inAdmissiblesFromNecessarys.size > 0) {
-            if (tmpCell.myLevel_gt0_inAdmissiblesFromNecessarys.has(adMissibleNrSelected)) {
+        if (tmpCell.inAdmissibleCandidates.size > 0 &&
+            tmpCell.inAdmissibleCandidatesFromNecessarys.size > 0) {
+            if (tmpCell.inAdmissibleCandidatesFromNecessarys.has(adMissibleNrSelected)) {
                 // Wenn die selektierte Zelle eine rote Nummer enthält, die durch eine notwendige
                 // Nummer verursacht ist, wird dies angezeigt.
                 let necessaryCell = undefined;
@@ -5714,15 +5714,15 @@ class SudokuCellView extends SudokuView {
                 return;
             }
         }
-        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-            tmpCell.myLevel_gt0_inAdmissiblesFromPairs.size > 0) {
-            if (tmpCell.myLevel_gt0_inAdmissiblesFromPairs.has(adMissibleNrSelected)) {
+        if (tmpCell.inAdmissibleCandidates.size > 0 &&
+            tmpCell.inAdmissibleCandidatesFromPairs.size > 0) {
+            if (tmpCell.inAdmissibleCandidatesFromPairs.has(adMissibleNrSelected)) {
                 // Wenn für die selektierte Zelle kritische Paare gespeichert sind,
                 // dann gibt es in der Zelle indirekt unzulässige Nummern, die durch sie
                 // verursacht werden.
                 // Die Block, Spalte oder Zeile des Paares wird markiert.
                 let pairArray = [];
-                let pairInfo = tmpCell.myLevel_gt0_inAdmissiblesFromPairs.get(adMissibleNrSelected);
+                let pairInfo = tmpCell.inAdmissibleCandidatesFromPairs.get(adMissibleNrSelected);
                 pairInfo.collection.myCells.forEach(cell => {
                     if (cell !== tmpCell) {
                         cell.myView.setBorderSelected();
@@ -5741,10 +5741,10 @@ class SudokuCellView extends SudokuView {
             }
         }
 
-        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-            tmpCell.myLevel_gt0_inAdmissiblesFromIntersection.size > 0) {
+        if (tmpCell.inAdmissibleCandidates.size > 0 &&
+            tmpCell.inAdmissibleCandidatesFromIntersection.size > 0) {
 
-            let info = tmpCell.myLevel_gt0_inAdmissiblesFromIntersectionInfo.get(adMissibleNrSelected);
+            let info = tmpCell.inAdmissibleCandidatesFromIntersectionInfo.get(adMissibleNrSelected);
             info.block.myCells.forEach(cell => {
                 cell.myView.setBorderSelected();
             });
@@ -5756,10 +5756,10 @@ class SudokuCellView extends SudokuView {
             return;
         }
 
-        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-            tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairs.size > 0) {
+        if (tmpCell.inAdmissibleCandidates.size > 0 &&
+            tmpCell.inAdmissibleCandidatesFromPointingPairs.size > 0) {
 
-            let info = tmpCell.myLevel_gt0_inAdmissiblesFromPointingPairsInfo.get(adMissibleNrSelected);
+            let info = tmpCell.inAdmissibleCandidatesFromPointingPairsInfo.get(adMissibleNrSelected);
             info.rowCol.myCells.forEach(cell => {
                 cell.myView.setBorderSelected();
             });
@@ -5774,13 +5774,13 @@ class SudokuCellView extends SudokuView {
             return;
         }
 
-        if (tmpCell.myLevel_gt0_inAdmissibles.size > 0 &&
-            tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.size > 0) {
-            if (tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.has(adMissibleNrSelected)) {
+        if (tmpCell.inAdmissibleCandidates.size > 0 &&
+            tmpCell.inAdmissibleCandidatesFromHiddenPairs.size > 0) {
+            if (tmpCell.inAdmissibleCandidatesFromHiddenPairs.has(adMissibleNrSelected)) {
                 // Für ein Subpaar muss nicht jede einzelne Nummer geprüft werden.
                 // 
                 let pairArray = [];
-                const [pairInfo] = tmpCell.myLevel_gt0_inAdmissiblesFromHiddenPairs.values();
+                const [pairInfo] = tmpCell.inAdmissibleCandidatesFromHiddenPairs.values();
                 pairInfo.collection.myCells.forEach(cell => {
                     if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
                         cell.myView.setBorderRedSelected();
@@ -5881,7 +5881,7 @@ class SudokuCellView extends SudokuView {
         // und nur unwesentlich zur einer früheren Erkennung der Widersprüchlichkeit führt.
         /*
         if (cell.getValue() == '0' &&
-            cell.myLevel_0_inAdmissibles.union(cell.myLevel_gt0_inAdmissibles).intersection(cell.myNecessarys).size > 0) {
+            cell.inAdmissibles.union(cell.inAdmissibleCandidates).intersection(cell.myNecessarys).size > 0) {
             this.displayCellError();
             mySolverView.displayReasonInsolvability('Eine notwendige Nummer ist gleichzeitig unzulässig');
             return true;
@@ -5922,23 +5922,23 @@ class SudokuCell extends SudokuModel {
         // 'manual' oder 'auto'
         this.myValueType = 'manual';
         // Speichert die aktuell unzulässigen Zahlen für diese Zelle
-        this.myLevel_0_inAdmissibles = new SudokuSet();
-        this.myLevel_gt0_inAdmissibles = new SudokuSet();
+        this.inAdmissibles = new SudokuSet();
+        this.inAdmissibleCandidates = new SudokuSet();
 
-        this.myLevel_gt0_inAdmissiblesFromPairs = new Map();
-        this.myLevel_gt0_inAdmissiblesFromHiddenPairs = new Map();
-        this.myLevel_gt0_inAdmissiblesFromIntersection = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesFromIntersectionInfo = new Map();
+        this.inAdmissibleCandidatesFromPairs = new Map();
+        this.inAdmissibleCandidatesFromHiddenPairs = new Map();
+        this.inAdmissibleCandidatesFromIntersection = new SudokuSet();
+        this.inAdmissibleCandidatesFromIntersectionInfo = new Map();
 
-        this.myLevel_gt0_inAdmissiblesFromPointingPairs = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesFromPointingPairsInfo = new Map();
+        this.inAdmissibleCandidatesFromPointingPairs = new SudokuSet();
+        this.inAdmissibleCandidatesFromPointingPairsInfo = new Map();
 
-        this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
+        this.inAdmissibleCandidatesFromNecessarys = new SudokuSet();
+        this.inAdmissibleCandidatesFromSingles = new SudokuSet();
 
         // Außer bei widerspruchsvollen Sudokus einelementig
         this.myNecessarys = new SudokuSet();
-        this.myNecessaryCollections = new Map();
+        this.myNecessaryGroups = new Map();
 
         // Außer bei widerspruchsvollen Sudokus einelementig
         // this.myIndirectNecessarys = new SudokuSet();
@@ -5975,7 +5975,7 @@ class SudokuCell extends SudokuModel {
 
 
     getTotalInAdmissibles() {
-        let totalInAdmissibles = this.myLevel_0_inAdmissibles.union(this.myLevel_gt0_inAdmissibles);
+        let totalInAdmissibles = this.inAdmissibles.union(this.inAdmissibleCandidates);
         // In widerspruchsvollen Sudokus können notwendige Nummern gleichzeitig unzulässig sein.
         // Aus pragmatischen Gründen zählen wir solche Nummern nicht zu den inAdmissibles.
         // Dann werden sie auch angezeigt, wenn die Anzeige von inAdmissibles abgeschaltet ist.
@@ -5987,7 +5987,7 @@ class SudokuCell extends SudokuModel {
     getAdmissibles() {
         // Die zulässigen Zahlen einer Zelle sind das Komplement der unzulässigen Zahlen
         return new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
-            this.myLevel_0_inAdmissibles);
+            this.inAdmissibles);
     }
     getTotalAdmissibles() {
         if (this.getValue() == '0') {
@@ -6118,7 +6118,7 @@ class SudokuCell extends SudokuModel {
     }
 
     isDisplayRelevant(admissibleNr) {
-        let relevant = this.myLevel_gt0_inAdmissibles.has(admissibleNr);
+        let relevant = this.inAdmissibleCandidates.has(admissibleNr);
         return relevant;
     }
 
@@ -6138,33 +6138,33 @@ class SudokuCell extends SudokuModel {
         // 
         this.candidatesEvaluated = false;
         // Speichert die aktuell unzulässigen Zahlen für diese Zelle
-        this.myLevel_0_inAdmissibles = new SudokuSet();
-        this.myLevel_gt0_inAdmissibles = new SudokuSet();
+        this.inAdmissibles = new SudokuSet();
+        this.inAdmissibleCandidates = new SudokuSet();
 
-        this.myLevel_gt0_inAdmissiblesFromPairs = new Map();
-        this.myLevel_gt0_inAdmissiblesFromHiddenPairs = new Map();
-        this.myLevel_gt0_inAdmissiblesFromIntersection = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesFromIntersectionInfo = new Map();
-        this.myLevel_gt0_inAdmissiblesFromPointingPairs = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesFromPointingPairsInfo = new Map();
+        this.inAdmissibleCandidatesFromPairs = new Map();
+        this.inAdmissibleCandidatesFromHiddenPairs = new Map();
+        this.inAdmissibleCandidatesFromIntersection = new SudokuSet();
+        this.inAdmissibleCandidatesFromIntersectionInfo = new Map();
+        this.inAdmissibleCandidatesFromPointingPairs = new SudokuSet();
+        this.inAdmissibleCandidatesFromPointingPairsInfo = new Map();
 
-        this.myLevel_gt0_inAdmissiblesFromNecessarys = new SudokuSet();
-        this.myLevel_gt0_inAdmissiblesFromSingles = new SudokuSet();
+        this.inAdmissibleCandidatesFromNecessarys = new SudokuSet();
+        this.inAdmissibleCandidatesFromSingles = new SudokuSet();
 
         // Außer bei widerspruchsvollen Sudokus einelementig
         this.myNecessarys = new SudokuSet();
-        this.myNecessaryCollections = new Map();
+        this.myNecessaryGroups = new Map();
 
         // Außer bei widerspruchsvollen Sudokus einelementig
         // this.myIndirectNecessarys = new SudokuSet();
         // this.myIndirectNecessaryCollections = new Map();
     }
 
-    calculate_level_0_inAdmissibles() {
+    calculateInAdmissibles() {
         // Level 0 unzulässige Nummern sind direkt unzulässige Nummern.
         // Sie werden in der Zelle nicht mehr angezeigt
-        this.myLevel_0_inAdmissibles = this.myDirectInAdmissibles();
-        return this.myLevel_0_inAdmissibles;
+        this.inAdmissibles = this.myDirectInAdmissibles();
+        return this.inAdmissibles;
     }
 
     myDirectInAdmissibles() {
@@ -6259,12 +6259,12 @@ class SudokuCell extends SudokuModel {
 
     addNecessary(nr, nineCellCollection) {
         this.myNecessarys.add(nr);
-        this.myNecessaryCollections.set(nr, nineCellCollection);
+        this.myNecessaryGroups.set(nr, nineCellCollection);
     }
 
     isInsolvable() {
 
-        if (this.myGrid.myCalculator.currentEvalType == 'lazy-invisible' || this.myGrid.myCalculator.currentEvalType == 'lazy')
+        if (this.myGrid.myStepByStepSolver.currentEvalType == 'lazy-invisible' || this.myGrid.myStepByStepSolver.currentEvalType == 'lazy')
             return (
                 // 1) Die Nummer ist bereits einmal gesetzt.
                 (this.getValue() !== '0' && this.myDirectInAdmissibles().has(this.getValue())) ||
@@ -6273,7 +6273,7 @@ class SudokuCell extends SudokuModel {
                 // 3) Gleichzeitig verschiedene notwendige Nummern
                 (this.getValue() == '0' && this.myNecessarys.size > 1));
 
-        else if (this.myGrid.myCalculator.currentEvalType == 'strict-plus' || this.myGrid.myCalculator.currentEvalType == 'strict-minus')
+        else if (this.myGrid.myStepByStepSolver.currentEvalType == 'strict-plus' || this.myGrid.myStepByStepSolver.currentEvalType == 'strict-minus')
 
             return (
                 // 1) Die Nummer ist bereits einmal gesetzt.

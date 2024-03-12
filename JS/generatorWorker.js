@@ -55,8 +55,8 @@ class SudokuGeneratorApp {
 }
 
 
-class SudokuGenerator extends SudokuCalculator {
-    // Der Generator erweitert den SudokuCalculator lediglich
+class SudokuGenerator extends StepByStepSolver {
+    // Der Generator erweitert den StepByStepSolver lediglich
     // um eine Methode, die Generierungsmethode.
     constructor() {
         super();
