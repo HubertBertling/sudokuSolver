@@ -1203,12 +1203,6 @@ class StepByStepSolver extends SudokuModel {
             this.myStepper.startSynchronousLoop();
         } else {
             if (this.myStepper.deadlockReached()) {
-                // Der Calculator braucht gar nicht in den Auto-Modus gesetzt werden
-                //if (sudoApp instanceof SudokuMainApp) {
-                //    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
-
-                // alert("Keine (weitere) Lösung gefunden!");
-                //  } else {
                 // Übertrage Stepper-Infos nach Grid-Infos.
                 this.myGrid.difficulty = 'unlösbar';
                 this.myGrid.backTracks = this.countBackwards;
@@ -2291,8 +2285,8 @@ class StepperOnGrid {
         // D.h. wenn der Owner des Steppers der ein Observer ist,
         // dann können wir den Timer prüfen. Im Web-Worker kann der Generator den Timer nicht benutzen.
 
-        let myCalculator = this.myGrid.myStepByStepSolver;
-        if (myCalculator.isStepExecutionObserver) {
+        let myStepByStepSolver = this.myGrid.myStepByStepSolver;
+        if (myStepByStepSolver.isStepExecutionObserver) {
             // Trickprogrammierung:
             // Der timer ist ungleich false, wenn er läuft.
             return this.timer !== false;
@@ -2325,7 +2319,7 @@ class StepperOnGrid {
                     this.myResult = this.asyncObservedStep();
                 } else {
                     this.stopClockedLoop();
-                    this.cleanupFinishedLoop();
+                    this.clockedLoopFinished();
                 }
             }, this.execSpeed);
         }
@@ -2347,10 +2341,10 @@ class StepperOnGrid {
         if (this.myResult == undefined || this.myResult.processResult == 'inProgress') {
             this.myResult = this.asyncObservedStep();
             if (this.myResult.processResult == 'success') {
-                this.cleanupFinishedLoop();
+                this.clockedLoopFinished();
             }
         } else {
-            this.cleanupFinishedLoop();
+            this.clockedLoopFinished();
         }
         return this.myResult;
     }
@@ -2364,7 +2358,7 @@ class StepperOnGrid {
         return result;
     }
 
-    cleanupFinishedLoop() {
+    clockedLoopFinished() {
         switch (this.myResult.processResult) {
             case 'success': {
                 // Übertrage Stepper-Infos nach Grid-Infos.
@@ -2387,6 +2381,7 @@ class StepperOnGrid {
                     this.myGrid.difficulty = 'unlösbar';
                     this.myGrid.backTracks = this.countBackwards;
                     this.myGrid.steps = this.goneSteps;
+                   
                     this.myGrid.myStepByStepSolver.notifyLoopFinished();
                 }
                 break;
