@@ -2366,8 +2366,8 @@ class StepperOnGrid {
                 this.myGrid.backTracks = this.countBackwards;
                 this.myGrid.steps = this.goneSteps;
                 //            //Übertragung in den preRunRecord
-                this.myGrid.preRunRecord.level = this.myGrid.difficulty;
-                this.myGrid.preRunRecord.backTracks = this.myGrid.backTracks;
+                // this.myGrid.preRunRecord.level = this.myGrid.difficulty;
+                // this.myGrid.preRunRecord.backTracks = this.myGrid.backTracks;
                 //
                 this.myGrid.myStepByStepSolver.notifyLoopFinished();
                 break;
