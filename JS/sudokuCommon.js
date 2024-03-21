@@ -1048,9 +1048,9 @@ class SudokuSolverView extends SudokuView {
 
 
 class StepByStepSolver extends SudokuModel {
-    // StepByStepSolver ist abstrakte Oberklaase für den Solver und Generator.
-    // Der Generator und der Solver verwenden dieselben
-    // Grid-Operationen.
+    // The StepByStepSolver is an abstract superclass for the interactive sudokuSolver,
+    // the FastSolver and the puzzle generator. It has neither access to the DOM model 
+    // nor to the view and controller classes of the interactive sudokuSolver.
 
     constructor() {
         super();
@@ -2225,12 +2225,11 @@ class BackTrackOptionPath {
 
 //=================================================
 class StepperOnGrid {
-    // Für die Sudoku-Matrix kann ein temporärer
-    // Stepper für die automatische Ausführung angelegt werde.
-    // Jede neue automatische Ausführung erfolgt mit einem neuen Stepper.
-    // Der Stepper führt elementare Vorwärts- oder Rückwärtsschritte durch.
-    // Ein Vorwärtsschritt ist ein Aktionspaar (Zelle selektieren, Nummer setzen),
-    // ein Rückwärtsschritt ist ein Paar (Zelle selektieren, gesetzte Nummer zurücknehmen)
+    // A temporary stepper for automatic execution is created for the Sudoku matrix.
+    // Each new automatic execution takes place with a new stepper.
+    // The stepper performs elementary forward or backward steps.
+    // A forward step is a pair of actions (select cell, set number),
+    // a backward step is a pair (select cell, reset set number)
 
     constructor(suGrid) {
         this.lastNumberSet = '0';
@@ -2258,12 +2257,6 @@ class StepperOnGrid {
         this.levelOfDifficulty = 'Keine Angabe';
         // Der Stepper hat immer einen aktuellen BackTracker
         this.myBackTracker = new BackTracker();
-    }
-
-    notifyStepExecuted() {
-        if (this.myGrid.myStepByStepSolver.isStepExecutionObserver) {
-            this.myGrid.myStepByStepSolver.onStepExecution();
-        }
     }
 
     // =============================================================
@@ -2316,10 +2309,10 @@ class StepperOnGrid {
         if (!this.isRunningClockedLoop()) {
             this.timer = window.setInterval(() => {
                 if (this.myResult == undefined || this.myResult.processResult == 'inProgress') {
-                    this.myResult = this.asyncObservedStep();
+                    this.myResult = this.observedStep();
                 } else {
                     this.stopClockedLoop();
-                    this.clockedLoopFinished();
+                    this.loopFinished();
                 }
             }, this.execSpeed);
         }
@@ -2339,62 +2332,20 @@ class StepperOnGrid {
         }
 
         if (this.myResult == undefined || this.myResult.processResult == 'inProgress') {
-            this.myResult = this.asyncObservedStep();
-            if (this.myResult.processResult == 'success') {
-                this.clockedLoopFinished();
-            }
+            this.myResult = this.observedStep();
         } else {
-            this.clockedLoopFinished();
+            this.loopFinished();
         }
         return this.myResult;
     }
 
-    asyncObservedStep() {
+    observedStep() {
         let result = this.autoStep();
         if (result.action == 'backward2forward') {
             return result;
         }
-        this.notifyStepExecuted();
+        sudoApp.mySolver.notify();
         return result;
-    }
-
-    clockedLoopFinished() {
-        switch (this.myResult.processResult) {
-            case 'success': {
-                // Übertrage Stepper-Infos nach Grid-Infos.
-                this.myGrid.difficulty = this.levelOfDifficulty;
-                this.myGrid.backTracks = this.countBackwards;
-                this.myGrid.steps = this.goneSteps;
-                //            //Übertragung in den preRunRecord
-                // this.myGrid.preRunRecord.level = this.myGrid.difficulty;
-                // this.myGrid.preRunRecord.backTracks = this.myGrid.backTracks;
-                //
-                this.myGrid.myStepByStepSolver.notifyLoopFinished();
-                break;
-            }
-            case 'fail': {
-                if (sudoApp instanceof SudokuMainApp) {
-                    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
-                    //alert("Keine (weitere) Lösung gefunden!");
-                } else {
-                    // Übertrage Stepper-Infos nach Grid-Infos.
-                    this.myGrid.difficulty = 'unlösbar';
-                    this.myGrid.backTracks = this.countBackwards;
-                    this.myGrid.steps = this.goneSteps;
-                   
-                    this.myGrid.myStepByStepSolver.notifyLoopFinished();
-                }
-                break;
-            }
-            case '':
-            case 'inProgress': {
-                // Proceed looping
-                break;
-            }
-            default: {
-                throw new Error('Unknown autoStep result: ' + this.myResult.processResult);
-            }
-        }
     }
 
     startSynchronousLoop() {
@@ -2402,25 +2353,22 @@ class StepperOnGrid {
         if (this.indexSelected !== this.myGrid.indexSelected && this.indexSelected !== -1) {
             this.myGrid.select(this.indexSelected);
         }
-
         while (this.myResult == undefined || this.myResult.processResult == 'inProgress') {
-            this.myResult = this.synchronousHiddenStep();
+            this.myResult = this.autoStep();
         }
-        this.synchronousLoopFinished();
+        this.loopFinished();
     }
 
-    synchronousHiddenStep() {
-        let result = this.autoStep();
-        return result;
-    }
-
-    synchronousLoopFinished() {
+    loopFinished() {
         switch (this.myResult.processResult) {
             case 'success': {
                 // Übertrage Stepper-Infos nach Grid-Infos.
                 this.myGrid.difficulty = this.levelOfDifficulty;
                 this.myGrid.backTracks = this.countBackwards;
                 this.myGrid.steps = this.goneSteps;
+                if (sudoApp.isInteractive) {
+                    sudoApp.mySolverController.mySuccessDialog.open();
+                }
                 break;
             }
             case 'fail': {
@@ -2428,6 +2376,9 @@ class StepperOnGrid {
                 this.myGrid.difficulty = 'unlösbar';
                 this.myGrid.backTracks = this.countBackwards;
                 this.myGrid.steps = this.goneSteps;
+                if (sudoApp.isInteractive) {
+                    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
+                }
                 break;
             }
             case '':
@@ -5477,7 +5428,7 @@ class SudokuCellView extends SudokuView {
         this.myNode.innerHTML = value;
     }
 
-    
+
     displayCellError() {
         this.myNode.classList.add('err');
     }
@@ -5800,7 +5751,8 @@ class SudokuCellView extends SudokuView {
     setSelectStatus() {
         let tmpCell = this.getMyModel();
         this.setSelected();
-        if (sudoApp.mySolver.isInAutoExecution()) {
+        if (sudoApp.mySolver.isInAutoExecution()
+            && sudoApp.mySolver.getAutoDirection() == 'forward') {
             if (tmpCell.candidateIndexSelected == -1) {
                 // Nach dem ersten Click auf die Zelle ist noch 
                 // kein Kandidat in der Zelle selektiert.

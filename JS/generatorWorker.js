@@ -48,6 +48,8 @@ class SudokuGeneratorApp {
     constructor() {
         // The only component of the Sudoku worker app is the generator.
         this.myGenerator = new SudokuGenerator();
+        // This is a non-interactive app
+        this.isInteractive = false;
     }
     init() {
         this.myGenerator.init();
@@ -62,6 +64,7 @@ class SudokuGenerator extends StepByStepSolver {
         super();
         this.init();
     }
+
     init() {
         super.init();
         super.setActualEvalType('strict-plus');
@@ -125,8 +128,6 @@ class SudokuGenerator extends StepByStepSolver {
         // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
         this.autoExecStop();
         this.startGeneratorSolutionLoop();
-        // Reset hier nicht
-        // this.myGrid.reset();
     }
 
     startGeneratorSolutionLoop() {

@@ -6,7 +6,7 @@ function start() {
     //A worker app is assigned to the variable "sudoApp".
     sudoApp = new SudokuFastSolverApp();
     sudoApp.init();
-    
+
 }
 
 // The Web Worker is assigned a message handler.
@@ -33,6 +33,8 @@ class SudokuFastSolverApp {
     constructor() {
         // The only component of this app is the FastSolver.
         this.myFastSolver = new SudokuFastSolver();
+        // This is a non-interactive app
+        this.isInteractive = false;
     }
     init() {
         this.myFastSolver.init();

@@ -117,10 +117,13 @@ class SudokuMainApp {
 
         this.myNewPuzzleStore = new NewPuzzleStore();
         this.myNavBar = new NavigationBar();
+        this.myConfirmDlg = new ConfirmDialog();
+       
+        // This is an interactive app
+        this.isInteractive = true;
         // There are two play-modes 'training' and 'solving'.
         this.playMode = 'solving';
 
-        this.myConfirmDlg = new ConfirmDialog();
    
     }
 
