@@ -32,7 +32,7 @@ self.onmessage = function (n) {
 class SudokuFastSolverApp {
     constructor() {
         // The only component of this app is the FastSolver.
-        this.myFastSolver = new SudokuFastSolver();
+        this.myFastSolver = new SudokuFastSolver(this);
         // This is a non-interactive app
         this.isInteractive = false;
     }
@@ -44,8 +44,8 @@ class SudokuFastSolverApp {
 class SudokuFastSolver extends StepByStepSolver {
     // Der FastSolver erweitert den StepByStepSolver lediglich
     // um eine Methode, die Solve-Methode.
-    constructor() {
-        super();
+    constructor(app) {
+        super(app);
         this.init();
     }
 

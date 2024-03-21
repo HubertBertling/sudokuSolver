@@ -1052,8 +1052,9 @@ class StepByStepSolver extends SudokuModel {
     // the FastSolver and the puzzle generator. It has neither access to the DOM model 
     // nor to the view and controller classes of the interactive sudokuSolver.
 
-    constructor() {
+    constructor(app) {
         super();
+        this.myApp = app;
         // Die Matrix des Sudoku-Calculators
         this.myGrid = new SudokuGrid(this);
         //Die Calculator kennt zwei Betriebs-Phasen 'play' or 'define'
@@ -1071,9 +1072,12 @@ class StepByStepSolver extends SudokuModel {
         this.isInAutoExecMode = false;
         // Für eine automatische Lösungssuche legt die App
         // einen Stepper an. Für jede Ausführung einen neuen.
-        this.myStepper = new StepperOnGrid(this.myGrid);
-        this.isStepExecutionObserver = false;
+        this.myStepper = new StepperOnGrid(this, this.myGrid);
         this.init();
+    }
+
+    getMyApp() {
+        return this.myApp;
     }
 
     notifyAspect(aspect, aspectValue) {
@@ -1137,13 +1141,13 @@ class StepByStepSolver extends SudokuModel {
         this.currentPhase = 'define';
         this.isInAutoExecMode = false;
         this.myGrid.init();
-        this.myStepper = new StepperOnGrid(this.myGrid);
+        this.myStepper = new StepperOnGrid(this, this.myGrid);
         this.myStepper.init();
         // Ein neuer Stepper wird angelegt und initialisert
     }
     reset() {
         this.myStepper.stopClockedLoop();
-        this.myStepper = new StepperOnGrid(this.myGrid);
+        this.myStepper = new StepperOnGrid(this, this.myGrid);
         this.myGrid.reset();
         this.myStepper.init();
         this.currentPhase = 'play';
@@ -1175,64 +1179,25 @@ class StepByStepSolver extends SudokuModel {
 
 
     startClockedLoop() {
-        if (this.isInAutoExecMode) {
-            // Im automatischen Ausführungsmodus
-            // muss lediglich die zeitgetacktete Loop gestartet werden.
-            this.myStepper.startClockedLoop();
-        } else {
-            if (this.myStepper.deadlockReached()) {
-                this.setInAutoExecMode();
-                sudoApp.mySolver.notify();
-                // Der Calculator braucht gar nicht in den Auto-Modus gesetzt werden
-                sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
-                // alert("Keine (weitere) Lösung gefunden!");
-            } else {
-                // Der Calculator wird in den Auto-Modus gesetzt
-                // und die zeitgetacktete Loop wird gestartet.
-                this.setInAutoExecMode();
-                this.myStepper.startClockedLoop();
-            }
-        }
+        if (!this.isInAutoExecMode) {
+            this.setInAutoExecMode();
+        }    
+        this.myStepper.startClockedLoop();
     }
-
-
+    
     startSyncLoop() {
-        if (this.isInAutoExecMode) {
-            // Im automatischen Ausführungsmodus
-            // muss lediglich die Loop gestartet werden.
-            this.myStepper.startSynchronousLoop();
-        } else {
-            if (this.myStepper.deadlockReached()) {
-                // Übertrage Stepper-Infos nach Grid-Infos.
-                this.myGrid.difficulty = 'unlösbar';
-                this.myGrid.backTracks = this.countBackwards;
-                this.myGrid.steps = this.goneSteps;
-                this.notifyLoopFinished();
-                //  }
-            } else {
-                // Der Calculator wird in den Auto-Modus gesetzt
-                // und die Loop wird gestartet.
-                this.setInAutoExecMode();
-                this.myStepper.startSynchronousLoop();
-            }
+        if (!this.isInAutoExecMode) {
+            this.setInAutoExecMode();
         }
-    }
-
-    notifyLoopFinished() {
-        if (this.myGrid.myStepByStepSolver.isStepExecutionObserver) {
-            this.myGrid.myStepByStepSolver.onLoopFinish();
-        }
+        this.myStepper.startSynchronousLoop();
     }
 
     setInAutoExecMode() {
-        // Calculator in autoExecMode setzen, so
-        // dass die Looper gestartet werden können.
         this.setGamePhase('play');
         this.isInAutoExecMode = true;
         this.myGrid.clearAutoExecCellInfos();
         this.myGrid.deselect();
         this.myStepper.init();
-
     }
 
     tryMoreSolutions() {
@@ -1240,11 +1205,6 @@ class StepByStepSolver extends SudokuModel {
         this.myStepper.myResult = undefined;
         this.myStepper.startClockedLoop();
     }
-
-    setExecutionObserver() {
-        this.isStepExecutionObserver = true;
-    }
-
 
     isInAutoExecution() {
         return this.isInAutoExecMode;
@@ -1276,19 +1236,9 @@ class StepByStepSolver extends SudokuModel {
 
     executeSingleStep() {
         if (this.isInAutoExecMode) {
-            return this.myStepper.executeSingleStep();
-        } else {
-            if (this.myStepper.deadlockReached()) {
-                this.setInAutoExecMode();
-                sudoApp.mySolver.notify();
-                sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
-                // alert("Keine (weitere) Lösung gefunden!");
-                return undefined;
-            } else {
-                this.setInAutoExecMode();
-                return this.myStepper.executeSingleStep();
-            }
+            this.setInAutoExecMode();
         }
+        return this.myStepper.executeSingleStep(); 
     }
 
     autoExecPause() {
@@ -1307,7 +1257,7 @@ class StepByStepSolver extends SudokuModel {
         // 2. Der ExecMode des Calculators wird abgeschaltet.
         this.isInAutoExecMode = false;
         this.myGrid.clearAutoExecCellInfos();
-        this.myStepper = new StepperOnGrid(this.myGrid);
+        this.myStepper = new StepperOnGrid(this, this.myGrid);
     }
 
     setActualEvalType(value) {
@@ -1352,16 +1302,15 @@ class StepByStepSolver extends SudokuModel {
 
 
 class SudokuSolver extends StepByStepSolver {
-    // Der Solver erweitert den Calculator um
-    // um die Ansichtsklassen, die die Matrix 
-    // über den DOM-Tree sichtbar machen.
+    // The sudokuSolver extends the StepByStepSolver 
+    // with view classes that make the matrix 
+    // visible via the DOM tree.
 
-    constructor() {
-        super();
+    constructor(app) {
+        super(app);
         // Die Matrix des Sudoku-Solver
         this.myGridView = new SudokuGridView(this.myGrid);
         this.myGrid.setMyView(this.myGridView);
-        super.setExecutionObserver();
         this.init();
     }
 
@@ -1372,7 +1321,6 @@ class SudokuSolver extends StepByStepSolver {
     indexSelected() {
         return super.indexSelected();
     }
-
 
     setStepLazy() {
         super.setStepLazy();
@@ -1584,10 +1532,7 @@ class SudokuSolver extends StepByStepSolver {
     onStepExecution() {
         this.notify();
     }
-    onLoopFinish() {
-        sudoApp.mySolverController.mySuccessDialog.open();
-    }
-
+  
     reset() {
         super.reset();
         sudoApp.mySolverController.myUndoActionStack = [];
@@ -2231,7 +2176,8 @@ class StepperOnGrid {
     // A forward step is a pair of actions (select cell, set number),
     // a backward step is a pair (select cell, reset set number)
 
-    constructor(suGrid) {
+    constructor(parent, suGrid) {
+        this.myStepByStepSolver = parent;
         this.lastNumberSet = '0';
         this.indexSelected = -1;
         this.myResult = undefined;
@@ -2271,22 +2217,17 @@ class StepperOnGrid {
     }
 
     isRunningClockedLoop() {
-        // StepExecution-Observer sind Sudoku-Calculators, die jede einzelne Schrittausführung
-        // beobachten. Sie benutzen daher eine zeit-getaktete asynchrone Schrittausführung.
-        // 
-        // Von Nicht-Observern nehmen wir an, dass sie die synchrone Schrittausführung verwenden.
-        // D.h. wenn der Owner des Steppers der ein Observer ist,
-        // dann können wir den Timer prüfen. Im Web-Worker kann der Generator den Timer nicht benutzen.
-
-        let myStepByStepSolver = this.myGrid.myStepByStepSolver;
-        if (myStepByStepSolver.isStepExecutionObserver) {
+        if (this.myStepByStepSolver.myApp.isInteractive) {
             // Trickprogrammierung:
             // Der timer ist ungleich false, wenn er läuft.
             return this.timer !== false;
         } else {
             return false;
         }
+    }
 
+    getMyApp() {
+        return this.myStepByStepSolver.getMyApp();
     }
 
     // =============================================================
@@ -2330,7 +2271,6 @@ class StepperOnGrid {
         if (this.indexSelected !== this.myGrid.indexSelected && this.indexSelected !== -1) {
             this.myGrid.select(this.indexSelected);
         }
-
         if (this.myResult == undefined || this.myResult.processResult == 'inProgress') {
             this.myResult = this.observedStep();
         } else {
@@ -2366,7 +2306,7 @@ class StepperOnGrid {
                 this.myGrid.difficulty = this.levelOfDifficulty;
                 this.myGrid.backTracks = this.countBackwards;
                 this.myGrid.steps = this.goneSteps;
-                if (sudoApp.isInteractive) {
+                if (this.myStepByStepSolver.myApp.isInteractive) {
                     sudoApp.mySolverController.mySuccessDialog.open();
                 }
                 break;
@@ -2376,7 +2316,7 @@ class StepperOnGrid {
                 this.myGrid.difficulty = 'unlösbar';
                 this.myGrid.backTracks = this.countBackwards;
                 this.myGrid.steps = this.goneSteps;
-                if (sudoApp.isInteractive) {
+                if (this.myStepByStepSolver.myApp.isInteractive) {
                     sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
                 }
                 break;
@@ -3951,6 +3891,9 @@ class SudokuGrid extends SudokuModel {
         }
     }
 
+    getMyApp() {
+        return this.myStepByStepSolver.getMyApp();
+    }
     init() {
         // Speichert die aktuell selektierte Zelle und ihren Index
         this.indexSelected = -1;
@@ -5840,10 +5783,10 @@ class SudokuCellView extends SudokuView {
 }
 
 class SudokuCell extends SudokuModel {
-    constructor(suTable, index) {
+    constructor(grid, index) {
         super();
         // Die Zelle kennt ihre Tabelle und ihren Index
-        this.myGrid = suTable;
+        this.myGrid = grid;
         this.myIndex = index;
         // Die Zelle kennt ihre DOM-Version
         // Mit der Erzeugung des Wrappers wird

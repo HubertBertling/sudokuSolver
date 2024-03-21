@@ -47,7 +47,7 @@ self.onmessage = function (n) {
 class SudokuGeneratorApp {
     constructor() {
         // The only component of the Sudoku worker app is the generator.
-        this.myGenerator = new SudokuGenerator();
+        this.myGenerator = new SudokuGenerator(this);
         // This is a non-interactive app
         this.isInteractive = false;
     }
@@ -60,8 +60,8 @@ class SudokuGeneratorApp {
 class SudokuGenerator extends StepByStepSolver {
     // Der Generator erweitert den StepByStepSolver lediglich
     // um eine Methode, die Generierungsmethode.
-    constructor() {
-        super();
+    constructor(app) {
+        super(app);
         this.init();
     }
 

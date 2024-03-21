@@ -102,7 +102,7 @@ class SudokuMainApp {
         // Components of the app
         // ==============================================================
         // 1. The solver component
-        this.mySolver = new SudokuSolver();
+        this.mySolver = new SudokuSolver(this);
         this.mySolverView = new SudokuSolverView(this.mySolver);
         this.mySolverController = new SudokuSolverController(this.mySolver);
         // A true MVC pattern exists only for the solver. 
