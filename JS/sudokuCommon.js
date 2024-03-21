@@ -1235,7 +1235,7 @@ class StepByStepSolver extends SudokuModel {
     }
 
     executeSingleStep() {
-        if (this.isInAutoExecMode) {
+        if (!this.isInAutoExecMode) {
             this.setInAutoExecMode();
         }
         return this.myStepper.executeSingleStep(); 
