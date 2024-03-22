@@ -91,7 +91,6 @@ if (navigator.share && navigator.canShare) {
     resultPara.textContent = `Web Share API not supported.`;
 }
 
-
 function start() {
     sudoApp = new SudokuMainApp();
     sudoApp.init();
@@ -115,7 +114,12 @@ class SudokuMainApp {
         this.myPuzzleDB = new SudokuPuzzleDB();
         this.myPuzzleDBController = new SudokuPuzzleDBController(this.myPuzzleDB);
 
+        // 3. The PuzzleStore, which is filled with three puzzles 
+        // for each difficulty level when the app is launched. 
+        // When a new puzzle is requested, it is taken from the store 
+        // and the store is replenished in the background.
         this.myNewPuzzleStore = new NewPuzzleStore();
+
         this.myNavBar = new NavigationBar();
         this.myConfirmDlg = new ConfirmDialog();
        
@@ -123,12 +127,9 @@ class SudokuMainApp {
         this.isInteractive = true;
         // There are two play-modes 'training' and 'solving'.
         this.playMode = 'solving';
-
-   
     }
 
     init() {
-        //this.myPuzzleDB.migratePuzzleDB()
         this.mySolver.init();
         this.mySolver.notify();
         this.myPuzzleDB.init();

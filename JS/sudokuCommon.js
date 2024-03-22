@@ -1048,9 +1048,9 @@ class SudokuSolverView extends SudokuView {
 
 
 class StepByStepSolver extends SudokuModel {
-    // The StepByStepSolver is an abstract superclass for the interactive sudokuSolver,
-    // the FastSolver and the puzzle generator. It has neither access to the DOM model 
-    // nor to the view and controller classes of the interactive sudokuSolver.
+    // The StepByStepSolver is an abstract superclass for the interactive SudokuSolver,
+    // the FastSolver and the SudokuGenerator. It has neither access to the DOM model 
+    // nor to the view and controller classes of the interactive SudokuSolver.
 
     constructor(app) {
         super();
@@ -1074,10 +1074,6 @@ class StepByStepSolver extends SudokuModel {
         // einen Stepper an. Für jede Ausführung einen neuen.
         this.myStepper = new StepperOnGrid(this, this.myGrid);
         this.init();
-    }
-
-    getMyApp() {
-        return this.myApp;
     }
 
     notifyAspect(aspect, aspectValue) {
@@ -1251,10 +1247,10 @@ class StepByStepSolver extends SudokuModel {
     }
 
     autoExecStop() {
-        // Die automatische Ausführung des Calculators wird gestoppt.
-        // 1. Die eventuell laufende asynchrone Loop wird angehalten
+        // The automatic execution of the SteByStepSolver is stopped.
+        // 1. the asynchronous loop that may be running is stopped
         this.myStepper.stopClockedLoop();
-        // 2. Der ExecMode des Calculators wird abgeschaltet.
+        // 2. The automatic exec mode will be turned off.
         this.isInAutoExecMode = false;
         this.myGrid.clearAutoExecCellInfos();
         this.myStepper = new StepperOnGrid(this, this.myGrid);
@@ -2217,17 +2213,14 @@ class StepperOnGrid {
     }
 
     isRunningClockedLoop() {
+        // if (sudoApp.isInteractive) {   Hier funktioniert sudoApp nicht. Warum?
         if (this.myStepByStepSolver.myApp.isInteractive) {
-            // Trickprogrammierung:
+                // Trickprogrammierung:
             // Der timer ist ungleich false, wenn er läuft.
             return this.timer !== false;
         } else {
             return false;
         }
-    }
-
-    getMyApp() {
-        return this.myStepByStepSolver.getMyApp();
     }
 
     // =============================================================
@@ -2306,7 +2299,8 @@ class StepperOnGrid {
                 this.myGrid.difficulty = this.levelOfDifficulty;
                 this.myGrid.backTracks = this.countBackwards;
                 this.myGrid.steps = this.goneSteps;
-                if (this.myStepByStepSolver.myApp.isInteractive) {
+                // if (this.myStepByStepSolver.myApp.isInteractive) {
+                if (sudoApp.isInteractive) {
                     sudoApp.mySolverController.mySuccessDialog.open();
                 }
                 break;
@@ -2316,8 +2310,9 @@ class StepperOnGrid {
                 this.myGrid.difficulty = 'unlösbar';
                 this.myGrid.backTracks = this.countBackwards;
                 this.myGrid.steps = this.goneSteps;
-                if (this.myStepByStepSolver.myApp.isInteractive) {
-                    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
+                // if (this.myStepByStepSolver.myApp.isInteractive) {
+                if (sudoApp.isInteractive) {
+                        sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
                 }
                 break;
             }
@@ -3891,9 +3886,6 @@ class SudokuGrid extends SudokuModel {
         }
     }
 
-    getMyApp() {
-        return this.myStepByStepSolver.getMyApp();
-    }
     init() {
         // Speichert die aktuell selektierte Zelle und ihren Index
         this.indexSelected = -1;
@@ -4218,33 +4210,35 @@ class SudokuGrid extends SudokuModel {
 
 
     takeBackSolvedCells(nr) {
-        // Vom Generator verwendete Funktion
-        // Löscht solange gelöste Zellen, wie das Grid 
-        // eine eindeutige Lösung behält.
+        // Function used by the puzzle generator
+        // Deletes solved cells as long as the grid 
+        // retains a unique solution.
         let nrOfGivens = 81;
         let randomCellOrder = Randomizer.getRandomNumbers(81, 0, 81);
         for (let i = 0; i < 81; i++) {
             if (nrOfGivens > nr) {
                 let k = randomCellOrder[i];
                 if (this.sudoCells[k].getValue() !== '0') {
-                    // Selektiere Zelle mit gesetzter Nummer
+                    // Select cell with set number
                     this.select(k);
-                    // Notiere die gesetzte Nummer, um sie eventuell wiederherstellen zu können
+                    // Make a note of the set number so that you can restore it if necessary
                     let tmpNr = this.sudoCells[k].getValue();
-                    // Lösche die gesetzte Nummer
+                    // delete number in cell
                     this.deleteSelected('define');
-                    // Werte die verbliebene Matrix strikt aus.
+                    // Evaluate the remaining matrix strictly.
                     this.evaluateGridStrict();
 
                     if (this.sudoCells[k].getNecessarys().size == 1) {
-                        // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
+                        // Deleting the cell is ok because the deleted cell 
+                        // has a unique given. 
                         nrOfGivens--;
                     } else if (this.sudoCells[k].getTotalAdmissibles().size == 1) {
-                        // Die gelöschte Zelle hat eine eindeutig zu wählende Nummer 
+                        // Deleting the cell is ok because the deleted cell 
+                        // has a unique given. 
                         nrOfGivens--;
                     } else {
-                        // Die gelöschte Zelle weist keine eindeutig zu wählende Nummer aus
-                        // Dann wird die Löschung zurückgenommen.
+                        // The deleted cell does not have a unique number to be selected
+                        // The deletion is therefore cancelled.
                         this.select(k);
                         this.sudoCells[k].manualSetValue(tmpNr, 'define');
                     }
@@ -5829,10 +5823,6 @@ class SudokuCell extends SudokuModel {
         // Außer bei widerspruchsvollen Sudokus einelementig
         this.myNecessarys = new SudokuSet();
         this.myNecessaryGroups = new Map();
-
-        // Außer bei widerspruchsvollen Sudokus einelementig
-        // this.myIndirectNecessarys = new SudokuSet();
-        // this.myIndirectNecessaryCollections = new Map();
     }
 
     // ===================================================================
@@ -5892,10 +5882,7 @@ class SudokuCell extends SudokuModel {
     getNecessarys() {
         return new SudokuSet(this.myNecessarys);
     }
-    /* getIndirectNecessarys() {
-        return new SudokuSet(this.myIndirectNecessarys);
-    }
-    */
+ 
     getTotalSingles() {
         let singles = this.getTotalAdmissibles();
         if (singles.size == 1) {
@@ -6046,8 +6033,6 @@ class SudokuCell extends SudokuModel {
         this.myNecessaryGroups = new Map();
 
         // Außer bei widerspruchsvollen Sudokus einelementig
-        // this.myIndirectNecessarys = new SudokuSet();
-        // this.myIndirectNecessaryCollections = new Map();
     }
 
     calculateInAdmissibles() {
@@ -6071,14 +6056,11 @@ class SudokuCell extends SudokuModel {
         return tmpInAdmissibles;
     }
 
-
     clearAutoExecInfo() {
         this.myValueType = 'manual';
         this.myAutoStepNumber = 0;
         this.myOptions = [];
     }
-
-
 
     countMyAdmissibles() {
         return this.getAdmissibles().size;
@@ -6153,7 +6135,6 @@ class SudokuCell extends SudokuModel {
     }
 
     isInsolvable() {
-
         if (this.myGrid.myStepByStepSolver.currentEvalType == 'lazy-invisible' || this.myGrid.myStepByStepSolver.currentEvalType == 'lazy')
             return (
                 // 1) Die Nummer ist bereits einmal gesetzt.
@@ -6185,10 +6166,6 @@ class SudokuPuzzleDBController {
         document.getElementById('col-name').addEventListener('click', () => {
             this.myPuzzleDB.sort('name');
         });
-        /*        document.getElementByIFd('col-defCount').addEventListener('click', () => {
-                    this.myPuzzleDB.sort('defCount');
-                }); */
-
         document.getElementById('col-status-given').addEventListener('click', () => {
             this.myPuzzleDB.sort('status-given');
         });
@@ -6201,12 +6178,6 @@ class SudokuPuzzleDBController {
             this.myPuzzleDB.sort('status-open');
         });
 
-        /*document.getElementById('col-steps-lazy').addEventListener('click', () => {
-                    this.myPuzzleDB.sort('steps-lazy');
-                });
-                document.getElementById('col-steps-strict').addEventListener('click', () => {
-                    this.myPuzzleDB.sort('steps-strict');
-                });   */
         document.getElementById('col-level').addEventListener('click', () => {
             this.myPuzzleDB.sort('level');
         });
@@ -6216,7 +6187,6 @@ class SudokuPuzzleDBController {
         document.getElementById('col-date').addEventListener('click', () => {
             this.myPuzzleDB.sort('date');
         });
-
 
         document.getElementById('pz-btn-load').addEventListener('click', () => {
             this.loadBtnPressed();
@@ -6269,7 +6239,6 @@ class SudokuPuzzleDBController {
         this.myPuzzleDB.selectedIndex = trNode.cells[0].innerText - 1;
         this.myPuzzleDB.notify();
     }
-
 
     loadBtnPressed() {
         if (this.myPuzzleDB.getSize() > 0) {
@@ -6571,7 +6540,7 @@ class NewPuzzleStore {
                     // Starting a new puzzle generator (web worker).
                     sudoApp.mySolver.generateNewVerySimplePuzzle();
                     this.runningGenerators++;
-                    //    console.log('       runningGenerators: ' + this.runningGenerators);
+                  //  console.log('       runningGenerators: ' + this.runningGenerators);
                 } else {
                     filled1 = true;
                 }
@@ -6580,7 +6549,7 @@ class NewPuzzleStore {
                     // Starting a new puzzle generator (web worker).
                     sudoApp.mySolver.generateNewPuzzle();
                     this.runningGenerators++;
-                    //   console.log('       runningGenerators: ' + this.runningGenerators);
+                   //    console.log('       runningGenerators: ' + this.runningGenerators);
                 } else {
                     filled2 = true;
                 }
@@ -6596,9 +6565,9 @@ class NewPuzzleStore {
     }
 
     isNotFilled() {
-        return this.simplePuzzles.length < 3
-            || this.mediumPuzzles.length < 3
-            || this.heavyPuzzles.length < 3;
+        return this.simplePuzzles.length < 2
+            || this.mediumPuzzles.length < 2
+            || this.heavyPuzzles.length < 2;
     }
 
     pushPuzzle(puzzleRecord) {

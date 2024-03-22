@@ -14,7 +14,7 @@ self.onmessage = function (n) {
     let request = JSON.parse(n.data);
     if (request.name == "generate") {
         // If the message is "generate", the Web Worker generates a new puzzle
-        sudoApp.myGenerator.generatePuzzle();
+        sudoApp.myGenerator.generatePuzzle(-1);
         // The generator returns the generated puzzle in the form of a database element
         let generatedPuzzle = sudoApp.myGenerator.myGrid.getGeneratedPuzzleRecord();
         let response = {
@@ -58,8 +58,8 @@ class SudokuGeneratorApp {
 
 
 class SudokuGenerator extends StepByStepSolver {
-    // Der Generator erweitert den StepByStepSolver lediglich
-    // um eine Methode, die Generierungsmethode.
+    // The generator only extends the StepByStepSolver
+    // by one method, the generation method.
     constructor(app) {
         super(app);
         this.init();
@@ -72,60 +72,31 @@ class SudokuGenerator extends StepByStepSolver {
     }
 
     generateVerySimplePuzzle() {
-        // Very simple puzzles are calculated 
-        this.init();
-        // Setze in zufälliger Zelle eine zufällige Nummer
-        let randomCellIndex = Randomizer.getRandomIntInclusive(0, 80);
-        this.myGrid.select(randomCellIndex);
-
-        let randomCellContent = Randomizer.getRandomIntInclusive(1, 9).toString();
-        this.atCurrentSelectionSetNumber(randomCellContent);
-
-        // Löse dieses Sudoku mit einer nicht getakteten
-        // und nicht beobachteten automatischen Ausführung
-        this.startGeneratorSolutionLoop();
-
-        // Mache die gelösten Zellen zu Givens
-        this.setSolvedToGiven();
-
-        // Setze das Puzzle in den Define-Mode
-        this.setGamePhase('define')
-        // Lösche in der Lösung Nummern, solange
-        // wie das verbleibende Puzzle backtrack-frei bleibt.
-        this.takeBackSolvedCells(36);
-
-        // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
-        this.autoExecStop();
-        this.startGeneratorSolutionLoop();
-        // Reset hier nicht
-        // this.myGrid.reset();
+        this.generatePuzzle(36);
     }
-
-    generatePuzzle() {
-        // Not very simple Puzzles cannot be calculated directly
     
+    generatePuzzle(nrGivens) {
         this.init();
-        // Setze in zufälliger Zelle eine zufällige Nummer
+        // Set a random number in a random cell
         let randomCellIndex = Randomizer.getRandomIntInclusive(0, 80);
         this.myGrid.select(randomCellIndex);
 
         let randomCellContent = Randomizer.getRandomIntInclusive(1, 9).toString();
         this.atCurrentSelectionSetNumber(randomCellContent);
 
-        // Löse dieses Sudoku mit einer nicht getakteten
-        // und nicht beobachteten automatischen Ausführung
+        // Solve this puzzle with a non-timed
+        // automatic execution
         this.startGeneratorSolutionLoop();
 
-        // Mache die gelösten Zellen zu Givens
+        // Turn the dissolved cells into Givens
         this.setSolvedToGiven();
 
-        // Setze das Puzzle in den Define-Mode
+        // Set the puzzle to define mode
         this.setGamePhase('define')
-        // Lösche in der Lösung Nummern, solange
-        // wie das verbleibende Puzzle backtrack-frei bleibt.
-        this.takeBackSolvedCells(-1);
-
-        // Löse das generierte Puzzle, um seinen Schwierigkeitsgrad zu ermitteln.
+        // Delete numbers in the solution as long
+        // as long as the remaining puzzle remains backtrack-free.
+        this.takeBackSolvedCells(nrGivens);
+        // Solve the generated puzzle to determine its level of difficulty.
         this.autoExecStop();
         this.startGeneratorSolutionLoop();
     }
@@ -134,13 +105,11 @@ class SudokuGenerator extends StepByStepSolver {
         super.startSyncLoop();
     }
     takeBackSolvedCells(nr) {
-        this.myGrid.takeBackSolvedCells(nr);
-    }
+        this.myGrid.takeBackSolvedCells(nr);    }
     setSolvedToGiven() {
         this.myGrid.setSolvedToGiven();
     }
 }
-
 
 // Launch and initialize the worker app
 start();
