@@ -6531,9 +6531,9 @@ class NewPuzzleStore {
         let filled2 = false;
         while (!(filled1 && filled2)) {
             // limit the number of running generators
-            if (this.runningGenerators < 4) {
+            if (this.runningGenerators < 2) {
                 // The number of generators running in parallel is limited 
-                // to 3 - a spontaneously chosen limit. We need a limit
+                // to 2. We need a limit
                 // to restrict the simultaneous resource requirements.
                 if (this.verySimpleIsNotFilled()) {
                     filled1 = false;
