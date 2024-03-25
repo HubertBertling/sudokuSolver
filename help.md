@@ -280,7 +280,7 @@ In dieser Nutzungsform zeigt der Sudoku-Trainer seinen vollen Funktionsumfang. S
 {: style="text-align:center"}
 ![Schritt 1](./images/exampleStep1.png){: max-width="75%"}
 
-**Schritt 2: Zelle mit notwendiger Nummer.** Im zweiten Schritt selektiert der Solver eine Zelle mit notwendiger Nummer 1. Sie ist notwendig, weil in dem Block in allen freien Zellen, grün gestrichelte Rahmen, keine 1 mehr gesetzt werden kann. Die weiß gerahmten Zellen liefern die Begründung.
+**Schritt 2: Zelle mit notwendiger Nummer.** Im zweiten Schritt selektiert der Solver eine Zelle mit notwendiger Nummer 1. Sie ist notwendig, weil in dem Block in allen freien Zellen, grün gestrichelte Rahmen, keine 1 mehr gesetzt werden kann. Die weiß gerahmten Zellen liefern die Begründung. Das heißt alle diese Zellen tragen die Nummer 1.
 
 {: style="text-align:center"}
 ![Schritt 2](./images/exampleStep2.png){: max-width="75%"}
@@ -295,7 +295,7 @@ In dieser Nutzungsform zeigt der Sudoku-Trainer seinen vollen Funktionsumfang. S
 {: style="text-align:center"}
 ![Schritt 60](./images/exampleStep60.png){: max-width="75%"}
 
-**Schritt 65: Zelle mit Single.** Im Schritt 65 selektiert der Solver eine Zelle mit nur einem Kandidaten, einem Single.
+**Schritt 65: Zelle mit Single.** Im Schritt 65 selektiert der Solver eine Zelle mit nur einem Kandidaten, einem Single. Alle anderen Nummern sind in dieser Zelle unzulässig. Die Zellen mit gestricheltem weißen Rand liefern die Bedingung dafür. Das heißt, für jede Zahl 1...8 gibt es eine solche Zelle.
 
 {: style="text-align:center"}
 ![Schritt 65](./images/exampleStep65.png){: max-width="75%"}

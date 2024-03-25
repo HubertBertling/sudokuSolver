@@ -2635,7 +2635,7 @@ class StepperOnGrid {
             if (this.myGrid.sudoCells[i].getValue() == '0') {
                 let selection = {
                     index: i,
-                    options: Array.from(this.myGrid.sudoCells[i].getTotalAdmissibles()),
+                    options: Array.from(this.myGrid.sudoCells[i].getTotalCandidates()),
                     //       indirectNecessaryOnes: Array.from(this.myGrid.sudoCells[i].getIndirectNecessarys()),
                     necessaryOnes: Array.from(this.myGrid.sudoCells[i].getNecessarys()),
                     level_0_singles: Array.from(this.myGrid.sudoCells[i].getSingles())
@@ -2846,8 +2846,8 @@ class SudokuGroup extends SudokuModel {
         let myNumbers = new SudokuSet();
         this.myCells.forEach(cell => {
             if (cell.getValue() == '0') {
-                // myNumbers = myNumbers.union(cell.getTotalAdmissibles());
-                myNumbers = myNumbers.union(cell.getAdmissibles());
+                // myNumbers = myNumbers.union(cell.getTotalCandidates());
+                myNumbers = myNumbers.union(cell.getCandidates());
             } else {
                 myNumbers.add(cell.getValue());
             }
@@ -2855,11 +2855,11 @@ class SudokuGroup extends SudokuModel {
         let missingNumbers = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(myNumbers);
         return (missingNumbers);
     }
-    getTotalAdmissibles() {
+    getTotalCandidates() {
         let myNumbers = new SudokuSet();
         this.myCells.forEach(cell => {
             if (cell.getValue() == '0') {
-                myNumbers = myNumbers.union(cell.getTotalAdmissibles());
+                myNumbers = myNumbers.union(cell.getTotalCandidates());
             }
         })
         return myNumbers;
@@ -2888,8 +2888,8 @@ class SudokuGroup extends SudokuModel {
         // Iteriere über die Gruppe
         for (let i = 0; i < 9; i++) {
             if (this.myCells[i].getValue() == '0') {
-                // let permNumbers = this.myCells[i].getAdmissibles();
-                let permNumbers = this.myCells[i].getTotalAdmissibles();
+                // let permNumbers = this.myCells[i].getCandidates();
+                let permNumbers = this.myCells[i].getTotalCandidates();
                 permNumbers.forEach(nr => {
                     let iNr = parseInt(nr);
                     // Für jede Nummer die Indices ihres Auftretens speichern
@@ -2958,16 +2958,16 @@ class SudokuGroup extends SudokuModel {
         // Iteriere über die Gruppe
         for (let i = 0; i < 9; i++) {
             if (this.myCells[i].getValue() == '0') {
-                let tmpAdmissibles = this.myCells[i].getTotalAdmissibles()
-                if (tmpAdmissibles.size == 2) {
+                let tmpCandidates = this.myCells[i].getTotalCandidates()
+                if (tmpCandidates.size == 2) {
                     // Infos zum Paar speichern
-                    let currentPair = new SudokuSet(tmpAdmissibles);
+                    let currentPair = new SudokuSet(tmpCandidates);
                     // Prüfen, ob das Paar schon in der PaarInfoliste ist
                     if (this.myPairInfos.length == 0) {
                         let pairInfo = {
                             pairInfoIndex: i,
                             pairIndices: [this.myCells[i].getIndex()],
-                            pairSet: tmpAdmissibles
+                            pairSet: tmpCandidates
                         }
                         this.myPairInfos.push(pairInfo);
                     } else {
@@ -2984,7 +2984,7 @@ class SudokuGroup extends SudokuModel {
                                     let pairInfo = {
                                         pairInfoIndex: i,
                                         pairIndices: [this.myCells[i].getIndex()],
-                                        pairSet: tmpAdmissibles
+                                        pairSet: tmpCandidates
                                     }
                                     this.myPairInfos.push(pairInfo);
                                     pairInfoStored = true;
@@ -3005,8 +3005,8 @@ class SudokuGroup extends SudokuModel {
             let hiddenPair = this.hiddenPairs[k];
             // Erste Paar-Zelle bereinigen
             let cell1 = this.myCells[hiddenPair.pos1];
-            let tmpAdmissibles1 = cell1.getTotalAdmissibles();
-            let newInAdmissibles1 = tmpAdmissibles1.difference(new SudokuSet([hiddenPair.nr1, hiddenPair.nr2]));
+            let tmpCandidates1 = cell1.getTotalCandidates();
+            let newInAdmissibles1 = tmpCandidates1.difference(new SudokuSet([hiddenPair.nr1, hiddenPair.nr2]));
 
             if (newInAdmissibles1.size > 0) {
                 let oldInAdmissibles = new SudokuSet(cell1.inAdmissibleCandidates);
@@ -3028,8 +3028,8 @@ class SudokuGroup extends SudokuModel {
 
             // Zweite Paar-Zelle bereinigen
             let cell2 = this.myCells[hiddenPair.pos2];
-            let tmpAdmissibles2 = cell2.getTotalAdmissibles();
-            let newInAdmissibles2 = tmpAdmissibles2.difference(new SudokuSet([hiddenPair.nr1, hiddenPair.nr2]));
+            let tmpCandidates2 = cell2.getTotalCandidates();
+            let newInAdmissibles2 = tmpCandidates2.difference(new SudokuSet([hiddenPair.nr1, hiddenPair.nr2]));
 
             if (newInAdmissibles2.size > 0) {
                 let oldInAdmissibles = new SudokuSet(cell2.inAdmissibleCandidates);
@@ -3057,7 +3057,7 @@ class SudokuGroup extends SudokuModel {
         this.myCells.forEach(cell => {
             if (cell.getValue() == '0' && cell !== necessaryCell) {
                 let oldInAdmissibles = new SudokuSet(cell.inAdmissibleCandidates);
-                if (cell.getAdmissibles().has(necessaryNr)) {
+                if (cell.getCandidates().has(necessaryNr)) {
                     // Nur zulässige können neu unzulässig werden.
                     cell.inAdmissibleCandidates =
                         cell.inAdmissibleCandidates.add(necessaryNr);
@@ -3086,8 +3086,8 @@ class SudokuGroup extends SudokuModel {
                         if (this.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[0] &&
                             this.myCells[j].getIndex() !== this.myPairInfos[i].pairIndices[1]) {
                             // Zelle der Gruppe, die nicht Paar-Zelle ist
-                            let tmpAdmissibles = this.myCells[j].getTotalAdmissibles();
-                            let tmpIntersection = tmpAdmissibles.intersection(pair);
+                            let tmpCandidates = this.myCells[j].getTotalCandidates();
+                            let tmpIntersection = tmpCandidates.intersection(pair);
                             let oldInAdmissibles = new SudokuSet(this.myCells[j].inAdmissibleCandidates);
                             this.myCells[j].inAdmissibleCandidates =
                                 this.myCells[j].inAdmissibleCandidates.union(tmpIntersection);
@@ -3161,7 +3161,7 @@ class SudokuGroup extends SudokuModel {
         // Iteriere über alle Zellen der Gruppe
         for (let i = 0; i < 9; i++) {
             if (this.myCells[i].getValue() == '0') {
-                if (this.myCells[i].getAdmissibles().has(permNr.toString())) {
+                if (this.myCells[i].getCandidates().has(permNr.toString())) {
                     countOccurrences++;
                     lastCellNr = i;
                 }
@@ -3185,7 +3185,7 @@ class SudokuGroup extends SudokuModel {
         // Iteriere über alle Zellen der Gruppe
         for (let i = 0; i < 9; i++) {
             if (this.myCells[i].getValue() == '0') {
-                if (this.myCells[i].getTotalAdmissibles().has(permNr.toString())) {
+                if (this.myCells[i].getTotalCandidates().has(permNr.toString())) {
                     countOccurrences++;
                     lastCellNr = i;
                 }
@@ -3218,8 +3218,8 @@ class SudokuGroup extends SudokuModel {
                 // Denn, wenn eine der Konfliktzellen geschlossen wäre, würde
                 // die noch offene Zelle ohne zulässige Nummer sein. Eine offene Zelle
                 // ohne zulässige Nummer fangen wir schon an anderer Stelle ab.
-                // let permNumbers = this.myCells[i].getTotalAdmissibles();
-                let permNumbers = this.myCells[i].getAdmissibles();
+                // let permNumbers = this.myCells[i].getTotalCandidates();
+                let permNumbers = this.myCells[i].getCandidates();
                 if (permNumbers.size == 1) {
                     permNumbers.forEach(nr => {
                         intSingle = parseInt(nr);
@@ -3253,7 +3253,7 @@ class SudokuGroup extends SudokuModel {
                     if (cell.getValue() == '0'
                         && cell.getIndex() !== this.myPairInfos[i].pairIndices[0]
                         && cell.getIndex() !== this.myPairInfos[i].pairIndices[1]) {
-                        let numbers = cell.getTotalAdmissibles();
+                        let numbers = cell.getTotalCandidates();
                         if (numbers.size == 1) {
                             if (pairSet.isSuperset(numbers)) {
                                 // Eine Single-Nummer, die Paar-Nummer ist
@@ -3330,7 +3330,7 @@ class SudokuBlockView extends SudokuGroupView {
                 // Inhalte der Gruppe dennoch anzeigen
                 this.getMyBlock().myCells.forEach(sudoCell => {
                     if (sudoCell.getValue() == '0') {
-                        sudoCell.myView.displayAdmissiblesInDetail(sudoCell.getAdmissibles());
+                        sudoCell.myView.displayCandidatesInDetail(sudoCell.getCandidates());
                         sudoCell.myView.displayNecessary(sudoCell.myNecessarys);
                     }
                 })
@@ -3414,12 +3414,12 @@ class BlockVector {
         this.cv2 = v2;
     }
 
-    getAdmissibles() {
-        let tmpAdmissibles = new SudokuSet();
+    getCandidates() {
+        let tmpCandidates = new SudokuSet();
         this.myCells.forEach(cell => {
-            tmpAdmissibles = tmpAdmissibles.union(cell.getTotalAdmissibles());
+            tmpCandidates = tmpCandidates.union(cell.getTotalCandidates());
         })
-        return tmpAdmissibles;
+        return tmpCandidates;
     }
 
     getPointingNrCandidates() {
@@ -3428,8 +3428,8 @@ class BlockVector {
         let intSingle = -1;
         this.myCells.forEach(cell => {
             if (cell.getValue() == '0') {
-                let tmpAdmissibles = cell.getTotalAdmissibles();
-                tmpAdmissibles.forEach(nr => {
+                let tmpCandidates = cell.getTotalCandidates();
+                tmpCandidates.forEach(nr => {
                     intSingle = parseInt(nr);
                     numberCount[intSingle - 1]++;
                 });
@@ -3447,7 +3447,7 @@ class BlockVector {
         let pointingNrs = new SudokuSet();
         // Nummern, die mindestens 2 mal auftauchen
         let pointingCandidates = this.getPointingNrCandidates();
-        let complement = this.cv1.getAdmissibles().union(this.cv2.getAdmissibles());
+        let complement = this.cv1.getCandidates().union(this.cv2.getCandidates());
         pointingCandidates.forEach(candidate => {
             if (!complement.has(candidate)) {
                 // Nummer nur im Pointing Vektor, 
@@ -3597,7 +3597,7 @@ class SudokuRowView extends SudokuGroupView {
                 // Inhalte der Gruppe dennoch anzeigen
                 this.getMyRow().myCells.forEach(sudoCell => {
                     if (sudoCell.getValue() == '0') {
-                        sudoCell.myView.displayAdmissiblesInDetail(sudoCell.getAdmissibles());
+                        sudoCell.myView.displayCandidatesInDetail(sudoCell.getCandidates());
                         sudoCell.myView.displayNecessary(sudoCell.myNecessarys);
                     }
                 })
@@ -3636,7 +3636,7 @@ class SudokuColView extends SudokuGroupView {
                 // Inhalte der Gruppe dennoch anzeigen
                 this.getMyCol().myCells.forEach(sudoCell => {
                     if (sudoCell.getValue() == '0') {
-                        sudoCell.myView.displayAdmissiblesInDetail(sudoCell.getAdmissibles());
+                        sudoCell.myView.displayCandidatesInDetail(sudoCell.getCandidates());
                         sudoCell.myView.displayNecessary(sudoCell.myNecessarys);
                     }
                 })
@@ -4232,7 +4232,7 @@ class SudokuGrid extends SudokuModel {
                         // Deleting the cell is ok because the deleted cell 
                         // has a unique given. 
                         nrOfGivens--;
-                    } else if (this.sudoCells[k].getTotalAdmissibles().size == 1) {
+                    } else if (this.sudoCells[k].getTotalCandidates().size == 1) {
                         // Deleting the cell is ok because the deleted cell 
                         // has a unique given. 
                         nrOfGivens--;
@@ -4502,25 +4502,19 @@ class SudokuGrid extends SudokuModel {
 
 
     evaluateGridLazy() {
-        // Berechne das Grid nur soweit, 
-        // dass der nächste eindeutige Schritt getan werden kann
+        // Calculate the grid only so far, 
+        // that the next step can be done unambiguously
         this.clearEvaluations();
         this.calculateInAdmissibles();
-
         let inAdmissiblesAdded = true;
         while (inAdmissiblesAdded && !this.isInsolvable()) {
-
             if (this.calculateNecessarys()) return true;
             if (this.calculateSingles()) return true;
-
             inAdmissiblesAdded = false;
-
-            // inAdmissiblesFromNecessarys kann es nicht mehr geben, 
-            // weil die necessarys im ersten Teil der Schleife verbraucht werden
-
-            // derive_inAdmissiblesFromSingles kann es nicht mehr geben,
-            // aus dem gleichen Grund.
-
+            // inAdmissiblesFromNecessarys can no longer exist, 
+            // because the necessarys are consumed in the first part of the loop
+            // derive_inAdmissiblesFromSingles can no longer exist,
+            // for the same reason.
             if (this.derive_inAdmissiblesFromNakedPairs()) {
                 inAdmissiblesAdded = true;
             } else if (this.derive_inAdmissiblesFromIntersection()) {
@@ -4536,16 +4530,13 @@ class SudokuGrid extends SudokuModel {
     evaluateGridStrict() {
         this.clearEvaluations();
         this.calculateInAdmissibles();
-
         this.calculateNecessarys();
-
         let inAdmissiblesAdded = true;
         let c1 = false;
         let c2 = false;
         let c3 = false;
         let c4 = false;
         let c5 = false;
-
         while (inAdmissiblesAdded && !this.isInsolvable()) {
             c4 = this.derive_inAdmissiblesFromSingles();
             c1 = this.derive_inAdmissiblesFromHiddenPairs();
@@ -4574,12 +4565,12 @@ class SudokuGrid extends SudokuModel {
         }
     }
 
-
     calculateSingles() {
+        // All singles, regardless wether real or hidden singles
         let added = false;
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() == '0') {
-                if (this.sudoCells[i].getTotalAdmissibles().size == 1) {
+                if (this.sudoCells[i].getTotalCandidates().size == 1) {
                     return true;
                 }
             }
@@ -4588,14 +4579,9 @@ class SudokuGrid extends SudokuModel {
     }
 
     derive_inAdmissiblesFromSingles() {
-        // Das das zweite Auftreten einer einzig verbliebenen Nummer ist indirekt unzulässig
-        // Iteriere über alle Zellen
-
         let inAdmissiblesAdded = false;
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getValue() == '0') {
-                // Die Zelle ist ungesetzt
-                // Die Zelle hat selbst keine notwendige Nummer
                 let singlesInContext = new SudokuSet();
                 this.sudoCells[i].myInfluencers.forEach(cell => {
                     if (cell.getValue() == '0') {
@@ -4605,16 +4591,16 @@ class SudokuGrid extends SudokuModel {
                 let oldInAdmissibles = new SudokuSet(this.sudoCells[i].inAdmissibleCandidates);
                 let mySingle = this.sudoCells[i].getTotalSingles();
                 if (mySingle.size == 1 && singlesInContext.isSuperset(mySingle)) {
-                    // Das ist die Situation: Dieselbe Single zweimal in einer Block, Spalte oder Reihe.
-                    // Also eine unlösbares Sudoku.
-                    // Das weitere Ausrechnen bringt nichts, da die Unlösbarkeit
-                    // bereits auf der Gruppe-Ebene festgestellt werden kann.
-                    // Auch ist auf der Gruppe-Ebene die Unlösbarkeit für den Anwender leichter verständlich.
+                    // This is the situation: The same single twice in a block, column or row.
+                    // So an unsolvable Puzzle.
+                    // Further calculation is useless, because the unsolvability
+                    // can already be determined at the group level.
+                    // The unsolvability is also easier for the user to understand at the group level.
                 } else {
-                    // Nur zulässige können neu unzulässig werden.
-                    let tmpAdmissibles = this.sudoCells[i].getAdmissibles();
-                    let inAdmissiblesFromSingles = tmpAdmissibles.intersection(singlesInContext);
-                    // Die indirekt unzulässigen werden neu gesetzt
+                    // Only admissible ones can become inadmissible.
+                    let tmpCandidates = this.sudoCells[i].getCandidates();
+                    let inAdmissiblesFromSingles = tmpCandidates.intersection(singlesInContext);
+                    // The inadmissible candidates are reset
                     this.sudoCells[i].inAdmissibleCandidates =
                         this.sudoCells[i].inAdmissibleCandidates.union(inAdmissiblesFromSingles);
 
@@ -4689,8 +4675,8 @@ class SudokuGrid extends SudokuModel {
 
             if (tmpCell.getValue() == '0') {
                 let oldInAdmissibles = new SudokuSet(tmpCell.inAdmissibleCandidates);
-                let tmpAdmissibles = tmpCell.getTotalAdmissibles();
-                let inAdmissiblesFromIntersection = tmpAdmissibles.intersection(strongNumbers);
+                let tmpCandidates = tmpCell.getTotalCandidates();
+                let inAdmissiblesFromIntersection = tmpCandidates.intersection(strongNumbers);
 
                 if (inAdmissiblesFromIntersection.size > 0) {
                     tmpCell.inAdmissibleCandidates =
@@ -4726,8 +4712,8 @@ class SudokuGrid extends SudokuModel {
 
             if (tmpCell.getValue() == '0') {
                 let oldInAdmissibles = new SudokuSet(tmpCell.inAdmissibleCandidates);
-                let tmpAdmissibles = tmpCell.getTotalAdmissibles();
-                let inAdmissiblesFromIntersection = tmpAdmissibles.intersection(strongNumbers);
+                let tmpCandidates = tmpCell.getTotalCandidates();
+                let inAdmissiblesFromIntersection = tmpCandidates.intersection(strongNumbers);
 
                 if (inAdmissiblesFromIntersection.size > 0) {
 
@@ -4798,9 +4784,9 @@ class SudokuGrid extends SudokuModel {
                 if (tmpCell.getValue() == '0') {
                     // Die Zelle ist ungesetzt
                     let oldInAdmissibles = new SudokuSet(tmpCell.inAdmissibleCandidates);
-                    let tmpAdmissibles = tmpCell.getTotalAdmissibles();
+                    let tmpCandidates = tmpCell.getTotalCandidates();
 
-                    if (tmpAdmissibles.has(pointingNr)) {
+                    if (tmpCandidates.has(pointingNr)) {
                         tmpCell.inAdmissibleCandidates.add(pointingNr);
 
                         let localAdded = !oldInAdmissibles.equals(tmpCell.inAdmissibleCandidates);
@@ -4838,9 +4824,9 @@ class SudokuGrid extends SudokuModel {
                 if (tmpCell.getValue() == '0') {
                     // Die Zelle ist ungesetzt
                     let oldInAdmissibles = new SudokuSet(tmpCell.inAdmissibleCandidates);
-                    let tmpAdmissibles = tmpCell.getTotalAdmissibles();
+                    let tmpCandidates = tmpCell.getTotalCandidates();
 
-                    if (tmpAdmissibles.has(pointingNr)) {
+                    if (tmpCandidates.has(pointingNr)) {
                         tmpCell.inAdmissibleCandidates.add(pointingNr);
 
                         let localAdded = !oldInAdmissibles.equals(tmpCell.inAdmissibleCandidates);
@@ -4868,11 +4854,11 @@ class SudokuGrid extends SudokuModel {
         let tmpCol = null;
         let inAdmissiblesAdded = false;
 
-        // Iteriere über die 9 Blöcke der Matrix
+        // Iterate over the 9 blocks of the matrix
         for (let i = 0; i < 9; i++) {
             tmpBlock = this.sudoBlocks[i];
 
-            // Iteriere über die 3 Reihen des Blocks
+            // Iterate over the 3 rows of the block
             for (let row = 0; row < 3; row++) {
                 let matrixRow = tmpBlock.getMatrixRowFromBlockRow(row);
                 let numbersInRowOutsideBlock = new SudokuSet();
@@ -4880,21 +4866,21 @@ class SudokuGrid extends SudokuModel {
                 let strongNumbersInRowInsideBlock = new SudokuSet();
                 tmpRow = this.sudoRows[matrixRow];
 
-                // Iteriere über die Zellen der Reihe
+                // Iterate over the cells in the row
                 for (let col = 0; col < 9; col++) {
                     if (tmpRow.myCells[col].getValue() == '0') {
                         if (tmpBlock.isBlockCol(col)) {
-                            numbersInRowInsideBlock = numbersInRowInsideBlock.union(tmpRow.myCells[col].getTotalAdmissibles());
+                            numbersInRowInsideBlock = numbersInRowInsideBlock.union(tmpRow.myCells[col].getTotalCandidates());
                         } else {
-                            numbersInRowOutsideBlock = numbersInRowOutsideBlock.union(tmpRow.myCells[col].getTotalAdmissibles());
+                            numbersInRowOutsideBlock = numbersInRowOutsideBlock.union(tmpRow.myCells[col].getTotalCandidates());
                         }
                     }
-                    // Die strengen Nummern kommen nur im Block vor, nicht außerhalb des Blocks
+                    // The strict numbers only occur in the block, not outside the block
                     strongNumbersInRowInsideBlock = numbersInRowInsideBlock.difference(numbersInRowOutsideBlock);
                 }
-                // Die Blockzellen um die strengen Nummern reduzieren
+                // Reduce the block cells by the strict numbers
                 if (strongNumbersInRowInsideBlock.size > 0) {
-                    // In 2 Reihen des Blocks die strengen Nummern inadmissible setzen
+                    // Set the strict numbers inadmissible in 2 rows of the block
                     let row1 = 0;
                     let row2 = 0;
                     switch (row) {
@@ -4932,9 +4918,9 @@ class SudokuGrid extends SudokuModel {
                 for (let row = 0; row < 9; row++) {
                     if (tmpCol.myCells[row].getValue() == '0') {
                         if (tmpBlock.isBlockRow(row)) {
-                            numbersInColInsideBlock = numbersInColInsideBlock.union(tmpCol.myCells[row].getTotalAdmissibles());
+                            numbersInColInsideBlock = numbersInColInsideBlock.union(tmpCol.myCells[row].getTotalCandidates());
                         } else {
-                            numbersInColOutsideBlock = numbersInColOutsideBlock.union(tmpCol.myCells[row].getTotalAdmissibles());
+                            numbersInColOutsideBlock = numbersInColOutsideBlock.union(tmpCol.myCells[row].getTotalCandidates());
                         }
                     }
                     strongNumbersInColInsideBlock = numbersInColInsideBlock.difference(numbersInColOutsideBlock);
@@ -4975,8 +4961,6 @@ class SudokuGrid extends SudokuModel {
 
 
     calculateInAdmissibles() {
-        // Berechne für jede nicht gesetzte Zelle 
-        // die noch möglichen Nummern
         for (let i = 0; i < 81; i++) {
             let tmpCell = this.sudoCells[i];
             tmpCell.calculateInAdmissibles();
@@ -4985,9 +4969,6 @@ class SudokuGrid extends SudokuModel {
     }
 
     calculateNecessarys() {
-        // Berechne und setze für jede nicht gesetzte Zelle
-        // in der Menge ihrer möglichen Nummern die
-        // notwendigen Nummern
         // Iteriere über die Blöcke
         for (let i = 0; i < 9; i++) {
             let tmpBlock = this.sudoBlocks[i];
@@ -5016,7 +4997,7 @@ class SudokuGrid extends SudokuModel {
         if (oldIndex == index) {
             // Die selektierte Zelle bleibt unverändert
             // Setze die nächste Subselektion
-            let candidateIndexSelected = sudoCell.nextAdMissibleIndex();
+            let candidateIndexSelected = sudoCell.nextCandidateIndex();
             if (candidateIndexSelected == -1) {
                 // Die Gesamtselektion besitzt keine weitere Subselektion
                 // Die Gesamtselektion wird deselektiert.
@@ -5032,9 +5013,8 @@ class SudokuGrid extends SudokuModel {
     }
 
     influencersOfCell(index) {
-        // Jede Zelle besitzt die Menge der sie beeinflussenden Zellen
-        // Diese werden hier berechnet.
-
+      // Each cell implicitly has a set of cells that influence it.
+      // The set of these cells is calculated here.
         const grid_size = 9;
         const box_size = 3;
 
@@ -5097,7 +5077,7 @@ class SudokuGrid extends SudokuModel {
     isMatrixWithSingleOrNecessary() {
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getNecessarys().size == 1
-                || this.sudoCells[i].getAdmissibles().size == 1) {
+                || this.sudoCells[i].getCandidates().size == 1) {
                 return true;
             }
         }
@@ -5107,7 +5087,7 @@ class SudokuGrid extends SudokuModel {
     isMatrixWithHiddenSingleOrSingleOrNecessary() {
         for (let i = 0; i < 81; i++) {
             if (this.sudoCells[i].getNecessarys().size == 1
-                || this.sudoCells[i].getTotalAdmissibles().size == 1) {
+                || this.sudoCells[i].getTotalCandidates().size == 1) {
                 return true;
             }
         }
@@ -5141,26 +5121,18 @@ class SudokuCellView extends SudokuView {
     upDateCellContent() {
         let cell = this.getMyModel();
         if (cell.myValue == '0') {
-            // Die Zelle ist noch nicht gesetzt
+            // The cell is not yet set
             if (cell.candidatesEvaluated) {
-                this.displayAdmissibles();
+                this.displayCandidates();
                 this.displayNecessary(cell.myNecessarys);
-                this.displayLevel_gt0_inAdmissibles(cell.inAdmissibleCandidates, cell.myNecessarys);
+                this.displayInAdmissibleCandidates(cell.inAdmissibleCandidates, cell.myNecessarys);
             } else {
-                // Leere Zelle anzeigen
+                // Display empty cell
                 this.myNode.classList.add('nested');
             }
         } else {
-            // Die Zelle ist mit einer Nummer belegt
-            // Setze die Klassifizierung in der DOM-Zelle
+            // The cell is assigned a number
             this.displayGamePhase(cell.myGamePhase);
-            /* if (cell.myValueType == 'auto') {
-                //        this.displayAutoValue(cell.myValue);
-                //      The simpler view is more attractiv
-                this.displayMainValueNode(cell.myValue);
-            } else {
-                this.displayMainValueNode(cell.myValue);
-            }*/
             this.displayMainValueNode(cell.myValue);
         }
     }
@@ -5200,15 +5172,15 @@ class SudokuCellView extends SudokuView {
                 && sudoApp.mySolver.myStepper.indexSelected > -1)) {
 
             myCell.myNecessarys.forEach(necessaryNr => {
-                let admissibleNrElement = document.createElement('div');
-                admissibleNrElement.setAttribute('data-value', necessaryNr);
-                admissibleNrElement.innerHTML = necessaryNr;
+                let candidateNode = document.createElement('div');
+                candidateNode.setAttribute('data-value', necessaryNr);
+                candidateNode.innerHTML = necessaryNr;
                 if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible') {
-                    admissibleNrElement.classList.add('neccessary-big');
+                    candidateNode.classList.add('neccessary-big');
                 } else {
-                    admissibleNrElement.classList.add('neccessary');
+                    candidateNode.classList.add('neccessary');
                 }
-                this.getMyNode().appendChild(admissibleNrElement);
+                this.getMyNode().appendChild(candidateNode);
             })
             return true;
         } else {
@@ -5221,15 +5193,15 @@ class SudokuCellView extends SudokuView {
         let myCell = this.getMyModel();
 
         // Gebe Single Nummer aus oder leere Zelle
-        let tmpAdmissibles = myCell.getAdmissibles();
-        if (tmpAdmissibles.size == 1
+        let tmpCandidates = myCell.getCandidates();
+        if (tmpCandidates.size == 1
             && myCell.isSelected
             && sudoApp.mySolver.myStepper.indexSelected > -1) {
-            let admissibleNr = Array.from(tmpAdmissibles)[0]
-            let admissibleNrElement = document.createElement('div');
-            admissibleNrElement.setAttribute('data-value', admissibleNr);
-            admissibleNrElement.innerHTML = admissibleNr;
-            this.getMyNode().appendChild(admissibleNrElement);
+            let candidate = Array.from(tmpCandidates)[0]
+            let candidateNode = document.createElement('div');
+            candidateNode.setAttribute('data-value', candidate);
+            candidateNode.innerHTML = candidate;
+            this.getMyNode().appendChild(candidateNode);
             return true;
         } else {
             return false;
@@ -5241,24 +5213,24 @@ class SudokuCellView extends SudokuView {
 
         // Gebe Single Nummer aus oder leere Zelle
         this.getMyNode().classList.add('nested');
-        let tmpAdmissibles = myCell.getTotalAdmissibles();
-        if (tmpAdmissibles.size == 1
+        let tmpCandidates = myCell.getTotalCandidates();
+        if (tmpCandidates.size == 1
             && myCell.isSelected
             && sudoApp.mySolver.myStepper.indexSelected > -1) {
 
-            let admissibleNr = Array.from(tmpAdmissibles)[0]
-            let admissibleNrElement = document.createElement('div');
-            admissibleNrElement.setAttribute('data-value', admissibleNr);
-            admissibleNrElement.innerHTML = admissibleNr;
-            this.getMyNode().appendChild(admissibleNrElement);
+            let candidate = Array.from(tmpCandidates)[0]
+            let candidateNode = document.createElement('div');
+            candidateNode.setAttribute('data-value', candidate);
+            candidateNode.innerHTML = candidate;
+            this.getMyNode().appendChild(candidateNode);
 
-            let redAdmissibles = myCell.getAdmissibles().difference(tmpAdmissibles);
+            let redAdmissibles = myCell.getCandidates().difference(tmpCandidates);
             redAdmissibles.forEach(redAdmissible => {
-                let admissibleNrElement = document.createElement('div');
-                admissibleNrElement.setAttribute('data-value', redAdmissible);
-                admissibleNrElement.innerHTML = redAdmissible;
-                admissibleNrElement.classList.add('inAdmissible');
-                this.getMyNode().appendChild(admissibleNrElement);
+                let candidateNode = document.createElement('div');
+                candidateNode.setAttribute('data-value', redAdmissible);
+                candidateNode.innerHTML = redAdmissible;
+                candidateNode.classList.add('inAdmissible');
+                this.getMyNode().appendChild(candidateNode);
             });
             //To understand the hidden single of this cell, 
             //we switch to lazy mode for this step.
@@ -5274,77 +5246,77 @@ class SudokuCellView extends SudokuView {
         // Eine selektierte Zelle mit Optionen
         this.getMyNode().classList.add('nested');
         // Die Optionen sind zulässige Kandidaten
-        let tmpAdmissibles = myCell.getTotalAdmissibles();
+        let tmpCandidates = myCell.getTotalCandidates();
         // Es gibt mindestens 2 Kandidaten, sprich Optionen
-        if (tmpAdmissibles.size > 1
+        if (tmpCandidates.size > 1
             && myCell.isSelected
             && sudoApp.mySolver.myStepper.indexSelected > -1) {
-            this.displayAdmissiblesInDetail(tmpAdmissibles);
+            this.displayCandidatesInDetail(tmpCandidates);
             return true;
         } else {
             return false;
         }
     }
 
-    displayAdmissibles() {
+    displayCandidates() {
         let cell = this.getMyModel();
         let inAdmissiblesVisible = (sudoApp.mySolver.getActualEvalType() == 'lazy' || sudoApp.mySolver.getActualEvalType() == 'strict-plus');
         if (inAdmissiblesVisible) {
-            this.displayAdmissiblesInDetail(cell.getAdmissibles());
+            this.displayCandidatesInDetail(cell.getCandidates());
         } else {
             // Angezeigte inAdmissibles sind zunächst einmal Zulässige
             // und dürfen jetzt nicht mehr angezeigt werden
-            this.displayAdmissiblesInDetail(cell.getTotalAdmissibles());
+            this.displayCandidatesInDetail(cell.getTotalCandidates());
         }
     }
 
-    displayAdmissiblesInDetail(admissibles) {
+    displayCandidatesInDetail(admissibles) {
         this.myNode.classList.add('nested');
         // Übertrage die berechneten Möglchen in das DOM
         admissibles.forEach(e => {
-            let admissibleNrElement = document.createElement('div');
-            admissibleNrElement.setAttribute('data-value', e);
-            admissibleNrElement.innerHTML = e;
-            this.getMyNode().appendChild(admissibleNrElement);
+            let candidateNode = document.createElement('div');
+            candidateNode.setAttribute('data-value', e);
+            candidateNode.innerHTML = e;
+            this.getMyNode().appendChild(candidateNode);
         });
     }
 
 
-    displayAdmissiblesInDetailV2(tmpAdmissibles, allOptions, openOptions) {
+    displayCandidatesInDetailV2(tmpCandidates, allOptions, openOptions) {
         this.myNode.classList.add('nested');
         // Übertrage die berechneten Möglchen in das DOM
-        tmpAdmissibles.forEach(nr => {
-            let admissibleNrElement = document.createElement('div');
-            admissibleNrElement.setAttribute('data-value', nr);
-            admissibleNrElement.innerHTML = nr;
+        tmpCandidates.forEach(nr => {
+            let candidateNode = document.createElement('div');
+            candidateNode.setAttribute('data-value', nr);
+            candidateNode.innerHTML = nr;
             if (allOptions.has(nr)
                 && !openOptions.has(nr)) {
-                admissibleNrElement.style = "text-decoration: underline";
+                candidateNode.style = "text-decoration: underline";
             }
-            this.getMyNode().appendChild(admissibleNrElement);
+            this.getMyNode().appendChild(candidateNode);
         });
     }
 
     displayNecessary(myNecessarys) {
-        let admissibleNodes = this.myNode.children;
-        for (let i = 0; i < admissibleNodes.length; i++) {
-            if (myNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
-                admissibleNodes[i].classList.add('neccessary');
+        let candidateNodes = this.myNode.children;
+        for (let i = 0; i < candidateNodes.length; i++) {
+            if (myNecessarys.has(candidateNodes[i].getAttribute('data-value'))) {
+                candidateNodes[i].classList.add('neccessary');
             }
         }
     }
 
-    displayLevel_gt0_inAdmissibles(inAdmissibleCandidates, myNecessarys) {
-        let admissibleNodes = this.myNode.children;
-        for (let i = 0; i < admissibleNodes.length; i++) {
-            if (inAdmissibleCandidates.has(admissibleNodes[i].getAttribute('data-value'))) {
+    displayInAdmissibleCandidates(inAdmissibleCandidates, myNecessarys) {
+        let candidateNodes = this.myNode.children;
+        for (let i = 0; i < candidateNodes.length; i++) {
+            if (inAdmissibleCandidates.has(candidateNodes[i].getAttribute('data-value'))) {
                 // In der Menge der unzulässigen Nummern gibt es die Knotennummer
-                if (!myNecessarys.has(admissibleNodes[i].getAttribute('data-value'))) {
+                if (!myNecessarys.has(candidateNodes[i].getAttribute('data-value'))) {
                     // Die Knotennummer wird als unzulässig markiert, aber
                     // nur, wenn die Nummer nicht gleichzeitig notwendig ist.
                     // Diese widersprüchliche Situation wird schon an anderer Stelle
                     // aufgefangen.
-                    admissibleNodes[i].classList.add('inAdmissible');
+                    candidateNodes[i].classList.add('inAdmissible');
                 }
             }
         }
@@ -5441,9 +5413,9 @@ class SudokuCellView extends SudokuView {
         let cell = this.getMyModel();
         if (cell.myValue == '0' && this.myNode.children.length == 0) {
             // Die Zelle ist noch nicht gesetzt
-            this.displayAdmissibles();
+            this.displayCandidates();
             this.displayNecessary(cell.myNecessarys);
-            this.displayLevel_gt0_inAdmissibles(cell.inAdmissibleCandidates, cell.myNecessarys);
+            this.displayInAdmissibleCandidates(cell.inAdmissibleCandidates, cell.myNecessarys);
         }
 
         for (let candidate of this.myNode.children) {
@@ -5489,11 +5461,11 @@ class SudokuCellView extends SudokuView {
                 ' in dieser Gruppe setzen.');
             return;
         }
-        if (tmpCell.getAdmissibles().size == 1) {
-            sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getAdmissibles())[0] + ' in dieser Zelle setzen.');
+        if (tmpCell.getCandidates().size == 1) {
+            sudoApp.mySolver.myView.displayTechnique('Single ' + Array.from(tmpCell.getCandidates())[0] + ' in dieser Zelle setzen.');
 
-            if (tmpCell.getAdmissibles().size == 1) {
-                let single = Array.from(tmpCell.getAdmissibles())[0];
+            if (tmpCell.getCandidates().size == 1) {
+                let single = Array.from(tmpCell.getCandidates())[0];
                 let numberSet = new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
                 numberSet.forEach(nr => {
                     if (nr !== single) {
@@ -5517,8 +5489,8 @@ class SudokuCellView extends SudokuView {
             }
             return;
         }
-        if (tmpCell.getTotalAdmissibles().size == 1) {
-            sudoApp.mySolver.myView.displayTechnique('Hidden Single ' + Array.from(tmpCell.getTotalAdmissibles())[0] + ' in dieser Zelle setzen.');
+        if (tmpCell.getTotalCandidates().size == 1) {
+            sudoApp.mySolver.myView.displayTechnique('Hidden Single ' + Array.from(tmpCell.getTotalCandidates())[0] + ' in dieser Zelle setzen.');
             if (sudoApp.mySolver.getPlayMode() == 'solving-trace' && sudoApp.mySolver.getAutoDirection() == 'forward') {
                 if (sudoApp.mySolver.getMyBreakpoints().hiddenSingle) {
                     sudoApp.mySolver.autoExecPause();
@@ -5526,7 +5498,7 @@ class SudokuCellView extends SudokuView {
             }
             return;
         }
-        if (tmpCell.getTotalAdmissibles().size > 1) {
+        if (tmpCell.getTotalCandidates().size > 1) {
             sudoApp.mySolver.myView.displayTechnique('Aus mehreren Kandidaten eine Nummer setzen.');
             if (sudoApp.mySolver.getPlayMode() == 'solving-trace' && sudoApp.mySolver.getAutoDirection() == 'forward') {
                 if (sudoApp.mySolver.getMyBreakpoints().multipleOption) {
@@ -5613,7 +5585,7 @@ class SudokuCellView extends SudokuView {
                 });
                 pairInfo.pairCell1.myView.setBorderRedSelected();
                 pairInfo.pairCell2.myView.setBorderRedSelected();
-                pairArray = Array.from(pairInfo.pairCell1.getTotalAdmissibles());
+                pairArray = Array.from(pairInfo.pairCell1.getTotalCandidates());
                 sudoApp.mySolver.myView.displayTechnique(
                     adMissibleNrSelected
                     + ' unzulässig wegen "Nacktem Paar" {'
@@ -5647,7 +5619,7 @@ class SudokuCellView extends SudokuView {
                 cell.myView.setBorderSelected();
             });
             info.pVector.myCells.forEach(cell => {
-                if (cell.getValue() == '0' && cell.getTotalAdmissibles().has(adMissibleNrSelected)) {
+                if (cell.getValue() == '0' && cell.getTotalCandidates().has(adMissibleNrSelected)) {
                     cell.myView.unsetSelected();
                     cell.myView.setBorderRedSelected();
                 }
@@ -5668,7 +5640,7 @@ class SudokuCellView extends SudokuView {
                     if (cell == pairInfo.subPairCell1 || cell == pairInfo.subPairCell2) {
                         cell.myView.setBorderRedSelected();
                         if (pairArray.length == 0) {
-                            pairArray = Array.from(cell.getTotalAdmissibles());
+                            pairArray = Array.from(cell.getTotalCandidates());
                         }
                     } else {
                         cell.myView.setBorderSelected();
@@ -5741,14 +5713,14 @@ class SudokuCellView extends SudokuView {
         // 2) Die Widersprüchlichkeit steht schon fest, wenn es überhaupt keinen zulässigen Kandidaten 
         // mehr gibt.
         if (sudoApp.mySolver.getActualEvalType() == 'lazy-invisible' || sudoApp.mySolver.getActualEvalType() == 'lazy') {
-            // if (cell.getValue() == '0' && cell.getTotalAdmissibles().size == 0) { 
-            if (cell.getValue() == '0' && cell.getAdmissibles().size == 0) {
+            // if (cell.getValue() == '0' && cell.getTotalCandidates().size == 0) { 
+            if (cell.getValue() == '0' && cell.getCandidates().size == 0) {
                 this.displayCellError();
                 mySolverView.displayReasonInsolvability('Überhaupt keine zulässige Nummer.');
                 return true;
             }
         } else if (sudoApp.mySolver.getActualEvalType() == 'strict-plus' || sudoApp.mySolver.getActualEvalType() == 'strict-minus') {
-            if (cell.getValue() == '0' && cell.getTotalAdmissibles().size == 0) {
+            if (cell.getValue() == '0' && cell.getTotalCandidates().size == 0) {
                 this.displayCellError();
                 mySolverView.displayReasonInsolvability('Überhaupt keine zulässige Nummer.');
                 return true;
@@ -5845,8 +5817,8 @@ class SudokuCell extends SudokuModel {
         return this.isSelected;
     }
     getAdMissibleNrSelected() {
-        let adMissibleArray = Array.from(this.getAdmissibles());
-        return adMissibleArray[this.candidateIndexSelected];
+        let candidateIArray = Array.from(this.getCandidates());
+        return candidateIArray[this.candidateIndexSelected];
     }
 
     setAdMissibleIndexSelected(nr) {
@@ -5855,23 +5827,25 @@ class SudokuCell extends SudokuModel {
 
 
     getTotalInAdmissibles() {
+        // Remember: inAdmissibles are the non-candidates of a cell.
+        // The set of totalInAdmissibles is the union of inAdmissibles and the inAdmissibleCandidates.
         let totalInAdmissibles = this.inAdmissibles.union(this.inAdmissibleCandidates);
-        // In widerspruchsvollen Sudokus können notwendige Nummern gleichzeitig unzulässig sein.
-        // Aus pragmatischen Gründen zählen wir solche Nummern nicht zu den inAdmissibles.
-        // Dann werden sie auch angezeigt, wenn die Anzeige von inAdmissibles abgeschaltet ist.
-        // Semantisch ist das kein Problem, da bekanntlich in widerspruchsvollen Mengen beliebiges 
-        // gefolgert werden kann.
+        // In contradictory Puzzles, necessary numbers can be inadmissible at the same time.
+        // For pragmatic reasons, we do not include such numbers in inAdmissibles.
+        // Then they are also displayed if the display of inAdmissibles is switched off.
+        // Semantically, this is not a problem, as it is well known that anything can be inferred in contradictory sets. 
         return totalInAdmissibles.difference(this.getNecessarys());
     }
 
-    getAdmissibles() {
-        // Die zulässigen Zahlen einer Zelle sind das Komplement der unzulässigen Zahlen
+    getCandidates() {
+        // Candidates are the numbers that are not (directly) inadmissible.
         return new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
             this.inAdmissibles);
     }
-    getTotalAdmissibles() {
+
+    getTotalCandidates() {
+        // Total candidates are the numbers that are not inadmissible, not even indirectly.
         if (this.getValue() == '0') {
-            // Die zulässigen Zahlen einer Zelle sind das Komplement der unzulässigen Zahlen
             return new SudokuSet(['1', '2', '3', '4', '5', '6', '7', '8', '9']).difference(
                 this.getTotalInAdmissibles());
         } else {
@@ -5884,7 +5858,7 @@ class SudokuCell extends SudokuModel {
     }
  
     getTotalSingles() {
-        let singles = this.getTotalAdmissibles();
+        let singles = this.getTotalCandidates();
         if (singles.size == 1) {
             return singles;
         } else {
@@ -5892,7 +5866,7 @@ class SudokuCell extends SudokuModel {
         }
     }
     getSingles() {
-        let singles = this.getAdmissibles();
+        let singles = this.getCandidates();
         if (singles.size == 1) {
             return singles;
         } else {
@@ -5956,28 +5930,28 @@ class SudokuCell extends SudokuModel {
     setPhase(phase) {
         this.myGamePhase = phase;
     }
-    nextAdMissibleIndex() {
+    nextCandidateIndex() {
 
-        let maxIndex = this.getAdmissibles().size;
-        let adMissibleArray = Array.from(this.getAdmissibles());
+        let maxIndex = this.getCandidates().size;
+        let candidateIArray = Array.from(this.getCandidates());
         let necessaryNr = -1;
         let necessaryIndex = -1;
 
         if (this.myNecessarys.size > 0) {
             necessaryNr = Array.from(this.myNecessarys)[0];
-            necessaryIndex = adMissibleArray.indexOf(necessaryNr);
+            necessaryIndex = candidateIArray.indexOf(necessaryNr);
             this.candidateIndexSelected = necessaryIndex;
             return necessaryIndex;
         }
 
         let nextIndex = this.candidateIndexSelected + 1;
-        let nextAdmissible = '-1';
+        let nextCandidate = '-1';
         let found = false;
 
         while (nextIndex < maxIndex && !found) {
-            nextAdmissible = adMissibleArray[nextIndex];
+            nextCandidate = candidateIArray[nextIndex];
             //Subindex is display relevant if the candidate is red.
-            if (this.isDisplayRelevant(nextAdmissible)) {
+            if (this.isInAdmissibleCandidate(nextCandidate)) {
                 found = true;
             } else {
                 nextIndex++;
@@ -5994,8 +5968,8 @@ class SudokuCell extends SudokuModel {
         }
     }
 
-    isDisplayRelevant(admissibleNr) {
-        let relevant = this.inAdmissibleCandidates.has(admissibleNr);
+    isInAdmissibleCandidate(candidate) {
+        let relevant = this.inAdmissibleCandidates.has(candidate);
         return relevant;
     }
 
@@ -6062,8 +6036,8 @@ class SudokuCell extends SudokuModel {
         this.myOptions = [];
     }
 
-    countMyAdmissibles() {
-        return this.getAdmissibles().size;
+    countMyCandidates() {
+        return this.getCandidates().size;
     }
 
     countMyOpenInfluencers() {
@@ -6081,8 +6055,8 @@ class SudokuCell extends SudokuModel {
         // weil durch sie die Entscheidungen schneller vorangetrieben werden.
         let tmpWeight = 0;
         let summand = 0;
-        let tmpAdmissibles = this.getTotalAdmissibles();
-        if (tmpAdmissibles.size == 2) {
+        let tmpCandidates = this.getTotalCandidates();
+        if (tmpCandidates.size == 2) {
             tmpWeight = 300;
         }
         // Den Kontext der Zelle betrachten
@@ -6090,21 +6064,21 @@ class SudokuCell extends SudokuModel {
             if (influencer.getValue() == '0') {
                 // Paare, die vollständig in Influenz-Zellen enthalten sind
                 // werden bevorzugt
-                let influenceAdmissible = influencer.getTotalAdmissibles();
+                let influenceCandidates = influencer.getTotalCandidates();
                 summand = 0;
-                if (tmpAdmissibles.size == 2) {
-                    if (influenceAdmissible.equals(tmpAdmissibles)) {
+                if (tmpCandidates.size == 2) {
+                    if (influenceCandidates.equals(tmpCandidates)) {
                         // Mehrfachauftreten von Paaren bekommt die höchste Bewertung
                         summand = 300;
                     } else {
-                        let interSecSize = influenceAdmissible.intersection(tmpAdmissibles).size;
+                        let interSecSize = influenceCandidates.intersection(tmpCandidates).size;
                         if (interSecSize > 0) {
                             // Das aktuelle Paar mit Schnitt in den Influenz-Zellen
                             summand = 27 + interSecSize;
                         }
                     }
                 } else {
-                    let interSecSize = influenceAdmissible.intersection(tmpAdmissibles).size;
+                    let interSecSize = influenceCandidates.intersection(tmpCandidates).size;
                     // Die aktuelle Zelle mit Schnitt in den Influenz-Zellen
                     if (interSecSize > 0) {
                         summand = Math.floor(9 / interSecSize) + interSecSize;
@@ -6122,7 +6096,7 @@ class SudokuCell extends SudokuModel {
         let tmpCount = 0;
         this.myInfluencers.forEach(influencer => {
             if (influencer.getValue() == '0') {
-                tmpCount = tmpCount + influencer.countMyAdmissibles();
+                tmpCount = tmpCount + influencer.countMyCandidates();
             }
         });
         return tmpCount;
@@ -6140,7 +6114,7 @@ class SudokuCell extends SudokuModel {
                 // 1) Die Nummer ist bereits einmal gesetzt.
                 (this.getValue() !== '0' && this.myDirectInAdmissibles().has(this.getValue())) ||
                 // 2) Überhaupt keine zulässige Kandidaten mehr
-                (this.getValue() == '0' && this.getAdmissibles().size == 0) ||
+                (this.getValue() == '0' && this.getCandidates().size == 0) ||
                 // 3) Gleichzeitig verschiedene notwendige Nummern
                 (this.getValue() == '0' && this.myNecessarys.size > 1));
 
@@ -6150,7 +6124,7 @@ class SudokuCell extends SudokuModel {
                 // 1) Die Nummer ist bereits einmal gesetzt.
                 (this.getValue() !== '0' && this.myDirectInAdmissibles().has(this.getValue())) ||
                 // 2) Überhaupt keine zulässige Kandidaten mehr
-                (this.getValue() == '0' && this.getTotalAdmissibles().size == 0) ||
+                (this.getValue() == '0' && this.getTotalCandidates().size == 0) ||
                 // 3) Gleichzeitig verschiedene notwendige Nummern
                 (this.getValue() == '0' && this.myNecessarys.size > 1));
     }
