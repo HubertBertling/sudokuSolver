@@ -6,6 +6,7 @@ class SudokuSolverController {
         this.mySuccessDialog = new SuccessDialog();
         this.myInfoDialog = new InfoDialog();
         this.mySettingsDialog = new SettingsDialog();
+        this.myPuzzleSaveDlg = new PuzzleSaveDialog();
         this.myUndoActionStack = [];
         this.myRedoActionStack = [];
 
@@ -490,8 +491,32 @@ class SudokuSolverController {
         // After getting a puzzle from store the store needs to be filled up.
         sudoApp.myNewPuzzleStore.fillNewPuzzleStore();
     }
-
     saveBtnPressed() {
+        //The current puzzle state shall be saved into the database.
+        let currentPuzzle = this.mySolver.myGrid.getPuzzleRecord();
+        let currentPuzzleId = this.mySolver.myGrid.loadedPuzzleId;
+        let currentPuzzleName = this.mySolver.myGrid.loadedPuzzleName;
+        if (currentPuzzleId == '' || currentPuzzleId == '-') {
+            // The current puzzle is not yet element in the database.
+            // Save current puzzle with new ID and name in the database
+            let newPuzzleId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+            let newPuzzleName = 'PZ (' + new Date().toLocaleString('de-DE') + ')';
+            this.myPuzzleSaveDlg.open(newPuzzleId, newPuzzleName, currentPuzzle);
+        } else {
+            // The current puzzle is already element in the database
+            // So only the actual puzzle state needs to be saved
+            sudoApp.myPuzzleDB.mergePlayedPuzzle(currentPuzzleId, currentPuzzleName, currentPuzzle);
+            this.myInfoDialog.open('Spielstand gespeichert', "positiv",
+                'Puzzle: ' + currentPuzzleName);
+            // The saved puzzle becomes the new current puzzle
+            let tmpPuzzleID = sudoApp.myPuzzleDB.getSelectedUid();
+            let puzzle = sudoApp.myPuzzleDB.getSelectedPuzzle();
+            sudoApp.mySolver.loadPuzzle(tmpPuzzleID, puzzle);
+            sudoApp.mySolver.notify();
+        }
+    }
+
+    saveBtnPressedOld() {
         //The current puzzle state shall be saved into the database.
         let currentPuzzle = this.mySolver.myGrid.getPuzzleRecord();
         let currentPuzzleId = this.mySolver.myGrid.loadedPuzzleId;
@@ -609,6 +634,23 @@ class SudokuSolverController {
         this.mySolver.setPuzzleIOtechnique(pIOcheckbox.checked);
         str_appSetting = JSON.stringify(appSetting);
         localStorage.setItem("sudokuAppSetting", str_appSetting);
+    }
+
+    savePuzzleDlgOKPressed() {
+        sudoApp.myPuzzleDB.saveNamedPuzzle(
+            this.myPuzzleSaveDlg.getPuzzleId(),
+            this.myPuzzleSaveDlg.getPuzzleName(),
+            this.myPuzzleSaveDlg.getPuzzle());
+        this.myPuzzleSaveDlg.close();
+        // The saved puzzle becomes the new current puzzle
+        let tmpPuzzleID = sudoApp.myPuzzleDB.getSelectedUid();
+        let puzzle = sudoApp.myPuzzleDB.getSelectedPuzzle();
+        sudoApp.mySolver.loadPuzzle(tmpPuzzleID, puzzle);
+        sudoApp.mySolver.notify();
+    }
+
+    savePuzzleDlgCancelPressed() {
+        this.myPuzzleSaveDlg.close();
     }
 }
 
@@ -1177,10 +1219,10 @@ class StepByStepSolver extends SudokuModel {
     startClockedLoop() {
         if (!this.isInAutoExecMode) {
             this.setInAutoExecMode();
-        }    
+        }
         this.myStepper.startClockedLoop();
     }
-    
+
     startSyncLoop() {
         if (!this.isInAutoExecMode) {
             this.setInAutoExecMode();
@@ -1234,7 +1276,7 @@ class StepByStepSolver extends SudokuModel {
         if (!this.isInAutoExecMode) {
             this.setInAutoExecMode();
         }
-        return this.myStepper.executeSingleStep(); 
+        return this.myStepper.executeSingleStep();
     }
 
     autoExecPause() {
@@ -1528,7 +1570,7 @@ class SudokuSolver extends StepByStepSolver {
     onStepExecution() {
         this.notify();
     }
-  
+
     reset() {
         super.reset();
         sudoApp.mySolverController.myUndoActionStack = [];
@@ -1641,7 +1683,6 @@ class PuzzleSaveDialog {
         this.myOpen = false;
         this.myContentSaveDlgNode = document.getElementById("contentSaveDlg")
         this.myPuzzleNameNode = document.getElementById("puzzle-name");
-        this.myPuzzleIdNode = document.getElementById("save-dlg-puzzle-id");
         this.okNode = document.getElementById("btn-saveStorageOK");
         this.cancelNode = document.getElementById("btn-saveStorageCancel");
         // Mit der Erzeugung des Wrappers werden 
@@ -1653,7 +1694,9 @@ class PuzzleSaveDialog {
             sudoApp.mySolverController.savePuzzleDlgCancelPressed();
         });
     }
-    open(uid, name) {
+    open(uid, name, puzzle) {
+        this.myPuzzle = puzzle;
+        this.myUid = uid;
         this.myPuzzleNameNode.value = name;
         this.myOpen = true;
         this.myContentSaveDlgNode.showModal();
@@ -1666,17 +1709,15 @@ class PuzzleSaveDialog {
         }
     }
     getPuzzleId() {
-        return this.myPuzzleIdNode.value;
+        return this.myUid;
     }
     getPuzzleName() {
         return this.myPuzzleNameNode.value;
     }
+    getPuzzle() {
+        return this.myPuzzle;
+    }
 }
-
-
-
-
-
 
 class PuzzleRenameDialog {
     constructor() {
@@ -2215,7 +2256,7 @@ class StepperOnGrid {
     isRunningClockedLoop() {
         // if (sudoApp.isInteractive) {   Hier funktioniert sudoApp nicht. Warum?
         if (this.myStepByStepSolver.myApp.isInteractive) {
-                // Trickprogrammierung:
+            // Trickprogrammierung:
             // Der timer ist ungleich false, wenn er läuft.
             return this.timer !== false;
         } else {
@@ -2312,7 +2353,7 @@ class StepperOnGrid {
                 this.myGrid.steps = this.goneSteps;
                 // if (this.myStepByStepSolver.myApp.isInteractive) {
                 if (sudoApp.isInteractive) {
-                        sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
+                    sudoApp.mySolverController.myInfoDialog.open('Lösungssuche', 'info', 'Keine (weitere) Lösung gefunden!');
                 }
                 break;
             }
@@ -5013,8 +5054,8 @@ class SudokuGrid extends SudokuModel {
     }
 
     influencersOfCell(index) {
-      // Each cell implicitly has a set of cells that influence it.
-      // The set of these cells is calculated here.
+        // Each cell implicitly has a set of cells that influence it.
+        // The set of these cells is calculated here.
         const grid_size = 9;
         const box_size = 3;
 
@@ -5856,7 +5897,7 @@ class SudokuCell extends SudokuModel {
     getNecessarys() {
         return new SudokuSet(this.myNecessarys);
     }
- 
+
     getTotalSingles() {
         let singles = this.getTotalCandidates();
         if (singles.size == 1) {
@@ -6264,7 +6305,7 @@ class SudokuPuzzleDBController {
         sudoApp.myConfirmDlg.open(sudoApp.myPuzzleDBController,
             sudoApp.myPuzzleDBController.delete,
             "Puzzle löschen",
-            'Soll das Puzzle >>' + pzName + '<< endgültig gelöscht werden?');
+            'Soll das Puzzle \"' + pzName + '\" endgültig gelöscht werden?');
     }
 
     delete() {
@@ -6514,7 +6555,7 @@ class NewPuzzleStore {
                     // Starting a new puzzle generator (web worker).
                     sudoApp.mySolver.generateNewVerySimplePuzzle();
                     this.runningGenerators++;
-                  //  console.log('       runningGenerators: ' + this.runningGenerators);
+                    //  console.log('       runningGenerators: ' + this.runningGenerators);
                 } else {
                     filled1 = true;
                 }
@@ -6523,7 +6564,7 @@ class NewPuzzleStore {
                     // Starting a new puzzle generator (web worker).
                     sudoApp.mySolver.generateNewPuzzle();
                     this.runningGenerators++;
-                   //    console.log('       runningGenerators: ' + this.runningGenerators);
+                    //    console.log('       runningGenerators: ' + this.runningGenerators);
                 } else {
                     filled2 = true;
                 }

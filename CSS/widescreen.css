@@ -822,16 +822,17 @@ html {
 }
 
 label {
-    font-size: var(--font-size);
+    font-size: var(--font-size-lg);
     margin-left: 1.2rem;
     margin-bottom: 1.2rem;
 }
 
 .puzzle-name-input-dlg {
     width: 90%;
+    margin-top: 0.8rem;
     margin-left: 1.2rem;
-    padding: 0.8rem;
-    font-size: var(--font-size);
+    padding: 0.4rem;
+    font-size: var(--font-size-lg);
 }
 
 .ok-cancel-btns {
