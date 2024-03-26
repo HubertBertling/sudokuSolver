@@ -6513,7 +6513,7 @@ class SudokuPuzzleDBView extends SudokuView {
                 tbNode.appendChild(tr);
             }
             if (selectedTr !== undefined) {
-                selectedTr.scrollIntoView(false);
+                selectedTr.scrollIntoView({ block: "end" });
             }
         }
 
