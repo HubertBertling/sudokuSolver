@@ -1430,6 +1430,7 @@ class SudokuSolver extends StepByStepSolver {
             let response = JSON.parse(e.data);
             // Load the puzzle into the NewPuzzleStore
             sudoApp.myNewPuzzleStore.pushPuzzle(response.value);
+            // 
         }
         let str_request = JSON.stringify(request);
         webworkerGenerator.postMessage(str_request);
@@ -6511,125 +6512,137 @@ class NewPuzzleStore {
         this.fillNewPuzzleStore();
     }
 
+    /*
     sleep(milliseconds) {
         return new Promise(resolve => setTimeout(resolve, milliseconds));
     }
-    async fillNewPuzzleStore() {
-        let filled1 = false;
-        let filled2 = false;
-        while (!(filled1 && filled2)) {
-            // limit the number of running generators
-            if (this.runningGenerators < 2) {
-                // The number of generators running in parallel is limited 
-                // to 2. We need a limit
-                // to restrict the simultaneous resource requirements.
-                if (this.verySimpleIsNotFilled()) {
-                    filled1 = false;
-                    // Starting a new puzzle generator (web worker).
-                    sudoApp.mySolver.generateNewVerySimplePuzzle();
-                    this.runningGenerators++;
-                    //  console.log('       runningGenerators: ' + this.runningGenerators);
-                } else {
-                    filled1 = true;
-                }
-                if (this.isNotFilled()) {
-                    filled2 = false;
-                    // Starting a new puzzle generator (web worker).
-                    sudoApp.mySolver.generateNewPuzzle();
-                    this.runningGenerators++;
-                    //    console.log('       runningGenerators: ' + this.runningGenerators);
-                } else {
-                    filled2 = true;
-                }
+*/
+    fillNewPuzzleStore() {
+        if (this.runningGenerators < 2) {
+                  if (this.verySimpleIsNotFilled()) {
+                // Starting a new puzzle generator (web worker).
+                sudoApp.mySolver.generateNewVerySimplePuzzle();
+                this.runningGenerators++;
+                // console.log('       runningGenerators++: ' + this.runningGenerators);
             }
-            // Wait a second so that the running generators have a chance
-            // to generate new puzzles and finish before new generators are started.
-            await this.sleep(1000);
-        }
-    }
-
-    verySimpleIsNotFilled() {
-        return this.verySimplePuzzles.length < 3;
-    }
-
-    isNotFilled() {
-        return this.simplePuzzles.length < 2
-            || this.mediumPuzzles.length < 2
-            || this.heavyPuzzles.length < 2;
-    }
-
-    pushPuzzle(puzzleRecord) {
-        switch (puzzleRecord.preRunRecord.level) {
-            case 'Sehr leicht': {
-                if (this.verySimplePuzzles.length < 3) {
-                    this.verySimplePuzzles.push(puzzleRecord);
-                    // console.log('push: Sehr leicht: #' + this.verySimplePuzzles.length);
-                }
-                break;
-            }
-            case 'Leicht': {
-                if (this.simplePuzzles.length < 3) {
-                    this.simplePuzzles.push(puzzleRecord);
-                    //  console.log('push: Leicht: #' + this.simplePuzzles.length);
-                }
-                break;
-            }
-            case 'Mittel': {
-                if (this.mediumPuzzles.length < 3) {
-                    this.mediumPuzzles.push(puzzleRecord);
-                    //  console.log('push: Mittel: #' + this.mediumPuzzles.length);
-                }
-                break;
-            }
-            case 'Schwer': {
-                if (this.heavyPuzzles.length < 3) {
-                    this.heavyPuzzles.push(puzzleRecord);
-                    //      console.log('push: Schwer: #' + this.heavyPuzzles.length)
-                }
-                break;
-            }
-            default: {
-                // throw new Error('Unexpected difficulty: ' + puzzleRecord.preRunRecord.level);
+             if (this.isNotFilled()) {
+                sudoApp.mySolver.generateNewPuzzle();
+                this.runningGenerators++; 
+            //     console.log('       runningGenerators++: ' + this.runningGenerators);
             }
         }
-        if (this.runningGenerators > 0) {
-            // A generator has successfully generated a new puzzle 
-            // and placed it in the store (pushPuzzle). 
-            // After generating a new puzzle, the generator terminates itself. 
-            // Hence the following decrement
-            this.runningGenerators--;
-            // console.log('       runningGenerators: ' + this.runningGenerators);
-        } else {
-            throw new Error('Unexpected #running generators: ' + this.runningGenerators);
-        }
-    }
+    } 
 
-    popPuzzle(difficulty) {
-        let pz = undefined;
-        switch (difficulty) {
-            case 'Sehr leicht': {
-                pz = this.verySimplePuzzles.pop();
-                break;
-            }
-            case 'Leicht': {
-                pz = this.simplePuzzles.pop();
-                break;
-            }
-            case 'Mittel': {
-                pz = this.mediumPuzzles.pop();
-                break;
-            }
-            case 'Schwer': {
-                pz = this.heavyPuzzles.pop();
-                break;;
-            }
-            default: {
-                throw new Error('Unexpected difficulty: ' + difficulty);
+/*    async fillNewPuzzleStoreOld() {
+            let filled1 = false;
+            let filled2 = false;
+            while (!(filled1 && filled2)) {
+                // limit the number of running generators
+                if (this.runningGenerators < 2) {
+                    // The number of generators running in parallel is limited 
+                    // to 2. We need a limit
+                    // to restrict the simultaneous resource requirements.
+                    if (this.verySimpleIsNotFilled()) {
+                        filled1 = false;
+                        // Starting a new puzzle generator (web worker).
+                        sudoApp.mySolver.generateNewVerySimplePuzzle();
+                        this.runningGenerators++;
+                        //  console.log('       runningGenerators: ' + this.runningGenerators);
+                    } else {
+                        filled1 = true;
+                    }
+                    if (this.isNotFilled()) {
+                        filled2 = false;
+                        // Starting a new puzzle generator (web worker).
+                        sudoApp.mySolver.generateNewPuzzle();
+                        this.runningGenerators++;
+                        //    console.log('       runningGenerators: ' + this.runningGenerators);
+                    } else {
+                        filled2 = true;
+                    }
+                }
+                // Wait a second so that the running generators have a chance
+                // to generate new puzzles and finish before new generators are started.
+                await this.sleep(1000);
             }
         }
-        return pz;
+*/
+        verySimpleIsNotFilled() {
+            return this.verySimplePuzzles.length < 2;
+        }
+
+        isNotFilled() {
+            return this.simplePuzzles.length < 2
+                || this.mediumPuzzles.length < 2
+                || this.heavyPuzzles.length < 2;
+        }
+
+        pushPuzzle(puzzleRecord) {
+            switch (puzzleRecord.preRunRecord.level) {
+                case 'Sehr leicht': {
+                    if (this.verySimplePuzzles.length < 2) {
+                        this.verySimplePuzzles.push(puzzleRecord);
+                         // console.log('push: Sehr leicht: #' + this.verySimplePuzzles.length);
+                    }
+                    break;
+                }
+                case 'Leicht': {
+                    if (this.simplePuzzles.length < 2) {
+                        this.simplePuzzles.push(puzzleRecord);
+                          // console.log('push: Leicht: #' + this.simplePuzzles.length);
+                    }
+                    break;
+                }
+                case 'Mittel': {
+                    if (this.mediumPuzzles.length < 2) {
+                        this.mediumPuzzles.push(puzzleRecord);
+                          // console.log('push: Mittel: #' + this.mediumPuzzles.length);
+                    }
+                    break;
+                }
+                case 'Schwer': {
+                    if (this.heavyPuzzles.length < 2) {
+                        this.heavyPuzzles.push(puzzleRecord);
+                           //   console.log('push: Schwer: #' + this.heavyPuzzles.length)
+                    }
+                    break;
+                }
+                default: {
+                    // throw new Error('Unexpected difficulty: ' + puzzleRecord.preRunRecord.level);
+                }
+            }
+            this.runningGenerators--;       
+                     // console.log('       runningGenerators--: ' + this.runningGenerators);
+            this.fillNewPuzzleStore();
+        }
+
+        popPuzzle(difficulty) {
+            let pz = undefined;
+            switch (difficulty) {
+                case 'Sehr leicht': {
+                    pz = this.verySimplePuzzles.pop();
+                    break;
+                }
+                case 'Leicht': {
+                    pz = this.simplePuzzles.pop();
+                    break;
+                }
+                case 'Mittel': {
+                    pz = this.mediumPuzzles.pop();
+                    break;
+                }
+                case 'Schwer': {
+                    pz = this.heavyPuzzles.pop();
+                    break;;
+                }
+                default: {
+                    throw new Error('Unexpected difficulty: ' + difficulty);
+                }
+            }
+            this.fillNewPuzzleStore();
+            return pz;
+        }
     }
-}
 
 
 class SudokuPuzzleDB extends SudokuModel {
