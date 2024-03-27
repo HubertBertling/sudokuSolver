@@ -507,7 +507,7 @@ class SudokuSolverController {
             // So only the actual puzzle state needs to be saved
             sudoApp.myPuzzleDB.mergePlayedPuzzle(currentPuzzleId, currentPuzzleName, currentPuzzle);
             this.myInfoDialog.open('Spielstand gespeichert', "positiv",
-                'Puzzle: ' + currentPuzzleName);
+                'Puzzle: \"' + currentPuzzleName + '\"');
             // The saved puzzle becomes the new current puzzle
             let tmpPuzzleID = sudoApp.myPuzzleDB.getSelectedUid();
             let puzzle = sudoApp.myPuzzleDB.getSelectedPuzzle();
